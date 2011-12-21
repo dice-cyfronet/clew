@@ -2,6 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<artifactId>dice</artifactId>
+		<groupId>pl.cyfronet.dice</groupId>
+		<version>1</version>
+	</parent>
+
 	<groupId>pl.cyfronet</groupId>
 	<artifactId>coin</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -15,6 +21,12 @@
 		<spring.version>3.1.0.RELEASE</spring.version>
 	</properties>
 
+	<scm>
+		<connection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</connection>
+		<developerConnection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</developerConnection>
+		<url>https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -27,4 +39,24 @@
 		<module>coinapi</module>
 		<module>coined</module>
 	</modules>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-7</version>
+			</extension>
+		</extensions>
+	</build>
 </project>
