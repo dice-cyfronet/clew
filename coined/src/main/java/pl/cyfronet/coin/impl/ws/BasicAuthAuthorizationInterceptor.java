@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.ws;
+package pl.cyfronet.coin.impl.ws;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.manager;
+package pl.cyfronet.coin.impl.manager;
 
 import java.util.List;
 

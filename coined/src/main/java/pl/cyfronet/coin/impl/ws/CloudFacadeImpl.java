@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.ws;
+package pl.cyfronet.coin.impl.ws;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import pl.cyfronet.coin.api.ws.CloudFacade;
 import pl.cyfronet.coin.api.ws.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
-import pl.cyfronet.coin.manager.CloudManager;
+import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
