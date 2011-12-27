@@ -46,6 +46,7 @@
 		<module>coinapi</module>
 		<module>coined</module>
 		<module>coinportlet</module>
+		<module>coinclient</module>
 	</modules>
 	
 	<build>
