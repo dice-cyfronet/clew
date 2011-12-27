@@ -9,6 +9,10 @@
 		<groupId>pl.cyfronet</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+	
+	<properties>
+		<pluto.version>2.0.1</pluto.version>
+	</properties>
 
 	<groupId>pl.cyfronet</groupId>
 	<artifactId>coinportlet</artifactId>
@@ -43,11 +47,6 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
-		</dependency>
-		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.1.2</version>
@@ -57,6 +56,12 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
+        <dependency>
+			<groupId>org.apache.portals.pluto</groupId>
+			<artifactId>pluto-taglib</artifactId>
+			<version>${pluto.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Logging dependencies -->
 		<dependency>

@@ -6,6 +6,7 @@
 		version="2.0">
 	<portlet>
         <portlet-name>coin-cloud-manager</portlet-name>
+        <display-name>Cloud Manager</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
