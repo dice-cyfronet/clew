@@ -33,20 +33,6 @@
 		<developerConnection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</developerConnection>
 		<url>https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</url>
 	</scm>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.9</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-	<modules>
-		<module>coinapi</module>
-		<module>coined</module>
-		<module>coinportlet</module>
-	</modules>
 	
 	<build>
 		<plugins>
@@ -67,4 +53,24 @@
 			</extension>
 		</extensions>
 	</build>
+	
+	<modules>
+		<module>coinapi</module>
+		<module>coined</module>
+		<module>coinportlet</module>
+	</modules>
+	
+	<dependencies>
+		<dependency>
+			<artifactId>slf4j-api</artifactId>
+			<groupId>org.slf4j</groupId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.9</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

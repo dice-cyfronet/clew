@@ -17,14 +17,8 @@
 		<cxf-version>2.4.2</cxf-version>
 		<bundle.symbolicName>coined</bundle.symbolicName>
 	</properties>
-	<dependencies>
-		<dependency>
-			<artifactId>slf4j-api</artifactId>
-			<groupId>org.slf4j</groupId>
-			<version>1.6.1</version>
-			<scope>provided</scope>
-		</dependency>
 
+	<dependencies>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-transports-http</artifactId>
@@ -44,7 +38,6 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-
 
 	<build>
 		<plugins>
