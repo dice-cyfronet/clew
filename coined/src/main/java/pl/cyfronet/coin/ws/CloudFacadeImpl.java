@@ -24,10 +24,13 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.ws.CloudFacade;
+import pl.cyfronet.coin.api.ws.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
 import pl.cyfronet.coin.manager.CloudManager;
 
 /**
+ * Web service which exposes functionality given by the cloud manager.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class CloudFacadeImpl implements CloudFacade {
@@ -35,6 +38,9 @@ public class CloudFacadeImpl implements CloudFacade {
 	private static final Logger logger = LoggerFactory
 			.getLogger(CloudFacadeImpl.class);
 
+	/**
+	 * Cloud manager.
+	 */
 	private CloudManager manager;
 
 	/*
@@ -68,8 +74,9 @@ public class CloudFacadeImpl implements CloudFacade {
 	 * java.lang.String)
 	 */
 	@Override
-	public String startAtomicService(String atomicServiceId, String contextId)
-			throws CloudFacadeException {
+	public String startAtomicServiceInstance(String atomicServiceId,
+			String contextId) throws AtomicServiceNotFoundException,
+			CloudFacadeException {
 		logger.debug("Start atomic service [{}] in {} context",
 				atomicServiceId, contextId);
 		return manager.startAtomicService(atomicServiceId, contextId);
@@ -82,8 +89,9 @@ public class CloudFacadeImpl implements CloudFacade {
 	 * String)
 	 */
 	@Override
-	public AtomicServiceInstance getAtomicServiceStatus(
-			String atomicServiceInstanceId) throws CloudFacadeException {
+	public AtomicServiceInstance getAtomicServiceInstanceStatus(
+			String atomicServiceInstanceId)
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Get atomic service status for {}",
 				atomicServiceInstanceId);
 		return manager.getAtomicServiceStatus(atomicServiceInstanceId);
@@ -97,7 +105,7 @@ public class CloudFacadeImpl implements CloudFacade {
 	 */
 	@Override
 	public void stopAtomicServiceInstance(String atomicServiceInstance)
-			throws CloudFacadeException {
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Stop {} atomic service instance", atomicServiceInstance);
 		manager.stopAtomicServiceInstance(atomicServiceInstance);
 	}
@@ -110,7 +118,8 @@ public class CloudFacadeImpl implements CloudFacade {
 	 */
 	@Override
 	public void createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService) throws CloudFacadeException {
+			AtomicService atomicService)
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
 		manager.createAtomicService(atomicServiceInstanceId, atomicService);
 	}

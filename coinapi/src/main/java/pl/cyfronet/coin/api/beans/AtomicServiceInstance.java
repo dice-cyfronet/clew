@@ -15,6 +15,11 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+/**
+ * Bean which describes atomic service instance (vm instance).
+ * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
+ * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ */
 public class AtomicServiceInstance extends AtomicService {
 
 }

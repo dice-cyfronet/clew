@@ -27,6 +27,8 @@
 	<osgix:cm-properties id="coin-properties"
 		persistent-id="pl.cyfronet.coins">
 		<prop key="ws-port">9099</prop>
+		<prop key="ws-username">coin</prop>
+		<prop key="ws-password">coin123</prop>
 	</osgix:cm-properties>
 
 	<bean
@@ -37,12 +39,23 @@
 		</property>
 	</bean>
 
-	<jaxws:endpoint id="platinWSEndpoint-batch" implementor="#wsCloudManager-test"
-		address="http://0.0.0.0:${ws-port}/coin-test"/>
-		
-	<bean name="wsCloudManager-test"
-		class="pl.cyfronet.coin.ws.CloudFacadeImpl">
+
+	<bean id="securityInterceptor" class="pl.cyfronet.coin.ws.BasicAuthAuthorizationInterceptor">
+		<property name="users">
+			<map>
+				<entry key="${ws-username}" value="${ws-password}" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.ws.CloudFacadeImpl">
 		<property name="manager" ref="dummyCloudManager" />
 	</bean>
 
+	<jaxws:endpoint id="platinWSEndpoint-batch" implementor="#wsCloudManager-test"
+		address="http://0.0.0.0:${ws-port}/coin-test">
+		<jaxws:inInterceptors>
+			<ref bean="securityInterceptor" />
+		</jaxws:inInterceptors>
+	</jaxws:endpoint>
 </beans>

@@ -17,35 +17,41 @@ package pl.cyfronet.coin.api.ws.exception;
 
 import javax.xml.ws.WebFault;
 
+/**
+ * The most generic cloud facade exception. It should be thrown when e.g.
+ * connection with Air, Atmosphere, etc. fails.
+ * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
+ * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ */
 @WebFault
 public class CloudFacadeException extends Exception {
 	private static final long serialVersionUID = -1200644885931600000L;
-	
+
 	private ErrorCode errorCode;
-	
+
 	public enum ErrorCode {
 		UNKNOWN;
 	}
-	
+
 	public CloudFacadeException() {
 		errorCode = ErrorCode.UNKNOWN;
 	}
-	
+
 	public CloudFacadeException(String message) {
 		super(message);
 		errorCode = ErrorCode.UNKNOWN;
 	}
-	
+
 	public CloudFacadeException(ErrorCode errorCode) {
 		super();
 		this.errorCode = errorCode;
 	}
-	
+
 	public CloudFacadeException(ErrorCode errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 	}
-	
+
 	public ErrorCode getErrorCode() {
 		return errorCode;
 	}

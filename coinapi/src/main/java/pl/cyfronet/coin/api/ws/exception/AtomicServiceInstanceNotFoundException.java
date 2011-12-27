@@ -13,13 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.api.beans;
+
+package pl.cyfronet.coin.api.ws.exception;
+
+import javax.xml.ws.WebFault;
 
 /**
- * Bean which describes atomic service (vm template).
- * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
+ * Exception which should be thrown when user tries to find atomic service
+ * instance which is not instantiated on the cloud infrastructure.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class AtomicService {
+@WebFault
+public class AtomicServiceInstanceNotFoundException extends Exception {
+
+	/**
+	 * Serial version UID.
+	 */
+	private static final long serialVersionUID = 7028013118481656340L;
 
 }
