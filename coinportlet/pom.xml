@@ -15,10 +15,18 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	
-	<name>coinportlet Maven Webapp</name>
+	<name>COIN Portlets</name>
 	<url>http://maven.apache.org</url>
 	
 	<build>
 		<finalName>coinportlet</finalName>
 	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>pl.cyfronet</groupId>
+			<artifactId>coinapi</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>

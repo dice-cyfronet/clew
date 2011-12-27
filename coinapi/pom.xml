@@ -11,7 +11,7 @@
 
 	<artifactId>coinapi</artifactId>
 	<packaging>bundle</packaging>
-	<name>Coin API</name>
+	<name>COIN API</name>
 
 	<properties>
 		<bundle.symbolicName>coinapi</bundle.symbolicName>

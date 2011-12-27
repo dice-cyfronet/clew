@@ -25,7 +25,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>coin</name>
+	<name>COIN - Cloud User Interfaces</name>
 	<url>http://maven.apache.org</url>
 
 	<scm>

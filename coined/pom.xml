@@ -11,7 +11,7 @@
 
 	<artifactId>coined</artifactId>
 	<packaging>bundle</packaging>
-	<name>coined</name>
+	<name>COIN Implementation</name>
 
 	<properties>
 		<cxf-version>2.4.2</cxf-version>

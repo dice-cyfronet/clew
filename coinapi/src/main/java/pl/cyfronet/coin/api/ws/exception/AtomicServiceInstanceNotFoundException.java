@@ -30,5 +30,4 @@ public class AtomicServiceInstanceNotFoundException extends Exception {
 	 * Serial version UID.
 	 */
 	private static final long serialVersionUID = 7028013118481656340L;
-
 }
