@@ -9,8 +9,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://camel.apache.org/schema/cxf"
 	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -32,9 +31,9 @@
 
 	<osgix:cm-properties id="coin-properties"
 		persistent-id="pl.cyfronet.coins">
-		<prop key="ws-port">9099</prop>
-		<prop key="ws-username">coin</prop>
-		<prop key="ws-password">coin123</prop>
+		<prop key="port">9099</prop>
+		<prop key="username">coin</prop>
+		<prop key="password">coin123</prop>
 	</osgix:cm-properties>
 
 	<bean
@@ -45,34 +44,29 @@
 		</property>
 	</bean>
 
+	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
+		<property name="manager" ref="dummyCloudManager" />
+	</bean>
 
 	<bean id="securityInterceptor"
 		class="pl.cyfronet.coin.impl.ws.BasicAuthAuthorizationInterceptor">
 		<property name="users">
 			<map>
-				<entry key="${ws-username}" value="${ws-password}" />
+				<entry key="${username}" value="${password}" />
 			</map>
 		</property>
 	</bean>
 
-	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.impl.ws.CloudFacadeImpl">
-		<property name="manager" ref="dummyCloudManager" />
-	</bean>
-
-	<bean name="wsCloudManager-rs-test" class="pl.cyfronet.coin.impl.rs.CloudFacadeRsImpl">
-		<property name="manager" ref="dummyCloudManager" />
-	</bean>
-
 	<jaxws:endpoint id="coinWSEndpoint-test" implementor="#wsCloudManager-test"
-		address="http://0.0.0.0:${ws-port}/coin-test">
+		address="http://0.0.0.0:${port}/coin-test">
 		<jaxws:inInterceptors>
 			<ref bean="securityInterceptor" />
 		</jaxws:inInterceptors>
 	</jaxws:endpoint>
 
-	<jaxrs:server id="coinRSEndpoint-test" address="http://0.0.0.0:${ws-port}/coin-rs-test">
+	<jaxrs:server id="coinRSEndpoint-test" address="http://0.0.0.0:${port}/coin-rs-test">
 		<jaxrs:serviceBeans>
-			<ref bean="wsCloudManager-rs-test" />
+			<ref bean="wsCloudManager-test" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />

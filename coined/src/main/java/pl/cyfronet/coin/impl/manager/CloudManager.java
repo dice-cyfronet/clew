@@ -20,8 +20,9 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
-import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -43,5 +44,6 @@ public interface CloudManager {
 			throws CloudFacadeException;
 
 	void createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService) throws CloudFacadeException;
+			AtomicService atomicService)
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
 }

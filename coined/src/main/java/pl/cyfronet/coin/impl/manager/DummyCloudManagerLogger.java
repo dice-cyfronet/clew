@@ -24,8 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
-import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -112,11 +113,15 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 */
 	@Override
 	public void createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService) throws CloudFacadeException {
+			AtomicService atomicService)
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.info("Create atomic service from {}", atomicServiceInstanceId);
 		if (atomicService != null) {
 			logger.info("Atomic service details: name -> {}",
 					atomicService.getName());
+			if ("404".equals(atomicService.getName())) {
+				throw new AtomicServiceInstanceNotFoundException();
+			}
 		} else {
 			logger.info("Atomic service metadata empty");
 		}

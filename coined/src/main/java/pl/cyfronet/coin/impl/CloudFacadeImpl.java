@@ -14,19 +14,19 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.ws;
+package pl.cyfronet.coin.impl;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.ws.CloudFacade;
-import pl.cyfronet.coin.api.ws.exception.AtomicServiceInstanceNotFoundException;
-import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
-import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
@@ -92,7 +92,7 @@ public class CloudFacadeImpl implements CloudFacade {
 	 * String)
 	 */
 	@Override
-	public AtomicServiceInstance getAtomicServiceInstanceStatus(
+	public AtomicServiceInstance getAtomicServiceInstance(
 			String atomicServiceInstanceId)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Get atomic service status for {}",
