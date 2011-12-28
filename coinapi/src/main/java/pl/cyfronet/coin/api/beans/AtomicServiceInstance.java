@@ -15,11 +15,21 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Bean which describes atomic service instance (vm instance).
  * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
+@XmlRootElement
 public class AtomicServiceInstance extends AtomicService {
 
+	public AtomicServiceInstance() {
+		super();
+	}
+	
+	public AtomicServiceInstance(String name) {
+		super(name);
+	}
 }

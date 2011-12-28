@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.ws;
+package pl.cyfronet.coin.impl.rs;
 
 import java.util.List;
 
@@ -23,17 +23,17 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.ws.CloudFacade;
+import pl.cyfronet.coin.api.rs.CloudFacadeRs;
 import pl.cyfronet.coin.api.ws.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
+import pl.cyfronet.coin.impl.ws.CloudFacadeImpl;
 
 /**
- * Web service which exposes functionality given by the cloud manager.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class CloudFacadeImpl implements CloudFacade {
+public class CloudFacadeRsImpl implements CloudFacadeRs {
 
 	/**
 	 * Logger.
@@ -42,15 +42,15 @@ public class CloudFacadeImpl implements CloudFacade {
 			.getLogger(CloudFacadeImpl.class);
 
 	/**
-	 * Cloud manager.
+	 * Cloud manager
 	 */
 	private CloudManager manager;
 
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServiceInstances(java.lang
-	 * .String)
+	 * pl.cyfronet.coin.api.rs.CloudFacadeRs#getAtomicServiceInstances(java.
+	 * lang.String)
 	 */
 	@Override
 	public List<AtomicServiceInstance> getAtomicServiceInstances(
@@ -62,19 +62,9 @@ public class CloudFacadeImpl implements CloudFacade {
 
 	/*
 	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServices()
-	 */
-	@Override
-	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
-		logger.debug("Get atomic services");
-		return manager.getAtomicServices();
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#startAtomicService(java.lang.String,
-	 * java.lang.String)
+	 * pl.cyfronet.coin.api.rs.CloudFacadeRs#startAtomicServiceInstance(java
+	 * .lang.String, java.lang.String)
 	 */
 	@Override
 	public String startAtomicServiceInstance(String atomicServiceId,
@@ -88,8 +78,21 @@ public class CloudFacadeImpl implements CloudFacade {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServiceStatus(java.lang.
-	 * String)
+	 * pl.cyfronet.coin.api.rs.CloudFacadeRs#stopAtomicServiceInstance(java.
+	 * lang.String)
+	 */
+	@Override
+	public void stopAtomicServiceInstance(String atomicServiceInstanceId)
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
+		logger.debug("Stop {} atomic service instance", atomicServiceInstanceId);
+		manager.stopAtomicServiceInstance(atomicServiceInstanceId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.api.rs.CloudFacadeRs#getAtomicServiceInstanceStatus(
+	 * java.lang.String)
 	 */
 	@Override
 	public AtomicServiceInstance getAtomicServiceInstanceStatus(
@@ -102,22 +105,19 @@ public class CloudFacadeImpl implements CloudFacade {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#stopAtomicServiceInstance(java.lang
-	 * .String)
+	 * @see pl.cyfronet.coin.api.rs.CloudFacadeRs#getAtomicServices()
 	 */
 	@Override
-	public void stopAtomicServiceInstance(String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		logger.debug("Stop {} atomic service instance", atomicServiceInstanceId);
-		manager.stopAtomicServiceInstance(atomicServiceInstanceId);
+	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
+		logger.debug("Get atomic services");
+		return manager.getAtomicServices();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#createAtomicService(java.lang.String,
-	 * pl.cyfronet.coin.api.beans.AtomicService)
+	 * pl.cyfronet.coin.api.rs.CloudFacadeRs#createAtomicService(java.lang.String
+	 * , pl.cyfronet.coin.api.beans.AtomicService)
 	 */
 	@Override
 	public void createAtomicService(String atomicServiceInstanceId,
@@ -128,8 +128,7 @@ public class CloudFacadeImpl implements CloudFacade {
 	}
 
 	/**
-	 * Set cloud manager.
-	 * @param manager Cloud manager implementation.
+	 * @param manager the manager to set
 	 */
 	public void setManager(CloudManager manager) {
 		this.manager = manager;

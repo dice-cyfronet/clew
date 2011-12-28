@@ -22,6 +22,6 @@
   http://www.springframework.org/schema/osgi
   http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<bean id="dummyCloudManager" class="pl.cyfronet.coin.manager.DummyCloudManagerLogger" />
+	<bean id="dummyCloudManager" class="pl.cyfronet.coin.impl.manager.DummyCloudManagerLogger" />
 
 </beans>

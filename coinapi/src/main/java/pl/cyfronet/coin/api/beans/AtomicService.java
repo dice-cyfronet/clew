@@ -15,11 +15,37 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Bean which describes atomic service (vm template).
  * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
+@XmlRootElement
 public class AtomicService {
 
+	private String name;
+
+	public AtomicService() {
+		
+	}
+	
+	public AtomicService(String name) {
+		this.name = name;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 }

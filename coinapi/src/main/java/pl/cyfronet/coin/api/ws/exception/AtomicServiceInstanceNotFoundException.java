@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.api.ws.exception;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import javax.xml.ws.WebFault;
 
 /**
@@ -24,10 +26,14 @@ import javax.xml.ws.WebFault;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @WebFault
-public class AtomicServiceInstanceNotFoundException extends Exception {
+public class AtomicServiceInstanceNotFoundException extends WebApplicationException {
 
 	/**
 	 * Serial version UID.
 	 */
 	private static final long serialVersionUID = 7028013118481656340L;
+	
+	public AtomicServiceInstanceNotFoundException() {
+		super(Response.Status.NOT_FOUND);
+	}
 }

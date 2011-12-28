@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
 
 /**
@@ -45,8 +46,8 @@ public class DummyCloudManagerLogger implements CloudManager {
 		logger.info(
 				"Get atomic services instances for \"{}\" context - returning two dummy atomic service instances",
 				contextId);
-		return Arrays.asList(new AtomicServiceInstance(),
-				new AtomicServiceInstance());
+		return Arrays.asList(new AtomicServiceInstance("asi1"),
+				new AtomicServiceInstance("asi2"));
 	}
 
 	/*
@@ -56,7 +57,8 @@ public class DummyCloudManagerLogger implements CloudManager {
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.info("Get atomic services - returning two dummy atomic services");
-		return Arrays.asList(new AtomicService(), new AtomicService());
+		return Arrays
+				.asList(new AtomicService("as1"), new AtomicService("as2"));
 	}
 
 	/*
@@ -66,10 +68,15 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 */
 	@Override
 	public String startAtomicService(String atomicServiceId, String contextId)
-			throws CloudFacadeException {
+			throws AtomicServiceNotFoundException, CloudFacadeException {
 		logger.info(
 				"Start atomic service [{}] in {} context - generated id returned",
 				atomicServiceId, contextId);
+
+		if ("404".equals(atomicServiceId)) {
+			throw new AtomicServiceNotFoundException();
+		}
+
 		return System.currentTimeMillis() + "";
 	}
 
@@ -84,7 +91,7 @@ public class DummyCloudManagerLogger implements CloudManager {
 		logger.info(
 				"Get atomic service status for {} - default atomic service instance returned",
 				atomicServiceInstanceId);
-		return new AtomicServiceInstance();
+		return new AtomicServiceInstance("asi");
 	}
 
 	/*
@@ -107,6 +114,12 @@ public class DummyCloudManagerLogger implements CloudManager {
 	public void createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService) throws CloudFacadeException {
 		logger.info("Create atomic service from {}", atomicServiceInstanceId);
+		if (atomicService != null) {
+			logger.info("Atomic service details: name -> {}",
+					atomicService.getName());
+		} else {
+			logger.info("Atomic service metadata empty");
+		}
 	}
 
 }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.ws.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.ws.exception.CloudFacadeException;
 
 /**
@@ -33,7 +34,7 @@ public interface CloudManager {
 	List<AtomicService> getAtomicServices() throws CloudFacadeException;
 
 	String startAtomicService(String atomicServiceId, String contextId)
-			throws CloudFacadeException;
+			throws AtomicServiceNotFoundException, CloudFacadeException;
 
 	AtomicServiceInstance getAtomicServiceStatus(String atomicServiceInstanceId)
 			throws CloudFacadeException;

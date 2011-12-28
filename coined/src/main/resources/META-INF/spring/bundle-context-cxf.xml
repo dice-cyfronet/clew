@@ -9,6 +9,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://camel.apache.org/schema/cxf"
 	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -18,7 +20,11 @@
        http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://www.springframework.org/schema/osgi-compendium 
-        http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+       http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+       http://cxf.apache.org/jaxrs 
+       http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
@@ -40,7 +46,8 @@
 	</bean>
 
 
-	<bean id="securityInterceptor" class="pl.cyfronet.coin.ws.BasicAuthAuthorizationInterceptor">
+	<bean id="securityInterceptor"
+		class="pl.cyfronet.coin.impl.ws.BasicAuthAuthorizationInterceptor">
 		<property name="users">
 			<map>
 				<entry key="${ws-username}" value="${ws-password}" />
@@ -48,14 +55,37 @@
 		</property>
 	</bean>
 
-	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.ws.CloudFacadeImpl">
+	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.impl.ws.CloudFacadeImpl">
 		<property name="manager" ref="dummyCloudManager" />
 	</bean>
 
-	<jaxws:endpoint id="platinWSEndpoint-batch" implementor="#wsCloudManager-test"
+	<bean name="wsCloudManager-rs-test" class="pl.cyfronet.coin.impl.rs.CloudFacadeRsImpl">
+		<property name="manager" ref="dummyCloudManager" />
+	</bean>
+
+	<jaxws:endpoint id="coinWSEndpoint-test" implementor="#wsCloudManager-test"
 		address="http://0.0.0.0:${ws-port}/coin-test">
 		<jaxws:inInterceptors>
 			<ref bean="securityInterceptor" />
 		</jaxws:inInterceptors>
 	</jaxws:endpoint>
+
+	<jaxrs:server id="coinRSEndpoint-test" address="http://0.0.0.0:${ws-port}/coin-rs-test">
+		<jaxrs:serviceBeans>
+			<ref bean="wsCloudManager-rs-test" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jaxbProvider" />
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
+
+	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
+		<property name="namespaceMap" ref="jsonNamespaceMap" />
+	</bean>
+
+	<util:map id="jsonNamespaceMap" map-class="java.util.Hashtable">
+	</util:map>
 </beans>
