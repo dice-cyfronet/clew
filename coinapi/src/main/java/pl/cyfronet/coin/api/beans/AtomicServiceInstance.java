@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class AtomicServiceInstance extends AtomicService {
+	private String instanceId;
 
 	public AtomicServiceInstance() {
 		super();
@@ -31,5 +32,13 @@ public class AtomicServiceInstance extends AtomicService {
 	
 	public AtomicServiceInstance(String name) {
 		super(name);
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
 	}
 }

@@ -24,8 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class AtomicService {
-
+	private String atomicServiceId;
 	private String name;
+	private String description;
 
 	public AtomicService() {
 		
@@ -47,5 +48,21 @@ public class AtomicService {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getAtomicServiceId() {
+		return atomicServiceId;
+	}
+
+	public void setAtomicServiceId(String atomicServiceId) {
+		this.atomicServiceId = atomicServiceId;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

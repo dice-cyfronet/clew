@@ -9,34 +9,35 @@
 		   http://www.springframework.org/schema/task/spring-task-3.1.xsd
 		   http://www.springframework.org/schema/util
 		   http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	<!-- Lets enable autowiring -->
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
     
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:coinportlet-constants.properties</value>
-            </list>
-        </property>
+    <!-- Properties and messages beans -->
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="location" value="classpath:coinportlet-constants.properties"/>
     </bean>
-
-    <!-- Messages files for this application -->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basenames">
-            <list>
-                <value>classpath:coinportlet-messages</value>
-            </list>
-        </property>
+        <property name="basename" value="coinportlet-messages"/>
     </bean>
-
 	<!-- Default View Resolver -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-
 	<!-- Default ExceptionHandler -->
     <bean id="defaultExceptionHandler" class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver">
         <property name="defaultErrorView" value="fatal/error"/>
+    </bean>
+    
+    <!-- Utility beans -->
+    <bean class="pl.cyfronet.coin.portlet.util.ContextIdFactory">
+    	<constructor-arg value="${cloud.context.id.prefix}"/>
+    </bean>
+    
+    <!-- Mock definitions -->
+    <bean class="pl.cyfronet.coin.portlet.mock.MockCloudFacade">
+    	<constructor-arg value="${initial.number.of.mock.atomic.service.instances}"/>
+    	<constructor-arg value="${initial.number.of.mock.atomic.services}"/>
     </bean>
 </beans>
