@@ -37,10 +37,9 @@
 						<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
 						<!-- <Bundle-Activator>pl.cyfronet.ews.platin.Activator</Bundle-Activator> -->
 						<Export-Package>
+							pl.cyfronet.coin.api;version="${pom.version}",
 							pl.cyfronet.coin.api.beans;version="${pom.version}",
-							pl.cyfronet.coin.api.ws.exception;version="${pom.version}",
-							pl.cyfronet.coin.api.rs;version="${pom.version}",
-							pl.cyfronet.coin.api.ws;version="${pom.version}",							
+							pl.cyfronet.coin.api.exception;version="${pom.version}"
 						</Export-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
