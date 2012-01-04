@@ -23,7 +23,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -86,7 +86,7 @@ public interface CloudFacade {
 	 * @throws CloudFacadeException Thrown when error occurs while starting
 	 *             atomic service instance.
 	 */
-	@PUT
+	@POST
 	@Path("/asi/new/{atomicServiceId}/in/{contextId}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@WebMethod(operationName = "startAtomicServiceInstance")
@@ -139,7 +139,7 @@ public interface CloudFacade {
 	 * @throws CloudFacadeException Thrown when error while creating atomic
 	 *             service (vm template) occurs.
 	 */
-	@PUT
+	@POST
 	@Path("as/new/{atomicServiceInstanceId}")
 	@WebMethod(operationName = "createAtomicService")
 	void createAtomicService(
