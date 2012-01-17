@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,9 +29,36 @@ public class AtomicService {
 	private String atomicServiceId;
 	private String name;
 	private String description;
+	private boolean atomicService;
+	private String semanticDescriptionEndpoint;
+	private String invocationEndpoint;
+	private List<String> ports;
+
+	public String getSemanticDescriptionEndpoint() {
+		return semanticDescriptionEndpoint;
+	}
+
+	public void setSemanticDescriptionEndpoint(String semanticDescriptionEndpoint) {
+		this.semanticDescriptionEndpoint = semanticDescriptionEndpoint;
+	}
+
+	public String getInvocationEndpoint() {
+		return invocationEndpoint;
+	}
+
+	public void setInvocationEndpoint(String invocationEndpoint) {
+		this.invocationEndpoint = invocationEndpoint;
+	}
+
+	public List<String> getPorts() {
+		return ports;
+	}
+
+	public void setPorts(List<String> ports) {
+		this.ports = ports;
+	}
 
 	public AtomicService() {
-		
 	}
 	
 	public AtomicService(String name) {
@@ -64,5 +93,20 @@ public class AtomicService {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean isAtomicService() {
+		return atomicService;
+	}
+
+	public void setAtomicService(boolean atomicService) {
+		this.atomicService = atomicService;
+	}
+	
+	@Override
+	public String toString() {
+		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
+				+ name + ", description=" + description + ", atomicService="
+				+ atomicService + "]";
 	}
 }

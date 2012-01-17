@@ -25,6 +25,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class AtomicServiceInstance extends AtomicService {
 	private String instanceId;
+	private Status status;
+	
+	public enum Status {
+		Running,
+		Paused,
+		Stopped
+	}
 
 	public AtomicServiceInstance() {
 		super();
@@ -40,5 +47,19 @@ public class AtomicServiceInstance extends AtomicService {
 
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
+	}
+	
+	@Override
+	public String toString() {
+		return "AtomicServiceInstance [instanceId=" + instanceId
+				+ ", toString()=" + super.toString() + "]";
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 }

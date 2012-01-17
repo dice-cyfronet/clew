@@ -30,7 +30,6 @@
 		</c:forEach>
 	</table>
 	<form:input path='atomicServiceName'/>
-	<form:select path="requestedStorageInGigaBytes" items="${storageSizeValues}"/>
 	<input type='submit' value='<spring:message code='cloud.manager.portlet.submit.atomic.service.start.request'/>'/>
 </form:form>
 
