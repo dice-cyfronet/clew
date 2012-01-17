@@ -87,12 +87,13 @@ public interface CloudFacade {
 	 *             atomic service instance.
 	 */
 	@POST
-	@Path("/asi/new/{atomicServiceId}/in/{contextId}")
+	@Path("/asi/new/{atomicServiceId}/in/{contextId}/name/{name}")
 	@Produces(MediaType.TEXT_PLAIN)
 	@WebMethod(operationName = "startAtomicServiceInstance")
 	@WebResult(name = "atomicServiceInstanceId")
 	String startAtomicServiceInstance(
 			@WebParam(name = "atomicServiceId") @PathParam("atomicServiceId") String atomicServiceId,
+			@WebParam(name = "name") @PathParam("name") String name,
 			@WebParam(name = "contextId") @PathParam("contextId") String contextId)
 			throws AtomicServiceNotFoundException, CloudFacadeException;
 

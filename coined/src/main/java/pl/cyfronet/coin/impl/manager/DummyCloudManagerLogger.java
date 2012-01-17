@@ -68,11 +68,12 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 * java.lang.String)
 	 */
 	@Override
-	public String startAtomicService(String atomicServiceId, String contextId)
-			throws AtomicServiceNotFoundException, CloudFacadeException {
+	public String startAtomicService(String atomicServiceId, String name,
+			String contextId) throws AtomicServiceNotFoundException,
+			CloudFacadeException {
 		logger.info(
-				"Start atomic service [{}] in {} context - generated id returned",
-				atomicServiceId, contextId);
+				"Start atomic service [{}, name {}] in {} context - generated id returned",
+				new Object[] { atomicServiceId, name, contextId });
 
 		if ("404".equals(atomicServiceId)) {
 			throw new AtomicServiceNotFoundException();

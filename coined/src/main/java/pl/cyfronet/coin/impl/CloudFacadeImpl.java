@@ -78,11 +78,11 @@ public class CloudFacadeImpl implements CloudFacade {
 	 */
 	@Override
 	public String startAtomicServiceInstance(String atomicServiceId,
-			String contextId) throws AtomicServiceNotFoundException,
-			CloudFacadeException {
+			String name, String contextId)
+			throws AtomicServiceNotFoundException, CloudFacadeException {
 		logger.debug("Start atomic service [{}] in {} context",
 				atomicServiceId, contextId);
-		return manager.startAtomicService(atomicServiceId, contextId);
+		return manager.startAtomicService(atomicServiceId, name, contextId);
 	}
 
 	/*

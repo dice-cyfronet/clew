@@ -34,8 +34,9 @@ public interface CloudManager {
 
 	List<AtomicService> getAtomicServices() throws CloudFacadeException;
 
-	String startAtomicService(String atomicServiceId, String contextId)
-			throws AtomicServiceNotFoundException, CloudFacadeException;
+	String startAtomicService(String atomicServiceId, String name,
+			String contextId) throws AtomicServiceNotFoundException,
+			CloudFacadeException;
 
 	AtomicServiceInstance getAtomicServiceStatus(String atomicServiceInstanceId)
 			throws CloudFacadeException;
