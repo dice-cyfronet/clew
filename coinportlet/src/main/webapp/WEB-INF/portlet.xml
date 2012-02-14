@@ -18,4 +18,18 @@
         </supports>
         <resource-bundle>coin-cloud-manager-portlet</resource-bundle>
     </portlet>
+    <portlet>
+        <portlet-name>coin-data-manager</portlet-name>
+        <display-name>Cloud Data Manager</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/portlet-config/coin-data-manager-portlet.xml</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <resource-bundle>coin-data-manager-portlet</resource-bundle>
+    </portlet>
 </portlet-app>
