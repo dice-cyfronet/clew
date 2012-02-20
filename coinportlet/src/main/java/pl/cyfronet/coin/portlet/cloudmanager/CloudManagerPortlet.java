@@ -31,6 +31,7 @@ public class CloudManagerPortlet {
 	private static final String MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST = "saveAtomicServiceRequest";
 	private static final String MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST = "atomicServiceMethodList";
 	private static final String MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST = "invokeAtomicServiceRequest";
+	private static final String MODEL_BEAN_VIEW = "view";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -39,6 +40,8 @@ public class CloudManagerPortlet {
 	private static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	private static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
 	private static final String ACTION_INVOKE_ATOMIC_SERVICE = "invokeAtomicService";
+	private static final String ACTION_GENERIC_INVOKER = "genericInvoker";
+	private static final String ACTION_WORKFLOWS = "workflows";
 	
 	@Autowired private CloudFacade cloudFacade;
 	@Autowired private ContextIdFactory contextIdFactory;
@@ -47,13 +50,45 @@ public class CloudManagerPortlet {
 	public String doView(Model model) {
 		log.debug("Generating the main view");
 		
-		List<AtomicServiceInstance> atomicServiceInstances =
-				cloudFacade.getAtomicServiceInstances(contextIdFactory.createContextId("userName"));
-		//TODO - obtain user name from the portal's user manager (somehow)
-		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, atomicServiceInstances);
+		if(model.containsAttribute(MODEL_BEAN_VIEW)) {
+			String view = (String) model.asMap().get(MODEL_BEAN_VIEW);
+			
+			if(view.equals(ACTION_GENERIC_INVOKER)) {
+				return doViewGenericInvoker(model);
+			} else {
+				return doViewWorkflows(model);
+			}
+		} else {
+			//returning default view
+			return doViewGenericInvoker(model);
+		}
 		
-		return "cloudManager/main";
+		
+//		List<AtomicServiceInstance> atomicServiceInstances =
+//				cloudFacade.getAtomicServiceInstances(contextIdFactory.createContextId("userName"));
+//		//TODO - obtain user name from the portal's user manager (somehow)
+//		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, atomicServiceInstances);
+//		
+//		return "cloudManager/main";
 	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_GENERIC_INVOKER)
+	public String doViewGenericInvoker(Model model) {
+		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
+		
+		return "cloudManager/genericInvoker";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_WORKFLOWS)
+	public String doViewWorkflows(Model model) {
+		model.addAttribute(MODEL_BEAN_VIEW, ACTION_WORKFLOWS);
+		
+		return "cloudManager/workflows";
+	}
+	
+	
+	
+	
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public String doViewStartAtomicService(Model model) {

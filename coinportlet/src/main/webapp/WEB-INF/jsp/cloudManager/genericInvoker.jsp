@@ -1,10 +1,11 @@
-<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<%@ include file="../include.jsp" %>
+
+<%@ include file="menu.jsp" %>
 
 <portlet:renderURL var="startAtomicService">
     <portlet:param name="action" value="startAtomicService"/>
 </portlet:renderURL>
 
-<p><spring:message code="cloud.manager.portlet.atomic.service.list.header"/></p>
 <ul>
 	<c:forEach var="atomicServiceInstance" items="${atomicServiceInstances}">
 		<portlet:renderURL var="saveAtomicService">
