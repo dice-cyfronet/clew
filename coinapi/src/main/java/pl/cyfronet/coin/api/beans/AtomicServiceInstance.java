@@ -36,6 +36,10 @@ public class AtomicServiceInstance {
 		Booting,
 		Stopping
 	}
+	
+	public AtomicServiceInstance() {
+		
+	}
 
 	public AtomicServiceInstance(String name) {
 		this.name = name;
