@@ -14,37 +14,40 @@
 	<c:when test="${fn:length(activeAtomicServices) > 0}">
 		<div>
 			<c:forEach var="atomicService" items="${activeAtomicServices}">
-				<span>${atomicService.name}<br/>
-					<c:if test="${atomicService.http or atomicService.vnc}">
-					(<spring:message code=""/>
-					</c:if>
+				<span class="tab">
+					<c:choose>
+						<c:when test="${atomicService.atomicServiceId == currentAtomicServiceId}">
+							${atomicService.name}
+						</c:when>
+						<c:otherwise>
+							<portlet:renderURL var="showAtomicService">
+								<portlet:param name="action" value="genericInvoker"/>
+								<portlet:param name="currentAtomicService" value="${atomicService.atomicServiceId}"/>
+							</portlet:renderURL>
+							<a href="${showAtomicService}">${atomicService.name}</a>
+						</c:otherwise>
+					</c:choose>
+					<br/>
+					<c:choose>
+						<c:when test="${atomicService.http or atomicService.vnc}">
+							(<spring:message code="cloud.manager.portlet.atomic.service.type.label"/>,
+						</c:when>
+						<c:otherwise>
+							(<spring:message code="cloud.manager.portlet.template.type.label"/>,
+						</c:otherwise>
+					</c:choose>
+					<spring:message code="cloud.manager.portlet.number.of.instances.label" arguments="1"/>)
 				</span>
 			</c:forEach>
 		</div>
-	
-	<!-- 
-		<ul>
-			<c:forEach var="atomicServiceInstance" items="${atomicServiceInstances}">
-				<portlet:renderURL var="saveAtomicService">
-					<portlet:param name="action" value="saveAtomicService"/>
-					<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.instanceId}"/>
-				</portlet:renderURL>
-				<portlet:renderURL var="invokeAtomicService">
-					<portlet:param name="action" value="invokeAtomicService"/>
-					<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.instanceId}"/>
-				</portlet:renderURL>
-				<li>
-					<span>${atomicServiceInstance.name} (template ID: ${atomicServiceInstance.atomicServiceId},
-							status: ${atomicServiceInstance.status})</span>
-					<br/>
-					Actions: <a href="${saveAtomicService}">Save as AS...</a>
-					<c:if test="${atomicServiceInstance.atomicService}">
-						, <a href="TODO">VNC</a>, <a href="${invokeAtomicService}">Invoker</a>
-					</c:if>
-				</li>
+		<div>
+			<c:forEach var="atomicServiceInstance" items="${atomicServiceInstances}" varStatus="status">
+				<span class="instance-label">
+					<spring:message code="cloud.manager.portlet.instance.sequence.label" arguments="${status.index + 1}"/>
+					${atomicServiceInstance.name}
+				</span>
 			</c:forEach>
-		</ul>
-		-->
+		</div>
 	</c:when>
 	<c:otherwise>
 		<spring:message code="cloud.manager.portlet.no.atomic.service.instances"/>
