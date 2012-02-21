@@ -29,34 +29,10 @@ public class AtomicService {
 	private String atomicServiceId;
 	private String name;
 	private String description;
-	private boolean atomicService;
-	private String semanticDescriptionEndpoint;
-	private String invocationEndpoint;
-	private List<String> ports;
-
-	public String getSemanticDescriptionEndpoint() {
-		return semanticDescriptionEndpoint;
-	}
-
-	public void setSemanticDescriptionEndpoint(String semanticDescriptionEndpoint) {
-		this.semanticDescriptionEndpoint = semanticDescriptionEndpoint;
-	}
-
-	public String getInvocationEndpoint() {
-		return invocationEndpoint;
-	}
-
-	public void setInvocationEndpoint(String invocationEndpoint) {
-		this.invocationEndpoint = invocationEndpoint;
-	}
-
-	public List<String> getPorts() {
-		return ports;
-	}
-
-	public void setPorts(List<String> ports) {
-		this.ports = ports;
-	}
+	private List<Endpoint> endpoint;
+	private boolean vnc;
+	private boolean http;
+	private boolean shared;
 
 	public AtomicService() {
 	}
@@ -95,18 +71,43 @@ public class AtomicService {
 		this.description = description;
 	}
 
-	public boolean isAtomicService() {
-		return atomicService;
-	}
-
-	public void setAtomicService(boolean atomicService) {
-		this.atomicService = atomicService;
-	}
-	
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
-				+ name + ", description=" + description + ", atomicService="
-				+ atomicService + "]";
+				+ name + ", description=" + description + ", endpoint="
+				+ endpoint + ", vnc=" + vnc + ", http=" + http + ", shared="
+				+ shared + "]";
+	}
+
+	public List<Endpoint> getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(List<Endpoint> endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public boolean isVnc() {
+		return vnc;
+	}
+
+	public void setVnc(boolean vnc) {
+		this.vnc = vnc;
+	}
+
+	public boolean isHttp() {
+		return http;
+	}
+
+	public void setHttp(boolean http) {
+		this.http = http;
+	}
+
+	public boolean isShared() {
+		return shared;
+	}
+
+	public void setShared(boolean shared) {
+		this.shared = shared;
 	}
 }

@@ -23,22 +23,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @XmlRootElement
-public class AtomicServiceInstance extends AtomicService {
+public class AtomicServiceInstance {
+	private String atomicServiceId;
 	private String instanceId;
 	private Status status;
+	private String name;
 	
 	public enum Status {
 		Running,
 		Paused,
-		Stopped
+		Stopped,
+		Booting,
+		Stopping
 	}
 
-	public AtomicServiceInstance() {
-		super();
-	}
-	
 	public AtomicServiceInstance(String name) {
-		super(name);
+		this.name = name;
 	}
 
 	public String getInstanceId() {
@@ -61,5 +61,21 @@ public class AtomicServiceInstance extends AtomicService {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public String getAtomicServiceId() {
+		return atomicServiceId;
+	}
+
+	public void setAtomicServiceId(String atomicServiceId) {
+		this.atomicServiceId = atomicServiceId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
