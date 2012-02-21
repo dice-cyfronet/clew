@@ -38,7 +38,6 @@ public class AtomicServiceInstance {
 	}
 	
 	public AtomicServiceInstance() {
-		
 	}
 
 	public AtomicServiceInstance(String name) {

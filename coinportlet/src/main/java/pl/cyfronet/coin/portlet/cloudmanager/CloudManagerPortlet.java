@@ -1,9 +1,15 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionResponse;
+import javax.portlet.RenderRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ContextIdFactory;
 
 @Controller
@@ -24,7 +32,7 @@ import pl.cyfronet.coin.portlet.util.ContextIdFactory;
 public class CloudManagerPortlet {
 	private final Logger log = LoggerFactory.getLogger(CloudManagerPortlet.class);
 	
-	private static final String MODEL_BEAN_ATOMIC_SERVICE_INSTANCES = "atomicServiceInstances";
+	private static final String MODEL_BEAN_ATOMIC_SERVICE_INSTANCES = "userInstances";
 	private static final String MODEL_BEAN_ATOMIC_SERVICES = "atomicServices";
 	private static final String MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST = "startAtomicServiceRequest";
 	private static final String MODEL_BEAN_POSITIVE_MESSAGE = "positiveMessage";
@@ -32,6 +40,8 @@ public class CloudManagerPortlet {
 	private static final String MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST = "atomicServiceMethodList";
 	private static final String MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST = "invokeAtomicServiceRequest";
 	private static final String MODEL_BEAN_VIEW = "view";
+	private static final String MODEL_BEAN_DEVELOPER_MODE = "developerMode";
+	private static final String MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES = "activeAtomicServices";
 	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -45,40 +55,42 @@ public class CloudManagerPortlet {
 	
 	@Autowired private CloudFacade cloudFacade;
 	@Autowired private ContextIdFactory contextIdFactory;
+	@Autowired Portal portal;
 	
 	@RequestMapping
-	public String doView(Model model) {
+	public String doView(RenderRequest request, Model model) {
 		log.debug("Generating the main view");
 		
 		if(model.containsAttribute(MODEL_BEAN_VIEW)) {
 			String view = (String) model.asMap().get(MODEL_BEAN_VIEW);
 			
 			if(view.equals(ACTION_GENERIC_INVOKER)) {
-				return doViewGenericInvoker(model);
+				return doViewGenericInvoker(request, model);
 			} else {
 				return doViewWorkflows(model);
 			}
 		} else {
 			//returning default view
-			return doViewGenericInvoker(model);
+			return doViewGenericInvoker(request, model);
+		}
+	}
+
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_GENERIC_INVOKER)
+	public String doViewGenericInvoker(RenderRequest request, Model model) {
+		if(isDeveloper(request)) {
+			model.addAttribute(MODEL_BEAN_DEVELOPER_MODE, true);
 		}
 		
-		
-//		List<AtomicServiceInstance> atomicServiceInstances =
-//				cloudFacade.getAtomicServiceInstances(contextIdFactory.createContextId("userName"));
-//		//TODO - obtain user name from the portal's user manager (somehow)
-//		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, atomicServiceInstances);
-//		
-//		return "cloudManager/main";
-	}
-	
-	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_GENERIC_INVOKER)
-	public String doViewGenericInvoker(Model model) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
+		
+		List<AtomicServiceInstance> atomicServiceInstances =
+					cloudFacade.getAtomicServiceInstances(contextIdFactory.createContextId(portal.getUserName(request)));
+		
+		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, extractAtomicServices(atomicServiceInstances));
 		
 		return "cloudManager/genericInvoker";
 	}
-	
+
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_WORKFLOWS)
 	public String doViewWorkflows(Model model) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_WORKFLOWS);
@@ -86,10 +98,39 @@ public class CloudManagerPortlet {
 		return "cloudManager/workflows";
 	}
 	
+	private List<AtomicService> extractAtomicServices(
+			List<AtomicServiceInstance> atomicServiceInstances) {
+		List<AtomicService> result = new ArrayList<AtomicService>();
+		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
+		
+		for(AtomicServiceInstance asi : atomicServiceInstances) {
+			AtomicService atomicService = null;
+			
+			for(AtomicService as : atomicServices) {
+				if(as.getAtomicServiceId().equals(asi.getAtomicServiceId())) {
+					atomicService = as;
+					break;
+				}
+			}
+			
+			if(atomicService != null && !result.contains(atomicService)) {
+				result.add(atomicService);
+			}
+		}
+		
+		Collections.sort(result, new Comparator<AtomicService>() {
+			@Override
+			public int compare(AtomicService as1, AtomicService as2) {
+				return as1.getName().compareTo(as2.getName());
+			}
+		});
+		
+		return result;
+	}
 	
 	
 	
-
+	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public String doViewStartAtomicService(Model model) {
 		log.debug("Generating the atomic service startup parameters view");
@@ -114,7 +155,7 @@ public class CloudManagerPortlet {
 		response.setRenderParameter(MODEL_BEAN_POSITIVE_MESSAGE, "Atomic service with instance id " +
 				atomicServiceInstanceId + " successfully created");
 	}
-	
+
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SAVE_ATOMIC_SERVICE)
 	public String doViewSaveAtomicService(@RequestParam("") String atomicServiceInstanceId, Model model) {
 		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
@@ -125,20 +166,24 @@ public class CloudManagerPortlet {
 		
 		return "cloudManager/saveAtomicService";
 	}
-	
+
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SAVE_ATOMIC_SERVICE)
 	public void doActionSaveAtomicService(@ModelAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)
 			SaveAtomicServiceRequest saveAtomicServiceRequest, Model model) {
 		AtomicService atomicService = new AtomicService();
-		atomicService.setAtomicService(true);
+		atomicService.setHttp(true);
 		atomicService.setName(saveAtomicServiceRequest.getName());
 		atomicService.setDescription(saveAtomicServiceRequest.getDescription());
-		atomicService.setInvocationEndpoint(saveAtomicServiceRequest.getInvocationEndpoint());
-		atomicService.setSemanticDescriptionEndpoint(saveAtomicServiceRequest.getDescriptionEndpoint());
-		atomicService.setPorts(Arrays.asList(saveAtomicServiceRequest.getPorts().split(",")));
+		
+		Endpoint endpoint = new Endpoint();
+		endpoint.setInvocationPath(saveAtomicServiceRequest.getInvocationEndpoint());
+		endpoint.setServiceDescription(saveAtomicServiceRequest.getDescriptionEndpoint());
+		endpoint.setPort(Integer.parseInt(saveAtomicServiceRequest.getPorts().split(",")[0]));
+		atomicService.setEndpoint(new ArrayList<Endpoint>());
+		atomicService.getEndpoint().add(endpoint);
 		cloudFacade.createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
 	}
-	
+
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
 	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID)
 			String atomicServiceInstanceId, @RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
@@ -182,5 +227,9 @@ public class CloudManagerPortlet {
 	private List<String> getAtomicServiceMethods(
 			AtomicServiceInstance atomicServiceInstance) {
 		return Arrays.asList(new String[] {"method1", "method2", "method3"});
+	}
+	
+	private boolean isDeveloper(RenderRequest request) {
+		return portal.getUserRoles(request).contains("developer");
 	}
 }

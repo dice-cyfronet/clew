@@ -35,7 +35,6 @@ public class MockCloudFacade implements CloudFacade {
 			atomicService.setAtomicServiceId(String.valueOf(currentTime++));
 			atomicService.setName("Mock atomic service nr " + (i + 1));
 			atomicService.setDescription("Mock atomic service description which is slightly longer than the name");
-			atomicService.setAtomicService(random.nextBoolean());
 			log.debug("Created mock atomic service {}", atomicService);
 			atomicServices.add(atomicService);
 		}
@@ -49,7 +48,6 @@ public class MockCloudFacade implements CloudFacade {
 			AtomicService atomicService = atomicServices.get(
 					random.nextInt(initialNumberOfAtomicServices));
 			atomicServiceInstance.setAtomicServiceId(atomicService.getAtomicServiceId());
-			atomicServiceInstance.setAtomicService(atomicService.isAtomicService());
 			log.debug("Created mock atomic service instance {}", atomicServiceInstance);
 			atomicServiceInstances.add(atomicServiceInstance);
 		}
@@ -83,9 +81,7 @@ public class MockCloudFacade implements CloudFacade {
 			AtomicServiceInstance atomicServiceInstance = new AtomicServiceInstance();
 			atomicServiceInstance.setAtomicServiceId(atomicService.getAtomicServiceId());
 			atomicServiceInstance.setName(name);
-			atomicServiceInstance.setDescription(atomicService.getDescription());
 			atomicServiceInstance.setInstanceId(String.valueOf(System.currentTimeMillis()));
-			atomicServiceInstance.setAtomicService(atomicService.isAtomicService());
 			atomicServiceInstance.setStatus(Status.Paused);
 			atomicServiceInstances.add(atomicServiceInstance);
 			

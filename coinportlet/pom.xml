@@ -12,6 +12,7 @@
 	
 	<properties>
 		<pluto.version>2.0.1</pluto.version>
+		<jetspeed.version>2.2.2</jetspeed.version>
 	</properties>
 
 	<groupId>pl.cyfronet</groupId>
@@ -60,6 +61,14 @@
 			<groupId>org.apache.portals.pluto</groupId>
 			<artifactId>pluto-taglib</artifactId>
 			<version>${pluto.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Portlet container dependencies -->
+		<dependency>
+			<groupId>org.apache.portals.jetspeed-2</groupId>
+			<artifactId>jetspeed-api</artifactId>
+			<version>${jetspeed.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
