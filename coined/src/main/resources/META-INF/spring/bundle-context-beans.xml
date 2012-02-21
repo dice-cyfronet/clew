@@ -24,4 +24,10 @@
 
 	<bean id="dummyCloudManager" class="pl.cyfronet.coin.impl.manager.DummyCloudManagerLogger" />
 
-</beans>
+	<bean id="cloudManager" class="pl.cyfronet.coin.impl.manager.CloudManagerImpl">
+		<property name="atmosphere" ref="atmosphere" />  
+		<property name="defaultImportanceLevel" value="40" />
+	</bean>
+	
+	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService"/>											   
+</beans>									   

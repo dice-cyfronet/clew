@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -126,6 +127,15 @@ public class DummyCloudManagerLogger implements CloudManager {
 		} else {
 			logger.info("Atomic service metadata empty");
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.manager.CloudManager#startWorkflow(pl.cyfronet.coin.api.beans.Workflow)
+	 */
+	@Override
+	public String startWorkflow(Workflow workflow, String username) {
+		logger.debug("starting workflow {} for {} user", workflow, username);
+		return "workflowId";
 	}
 
 }

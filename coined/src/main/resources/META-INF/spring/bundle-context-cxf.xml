@@ -48,6 +48,10 @@
 		<property name="manager" ref="dummyCloudManager" />
 	</bean>
 
+	<bean name="workflow-management" class="pl.cyfronet.coin.impl.WorkflowManagementImpl">
+		<property name="manager" ref="cloudManager" />
+	</bean>
+
 	<bean id="securityInterceptor"
 		class="pl.cyfronet.coin.impl.ws.BasicAuthAuthorizationInterceptor">
 		<property name="users">
@@ -67,6 +71,16 @@
 	<jaxrs:server id="coinRSEndpoint-test" address="http://0.0.0.0:${port}/coin-rs-test">
 		<jaxrs:serviceBeans>
 			<ref bean="wsCloudManager-test" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jaxbProvider" />
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<jaxrs:server id="workflow-management-rs" address="http://0.0.0.0:${port}/workflow">
+		<jaxrs:serviceBeans>
+			<ref bean="workflow-management" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />

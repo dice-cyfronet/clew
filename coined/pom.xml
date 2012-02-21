@@ -15,6 +15,8 @@
 
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
+		<atmosphere.api.version>0.1.0</atmosphere.api.version>
+		<atmosphere.commons.version>0.3.2-SNAPSHOT</atmosphere.commons.version>
 	</properties>
 
 	<dependencies>
@@ -41,6 +43,18 @@
 			<groupId>pl.cyfronet</groupId>
 			<artifactId>coinapi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- Atmosphere -->
+		<dependency>
+			<artifactId>dyrealla-api</artifactId>
+			<groupId>pl.cyfronet.dyrealla</groupId>
+			<version>${atmosphere.api.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>dyrealla-commons</artifactId>
+			<groupId>pl.cyfronet.dyrealla</groupId>
+			<version>${atmosphere.commons.version}</version>
 		</dependency>
 	</dependencies>
 
