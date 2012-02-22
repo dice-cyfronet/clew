@@ -1,0 +1,25 @@
+{
+ 	"name":"workflow-three",
+ 	"context_id":"4f438258ab19910f87000042",
+ 	"_id":"4f438258ab19910f87000042",
+ 	"priority":88,
+ 	"workflow_type":"workflow",
+ 	"vms":[
+ 		{"name":"server",
+ 			"specs":{
+ 				"memory":268435456,
+ 				"mac":["3a:65:29:5c:ec:06"],
+ 				"ip":[],
+ 				"cpu":2.0,
+ 				"id":"4f438258ab19910f87000035",
+ 				"disk":21474836480},
+ 				"appliance_type":"4f438258ab19910f87000017",
+ 				"vms_id":"89e96981-4aa5-f3de-a18f-31bb379e430e",
+ 				"host":null,"id":"4f438258ab19910f8700001e",
+ 				"configuration":null,
+ 				"state":"stopped",
+ 				"source_template":null}
+ 		],
+ 	"description":null,
+ 	"status":"stopped"
+}

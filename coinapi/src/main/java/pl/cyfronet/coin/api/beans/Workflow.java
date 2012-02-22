@@ -28,6 +28,12 @@ public class Workflow {
 
 	private String name;
 
+	private String description;
+
+	private Integer priority;
+
+	private WorkflowType type;
+
 	private List<String> requiredIds;
 
 	/**
@@ -58,13 +64,56 @@ public class Workflow {
 		this.requiredIds = requiredIds;
 	}
 
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the priority
+	 */
+	public Integer getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public WorkflowType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(WorkflowType type) {
+		this.type = type;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Workflow [name=" + name + ", requiredIds=" + requiredIds + "]";
+		return "Workflow [name=" + name + ", description=" + description
+				+ ", priority=" + priority + ", type=" + type
+				+ ", requiredIds=" + requiredIds + "]";
 	}
-
 }

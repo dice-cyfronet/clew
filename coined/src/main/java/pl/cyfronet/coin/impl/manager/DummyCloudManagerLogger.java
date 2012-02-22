@@ -138,4 +138,12 @@ public class DummyCloudManagerLogger implements CloudManager {
 		return "workflowId";
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.manager.CloudManager#stopWorkflow(java.lang.String)
+	 */
+	@Override
+	public void stopWorkflow(String workflowId) {
+		logger.debug("stopping workflow {}", workflowId);
+	}
+
 }

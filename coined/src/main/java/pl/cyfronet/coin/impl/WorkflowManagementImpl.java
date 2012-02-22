@@ -17,6 +17,7 @@
 package pl.cyfronet.coin.impl;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
@@ -34,6 +36,8 @@ import pl.cyfronet.coin.impl.manager.CloudManager;
  */
 public class WorkflowManagementImpl implements WorkflowManagement {
 
+	//throw new WebApplicationException(403);
+	
 	private CloudManager manager;
 
 	/**
@@ -75,7 +79,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		asi1s.setMessage("my message");
 		
 		as1s.setInstances(Arrays.asList(asi1s));
-		status.setAses(Arrays.asList(as1s));
+		status.setAses(Arrays.asList(as1s));		
 		
 		return status;
 	}
@@ -86,8 +90,8 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 * pl.cyfronet.coin.api.WorkflowManagement#deleteWorkflow(java.lang.String)
 	 */
 	@Override
-	public void deleteWorkflow(String workflowId) {
-		logger.debug("Delete workflow [{}]", workflowId);
+	public void stopWorkflow(String workflowId) {
+		manager.stopWorkflow(workflowId);
 	}
 
 	/*
@@ -97,8 +101,8 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 * .lang.String, java.lang.String)
 	 */
 	@Override
-	public void addAtomicServiceToWorkflow(String workflowId, String asId) {
-		logger.debug("Add atomic service [{}] into workflow [{}]", asId, workflowId);
+	public void addAtomicServiceToWorkflow(String contextId, String asId) {		
+		manager.startAtomicService(asId, null, contextId);
 	}
 
 	/*
@@ -108,7 +112,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 * (java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void removeAtomicServiceToWorkflow(String workflowId, String asId) {
+	public void removeAtomicServiceFromWorkflow(String workflowId, String asId) {
 		logger.debug("Remove atomic service [{}] from workflow [{}]", asId, workflowId);
 	}
 
@@ -141,5 +145,15 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 */
 	public void setManager(CloudManager manager) {
 		this.manager = manager;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.WorkflowManagement#getInitialConfigurations(java.lang.String)
+	 */
+	@Override
+	public List<InitialConfiguration> getInitialConfigurations(
+			String atomicServiceId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

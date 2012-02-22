@@ -32,8 +32,12 @@
 	<osgix:cm-properties id="coin-properties"
 		persistent-id="pl.cyfronet.coins">
 		<prop key="port">9099</prop>
-		<prop key="username">coin</prop>
-		<prop key="password">coin123</prop>
+		<prop key="username"></prop>
+		<prop key="password"></prop>
+
+		<prop key="air.url"></prop>
+		<prop key="air.username"></prop>
+		<prop key="air.password"></prop>
 	</osgix:cm-properties>
 
 	<bean
@@ -53,7 +57,7 @@
 	</bean>
 
 	<bean id="securityInterceptor"
-		class="pl.cyfronet.coin.impl.ws.BasicAuthAuthorizationInterceptor">
+		class="pl.cyfronet.coin.impl.security.BasicAuthAuthorizationInterceptor">
 		<property name="users">
 			<map>
 				<entry key="${username}" value="${password}" />
@@ -87,6 +91,16 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:server>
+
+	<jaxrs:client id="air-client" address="${air.url}"
+		username="${air.username}" password="${air.password}"
+		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
+		inheritHeaders="true">
+		<jaxrs:headers>
+
+		</jaxrs:headers>
+	</jaxrs:client>
+
 
 	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
 

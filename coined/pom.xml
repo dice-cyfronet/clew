@@ -17,9 +17,15 @@
 		<bundle.symbolicName>coined</bundle.symbolicName>
 		<atmosphere.api.version>0.1.0</atmosphere.api.version>
 		<atmosphere.commons.version>0.3.2-SNAPSHOT</atmosphere.commons.version>
+		<atmosphere.version>0.5.1-SNAPSHOT</atmosphere.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-transports-http</artifactId>
@@ -59,6 +65,13 @@
 	</dependencies>
 
 	<build>
+		<defaultGoal>install</defaultGoal>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
@@ -75,10 +88,37 @@
 							org.apache.cxf.bus,
 							org.apache.cxf.bus.spring,
 							org.apache.cxf.transport.http,
+							javax.ws.rs.core,
 							*
 						</Import-Package>
 					</instructions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<configuration>
+					<artifacts>
+						<artifact>
+							<file>${project.build.outputDirectory}/features.xml</file>
+							<type>xml</type>
+							<classifier>features</classifier>
+						</artifact>
+						<artifact>
+							<file>${project.build.outputDirectory}/config.cfg</file>
+							<type>cfg</type>
+							<classifier>config</classifier>
+						</artifact>
+					</artifacts>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

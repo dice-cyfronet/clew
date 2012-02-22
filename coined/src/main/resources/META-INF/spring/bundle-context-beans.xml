@@ -26,7 +26,8 @@
 
 	<bean id="cloudManager" class="pl.cyfronet.coin.impl.manager.CloudManagerImpl">
 		<property name="atmosphere" ref="atmosphere" />  
-		<property name="defaultImportanceLevel" value="40" />
+		<property name="air" ref="air-client" />
+		<property name="defaultPriority" value="40" />
 	</bean>
 	
 	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService"/>											   

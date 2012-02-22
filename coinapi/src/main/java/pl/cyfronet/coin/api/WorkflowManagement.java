@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.api;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 
@@ -57,6 +60,36 @@ public interface WorkflowManagement {
 	String startWorkflow(Workflow workflow);
 
 	/**
+	 * Stop workflow. It will stop all atomic services executed for the
+	 * workflow.
+	 * @param workflowId Workflow id.
+	 */
+	@DELETE
+	@Path("/{workflowId}")
+	void stopWorkflow(@PathParam("workflowId") String workflowId);
+
+	/**
+	 * Add atomic service for started workflow.
+	 * @param workflowId Workflow id.
+	 * @param asId Atomic service configuration id.
+	 */
+	@PUT
+	@Path("/{workflowId}/as/{asConfigId}")
+	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
+			@PathParam("asConfigId") String asConfigId);
+
+	/**
+	 * Remove atomic service from running workflow.
+	 * @param workflowId Workflow id.
+	 * @param asId Atomic service configuration id.
+	 */
+	@DELETE
+	@Path("/{workflowId}/as/{asConfigId}")
+	void removeAtomicServiceFromWorkflow(
+			@PathParam("workflowId") String workflowId,
+			@PathParam("asConfigId") String asConfigId);
+
+	/**
 	 * Get status of all atomic services executed in the scope of workflow.
 	 * @param workflowId Workflow id.
 	 * @return Status of all atomic services executed for defined workflow in
@@ -74,36 +107,6 @@ public interface WorkflowManagement {
 	WorkflowStatus getStatus(@PathParam("workflowId") String workflowId);
 
 	/**
-	 * Delete workflow. It will stop all atomic services executed for the
-	 * workflow.
-	 * @param workflowId Workflow id.
-	 */
-	@DELETE
-	@Path("/{workflowId}") 
-	void deleteWorkflow(@PathParam("workflowId") String workflowId);
-
-	/**
-	 * Add atomic service for started workflow.
-	 * @param workflowId Workflow id.
-	 * @param asId Atomic service id.
-	 */
-	@PUT
-	@Path("/{workflowId}/as/{asId}")
-	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
-			@PathParam("asId") String asId);
-
-	/**
-	 * Remove atomic service from running workflow.
-	 * @param workflowId Workflow id.
-	 * @param asId Atomic service id.
-	 */
-	@DELETE
-	@Path("/{workflowId}/as/{asId}")
-	void removeAtomicServiceToWorkflow(
-			@PathParam("workflowId") String workflowId,
-			@PathParam("asId") String asId);
-
-	/**
 	 * Get atomic service executed for defined workflow status.
 	 * @param workflowId Workflow id.
 	 * @param asId Atomic service id.
@@ -114,8 +117,19 @@ public interface WorkflowManagement {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/{workflowId}/as/{asId}")
+	@Path("/{workflowId}/as/{asConfigId}")
 	AtomicServiceStatus getStatus(@PathParam("workflowId") String workflowId,
-			@PathParam("asId") String asId);
+			@PathParam("asConfigId") String asId);
 
+	/**
+	 * Get initial configurations for given atomic service (a.k.a. appliance
+	 * type).
+	 * @param atomicServiceId Atomic service id.
+	 * @return List of atomic service configurations in JSON format:
+	 *         <code>{[ {"name":"configName", id: "configId"}, ... ]}</code>
+	 */
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("/{workflowId}/as/{atomicServiceId}/configurations")
+	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId);
 }

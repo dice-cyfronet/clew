@@ -16,6 +16,7 @@
 
 package pl.cyfronet.coin.impl.manager;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
@@ -44,7 +46,9 @@ public class CloudManagerImpl implements CloudManager {
 
 	private DyReAllaManagerService atmosphere;
 
-	private Integer defaultImportanceLevel;
+	private AirClient air;
+
+	private Integer defaultPriority;
 
 	/*
 	 * (non-Javadoc)
@@ -55,8 +59,7 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public List<AtomicServiceInstance> getAtomicServiceInstances(
 			String contextId) throws CloudFacadeException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CloudFacadeException("Not impolemented yet");
 	}
 
 	/*
@@ -65,8 +68,7 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CloudFacadeException("Not impolemented yet");
 	}
 
 	/*
@@ -79,7 +81,9 @@ public class CloudManagerImpl implements CloudManager {
 	public String startAtomicService(String atomicServiceId, String name,
 			String contextId) throws AtomicServiceNotFoundException,
 			CloudFacadeException {
-		// TODO Auto-generated method stub
+		logger.debug("Add atomic service [{} {}] into workflow [{}]",
+				new Object[] { name, atomicServiceId, contextId });
+		registerVms(contextId, Arrays.asList(atomicServiceId), defaultPriority);
 		return null;
 	}
 
@@ -92,8 +96,7 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public AtomicServiceInstance getAtomicServiceStatus(
 			String atomicServiceInstanceId) throws CloudFacadeException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CloudFacadeException("Not impolemented yet");
 	}
 
 	/*
@@ -105,8 +108,7 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public void stopAtomicServiceInstance(String atomicServiceInstance)
 			throws CloudFacadeException {
-		// TODO Auto-generated method stub
-
+		throw new CloudFacadeException("Not impolemented yet");
 	}
 
 	/*
@@ -119,8 +121,7 @@ public class CloudManagerImpl implements CloudManager {
 	public void createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		// TODO Auto-generated method stub
-
+		throw new CloudFacadeException("Not impolemented yet");
 	}
 
 	/*
@@ -133,19 +134,44 @@ public class CloudManagerImpl implements CloudManager {
 	public String startWorkflow(Workflow workflow, String username) {
 		logger.debug("starting workflow {} for {} user", workflow, username);
 
-		//FIXME request to AIR
-		String workflowId = System.currentTimeMillis() + "";
-		List<String> ids = workflow.getRequiredIds();
-		AddRequiredAppliancesRequest request = new AddRequiredAppliancesRequestImpl();
-		request.setImportanceLevel(defaultImportanceLevel);
-		request.setCorrelationId(workflowId);
-		request.setApplianceInitConfigIds(ids.toArray(new String[0]));
+		Integer priority = workflow.getPriority();
+		if (priority != null) {
+			priority = defaultPriority;
+		}
 
-		atmosphere.addRequiredAppliances(request);
-		System.out.println("request: " + request);
-		System.out.println("atmosphere: " + atmosphere);
-		
+		// FIXME error handling
+		String workflowId = air.startWorkflow(workflow.getName(), username,
+				workflow.getDescription(), priority, workflow.getType());
+		List<String> ids = workflow.getRequiredIds();
+
+		registerVms(workflowId, ids, priority);
+
 		return workflowId;
+	}
+
+	@Override
+	public void stopWorkflow(String contextId) {
+		logger.debug("stopping workflow {}", contextId);
+		// FIXME error handling
+		atmosphere.removeRequiredAppliances(contextId);
+		air.stopWorkflow(contextId);
+	}
+
+	private void registerVms(String contextId, List<String> configIds,
+			Integer priority) {
+		if (configIds != null && configIds.size() > 0) {
+			String[] ids = configIds.toArray(new String[0]);
+			logger.debug(
+					"Registering required atomic services in atmosphere {}",
+					Arrays.toString(ids));
+
+			AddRequiredAppliancesRequest request = new AddRequiredAppliancesRequestImpl();
+			request.setImportanceLevel(priority);
+			request.setCorrelationId(contextId);
+			request.setApplianceInitConfigIds(ids);
+
+			atmosphere.addRequiredAppliances(request);
+		}
 	}
 
 	/**
@@ -156,9 +182,16 @@ public class CloudManagerImpl implements CloudManager {
 	}
 
 	/**
-	 * @param defaultImportanceLevel the defaultImportanceLevel to set
+	 * @param defaultPriority the defaultPriority to set
 	 */
-	public void setDefaultImportanceLevel(Integer defaultImportanceLevel) {
-		this.defaultImportanceLevel = defaultImportanceLevel;
+	public void setDefaultPriority(Integer defaultPriority) {
+		this.defaultPriority = defaultPriority;
+	}
+
+	/**
+	 * @param air the air to set
+	 */
+	public void setAir(AirClient air) {
+		this.air = air;
 	}
 }

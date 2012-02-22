@@ -55,4 +55,6 @@ public interface CloudManager {
 	 * @return
 	 */
 	String startWorkflow(Workflow workflow, String username);
+	
+	void stopWorkflow(String contextId);
 }
