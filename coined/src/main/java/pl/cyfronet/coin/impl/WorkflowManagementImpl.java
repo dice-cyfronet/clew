@@ -70,12 +70,12 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		
 		AtomicServiceStatus as1s = new AtomicServiceStatus();
 		as1s.setId("configId");
-		as1s.setStatus(Status.OK);
+		as1s.setStatus(Status.running);
 		as1s.setMessage("Up and running");
 		
 		AtomicServiceInstanceStatus asi1s = new AtomicServiceInstanceStatus();
 		asi1s.setId("1");
-		asi1s.setStatus(Status.OK);
+		asi1s.setStatus(Status.running);
 		asi1s.setMessage("my message");
 		
 		as1s.setInstances(Arrays.asList(asi1s));
@@ -127,12 +127,12 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		
 		AtomicServiceStatus as1s = new AtomicServiceStatus();
 		as1s.setId("configId");
-		as1s.setStatus(Status.OK);
+		as1s.setStatus(Status.running);
 		as1s.setMessage("Up and running");
 		
 		AtomicServiceInstanceStatus asi1s = new AtomicServiceInstanceStatus();
 		asi1s.setId("1");
-		asi1s.setStatus(Status.OK);
+		asi1s.setStatus(Status.running);
 		asi1s.setMessage("my message");
 		
 		as1s.setInstances(Arrays.asList(asi1s));

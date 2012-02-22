@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance.Status;
+import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -82,7 +82,7 @@ public class MockCloudFacade implements CloudFacade {
 			atomicServiceInstance.setAtomicServiceId(atomicService.getAtomicServiceId());
 			atomicServiceInstance.setName(name);
 			atomicServiceInstance.setInstanceId(String.valueOf(System.currentTimeMillis()));
-			atomicServiceInstance.setStatus(Status.Paused);
+			atomicServiceInstance.setStatus(Status.paused);
 			atomicServiceInstances.add(atomicServiceInstance);
 			
 			return atomicServiceInstance.getInstanceId();

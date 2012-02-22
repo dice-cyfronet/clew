@@ -14,21 +14,23 @@
  * the License.
  */
 
-package pl.cyfronet.coin.api.beans;
+package pl.cyfronet.coin.impl.air.client;
+
+import pl.cyfronet.coin.api.beans.WorkflowType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public enum Status {
+public class WorkflowDetails {
 
-	running,
+	private String name;
 	
-	paused,
+	private String id;
 	
-	stopped,
+	private WorkflowType type;
 	
-	booting,
+	private Integer priority;
 	
-	stopping
+	private String description;
 }

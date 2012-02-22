@@ -29,14 +29,6 @@ public class AtomicServiceInstance {
 	private Status status;
 	private String name;
 	
-	public enum Status {
-		Running,
-		Paused,
-		Stopped,
-		Booting,
-		Stopping
-	}
-	
 	public AtomicServiceInstance() {
 	}
 

@@ -18,8 +18,11 @@ package pl.cyfronet.coin.impl.air.client;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
@@ -32,7 +35,7 @@ public interface AirClient {
 
 	@POST
 	@Path("/workflow/start")
-	@Consumes("multipart/form-data")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	String startWorkflow(@FormParam("name") String name,
 			@FormParam("vph_username") String vph_username,
 			@FormParam("description") String description,
@@ -41,6 +44,11 @@ public interface AirClient {
 	
 	@POST
 	@Path("/workflow/stop")
-	@Consumes("multipart/form-data")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	void stopWorkflow(@FormParam("context_id") String contextId);
+	
+	@GET
+	@Path("workflow/get_user_workflows/{username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	WorkflowDetails getUserWorkflows(@PathParam("username") String username);
 }
