@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.Workflow;
+import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -151,7 +151,7 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getWorkflowStatus(java.lang.String)
 	 */
 	@Override
-	public Workflow getWorkflow(String contextId) {
+	public WorkflowStatus getWorkflowStatus(String contextId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

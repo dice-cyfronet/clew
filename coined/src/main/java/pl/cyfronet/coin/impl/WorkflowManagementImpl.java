@@ -28,7 +28,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.Workflow;
+import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
@@ -59,39 +59,21 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 
 	/*
 	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.WorkflowManagement#getStatus(java.lang.String)
-	 */
-	@Override
-	public Workflow getStatus(String workflowId) {
-		logger.debug("Get workflow [{}] status", workflowId);
-		
-		Workflow status = new Workflow();
-		status.setName("My workflow");
-		
-		AtomicServiceStatus as1s = new AtomicServiceStatus();
-		as1s.setId("configId");
-		as1s.setStatus(Status.running);
-		as1s.setMessage("Up and running");
-		
-		AtomicServiceInstanceStatus asi1s = new AtomicServiceInstanceStatus();
-		asi1s.setId("1");
-		asi1s.setStatus(Status.running);
-		asi1s.setMessage("my message");
-		
-		as1s.setInstances(Arrays.asList(asi1s));
-		status.setAses(Arrays.asList(as1s));		
-		
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * pl.cyfronet.coin.api.WorkflowManagement#deleteWorkflow(java.lang.String)
 	 */
 	@Override
 	public void stopWorkflow(String workflowId) {
 		manager.stopWorkflow(workflowId);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.WorkflowManagement#getStatus(java.lang.String)
+	 */
+	@Override
+	public WorkflowStatus getStatus(String contextId) {
+		return manager.getWorkflowStatus(contextId);
 	}
 
 	/*
