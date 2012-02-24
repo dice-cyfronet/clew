@@ -29,6 +29,7 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
@@ -59,6 +60,10 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public List<AtomicServiceInstance> getAtomicServiceInstances(
 			String contextId) throws CloudFacadeException {
+		
+		WorkflowDetail workflow = air.getWorkflow(contextId);
+		
+		
 		throw new CloudFacadeException("Not impolemented yet");
 	}
 

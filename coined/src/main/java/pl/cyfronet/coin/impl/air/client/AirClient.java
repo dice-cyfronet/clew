@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -50,5 +52,19 @@ public interface AirClient {
 	@GET
 	@Path("workflow/get_user_workflows/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
-	WorkflowDetails getUserWorkflows(@PathParam("username") String username);
+	List<WorkflowDetail> getUserWorkflows(@PathParam("username") String username);
+	
+	@GET
+	@Path("workflow/{contextId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	WorkflowDetail getWorkflow(@PathParam("contextId") String contextId);
+	
+	@GET
+	@Path("/get_appliance_types")
+	@Produces(MediaType.APPLICATION_JSON)
+	List<ApplianceType> getApplianceTypes();
+
+	@GET
+	@Path("/get_appliance_config/{conf_id}")
+	String getApplianceConfig(@PathParam("conf_id") String configId);
 }
