@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl;
+package pl.cyfronet.coin.impl.provider;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

@@ -96,11 +96,32 @@
 		username="${air.username}" password="${air.password}"
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
 		inheritHeaders="true">
-		<jaxrs:headers>
-
-		</jaxrs:headers>
+		<jaxrs:providers>
+			<ref bean="airJsonProvider" />
+		</jaxrs:providers>
 	</jaxrs:client>
 
+	<bean id="airJsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
+		<property name="serializeAsArray" value="true" />
+		<property name="dropRootElement" value="true" />
+		<property name="supportUnwrapped" value="true" />
+		<property name="collectionWrapperMap">
+			<map>
+				<entry>
+					<key>
+						<value>pl.cyfronet.coin.impl.air.client.WorkflowDetail</value>
+					</key>
+					<value>workflowDetail</value>
+				</entry>
+				<entry>
+					<key>
+						<value>pl.cyfronet.coin.impl.air.client.ApplianceType</value>
+					</key>
+					<value>applianceType</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
 
 	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
 
