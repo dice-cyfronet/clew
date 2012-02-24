@@ -31,7 +31,7 @@ import javax.ws.rs.core.MediaType;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.Workflow;
 
 /**
  * REST service dedicated for managing workflow lifecycle.
@@ -104,7 +104,7 @@ public interface WorkflowManagement {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/{workflowId}")
-	WorkflowStatus getStatus(@PathParam("workflowId") String workflowId);
+	Workflow getStatus(@PathParam("workflowId") String workflowId);
 
 	/**
 	 * Get atomic service executed for defined workflow status.

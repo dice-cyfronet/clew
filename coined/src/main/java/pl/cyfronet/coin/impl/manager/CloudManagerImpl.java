@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -164,10 +164,10 @@ public class CloudManagerImpl implements CloudManager {
 	}
 
 	@Override
-	public WorkflowStatus getWorkflow(String contextId) {
+	public Workflow getWorkflow(String contextId) {
 		WorkflowDetail detail = air.getWorkflow(contextId);
 		
-		WorkflowStatus workflow = new WorkflowStatus();
+		Workflow workflow = new Workflow();
 		workflow.setName(detail.getName());
 		workflow.setDescription(detail.getDescription());
 		workflow.setType(detail.getType());

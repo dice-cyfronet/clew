@@ -21,7 +21,7 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -59,5 +59,5 @@ public interface CloudManager {
 	
 	void stopWorkflow(String contextId);
 	
-	WorkflowStatus getWorkflow(String contextId);
+	Workflow getWorkflow(String contextId);
 }

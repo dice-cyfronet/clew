@@ -28,7 +28,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
@@ -62,10 +62,10 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 * @see pl.cyfronet.coin.api.WorkflowManagement#getStatus(java.lang.String)
 	 */
 	@Override
-	public WorkflowStatus getStatus(String workflowId) {
+	public Workflow getStatus(String workflowId) {
 		logger.debug("Get workflow [{}] status", workflowId);
 		
-		WorkflowStatus status = new WorkflowStatus();
+		Workflow status = new Workflow();
 		status.setName("My workflow");
 		
 		AtomicServiceStatus as1s = new AtomicServiceStatus();
