@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.Workflow;
+import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -136,7 +137,7 @@ public class CloudManagerImpl implements CloudManager {
 	 * coin.api.beans.Workflow, java.lang.String)
 	 */
 	@Override
-	public String startWorkflow(Workflow workflow, String username) {
+	public String startWorkflow(WorkflowStartRequest workflow, String username) {
 		logger.debug("starting workflow {} for {} user", workflow, username);
 
 		Integer priority = workflow.getPriority();
@@ -162,6 +163,20 @@ public class CloudManagerImpl implements CloudManager {
 		air.stopWorkflow(contextId);
 	}
 
+	@Override
+	public WorkflowStatus getWorkflow(String contextId) {
+		WorkflowDetail detail = air.getWorkflow(contextId);
+		
+		WorkflowStatus workflow = new WorkflowStatus();
+		workflow.setName(detail.getName());
+		workflow.setDescription(detail.getDescription());
+		workflow.setType(detail.getType());
+		workflow.setPriority(detail.getPriority());
+		workflow.setId(detail.getId());			
+		
+		return workflow;
+	}
+	
 	private void registerVms(String contextId, List<String> configIds,
 			Integer priority) {
 		if (configIds != null && configIds.size() > 0) {

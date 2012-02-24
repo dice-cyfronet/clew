@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @XmlRootElement
-public class Workflow {
+public class WorkflowStartRequest {
 
 	private String name;
 

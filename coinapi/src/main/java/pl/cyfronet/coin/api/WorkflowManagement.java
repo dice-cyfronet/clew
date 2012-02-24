@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
-import pl.cyfronet.coin.api.beans.Workflow;
+import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 
 /**
@@ -57,7 +57,7 @@ public interface WorkflowManagement {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Path("/start")
-	String startWorkflow(Workflow workflow);
+	String startWorkflow(WorkflowStartRequest workflow);
 
 	/**
 	 * Stop workflow. It will stop all atomic services executed for the

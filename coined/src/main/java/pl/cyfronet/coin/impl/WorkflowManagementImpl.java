@@ -27,7 +27,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
-import pl.cyfronet.coin.api.beans.Workflow;
+import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
@@ -53,7 +53,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 * .api.beans.Workflow)
 	 */
 	@Override
-	public String startWorkflow(Workflow workflow) {		
+	public String startWorkflow(WorkflowStartRequest workflow) {		
 		return manager.startWorkflow(workflow, "username");
 	}
 

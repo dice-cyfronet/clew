@@ -29,6 +29,14 @@ public class WorkflowStatus {
 
 	private String name;
 	
+	private String description;
+
+	private String id;
+	
+	private WorkflowType type;
+	
+	private Integer priority;
+	
 	private List<AtomicServiceStatus> ases;
 
 	/**
@@ -58,4 +66,61 @@ public class WorkflowStatus {
 	public void setAses(List<AtomicServiceStatus> ases) {
 		this.ases = ases;
 	}
+
+	/**
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public WorkflowType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(WorkflowType type) {
+		this.type = type;
+	}
+
+	/**
+	 * @return the priority
+	 */
+	public Integer getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
 }
+
