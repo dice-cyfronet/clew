@@ -45,7 +45,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 @WebService(targetNamespace = "http://cyfronet.pl/coin")
 @Path("/")
 public interface CloudFacade {
-
+	
 	/**
 	 * Get list of atomic services (vm templates) available for the user.
 	 * @return List of available atomic services.

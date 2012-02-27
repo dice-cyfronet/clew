@@ -16,8 +16,9 @@
 
 package pl.cyfronet.coin.impl;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -25,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.WorkflowManagement;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
-import pl.cyfronet.coin.api.beans.Status;
+import pl.cyfronet.coin.api.beans.UserWorkflows;
+import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.impl.manager.CloudManager;
@@ -81,21 +82,43 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		logger.debug("Get atomic service [{}] for workflow [{}]", asId,
 				workflowId);
 
-		AtomicServiceStatus as1s = new AtomicServiceStatus();
-		as1s.setId("configId");
-		as1s.setStatus(Status.running);
-		as1s.setMessage("Up and running");
-
-		AtomicServiceInstanceStatus asi1s = new AtomicServiceInstanceStatus();
-		asi1s.setId("1");
-		asi1s.setStatus(Status.running);
-		asi1s.setMessage("my message");
-
-		as1s.setInstances(Arrays.asList(asi1s));
-
-		return as1s;
+		WorkflowStatus workflowStatus = manager.getWorkflowStatus(workflowId);
+		List<AtomicServiceStatus> asStatuses = workflowStatus.getAses();
+		if(asStatuses != null) {
+			for (AtomicServiceStatus atomicServiceStatus : asStatuses) {
+				if (atomicServiceStatus.getId().equals(asId)) {
+					return atomicServiceStatus;
+				}
+			}
+		}
+		throw new WebApplicationException(404);
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.WorkflowManagement#getWorkflows()
+	 */
+	@Override
+	public UserWorkflows getWorkflows() {
+		String username = "developer";
+		UserWorkflows wrapper = new UserWorkflows();
+		wrapper.setUsername(username);
+		try {
+			
+			List<WorkflowBaseInfo> result = new ArrayList<WorkflowBaseInfo>(); 
+			Map<String, String> workflows = manager.getWorkflows(username);
+			for (String key : workflows.keySet()) {
+				WorkflowBaseInfo info = new WorkflowBaseInfo();
+				info.setId(key);
+				info.setName(workflows.get(key));
+				result.add(info);
+			}
+			wrapper.setWorkflows(result);			
+		} catch(Exception e) {
+			wrapper.setWorkflows(new ArrayList<WorkflowBaseInfo>());
+		}
+		return wrapper;
+	}
+	
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) {

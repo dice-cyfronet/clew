@@ -18,13 +18,17 @@ package pl.cyfronet.coin.impl.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
+import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
@@ -34,6 +38,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
+import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
@@ -84,7 +89,8 @@ public class CloudManagerImpl implements CloudManager {
 			AtomicService atomicService = new AtomicService();
 			atomicService.setAtomicServiceId(applianceType.getName());
 			atomicService.setDescription(applianceType.getDescription());
-			atomicService.setHttp(applianceType.isHttp() && applianceType.isIn_proxy());
+			atomicService.setHttp(applianceType.isHttp()
+					&& applianceType.isIn_proxy());
 			atomicService.setName(applianceType.getName());
 			atomicService.setShared(applianceType.isShared());
 			atomicService.setScalable(applianceType.isScalable());
@@ -187,7 +193,52 @@ public class CloudManagerImpl implements CloudManager {
 		WorkflowStatus workflow = new WorkflowStatus();
 		workflow.setName(detail.getName());
 
+		List<Vms> vms = detail.getVms();
+		Map<String, AtomicServiceStatus> asStatuses = new HashMap<String, AtomicServiceStatus>();
+		if (vms != null) {
+			for (Vms vm : vms) {
+				if (vm.getVms_id() == null) {
+					// /AIR returns vms:[null] when workflow does not have VMs
+					// and it is parsed by CXF as Vms object with all properties
+					// set to null.
+					continue;
+				}
+				String type = vm.getAppliance_type();
+				if (type == null) {
+					// get type from AIR once again if it is empty
+					type = getAtomicServiceTypeName(vm.getConf_id());
+				}
+				AtomicServiceStatus asStatus = asStatuses.get(type);
+				if (asStatus == null) {
+					asStatus = new AtomicServiceStatus();
+					asStatus.setId(type);
+					asStatuses.put(type, asStatus);
+				}
+				AtomicServiceInstanceStatus asiStatus = new AtomicServiceInstanceStatus();
+				asiStatus.setId(vm.getVms_id());
+				asiStatus.setStatus(vm.getState());
+				asiStatus.setMessage(""); // TODO
+
+				List<AtomicServiceInstanceStatus> asiStatuses = asStatus
+						.getInstances();
+				if (asiStatuses == null) {
+					asiStatuses = new ArrayList<AtomicServiceInstanceStatus>();
+					asStatus.setInstances(asiStatuses);
+				}
+
+				asiStatuses.add(asiStatus);
+			}
+		}
+
+		List<AtomicServiceStatus> ases = new ArrayList<AtomicServiceStatus>(
+				asStatuses.values());
+		workflow.setAses(ases);
+
 		return workflow;
+	}
+
+	private String getAtomicServiceTypeName(String configurationId) {
+		return air.getTypeFromConfig(configurationId).getName();
 	}
 
 	private void registerVms(String contextId, List<String> configIds,
@@ -218,7 +269,8 @@ public class CloudManagerImpl implements CloudManager {
 			String atomicServiceId) throws ApplianceTypeNotFound {
 
 		ApplianceType type = getApplianceType(atomicServiceId);
-		List<ApplianceConfiguration> typeConfigurations = type.getConfigurations();		
+		List<ApplianceConfiguration> typeConfigurations = type
+				.getConfigurations();
 		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();
 		for (ApplianceConfiguration applianceConfiguration : typeConfigurations) {
 			InitialConfiguration configuration = new InitialConfiguration();
@@ -226,8 +278,24 @@ public class CloudManagerImpl implements CloudManager {
 			configuration.setName(applianceConfiguration.getConfig_name());
 			configurations.add(configuration);
 		}
-		
+
 		return configurations;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.impl.manager.CloudManager#getWorkflows(java.lang.String)
+	 */
+	@Override
+	public Map<String, String> getWorkflows(String username) {
+		List<WorkflowDetail> workflowDetails = air.getUserWorkflows(username);
+		Map<String, String> workflows = new HashMap<String, String>();
+		for (WorkflowDetail workflowDetail : workflowDetails) {
+			workflows.put(workflowDetail.getId(), workflowDetail.getName());
+		}
+
+		return workflows;
 	}
 
 	private ApplianceType getApplianceType(String applianceTypeName)

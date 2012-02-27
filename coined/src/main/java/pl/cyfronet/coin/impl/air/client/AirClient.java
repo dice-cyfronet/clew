@@ -67,4 +67,8 @@ public interface AirClient {
 	@GET
 	@Path("/get_appliance_config/{conf_id}")
 	String getApplianceConfig(@PathParam("conf_id") String configId);
+	
+	@GET
+	@Path("/get_appliance_type_for_config/{conf_id}")
+	ApplianceType getTypeFromConfig(@PathParam("conf_id") String configId);
 }

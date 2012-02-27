@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
@@ -36,6 +38,8 @@ public class WorkflowDetail {
 	private Integer priority;
 	
 	private String description;
+	
+	private List<Vms> vms;
 
 	/**
 	 * @return the name
@@ -107,13 +111,27 @@ public class WorkflowDetail {
 		this.description = description;
 	}
 
+	/**
+	 * @return the vms
+	 */
+	public List<Vms> getVms() {
+		return vms;
+	}
+
+	/**
+	 * @param vms the vms to set
+	 */
+	public void setVms(List<Vms> vms) {
+		this.vms = vms;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "WorkflowDetails [name=" + name + ", id=" + id + ", type="
-				+ type + ", priority=" + priority + ", description="
-				+ description + "]";
+		return "WorkflowDetail [name=" + name + ", id=" + id + ", type=" + type
+				+ ", priority=" + priority + ", description=" + description
+				+ ", vms=" + vms + "]";
 	}	
 }

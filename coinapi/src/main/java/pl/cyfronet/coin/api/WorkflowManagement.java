@@ -18,6 +18,8 @@ package pl.cyfronet.coin.api;
 
 import java.util.List;
 
+import javax.jws.WebMethod;
+import javax.jws.WebResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -32,6 +34,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.UserWorkflows;
 
 /**
  * REST service dedicated for managing workflow lifecycle.
@@ -40,6 +43,13 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 @Path("/")
 public interface WorkflowManagement {
 
+	@GET
+	@Path("/list")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@WebMethod(operationName = "getUserWorkflows")
+	@WebResult(name = "workflows")
+	UserWorkflows getWorkflows();
+	
 	/**
 	 * Start new workflow. This action will trigger generation of the unique
 	 * workflow id. For workflow user can add atomic services (list of required

@@ -18,6 +18,7 @@ package pl.cyfronet.coin.impl.manager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,6 +164,15 @@ public class DummyCloudManagerLogger implements CloudManager {
 	@Override
 	public List<InitialConfiguration> getInitialConfiguration(
 			String atomicServiceId) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getWorkflows(java.lang.String)
+	 */
+	@Override
+	public Map<String, String> getWorkflows(String username) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -112,7 +112,7 @@ public class CloudFacadeImpl implements CloudFacade {
 		logger.debug("Stop {} atomic service instance", atomicServiceInstanceId);
 		manager.stopAtomicServiceInstance(atomicServiceInstanceId);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -134,5 +134,4 @@ public class CloudFacadeImpl implements CloudFacade {
 	public void setManager(CloudManager manager) {
 		this.manager = manager;
 	}
-
 }

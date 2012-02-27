@@ -40,11 +40,13 @@ public class AirTest {
 		System.out.println("air: " + air);
 		
 		List<WorkflowDetail> obj = air.getUserWorkflows("username");
-		WorkflowDetail detail = air.getWorkflow("4f44e4ed866488187600023d");
+		WorkflowDetail detail = air.getWorkflow("4f4b615c86648809b50004e2");
+		
 		
 		System.out.println("worfklows: " + obj);
 		System.out.println("workflow: " + detail);
 		System.out.println("types: " + air.getApplianceTypes());
 		System.out.println("config: " + air.getApplianceConfig("4f159c868664885aac000002"));
+		
 	}
 }

@@ -88,6 +88,7 @@
 							org.apache.cxf.bus,
 							org.apache.cxf.bus.spring,
 							org.apache.cxf.transport.http,
+							org.apache.cxf.jaxrs.client,
 							javax.ws.rs.core,
 							*
 						</Import-Package>

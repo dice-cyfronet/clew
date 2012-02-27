@@ -17,6 +17,7 @@
 package pl.cyfronet.coin.impl.manager;
 
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
@@ -63,6 +64,8 @@ public interface CloudManager {
 
 	WorkflowStatus getWorkflowStatus(String contextId);
 
+	Map<String, String> getWorkflows(String username);
+	
 	/**
 	 * @param atomicServiceId
 	 * @return
