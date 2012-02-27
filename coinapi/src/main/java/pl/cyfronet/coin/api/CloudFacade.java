@@ -24,6 +24,7 @@ import javax.jws.WebService;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -46,6 +47,38 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 public interface CloudFacade {
 
 	/**
+	 * Get list of atomic services (vm templates) available for the user.
+	 * @return List of available atomic services.
+	 * @throws CloudFacadeException Thrown when error while receiving atomic
+	 *             services list occurs.
+	 */
+	@GET
+	@Path("as/list")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@WebMethod(operationName = "getAtomicServices")
+	@WebResult(name = "atomicServices")
+	List<AtomicService> getAtomicServices() throws CloudFacadeException;
+
+	/**
+	 * Create atomic service (vm template) from atomic service instance (running
+	 * vm).
+	 * @param atomicServiceInstanceId Atomic service instance id.
+	 * @param atomicService Atomic service name (vm name).
+	 * @throws AtomicServiceInstanceNotFoundException Thrown when atomic service
+	 *             instance which should be used to create atomic service is not
+	 *             found.
+	 * @throws CloudFacadeException Thrown when error while creating atomic
+	 *             service (vm template) occurs.
+	 */
+	@PUT
+	@Path("as/{atomicServiceInstanceId}")
+	@WebMethod(operationName = "createAtomicService")
+	void createAtomicService(
+			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
+			@WebParam(name = "atomicService") AtomicService atomicService)
+			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
+	
+	/**
 	 * Get list of atomic service instances created in the context scope.
 	 * @param contextId Context id (e.g. workflow id or master interface atomic
 	 *            service wizard).
@@ -61,20 +94,7 @@ public interface CloudFacade {
 	List<AtomicServiceInstance> getAtomicServiceInstances(
 			@WebParam(name = "contextId") @PathParam("contextId") String contextId)
 			throws CloudFacadeException;
-
-	/**
-	 * Get list of atomic services (vm templates) available for the user.
-	 * @return List of available atomic services.
-	 * @throws CloudFacadeException Thrown when error while receiving atomic
-	 *             services list occurs.
-	 */
-	@GET
-	@Path("as/list")
-	@Produces({ MediaType.APPLICATION_JSON })
-	@WebMethod(operationName = "getAtomicServices")
-	@WebResult(name = "atomicServices")
-	List<AtomicService> getAtomicServices() throws CloudFacadeException;
-
+	
 	/**
 	 * Start atomic service instance.
 	 * @param atomicServiceId Atomic service (vm template) id.
@@ -127,24 +147,5 @@ public interface CloudFacade {
 	@WebMethod(operationName = "stopAtomicServiceInstanceId")
 	void stopAtomicServiceInstance(
 			@WebParam(name = "atomicServiceInstance") @PathParam("atomicServiceInstance") String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
-
-	/**
-	 * Create atomic service (vm template) from atomic service instance (running
-	 * vm).
-	 * @param atomicServiceInstanceId Atomic service instance id.
-	 * @param atomicService Atomic service name (vm name).
-	 * @throws AtomicServiceInstanceNotFoundException Thrown when atomic service
-	 *             instance which should be used to create atomic service is not
-	 *             found.
-	 * @throws CloudFacadeException Thrown when error while creating atomic
-	 *             service (vm template) occurs.
-	 */
-	@POST
-	@Path("as/new/{atomicServiceInstanceId}")
-	@WebMethod(operationName = "createAtomicService")
-	void createAtomicService(
-			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
-			@WebParam(name = "atomicService") AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
 }

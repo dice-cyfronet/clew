@@ -29,7 +29,7 @@ public class ApplianceType {
 
 	private String name;
 	
-	private boolean vnd;
+	private boolean vnc;
 	
 	private boolean in_proxy;
 	
@@ -60,17 +60,17 @@ public class ApplianceType {
 	}
 
 	/**
-	 * @return the vnd
+	 * @return the vnc
 	 */
-	public boolean isVnd() {
-		return vnd;
+	public boolean isVnc() {
+		return vnc;
 	}
 
 	/**
-	 * @param vnd the vnd to set
+	 * @param vnc the vnc to set
 	 */
-	public void setVnd(boolean vnd) {
-		this.vnd = vnd;
+	public void setVnc(boolean vnc) {
+		this.vnc = vnc;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class ApplianceType {
 	 */
 	@Override
 	public String toString() {
-		return "ApplianceType [name=" + name + ", vnd=" + vnd + ", in_proxy="
+		return "ApplianceType [name=" + name + ", vnd=" + vnc + ", in_proxy="
 				+ in_proxy + ", published=" + published + ", scalable="
 				+ scalable + ", shared=" + shared + ", http=" + http
 				+ ", description=" + description + ", configurations="

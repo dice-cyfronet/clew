@@ -16,6 +16,7 @@
 
 package pl.cyfronet.coin.impl.manager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,13 +25,17 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
@@ -61,10 +66,9 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public List<AtomicServiceInstance> getAtomicServiceInstances(
 			String contextId) throws CloudFacadeException {
-		
+
 		WorkflowDetail workflow = air.getWorkflow(contextId);
-		
-		
+
 		throw new CloudFacadeException("Not impolemented yet");
 	}
 
@@ -74,7 +78,20 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
-		throw new CloudFacadeException("Not impolemented yet");
+		List<ApplianceType> applianceTypes = air.getApplianceTypes();
+		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
+		for (ApplianceType applianceType : applianceTypes) {
+			AtomicService atomicService = new AtomicService();
+			atomicService.setAtomicServiceId(applianceType.getName());
+			atomicService.setDescription(applianceType.getDescription());
+			atomicService.setHttp(applianceType.isHttp() && applianceType.isIn_proxy());
+			atomicService.setName(applianceType.getName());
+			atomicService.setShared(applianceType.isShared());
+			atomicService.setScalable(applianceType.isScalable());
+			atomicService.setVnc(applianceType.isVnc());
+			atomicServices.add(atomicService);
+		}
+		return atomicServices;
 	}
 
 	/*
@@ -166,16 +183,13 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public WorkflowStatus getWorkflowStatus(String contextId) {
 		WorkflowDetail detail = air.getWorkflow(contextId);
-		
+
 		WorkflowStatus workflow = new WorkflowStatus();
 		workflow.setName(detail.getName());
 
-		
-		
-		
 		return workflow;
 	}
-	
+
 	private void registerVms(String contextId, List<String> configIds,
 			Integer priority) {
 		if (configIds != null && configIds.size() > 0) {
@@ -191,6 +205,43 @@ public class CloudManagerImpl implements CloudManager {
 
 			atmosphere.addRequiredAppliances(request);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.impl.manager.CloudManager#getInitialConfiguration(java
+	 * .lang.String)
+	 */
+	@Override
+	public List<InitialConfiguration> getInitialConfiguration(
+			String atomicServiceId) throws ApplianceTypeNotFound {
+
+		ApplianceType type = getApplianceType(atomicServiceId);
+		List<ApplianceConfiguration> typeConfigurations = type.getConfigurations();		
+		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();
+		for (ApplianceConfiguration applianceConfiguration : typeConfigurations) {
+			InitialConfiguration configuration = new InitialConfiguration();
+			configuration.setId(applianceConfiguration.getId());
+			configuration.setName(applianceConfiguration.getConfig_name());
+			configurations.add(configuration);
+		}
+		
+		return configurations;
+	}
+
+	private ApplianceType getApplianceType(String applianceTypeName)
+			throws ApplianceTypeNotFound {
+		List<ApplianceType> applianceTypes = air.getApplianceTypes();
+
+		for (ApplianceType applianceType : applianceTypes) {
+			String name = applianceType.getName();
+			if (name != null && name.equals(applianceTypeName)) {
+				return applianceType;
+			}
+		}
+
+		throw new ApplianceTypeNotFound(applianceTypeName);
 	}
 
 	/**

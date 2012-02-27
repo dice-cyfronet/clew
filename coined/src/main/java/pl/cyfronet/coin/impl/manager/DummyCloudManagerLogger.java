@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
@@ -143,8 +144,8 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 * @see pl.cyfronet.coin.impl.manager.CloudManager#stopWorkflow(java.lang.String)
 	 */
 	@Override
-	public void stopWorkflow(String workflowId) {
-		logger.debug("stopping workflow {}", workflowId);
+	public void stopWorkflow(String contextId) {
+		logger.debug("stopping workflow {}", contextId);
 	}
 
 	/* (non-Javadoc)
@@ -152,7 +153,16 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 */
 	@Override
 	public WorkflowStatus getWorkflowStatus(String contextId) {
-		// TODO Auto-generated method stub
+		logger.debug("Get workflow status {}", contextId);
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getInitialConfiguration(java.lang.String)
+	 */
+	@Override
+	public List<InitialConfiguration> getInitialConfiguration(
+			String atomicServiceId) {
 		return null;
 	}
 

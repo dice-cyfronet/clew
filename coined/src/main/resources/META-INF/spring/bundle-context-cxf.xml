@@ -123,7 +123,10 @@
 		</property>
 	</bean>
 
-	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
+	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
+		<property name="serializeAsArray" value="true" />
+		<property name="dropRootElement" value="true" />
+	</bean>
 
 	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
 		<property name="namespaceMap" ref="jsonNamespaceMap" />

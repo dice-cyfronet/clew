@@ -19,6 +19,8 @@ package pl.cyfronet.coin.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,14 +32,15 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.impl.manager.CloudManager;
+import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class WorkflowManagementImpl implements WorkflowManagement {
 
-	//throw new WebApplicationException(403);
-	
+	// throw new WebApplicationException(403);
+
 	private CloudManager manager;
 
 	/**
@@ -45,97 +48,68 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 */
 	private static final Logger logger = LoggerFactory
 			.getLogger(WorkflowManagementImpl.class);
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.WorkflowManagement#startWorkflow(pl.cyfronet.coin
-	 * .api.beans.Workflow)
-	 */
+
 	@Override
-	public String startWorkflow(WorkflowStartRequest workflow) {		
+	public String startWorkflow(WorkflowStartRequest workflow) {
 		return manager.startWorkflow(workflow, "username");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.WorkflowManagement#deleteWorkflow(java.lang.String)
-	 */
 	@Override
 	public void stopWorkflow(String workflowId) {
 		manager.stopWorkflow(workflowId);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.WorkflowManagement#getStatus(java.lang.String)
-	 */
+
 	@Override
 	public WorkflowStatus getStatus(String contextId) {
 		return manager.getWorkflowStatus(contextId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.WorkflowManagement#addAtomicServiceToWorkflow(java
-	 * .lang.String, java.lang.String)
-	 */
 	@Override
-	public void addAtomicServiceToWorkflow(String contextId, String asId) {		
+	public void addAtomicServiceToWorkflow(String contextId, String asId) {
 		manager.startAtomicService(asId, null, contextId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.WorkflowManagement#removeAtomicServiceToWorkflow
-	 * (java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void removeAtomicServiceFromWorkflow(String workflowId, String asId) {
-		logger.debug("Remove atomic service [{}] from workflow [{}]", asId, workflowId);
+		logger.debug("Remove atomic service [{}] from workflow [{}]", asId,
+				workflowId);
+		throw new WebApplicationException(501);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.WorkflowManagement#getStatus(java.lang.String,
-	 * java.lang.String)
-	 */
+	
 	@Override
 	public AtomicServiceStatus getStatus(String workflowId, String asId) {
-		logger.debug("Get atomic service [{}] for workflow [{}]", asId, workflowId);
-		
+		logger.debug("Get atomic service [{}] for workflow [{}]", asId,
+				workflowId);
+
 		AtomicServiceStatus as1s = new AtomicServiceStatus();
 		as1s.setId("configId");
 		as1s.setStatus(Status.running);
 		as1s.setMessage("Up and running");
-		
+
 		AtomicServiceInstanceStatus asi1s = new AtomicServiceInstanceStatus();
 		asi1s.setId("1");
 		asi1s.setStatus(Status.running);
 		asi1s.setMessage("my message");
-		
+
 		as1s.setInstances(Arrays.asList(asi1s));
-		
+
 		return as1s;
 	}
-	
+
+	@Override
+	public List<InitialConfiguration> getInitialConfigurations(
+			String atomicServiceId) {
+		try {
+			return manager.getInitialConfiguration(atomicServiceId);
+		} catch (ApplianceTypeNotFound e) {
+			throw new WebApplicationException(e, 404);
+		}
+	}
+
 	/**
 	 * @param manager the manager to set
 	 */
 	public void setManager(CloudManager manager) {
 		this.manager = manager;
-	}
-
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.WorkflowManagement#getInitialConfigurations(java.lang.String)
-	 */
-	@Override
-	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

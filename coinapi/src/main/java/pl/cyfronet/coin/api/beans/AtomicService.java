@@ -33,7 +33,8 @@ public class AtomicService {
 	private boolean vnc;
 	private boolean http;
 	private boolean shared;
-
+	private boolean scalable;
+	
 	public AtomicService() {
 	}
 	
@@ -109,5 +110,19 @@ public class AtomicService {
 
 	public void setShared(boolean shared) {
 		this.shared = shared;
+	}
+
+	/**
+	 * @return the scalable
+	 */
+	public boolean isScalable() {
+		return scalable;
+	}
+
+	/**
+	 * @param scalable the scalable to set
+	 */
+	public void setScalable(boolean scalable) {
+		this.scalable = scalable;
 	}
 }
