@@ -52,7 +52,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 
 	@Override
 	public String startWorkflow(WorkflowStartRequest workflow) {
-		return manager.startWorkflow(workflow, "username");
+		return manager.startWorkflow(workflow, "developer");
 	}
 
 	@Override

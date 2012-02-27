@@ -1,1 +1,1 @@
-{"name": "testName", "vph_username": "marek", "description": "myDescription", "priority": 40, "workflow_type": "portal"}
+{workflowStartRequest: {"name": "testName", "vph_username": "marek", "description": "myDescription", "priority": 40, "workflow_type": "portal"}}
