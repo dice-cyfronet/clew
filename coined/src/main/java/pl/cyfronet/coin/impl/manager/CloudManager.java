@@ -22,6 +22,7 @@ import java.util.Map;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
@@ -64,7 +65,7 @@ public interface CloudManager {
 
 	WorkflowStatus getWorkflowStatus(String contextId);
 
-	Map<String, String> getWorkflows(String username);
+	List<WorkflowBaseInfo> getWorkflows(String username);
 	
 	/**
 	 * @param atomicServiceId

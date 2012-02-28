@@ -58,5 +58,13 @@ public class WorkflowStatus {
 	public void setAses(List<AtomicServiceStatus> ases) {
 		this.ases = ases;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "WorkflowStatus [name=" + name + ", ases=" + ases + "]";
+	}
 }
 

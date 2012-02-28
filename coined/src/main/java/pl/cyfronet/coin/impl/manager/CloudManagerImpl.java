@@ -30,6 +30,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
@@ -290,11 +291,15 @@ public class CloudManagerImpl implements CloudManager {
 	 * pl.cyfronet.coin.impl.manager.CloudManager#getWorkflows(java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getWorkflows(String username) {
+	public List<WorkflowBaseInfo> getWorkflows(String username) {
 		List<WorkflowDetail> workflowDetails = air.getUserWorkflows(username);
-		Map<String, String> workflows = new HashMap<String, String>();
+		List<WorkflowBaseInfo> workflows = new ArrayList<WorkflowBaseInfo>();
 		for (WorkflowDetail workflowDetail : workflowDetails) {
-			workflows.put(workflowDetail.getId(), workflowDetail.getName());
+			WorkflowBaseInfo info = new WorkflowBaseInfo();
+			info.setId(workflowDetail.getId());
+			info.setName(workflowDetail.getName());
+			info.setType(workflowDetail.getType());
+			workflows.add(info);
 		}
 
 		return workflows;

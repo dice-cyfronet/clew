@@ -33,5 +33,15 @@
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />
 		<property name="supportUnwrapped" value="true" />
+		<property name="wrapperMap">
+			<map>
+				<entry>
+					<key>
+						<value>pl.cyfronet.coin.api.beans.WorkflowStartRequest</value>
+					</key>
+					<value>workflowStartRequest</value>
+				</entry>
+			</map>
+		</property>
 	</bean>
 </beans>

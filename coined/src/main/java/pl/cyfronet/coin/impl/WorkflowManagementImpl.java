@@ -76,7 +76,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 				workflowId);
 		throw new WebApplicationException(501);
 	}
-	
+
 	@Override
 	public AtomicServiceStatus getStatus(String workflowId, String asId) {
 		logger.debug("Get atomic service [{}] for workflow [{}]", asId,
@@ -84,7 +84,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 
 		WorkflowStatus workflowStatus = manager.getWorkflowStatus(workflowId);
 		List<AtomicServiceStatus> asStatuses = workflowStatus.getAses();
-		if(asStatuses != null) {
+		if (asStatuses != null) {
 			for (AtomicServiceStatus atomicServiceStatus : asStatuses) {
 				if (atomicServiceStatus.getId().equals(asId)) {
 					return atomicServiceStatus;
@@ -94,7 +94,8 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		throw new WebApplicationException(404);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see pl.cyfronet.coin.api.WorkflowManagement#getWorkflows()
 	 */
 	@Override
@@ -103,22 +104,14 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		UserWorkflows wrapper = new UserWorkflows();
 		wrapper.setUsername(username);
 		try {
-			
-			List<WorkflowBaseInfo> result = new ArrayList<WorkflowBaseInfo>(); 
-			Map<String, String> workflows = manager.getWorkflows(username);
-			for (String key : workflows.keySet()) {
-				WorkflowBaseInfo info = new WorkflowBaseInfo();
-				info.setId(key);
-				info.setName(workflows.get(key));
-				result.add(info);
-			}
-			wrapper.setWorkflows(result);			
-		} catch(Exception e) {
+			List<WorkflowBaseInfo> workflows = manager.getWorkflows(username);
+			wrapper.setWorkflows(workflows);
+		} catch (Exception e) {
 			wrapper.setWorkflows(new ArrayList<WorkflowBaseInfo>());
 		}
 		return wrapper;
 	}
-	
+
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) {

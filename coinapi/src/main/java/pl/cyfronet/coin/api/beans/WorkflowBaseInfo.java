@@ -25,6 +25,8 @@ public class WorkflowBaseInfo {
 	private String id;
 	
 	private String name;
+	
+	WorkflowType type;
 
 	/**
 	 * @return the id
@@ -52,5 +54,19 @@ public class WorkflowBaseInfo {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public WorkflowType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(WorkflowType type) {
+		this.type = type;
 	}
 }
