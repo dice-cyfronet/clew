@@ -212,10 +212,12 @@ public class CloudManagerImpl implements CloudManager {
 				if (asStatus == null) {
 					asStatus = new AtomicServiceStatus();
 					asStatus.setId(type);
+					asStatus.setName(type);
 					asStatuses.put(type, asStatus);
 				}
 				AtomicServiceInstanceStatus asiStatus = new AtomicServiceInstanceStatus();
 				asiStatus.setId(vm.getVms_id());
+				asiStatus.setName(vm.getName());
 				asiStatus.setStatus(vm.getState());
 				asiStatus.setMessage(""); // TODO
 

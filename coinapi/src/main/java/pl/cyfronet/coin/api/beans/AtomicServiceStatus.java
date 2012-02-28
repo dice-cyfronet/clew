@@ -41,4 +41,12 @@ public class AtomicServiceStatus extends AtomicServiceInstanceStatus {
 	public void setInstances(List<AtomicServiceInstanceStatus> instances) {
 		this.instances = instances;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AtomicServiceStatus [instances=" + instances + "]";
+	}
 }

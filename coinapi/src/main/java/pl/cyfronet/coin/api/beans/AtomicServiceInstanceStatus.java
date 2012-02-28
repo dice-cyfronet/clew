@@ -28,6 +28,8 @@ public class AtomicServiceInstanceStatus {
 
 	private Status status;
 
+	private String name;
+	
 	/**
 	 * @return the id
 	 */
@@ -68,6 +70,29 @@ public class AtomicServiceInstanceStatus {
 	 */
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AtomicServiceInstanceStatus [id=" + id + ", message=" + message
+				+ ", status=" + status + "]";
 	}
 	
 	
