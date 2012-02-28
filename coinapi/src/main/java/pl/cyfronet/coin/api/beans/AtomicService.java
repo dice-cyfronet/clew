@@ -41,7 +41,7 @@ public class AtomicService {
 	public AtomicService(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * @return the name
 	 */

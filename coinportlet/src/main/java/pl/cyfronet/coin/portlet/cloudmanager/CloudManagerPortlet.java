@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletResponse;
@@ -24,7 +27,13 @@ import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
+import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.UserWorkflows;
+import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
+import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ContextIdFactory;
 
@@ -101,26 +110,38 @@ public class CloudManagerPortlet {
 			@RequestParam(required = false, value = PARAM_CURRENT_ATOMIC_SERVICE) String currentAtomicServiceId) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
 		
-//		getPortalWorkflowContext();
+		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.portal);
+		Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances = null;
 		
-		
-		List<AtomicServiceInstance> atomicServiceInstances =
-					cloudFacade.getAtomicServiceInstances(
-							contextIdFactory.createContextId(portal.getUserName(request)));
-		List<AtomicService> atomicServices = extractAtomicServices(atomicServiceInstances);
-		
-		if(atomicServices.size() > 0) {
-			if(currentAtomicServiceId == null) {
-				currentAtomicServiceId = atomicServices.get(0).getAtomicServiceId();
-			}
+		if(portalWorkflowIds.size() > 0) {
+			atomicServiceInstances =
+					getAtomicServiceInstances(portalWorkflowIds.get(0));
 			
-			model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
-					extractAtomicServiceInstances(atomicServiceInstances, currentAtomicServiceId));
-			model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, currentAtomicServiceId);
+			if(atomicServiceInstances.size() > 0) {
+				AtomicService currentAtomicService = null;
+				
+				if(currentAtomicServiceId == null) {
+					currentAtomicService = new ArrayList<AtomicService>(
+							atomicServiceInstances.keySet()).get(0);
+					currentAtomicServiceId = currentAtomicService.getAtomicServiceId();
+				} else {
+					for(AtomicService as : atomicServiceInstances.keySet()) {
+						if(as.getAtomicServiceId().equals(currentAtomicServiceId)) {
+							currentAtomicService = as;
+							break;
+						}
+					}
+				}
+				
+				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances.keySet());
+				
+				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
+						atomicServiceInstances.get(currentAtomicService));
+			}
+		} else {
+			atomicServiceInstances = new HashMap<AtomicService, List<AtomicServiceInstance>>();
 		}
-		
-		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServices);
-		
+
 		return "cloudManager/genericInvoker";
 	}
 
@@ -131,15 +152,54 @@ public class CloudManagerPortlet {
 		return "cloudManager/workflows";
 	}
 	
-//	private void getPortalWorkflowContext() {
-//		UserWorkflows userWorkflows = workflowManagement.getWorkflows();
-//		
-//		for(WorkflowBaseInfo workflow : userWorkflows.getWorkflows()) {
-//			if(workflow.getType() == ) {
-//				
-//			}
-//		}
-//	}
+	private List<String> getWorkflowIds(WorkflowType workflowType) {
+		List<String> result = new ArrayList<String>();
+		UserWorkflows userWorkflows = workflowManagement.getWorkflows();
+		
+		for(WorkflowBaseInfo workflow : userWorkflows.getWorkflows()) {
+			if(workflow.getType() == workflowType) {
+				result.add(workflow.getId());
+			}
+		}
+		
+		return result;
+	}
+	
+	private Map<AtomicService, List<AtomicServiceInstance>> getAtomicServiceInstances(String workflowId) {
+		Map<AtomicService, List<AtomicServiceInstance>> result = new LinkedHashMap<AtomicService, List<AtomicServiceInstance>>();
+		WorkflowStatus workflowStatus = workflowManagement.getStatus(workflowId);
+		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
+		
+		for(AtomicServiceStatus atomicServiceStatus : workflowStatus.getAses()) {
+			if(atomicServiceStatus.getInstances() != null && atomicServiceStatus.getInstances().size() > 0) {
+				AtomicService atomicService = null;
+				
+				for(AtomicService as : atomicServices) {
+					if(as.getAtomicServiceId().equals(atomicServiceStatus.getId())) {
+						atomicService = as;
+						break;
+					}
+				}
+				
+				if(atomicService != null) {
+					List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
+					result.put(atomicService, instances);
+					
+					for(AtomicServiceInstanceStatus ass : atomicServiceStatus.getInstances()) {
+						AtomicServiceInstance asi = new AtomicServiceInstance();
+						asi.setAtomicServiceId(atomicService.getAtomicServiceId());
+						asi.setInstanceId(ass.getId());
+						asi.setName(ass.getName());
+						asi.setStatus(ass.getStatus());
+						instances.add(asi);
+					}
+				}
+				
+			}
+		}
+		
+		return result;
+	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public String doViewStartAtomicService(Model model) {
@@ -251,36 +311,6 @@ public class CloudManagerPortlet {
 				result.add(asi);
 			}
 		}
-		
-		return result;
-	}
-	
-	private List<AtomicService> extractAtomicServices(
-			List<AtomicServiceInstance> atomicServiceInstances) {
-		List<AtomicService> result = new ArrayList<AtomicService>();
-		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
-		
-		for(AtomicServiceInstance asi : atomicServiceInstances) {
-			AtomicService atomicService = null;
-			
-			for(AtomicService as : atomicServices) {
-				if(as.getAtomicServiceId().equals(asi.getAtomicServiceId())) {
-					atomicService = as;
-					break;
-				}
-			}
-			
-			if(atomicService != null && !result.contains(atomicService)) {
-				result.add(atomicService);
-			}
-		}
-		
-		Collections.sort(result, new Comparator<AtomicService>() {
-			@Override
-			public int compare(AtomicService as1, AtomicService as2) {
-				return as1.getName().compareTo(as2.getName());
-			}
-		});
 		
 		return result;
 	}
