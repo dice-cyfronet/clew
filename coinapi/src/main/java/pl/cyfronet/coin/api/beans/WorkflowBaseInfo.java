@@ -69,4 +69,15 @@ public class WorkflowBaseInfo {
 	public void setType(WorkflowType type) {
 		this.type = type;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "WorkflowBaseInfo [id=" + id + ", name=" + name + ", type="
+				+ type + "]";
+	}
+	
+	
 }

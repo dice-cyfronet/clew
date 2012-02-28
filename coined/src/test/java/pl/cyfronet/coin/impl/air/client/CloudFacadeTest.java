@@ -16,49 +16,27 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
-import java.util.Arrays;
-
 import org.apache.cxf.jaxrs.provider.JSONProvider;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import pl.cyfronet.coin.api.WorkflowManagement;
-import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.CloudFacade;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class WorkflowManagementTest {
+public class CloudFacadeTest {
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-		        new String[] {"wm-test.xml",});
+		        new String[] {"cf-test.xml",});
 //		// of course, an ApplicationContext is just a BeanFactory
 		BeanFactory factory = (BeanFactory) appContext;
 		
-		WorkflowManagement wm = factory.getBean("wm-client", WorkflowManagement.class);
+		CloudFacade cf = factory.getBean("cf-client", CloudFacade.class);
 		JSONProvider provider = factory.getBean("jsonProvider", JSONProvider.class);
 		
-//		System.out.println(wm.getStatus("4f4b615c86648809b50004e2"));
-//		System.out.println(wm.getWorkflows());
-		
-		
-//		WorkflowStartRequest start = new WorkflowStartRequest();
-//		start.setDescription("my description");
-//		start.setName("workflowName");
-//		start.setPriority(55);
-//		start.setRequiredIds(Arrays.asList("4f438218866488709400005f", "4f44e34e86648818760001e5"));
-//		start.setType(WorkflowType.portal);
-//		
-//		System.out.println(start);		
-//		
-//		System.out.println(wm.startWorkflow(start));
-//		wm.stopWorkflow("4f4cf50f8664884a2b00008e");
-		
-		System.out.println(wm.getWorkflows());
-		//wm.stopWorkflow("4f4cee9d8664884a2b000088");
-//		System.out.println(wm.getWorkflows());
+		System.out.println(cf.getAtomicServices());
 	}
 }

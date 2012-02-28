@@ -35,6 +35,8 @@ public class WorkflowDetail {
 	
 	private WorkflowType type;
 	
+	private WorkflowType workflow_type;
+	
 	private Integer priority;
 	
 	private String description;
@@ -125,13 +127,27 @@ public class WorkflowDetail {
 		this.vms = vms;
 	}
 
+	/**
+	 * @return the workflow_type
+	 */
+	public WorkflowType getWorkflow_type() {
+		return workflow_type;
+	}
+
+	/**
+	 * @param workflow_type the workflow_type to set
+	 */
+	public void setWorkflow_type(WorkflowType workflow_type) {
+		this.workflow_type = workflow_type;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "WorkflowDetail [name=" + name + ", id=" + id + ", type=" + type
-				+ ", priority=" + priority + ", description=" + description
-				+ ", vms=" + vms + "]";
-	}	
+				+ ", workflow_type=" + workflow_type + ", priority=" + priority
+				+ ", description=" + description + ", vms=" + vms + "]";
+	}
 }

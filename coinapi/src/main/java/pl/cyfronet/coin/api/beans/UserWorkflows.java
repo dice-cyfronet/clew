@@ -64,6 +64,16 @@ public class UserWorkflows {
 		this.workflows = workflows;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "UserWorkflows [username=" + username + ", workflows="
+				+ workflows + "]";
+	}
+
 	
 
 }

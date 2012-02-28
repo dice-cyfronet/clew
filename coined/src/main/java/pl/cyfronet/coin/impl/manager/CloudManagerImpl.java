@@ -183,7 +183,11 @@ public class CloudManagerImpl implements CloudManager {
 	public void stopWorkflow(String contextId) {
 		logger.debug("stopping workflow {}", contextId);
 		// FIXME error handling
-		atmosphere.removeRequiredAppliances(contextId);
+		try {
+			atmosphere.removeRequiredAppliances(contextId);
+		} catch (Exception e ) {
+			logger.error("error in atmosphere");
+		}
 		air.stopWorkflow(contextId);
 	}
 
