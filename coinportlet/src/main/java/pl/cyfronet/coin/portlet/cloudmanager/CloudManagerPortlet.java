@@ -111,6 +111,7 @@ public class CloudManagerPortlet {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
 		
 		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.portal);
+		log.debug("Workflow ids for user TODO: " + portalWorkflowIds);
 		Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances = null;
 		
 		if(portalWorkflowIds.size() > 0) {
@@ -134,7 +135,6 @@ public class CloudManagerPortlet {
 				}
 				
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances.keySet());
-				
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
 						atomicServiceInstances.get(currentAtomicService));
 			}
@@ -170,32 +170,37 @@ public class CloudManagerPortlet {
 		WorkflowStatus workflowStatus = workflowManagement.getStatus(workflowId);
 		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
 		
-		for(AtomicServiceStatus atomicServiceStatus : workflowStatus.getAses()) {
-			if(atomicServiceStatus.getInstances() != null && atomicServiceStatus.getInstances().size() > 0) {
-				AtomicService atomicService = null;
-				
-				for(AtomicService as : atomicServices) {
-					if(as.getAtomicServiceId().equals(atomicServiceStatus.getId())) {
-						atomicService = as;
-						break;
+		if(workflowStatus != null) {
+			if(workflowStatus.getAses() != null) {
+				for(AtomicServiceStatus atomicServiceStatus : workflowStatus.getAses()) {
+					if(atomicServiceStatus.getInstances() != null && atomicServiceStatus.getInstances().size() > 0) {
+						AtomicService atomicService = null;
+						
+						for(AtomicService as : atomicServices) {
+							if(as.getAtomicServiceId().equals(atomicServiceStatus.getId())) {
+								atomicService = as;
+								break;
+							}
+						}
+						
+						if(atomicService != null) {
+							List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
+							result.put(atomicService, instances);
+							
+							for(AtomicServiceInstanceStatus ass : atomicServiceStatus.getInstances()) {
+								AtomicServiceInstance asi = new AtomicServiceInstance();
+								asi.setAtomicServiceId(atomicService.getAtomicServiceId());
+								asi.setInstanceId(ass.getId());
+								asi.setName(ass.getName());
+								asi.setStatus(ass.getStatus());
+								instances.add(asi);
+							}
+						}
 					}
 				}
-				
-				if(atomicService != null) {
-					List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
-					result.put(atomicService, instances);
-					
-					for(AtomicServiceInstanceStatus ass : atomicServiceStatus.getInstances()) {
-						AtomicServiceInstance asi = new AtomicServiceInstance();
-						asi.setAtomicServiceId(atomicService.getAtomicServiceId());
-						asi.setInstanceId(ass.getId());
-						asi.setName(ass.getName());
-						asi.setStatus(ass.getStatus());
-						instances.add(asi);
-					}
-				}
-				
 			}
+		} else {
+			log.warn("Received empty workflow status for workflow id [{}]", workflowId);
 		}
 		
 		return result;

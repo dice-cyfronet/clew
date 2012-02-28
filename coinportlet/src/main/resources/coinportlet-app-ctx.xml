@@ -46,14 +46,14 @@
     </bean> -->
     
     <!-- Cloud Facade beans -->
-    <jaxrs:client id="wm-client" address="http://vph.cyfronet.pl:9099/workflow"		
+    <jaxrs:client id="wm-client" address="https://vph.cyfronet.pl/cloudfacade/workflow"
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:client>
-	<jaxrs:client id="cf-client" address="http://vph.cyfronet.pl:9099/cloudfacade"		
+	<jaxrs:client id="cf-client" address="https://vph.cyfronet.pl/cloudfacade"
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		inheritHeaders="true">
 		<jaxrs:providers>
