@@ -135,6 +135,17 @@ public class Vms {
 	public void setState(Status state) {
 		this.state = state;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Vms [name=" + name + ", specs=" + specs + ", conf_id="
+				+ conf_id + ", appliance_type=" + appliance_type
+				+ ", source_template=" + source_template + ", vms_id=" + vms_id
+				+ ", state=" + state + "]";
+	}
 	
 	
 }

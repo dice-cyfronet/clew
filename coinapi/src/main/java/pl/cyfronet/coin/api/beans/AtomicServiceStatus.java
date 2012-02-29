@@ -47,6 +47,10 @@ public class AtomicServiceStatus extends AtomicServiceInstanceStatus {
 	 */
 	@Override
 	public String toString() {
-		return "AtomicServiceStatus [instances=" + instances + "]";
+		return "AtomicServiceStatus [instances=" + instances + ", getId()="
+				+ getId() + ", getMessage()=" + getMessage() + ", getStatus()="
+				+ getStatus() + ", getName()=" + getName() + "]";
 	}
+
+	
 }
