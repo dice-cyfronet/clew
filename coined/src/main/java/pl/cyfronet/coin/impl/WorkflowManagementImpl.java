@@ -115,6 +115,7 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) {
+		logger.debug("Get initial configurations for: {}", atomicServiceId);
 		try {
 			return manager.getInitialConfiguration(atomicServiceId);
 		} catch (ApplianceTypeNotFound e) {

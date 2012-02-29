@@ -30,9 +30,11 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -185,7 +187,7 @@ public class CloudManagerImpl implements CloudManager {
 		// FIXME error handling
 		try {
 			atmosphere.removeRequiredAppliances(contextId);
-		} catch (Exception e ) {
+		} catch (Exception e) {
 			logger.error("error in atmosphere");
 		}
 		air.stopWorkflow(contextId);
@@ -299,11 +301,13 @@ public class CloudManagerImpl implements CloudManager {
 		List<WorkflowDetail> workflowDetails = air.getUserWorkflows(username);
 		List<WorkflowBaseInfo> workflows = new ArrayList<WorkflowBaseInfo>();
 		for (WorkflowDetail workflowDetail : workflowDetails) {
-			WorkflowBaseInfo info = new WorkflowBaseInfo();
-			info.setId(workflowDetail.getId());
-			info.setName(workflowDetail.getName());
-			info.setType(workflowDetail.getType());
-			workflows.add(info);
+			if (workflowDetail.getState() == Status.running) {
+				WorkflowBaseInfo info = new WorkflowBaseInfo();
+				info.setId(workflowDetail.getId());
+				info.setName(workflowDetail.getName());
+				info.setType(workflowDetail.getWorkflow_type());
+				workflows.add(info);
+			}
 		}
 
 		return workflows;

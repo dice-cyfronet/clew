@@ -49,7 +49,7 @@ public interface WorkflowManagement {
 	@WebMethod(operationName = "getUserWorkflows")
 	@WebResult(name = "workflows")
 	UserWorkflows getWorkflows();
-	
+
 	/**
 	 * Start new workflow. This action will trigger generation of the unique
 	 * workflow id. For workflow user can add atomic services (list of required
@@ -140,6 +140,7 @@ public interface WorkflowManagement {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/{workflowId}/as/{atomicServiceId}/configurations")
-	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId);
+	@Path("/as/{atomicServiceId}/configurations")
+	List<InitialConfiguration> getInitialConfigurations(
+			@PathParam("atomicServiceId") String atomicServiceId);
 }

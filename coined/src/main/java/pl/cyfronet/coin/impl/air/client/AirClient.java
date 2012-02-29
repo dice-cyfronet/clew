@@ -42,7 +42,7 @@ public interface AirClient {
 			@FormParam("vph_username") String vph_username,
 			@FormParam("description") String description,
 			@FormParam("priority") Integer priority,
-			@FormParam("type") WorkflowType type);
+			@FormParam("workflow_type") WorkflowType type);
 	
 	@POST
 	@Path("/workflow/stop")

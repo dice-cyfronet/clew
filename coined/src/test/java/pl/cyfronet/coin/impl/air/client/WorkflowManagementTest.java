@@ -39,26 +39,28 @@ public class WorkflowManagementTest {
 		BeanFactory factory = (BeanFactory) appContext;
 		
 		WorkflowManagement wm = factory.getBean("wm-client", WorkflowManagement.class);
-		JSONProvider provider = factory.getBean("jsonProvider", JSONProvider.class);
+//		JSONProvider provider = factory.getBean("jsonProvider", JSONProvider.class);
 		
 //		System.out.println(wm.getStatus("4f4b615c86648809b50004e2"));
 //		System.out.println(wm.getWorkflows());
 		
 		
-//		WorkflowStartRequest start = new WorkflowStartRequest();
-//		start.setDescription("my description");
-//		start.setName("workflowName");
-//		start.setPriority(55);
-//		start.setRequiredIds(Arrays.asList("4f438218866488709400005f", "4f44e34e86648818760001e5"));
-//		start.setType(WorkflowType.portal);
+		WorkflowStartRequest start = new WorkflowStartRequest();
+		start.setDescription("my description");
+		start.setName("workflowName");
+		start.setPriority(55);
+		start.setRequiredIds(Arrays.asList("4f438218866488709400005f"));
+		start.setType(WorkflowType.portal);
 //		
 //		System.out.println(start);		
 //		
 //		System.out.println(wm.startWorkflow(start));
-//		wm.stopWorkflow("4f4cf50f8664884a2b00008e");
+//		wm.stopWorkflow("4f4dc97a866488548d000253");
 		
-		System.out.println(wm.getWorkflows());
-		//wm.stopWorkflow("4f4cee9d8664884a2b000088");
 //		System.out.println(wm.getWorkflows());
+//		wm.stopWorkflow("4f4dc75f866488548d00020f");
+//		System.out.println(wm.getWorkflows());
+		
+		System.out.println(wm.getInitialConfigurations("ArchLinux"));
 	}
 }

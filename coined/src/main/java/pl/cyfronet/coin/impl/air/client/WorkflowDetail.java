@@ -20,26 +20,26 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-@XmlRootElement(name ="workflowDetail")
+@XmlRootElement(name = "workflowDetail")
 public class WorkflowDetail {
 
 	private String name;
-	
+
 	private String id;
-	
-	private WorkflowType type;
-	
+
 	private WorkflowType workflow_type;
-	
+
 	private Integer priority;
-	
+
 	private String description;
+
+	private Status state;
 	
 	private List<Vms> vms;
 
@@ -72,20 +72,6 @@ public class WorkflowDetail {
 	}
 
 	/**
-	 * @return the type
-	 */
-	public WorkflowType getType() {
-		return type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(WorkflowType type) {
-		this.type = type;
-	}
-
-	/**
 	 * @return the priority
 	 */
 	public Integer getPriority() {
@@ -111,6 +97,20 @@ public class WorkflowDetail {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public Status getState() {
+		return state;
+	}
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(Status state) {
+		this.state = state;
 	}
 
 	/**
@@ -146,8 +146,9 @@ public class WorkflowDetail {
 	 */
 	@Override
 	public String toString() {
-		return "WorkflowDetail [name=" + name + ", id=" + id + ", type=" + type
+		return "WorkflowDetail [name=" + name + ", id=" + id
 				+ ", workflow_type=" + workflow_type + ", priority=" + priority
-				+ ", description=" + description + ", vms=" + vms + "]";
+				+ ", description=" + description + ", state=" + state
+				+ ", vms=" + vms + "]";
 	}
 }
