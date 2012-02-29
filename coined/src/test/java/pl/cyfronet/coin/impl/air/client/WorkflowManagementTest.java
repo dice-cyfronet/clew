@@ -66,6 +66,6 @@ public class WorkflowManagementTest {
 //		System.out.println(wm.getInitialConfigurations("@neurist Services"));
 		
 		//wm.addAtomicServiceToWorkflow("4f4dc984866488548d000268", "4f4dde29866488548d0002fa");
-		System.out.println(wm.getStatus("4f4dc984866488548d000268"));
+		System.out.println(wm.getStatus("4f4e0bdb866488548d000f01"));
 	}
 }

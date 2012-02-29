@@ -251,22 +251,22 @@ public class CloudManagerPortlet {
 	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID)
 			String atomicServiceInstanceId, @RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
 			String invocationResult, Model model) {
-		AtomicServiceInstance atomicServiceInstance =
-				cloudFacade.getAtomicServiceInstance(atomicServiceInstanceId);
-		
-		if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
-			InvokeAtomicServiceRequest iasr = new InvokeAtomicServiceRequest();
-			iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
-			model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
-		}
-		
-		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST,
-				getAtomicServiceMethods(atomicServiceInstance));
-		
-		if(invocationResult != null) {
-			//TODO: in future do not use request parameter to pass AS invocation result
-			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
-		}
+//		AtomicServiceInstance atomicServiceInstance =
+//				cloudFacade.getAtomicServiceInstance(atomicServiceInstanceId);
+//		
+//		if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
+//			InvokeAtomicServiceRequest iasr = new InvokeAtomicServiceRequest();
+//			iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
+//			model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
+//		}
+//		
+//		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST,
+//				getAtomicServiceMethods(atomicServiceInstance));
+//		
+//		if(invocationResult != null) {
+//			//TODO: in future do not use request parameter to pass AS invocation result
+//			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
+//		}
 		
 		return "cloudManager/invokeAtomicService";
 	}

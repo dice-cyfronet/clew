@@ -38,5 +38,7 @@ public class CloudFacadeTest {
 		JSONProvider provider = factory.getBean("jsonProvider", JSONProvider.class);
 		
 		System.out.println(cf.getAtomicServices());
+		
+		System.out.println(cf.getInitialConfigurations("@neurist with VNC"));
 	}
 }

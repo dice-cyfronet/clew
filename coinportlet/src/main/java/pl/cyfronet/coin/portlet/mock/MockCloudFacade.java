@@ -58,19 +58,6 @@ public class MockCloudFacade implements CloudFacade {
 	}
 
 	@Override
-	public AtomicServiceInstance getAtomicServiceInstance(
-			String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		for(AtomicServiceInstance asi : atomicServiceInstances) {
-			if(asi.getInstanceId().equals(atomicServiceInstanceId)) {
-				return asi;
-			}
-		}
-		
-		return null;
-	}
-
-	@Override
 	public void createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {

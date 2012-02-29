@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -111,18 +110,6 @@ public class CloudManagerImpl implements CloudManager {
 				new Object[] { name, atomicServiceId, contextId });
 		registerVms(contextId, Arrays.asList(atomicServiceId), defaultPriority);
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#getAtomicServiceStatus(java
-	 * .lang.String)
-	 */
-	@Override
-	public AtomicServiceInstance getAtomicServiceStatus(
-			String atomicServiceInstanceId) throws CloudFacadeException {
-		throw new CloudFacadeException("Not impolemented yet");
 	}
 
 	/*

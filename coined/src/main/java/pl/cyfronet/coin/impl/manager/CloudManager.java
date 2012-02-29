@@ -19,7 +19,6 @@ package pl.cyfronet.coin.impl.manager;
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
@@ -39,9 +38,6 @@ public interface CloudManager {
 	String startAtomicService(String atomicServiceId, String name,
 			String contextId) throws AtomicServiceNotFoundException,
 			CloudFacadeException;
-
-	AtomicServiceInstance getAtomicServiceStatus(String atomicServiceInstanceId)
-			throws CloudFacadeException;
 
 	void createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)

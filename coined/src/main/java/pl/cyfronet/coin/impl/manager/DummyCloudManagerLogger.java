@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
@@ -69,20 +68,6 @@ public class DummyCloudManagerLogger implements CloudManager {
 		}
 
 		return System.currentTimeMillis() + "";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.CloudManager#getAtomicServiceStatus(java.lang.String)
-	 */
-	@Override
-	public AtomicServiceInstance getAtomicServiceStatus(
-			String atomicServiceInstanceId) throws CloudFacadeException {
-		logger.info(
-				"Get atomic service status for {} - default atomic service instance returned",
-				atomicServiceInstanceId);
-		return new AtomicServiceInstance("asi");
 	}
 
 	/*

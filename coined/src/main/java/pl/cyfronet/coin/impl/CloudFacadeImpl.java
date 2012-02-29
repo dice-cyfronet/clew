@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -57,21 +56,6 @@ public class CloudFacadeImpl implements CloudFacade {
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.debug("Get atomic services");
 		return manager.getAtomicServices();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServiceStatus(java.lang.
-	 * String)
-	 */
-	@Override
-	public AtomicServiceInstance getAtomicServiceInstance(
-			String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		logger.debug("Get atomic service status for {}",
-				atomicServiceInstanceId);
-		return manager.getAtomicServiceStatus(atomicServiceInstanceId);
 	}
 	
 	/*

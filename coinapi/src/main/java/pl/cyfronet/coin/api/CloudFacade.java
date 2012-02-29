@@ -75,23 +75,6 @@ public interface CloudFacade {
 			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
 			@WebParam(name = "atomicService") AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
-
-	/**
-	 * Get atomic service instance status.
-	 * @param atomicServiceInstanceId Atomic service instance id.
-	 * @return Atomic service instance status.
-	 * @throws AtomicServiceInstanceNotFoundException Thrown when atomic service
-	 *             instance with given id is not found.
-	 * @throws CloudFacadeException Thrown when error while getting instance
-	 *             information occurs.
-	 */
-	@GET
-	@Path("/asi/{atomicServiceInstanceId}")
-	@WebMethod(operationName = "getAtomicServiceInstance")
-	@WebResult(name = "atomicServiceInstance")
-	AtomicServiceInstance getAtomicServiceInstance(
-			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
 	
 	/**
 	 * Get initial configurations for given atomic service (a.k.a. appliance
