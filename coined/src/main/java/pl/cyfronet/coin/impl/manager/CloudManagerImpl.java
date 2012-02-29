@@ -34,7 +34,6 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
-import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -49,6 +48,7 @@ import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
 /**
+ * Set of methods allowing to manage Atmosphere and AIR.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class CloudManagerImpl implements CloudManager {
@@ -59,26 +59,20 @@ public class CloudManagerImpl implements CloudManager {
 	private static final Logger logger = LoggerFactory
 			.getLogger(CloudManagerImpl.class);
 
+	/**
+	 * Atmosphere client.
+	 */
 	private DyReAllaManagerService atmosphere;
 
+	/**
+	 * Air client
+	 */
 	private AirClient air;
 
-	private Integer defaultPriority;
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#getAtomicServiceInstances(
-	 * java.lang.String)
+	/**
+	 * Default workflow priority.
 	 */
-	@Override
-	public List<AtomicServiceInstance> getAtomicServiceInstances(
-			String contextId) throws CloudFacadeException {
-
-		WorkflowDetail workflow = air.getWorkflow(contextId);
-
-		throw new CloudFacadeException("Not impolemented yet");
-	}
+	private Integer defaultPriority;
 
 	/*
 	 * (non-Javadoc)
@@ -134,18 +128,6 @@ public class CloudManagerImpl implements CloudManager {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#stopAtomicServiceInstance(
-	 * java.lang.String)
-	 */
-	@Override
-	public void stopAtomicServiceInstance(String atomicServiceInstance)
-			throws CloudFacadeException {
-		throw new CloudFacadeException("Not impolemented yet");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
 	 * pl.cyfronet.coin.impl.manager.CloudManager#createAtomicService(java.lang
 	 * .String, pl.cyfronet.coin.api.beans.AtomicService)
 	 */
@@ -174,13 +156,18 @@ public class CloudManagerImpl implements CloudManager {
 		// FIXME error handling
 		String workflowId = air.startWorkflow(workflow.getName(), username,
 				workflow.getDescription(), priority, workflow.getType());
-		List<String> ids = workflow.getRequiredIds();
+		List<String> ids = workflow.getAsConfigIds();
 
 		registerVms(workflowId, ids, priority);
 
 		return workflowId;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.impl.manager.CloudManager#stopWorkflow(java.lang.String)
+	 */
 	@Override
 	public void stopWorkflow(String contextId) {
 		logger.debug("stopping workflow {}", contextId);
@@ -193,6 +180,12 @@ public class CloudManagerImpl implements CloudManager {
 		air.stopWorkflow(contextId);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.impl.manager.CloudManager#getWorkflowStatus(java.lang
+	 * .String)
+	 */
 	@Override
 	public WorkflowStatus getWorkflowStatus(String contextId) {
 		WorkflowDetail detail = air.getWorkflow(contextId);
@@ -210,12 +203,12 @@ public class CloudManagerImpl implements CloudManager {
 					// set to null.
 					continue;
 				}
-				//but in AIR type internal id is returned instead of type name.
-//				String type = vm.getAppliance_type();
-//				if (type == null) {
-//					// get type from AIR once again if it is empty
-//					type = getAtomicServiceTypeName(vm.getConf_id());
-//				}
+				// but in AIR type internal id is returned instead of type name.
+				// String type = vm.getAppliance_type();
+				// if (type == null) {
+				// // get type from AIR once again if it is empty
+				// type = getAtomicServiceTypeName(vm.getConf_id());
+				// }
 				String type = getAtomicServiceTypeName(vm.getConf_id());
 				AtomicServiceStatus asStatus = asStatuses.get(type);
 				if (asStatus == null) {
@@ -248,27 +241,6 @@ public class CloudManagerImpl implements CloudManager {
 		return workflow;
 	}
 
-	private String getAtomicServiceTypeName(String configurationId) {
-		return air.getTypeFromConfig(configurationId).getName();
-	}
-
-	private void registerVms(String contextId, List<String> configIds,
-			Integer priority) {
-		if (configIds != null && configIds.size() > 0) {
-			String[] ids = configIds.toArray(new String[0]);
-			logger.debug(
-					"Registering required atomic services in atmosphere {}",
-					Arrays.toString(ids));
-
-			AddRequiredAppliancesRequest request = new AddRequiredAppliancesRequestImpl();
-			request.setImportanceLevel(priority);
-			request.setCorrelationId(contextId);
-			request.setApplianceInitConfigIds(ids);
-
-			atmosphere.addRequiredAppliances(request);
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -276,7 +248,7 @@ public class CloudManagerImpl implements CloudManager {
 	 * .lang.String)
 	 */
 	@Override
-	public List<InitialConfiguration> getInitialConfiguration(
+	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) throws ApplianceTypeNotFound {
 
 		ApplianceType type = getApplianceType(atomicServiceId);
@@ -315,6 +287,13 @@ public class CloudManagerImpl implements CloudManager {
 		return workflows;
 	}
 
+	/**
+	 * Get appliance type information.
+	 * @param applianceTypeName Appliance type name.
+	 * @return Appliance type information.
+	 * @throws ApplianceTypeNotFound Thrown, when appliance type is not found in
+	 *             AIR.
+	 */
 	private ApplianceType getApplianceType(String applianceTypeName)
 			throws ApplianceTypeNotFound {
 		List<ApplianceType> applianceTypes = air.getApplianceTypes();
@@ -330,21 +309,56 @@ public class CloudManagerImpl implements CloudManager {
 	}
 
 	/**
-	 * @param atmosphere the atmosphere to set
+	 * Get atomic service type name.
+	 * @param configurationId Atomic service type configuration id.
+	 * @return Atomic service type name.
+	 */
+	private String getAtomicServiceTypeName(String configurationId) {
+		return air.getTypeFromConfig(configurationId).getName();
+	}
+
+	/**
+	 * Register appliance types (with specific configuration id) for workflow.
+	 * @param contextId Context id (e.k.a. workflow id).
+	 * @param configIds List of appliance types configurations ids.
+	 * @param priority Workflow priority.
+	 */
+	private void registerVms(String contextId, List<String> configIds,
+			Integer priority) {
+		if (configIds != null && configIds.size() > 0) {
+			String[] ids = configIds.toArray(new String[0]);
+			logger.debug(
+					"Registering required atomic services in atmosphere {}",
+					Arrays.toString(ids));
+
+			AddRequiredAppliancesRequest request = new AddRequiredAppliancesRequestImpl();
+			request.setImportanceLevel(priority);
+			request.setCorrelationId(contextId);
+			request.setApplianceInitConfigIds(ids);
+
+			atmosphere.addRequiredAppliances(request);
+		}
+	}
+	
+	/**
+	 * Set atmosphere client.
+	 * @param atmosphere Atmosphere client.
 	 */
 	public void setAtmosphere(DyReAllaManagerService atmosphere) {
 		this.atmosphere = atmosphere;
 	}
 
 	/**
-	 * @param defaultPriority the defaultPriority to set
+	 * Set default workflow priority.
+	 * @param defaultPriority Default workflow priority.
 	 */
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
 	}
 
 	/**
-	 * @param air the air to set
+	 * Set AIR client.
+	 * @param AIR client.
 	 */
 	public void setAir(AirClient air) {
 		this.air = air;

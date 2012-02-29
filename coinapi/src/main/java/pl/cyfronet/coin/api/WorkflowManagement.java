@@ -16,8 +16,6 @@
 
 package pl.cyfronet.coin.api;
 
-import java.util.List;
-
 import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.ws.rs.Consumes;
@@ -31,10 +29,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
-import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
-import pl.cyfronet.coin.api.beans.UserWorkflows;
 
 /**
  * REST service dedicated for managing workflow lifecycle.
@@ -130,17 +127,4 @@ public interface WorkflowManagement {
 	@Path("/{workflowId}/as/{asConfigId}")
 	AtomicServiceStatus getStatus(@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asId);
-
-	/**
-	 * Get initial configurations for given atomic service (a.k.a. appliance
-	 * type).
-	 * @param atomicServiceId Atomic service id.
-	 * @return List of atomic service configurations in JSON format:
-	 *         <code>{[ {"name":"configName", id: "configId"}, ... ]}</code>
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/as/{atomicServiceId}/configurations")
-	List<InitialConfiguration> getInitialConfigurations(
-			@PathParam("atomicServiceId") String atomicServiceId);
 }

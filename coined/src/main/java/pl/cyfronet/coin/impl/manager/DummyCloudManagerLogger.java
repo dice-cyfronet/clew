@@ -18,7 +18,6 @@ package pl.cyfronet.coin.impl.manager;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,21 +39,6 @@ public class DummyCloudManagerLogger implements CloudManager {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DummyCloudManagerLogger.class);
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.CloudManager#getAtomicServiceInstances(java.lang.String)
-	 */
-	@Override
-	public List<AtomicServiceInstance> getAtomicServiceInstances(
-			String contextId) throws CloudFacadeException {
-		logger.info(
-				"Get atomic services instances for \"{}\" context - returning two dummy atomic service instances",
-				contextId);
-		return Arrays.asList(new AtomicServiceInstance("asi1"),
-				new AtomicServiceInstance("asi2"));
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -99,17 +83,6 @@ public class DummyCloudManagerLogger implements CloudManager {
 				"Get atomic service status for {} - default atomic service instance returned",
 				atomicServiceInstanceId);
 		return new AtomicServiceInstance("asi");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.CloudManager#stopAtomicServiceInstance(java.lang.String)
-	 */
-	@Override
-	public void stopAtomicServiceInstance(String atomicServiceInstance)
-			throws CloudFacadeException {
-		logger.info("Stop {} atomic service instance.", atomicServiceInstance);
 	}
 
 	/*
@@ -163,7 +136,7 @@ public class DummyCloudManagerLogger implements CloudManager {
 	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getInitialConfiguration(java.lang.String)
 	 */
 	@Override
-	public List<InitialConfiguration> getInitialConfiguration(
+	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) {
 		return null;
 	}

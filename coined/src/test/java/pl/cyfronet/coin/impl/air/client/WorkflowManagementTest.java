@@ -49,7 +49,7 @@ public class WorkflowManagementTest {
 		start.setDescription("my description");
 		start.setName("workflowName");
 		start.setPriority(55);
-		start.setRequiredIds(Arrays.asList("4f438218866488709400005f"));
+		start.setAsConfigIds(Arrays.asList("4f438218866488709400005f"));
 		start.setType(WorkflowType.portal);
 //		
 //		System.out.println(start);		
@@ -61,6 +61,11 @@ public class WorkflowManagementTest {
 //		wm.stopWorkflow("4f4dc75f866488548d00020f");
 //		System.out.println(wm.getWorkflows());
 		
-		System.out.println(wm.getInitialConfigurations("ArchLinux"));
+//		System.out.println("info: " + wm.getStatus("4f4dc984866488548d000268"));
+		
+//		System.out.println(wm.getInitialConfigurations("@neurist Services"));
+		
+		//wm.addAtomicServiceToWorkflow("4f4dc984866488548d000268", "4f4dde29866488548d0002fa");
+		System.out.println(wm.getStatus("4f4dc984866488548d000268"));
 	}
 }

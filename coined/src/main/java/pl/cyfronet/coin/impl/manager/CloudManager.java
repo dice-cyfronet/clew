@@ -17,7 +17,6 @@
 package pl.cyfronet.coin.impl.manager;
 
 import java.util.List;
-import java.util.Map;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
@@ -35,9 +34,6 @@ import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
  */
 public interface CloudManager {
 
-	List<AtomicServiceInstance> getAtomicServiceInstances(String contextId)
-			throws CloudFacadeException;
-
 	List<AtomicService> getAtomicServices() throws CloudFacadeException;
 
 	String startAtomicService(String atomicServiceId, String name,
@@ -45,9 +41,6 @@ public interface CloudManager {
 			CloudFacadeException;
 
 	AtomicServiceInstance getAtomicServiceStatus(String atomicServiceInstanceId)
-			throws CloudFacadeException;
-
-	void stopAtomicServiceInstance(String atomicServiceInstance)
 			throws CloudFacadeException;
 
 	void createAtomicService(String atomicServiceInstanceId,
@@ -71,6 +64,6 @@ public interface CloudManager {
 	 * @param atomicServiceId
 	 * @return
 	 */
-	List<InitialConfiguration> getInitialConfiguration(String atomicServiceId)
+	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId)
 			throws ApplianceTypeNotFound;
 }

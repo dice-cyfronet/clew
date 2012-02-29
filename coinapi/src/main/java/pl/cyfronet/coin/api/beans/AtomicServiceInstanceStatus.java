@@ -20,80 +20,15 @@ package pl.cyfronet.coin.api.beans;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class AtomicServiceInstanceStatus {
-
-	private String id;
-
-	private String message;
-
-	private Status status;
-
-	private String name;
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
-
-	/**
-	 * @param message the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public Status getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+public class AtomicServiceInstanceStatus extends StatusBean {
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "AtomicServiceInstanceStatus [id=" + id + ", message=" + message
-				+ ", status=" + status + "]";
+		return "AtomicServiceInstanceStatus [getId()=" + getId()
+				+ ", getMessage()=" + getMessage() + ", getStatus()="
+				+ getStatus() + ", getName()=" + getName() + "]";
 	}
-	
-	
 }

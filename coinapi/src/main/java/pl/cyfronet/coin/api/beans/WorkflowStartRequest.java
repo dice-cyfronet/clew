@@ -34,7 +34,7 @@ public class WorkflowStartRequest {
 
 	private WorkflowType type;
 
-	private List<String> requiredIds;
+	private List<String> asConfigIds;
 
 	/**
 	 * @return the name
@@ -53,15 +53,15 @@ public class WorkflowStartRequest {
 	/**
 	 * @return the requiredIds
 	 */
-	public List<String> getRequiredIds() {
-		return requiredIds;
+	public List<String> getAsConfigIds() {
+		return asConfigIds;
 	}
 
 	/**
-	 * @param requiredIds the requiredIds to set
+	 * @param asConfigIds the requiredIds to set
 	 */
-	public void setRequiredIds(List<String> requiredIds) {
-		this.requiredIds = requiredIds;
+	public void setAsConfigIds(List<String> asConfigIds) {
+		this.asConfigIds = asConfigIds;
 	}
 
 	/**
@@ -114,6 +114,6 @@ public class WorkflowStartRequest {
 	public String toString() {
 		return "Workflow [name=" + name + ", description=" + description
 				+ ", priority=" + priority + ", type=" + type
-				+ ", requiredIds=" + requiredIds + "]";
+				+ ", asConfigIds=" + asConfigIds + "]";
 	}
 }

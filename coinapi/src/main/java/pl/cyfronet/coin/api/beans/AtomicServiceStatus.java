@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @XmlRootElement
-public class AtomicServiceStatus extends AtomicServiceInstanceStatus {
+public class AtomicServiceStatus extends StatusBean {
 
 	private List<AtomicServiceInstanceStatus> instances;
 
@@ -42,7 +42,8 @@ public class AtomicServiceStatus extends AtomicServiceInstanceStatus {
 		this.instances = instances;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -52,5 +53,4 @@ public class AtomicServiceStatus extends AtomicServiceInstanceStatus {
 				+ getStatus() + ", getName()=" + getName() + "]";
 	}
 
-	
 }

@@ -18,7 +18,6 @@ package pl.cyfronet.coin.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -27,13 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
-import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.impl.manager.CloudManager;
-import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -110,17 +107,6 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 			wrapper.setWorkflows(new ArrayList<WorkflowBaseInfo>());
 		}
 		return wrapper;
-	}
-
-	@Override
-	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) {
-		logger.debug("Get initial configurations for: {}", atomicServiceId);
-		try {
-			return manager.getInitialConfiguration(atomicServiceId);
-		} catch (ApplianceTypeNotFound e) {
-			throw new WebApplicationException(e, 404);
-		}
 	}
 
 	/**

@@ -18,16 +18,19 @@ package pl.cyfronet.coin.impl;
 
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
-import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
+import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
@@ -48,41 +51,12 @@ public class CloudFacadeImpl implements CloudFacade {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServiceInstances(java.lang
-	 * .String)
-	 */
-	@Override
-	public List<AtomicServiceInstance> getAtomicServiceInstances(
-			String contextId) throws CloudFacadeException {
-		logger.debug("Get atomic services instances for \"{}\" context",
-				contextId);
-		return manager.getAtomicServiceInstances(contextId);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServices()
 	 */
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.debug("Get atomic services");
 		return manager.getAtomicServices();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#startAtomicService(java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public String startAtomicServiceInstance(String atomicServiceId,
-			String name, String contextId)
-			throws AtomicServiceNotFoundException, CloudFacadeException {
-		logger.debug("Start atomic service [{}] in {} context",
-				atomicServiceId, contextId);
-		return manager.startAtomicService(atomicServiceId, name, contextId);
 	}
 
 	/*
@@ -99,19 +73,6 @@ public class CloudFacadeImpl implements CloudFacade {
 				atomicServiceInstanceId);
 		return manager.getAtomicServiceStatus(atomicServiceInstanceId);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#stopAtomicServiceInstance(java.lang
-	 * .String)
-	 */
-	@Override
-	public void stopAtomicServiceInstance(String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		logger.debug("Stop {} atomic service instance", atomicServiceInstanceId);
-		manager.stopAtomicServiceInstance(atomicServiceInstanceId);
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -127,6 +88,20 @@ public class CloudFacadeImpl implements CloudFacade {
 		manager.createAtomicService(atomicServiceInstanceId, atomicService);
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getInitialConfigurations(java.lang.String)
+	 */
+	@Override
+	public List<InitialConfiguration> getInitialConfigurations(
+			String atomicServiceId) {
+		logger.debug("Get initial configurations for: {}", atomicServiceId);
+		try {
+			return manager.getInitialConfigurations(atomicServiceId);
+		} catch (ApplianceTypeNotFound e) {
+			throw new WebApplicationException(e, 404);
+		}
+	}
+	
 	/**
 	 * Set cloud manager.
 	 * @param manager Cloud manager implementation.

@@ -21,9 +21,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,8 +30,8 @@ import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
-import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 
 /**
@@ -77,45 +75,6 @@ public interface CloudFacade {
 			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
 			@WebParam(name = "atomicService") AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
-	
-	/**
-	 * Get list of atomic service instances created in the context scope.
-	 * @param contextId Context id (e.g. workflow id or master interface atomic
-	 *            service wizard).
-	 * @return List of atomic service instances created in the context scope
-	 * @throws CloudFacadeException Thrown, when error while received
-	 *             information about atomic service instances occurs.
-	 */
-	@GET
-	@Path("/asi/{contextId}/list")
-	@Produces({ MediaType.APPLICATION_JSON })
-	@WebMethod(operationName = "getAtomicServiceInstances")
-	@WebResult(name = "atomicServiceInstances")
-	List<AtomicServiceInstance> getAtomicServiceInstances(
-			@WebParam(name = "contextId") @PathParam("contextId") String contextId)
-			throws CloudFacadeException;
-	
-	/**
-	 * Start atomic service instance.
-	 * @param atomicServiceId Atomic service (vm template) id.
-	 * @param contextId Context in which atomic service instance should be
-	 *            created.
-	 * @return New created atomic service instance id.
-	 * @throws AtomicServiceNotFoundException Thrown when atomic service (vm
-	 *             template) which should be started is not found.
-	 * @throws CloudFacadeException Thrown when error occurs while starting
-	 *             atomic service instance.
-	 */
-	@POST
-	@Path("/asi/new/{atomicServiceId}/in/{contextId}/name/{name}")
-	@Produces(MediaType.TEXT_PLAIN)
-	@WebMethod(operationName = "startAtomicServiceInstance")
-	@WebResult(name = "atomicServiceInstanceId")
-	String startAtomicServiceInstance(
-			@WebParam(name = "atomicServiceId") @PathParam("atomicServiceId") String atomicServiceId,
-			@WebParam(name = "name") @PathParam("name") String name,
-			@WebParam(name = "contextId") @PathParam("contextId") String contextId)
-			throws AtomicServiceNotFoundException, CloudFacadeException;
 
 	/**
 	 * Get atomic service instance status.
@@ -133,19 +92,17 @@ public interface CloudFacade {
 	AtomicServiceInstance getAtomicServiceInstance(
 			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
-
+	
 	/**
-	 * Stop atomic service instance.
-	 * @param atomicServiceInstanceId Atomic service instance id.
-	 * @throws AtomicServiceInstanceNotFoundException Thrown when atomic service
-	 *             is not found.
-	 * @throws CloudFacadeException Thrown while error while stopping atomic
-	 *             service instance occurs.
+	 * Get initial configurations for given atomic service (a.k.a. appliance
+	 * type).
+	 * @param atomicServiceId Atomic service id.
+	 * @return List of atomic service configurations in JSON format:
+	 *         <code>{[ {"name":"configName", id: "configId"}, ... ]}</code>
 	 */
-	@DELETE
-	@Path("/asi/{atomicServiceInstance}")
-	@WebMethod(operationName = "stopAtomicServiceInstanceId")
-	void stopAtomicServiceInstance(
-			@WebParam(name = "atomicServiceInstance") @PathParam("atomicServiceInstance") String atomicServiceInstanceId)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Path("/as/{atomicServiceId}/configurations")
+	List<InitialConfiguration> getInitialConfigurations(
+			@PathParam("atomicServiceId") String atomicServiceId);
 }

@@ -2,8 +2,6 @@ package pl.cyfronet.coin.portlet.cloudmanager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -13,7 +11,6 @@ import java.util.Map;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,7 +205,7 @@ public class CloudManagerPortlet {
 		
 		log.debug("Retrieving initial configurations for atomic service with id [{}]", atomicServiceId);
 		
-		List<InitialConfiguration> initialconfigurations = workflowManagement.getInitialConfigurations(atomicServiceId);
+		List<InitialConfiguration> initialconfigurations = cloudFacade.getInitialConfigurations(atomicServiceId);
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0) {
 			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]", workflowId, initialconfigurations.get(0).getId());
