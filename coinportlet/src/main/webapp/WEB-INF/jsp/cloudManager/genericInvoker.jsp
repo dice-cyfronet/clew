@@ -40,7 +40,7 @@
 								(<spring:message code="cloud.manager.portlet.template.type.label"/>,
 							</c:otherwise>
 						</c:choose>
-						<spring:message code="cloud.manager.portlet.number.of.instances.label" arguments="1"/>)
+						<spring:message code="cloud.manager.portlet.number.of.instances.label" arguments="${fn:length(atomicServiceInstances)}"/>)
 						</span>
 					</c:forEach>
 				</div>
@@ -63,6 +63,15 @@
 			<li>
 				<a class="coin-link" href="${startAtomicService}"><spring:message code="cloud.manager.portlet.start.atomic.service.instance.label"/></a>
 			</li>
+			<c:if test="${fn:length(activeAtomicServices) > 0}">
+				<li>
+					<portlet:actionURL var="stopPortalAtomicServices">
+						<portlet:param name="action" value="stopWorkflow"/>
+						<portlet:param name="workflowType" value="portal"/>
+					</portlet:actionURL>
+					<a class="coin-link" href="${stopPortalAtomicServices}"><spring:message code="cloud.manager.portlet.stop.portal.workflow.label"/></a>
+				</li>
+			</c:if>
 		</ul>
 	</div>
 </div>
