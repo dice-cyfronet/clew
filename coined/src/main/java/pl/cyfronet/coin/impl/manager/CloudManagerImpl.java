@@ -210,11 +210,13 @@ public class CloudManagerImpl implements CloudManager {
 					// set to null.
 					continue;
 				}
-				String type = vm.getAppliance_type();
-				if (type == null) {
-					// get type from AIR once again if it is empty
-					type = getAtomicServiceTypeName(vm.getConf_id());
-				}
+				//but in AIR type internal id is returned instead of type name.
+//				String type = vm.getAppliance_type();
+//				if (type == null) {
+//					// get type from AIR once again if it is empty
+//					type = getAtomicServiceTypeName(vm.getConf_id());
+//				}
+				String type = getAtomicServiceTypeName(vm.getConf_id());
 				AtomicServiceStatus asStatus = asStatuses.get(type);
 				if (asStatus == null) {
 					asStatus = new AtomicServiceStatus();
