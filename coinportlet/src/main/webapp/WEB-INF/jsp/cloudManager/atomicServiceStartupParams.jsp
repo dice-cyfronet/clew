@@ -5,7 +5,7 @@
 	<p>
 		<spring:message code='cloud.manager.portlet.available.atomic.services.list.header'/>
 	</p>
-	<c:forEach var='atomicService' items='${atomicServices}' varStatus='loopStatus'>
+	<c:forEach var='atomicService' items='${atomicServices}'>
 		<div class="coin-panel">
 			<div class="coin-left-column">
 				<span class="coin-header">${atomicService.name}</span><br/>

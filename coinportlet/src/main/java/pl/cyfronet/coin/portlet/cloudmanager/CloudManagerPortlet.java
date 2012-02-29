@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
+import javax.portlet.ResourceResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.WorkflowManagement;
@@ -62,6 +65,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_INVOCATION_RESULT = "atomicServiceInvocationResult";
 	static final String PARAM_CURRENT_ATOMIC_SERVICE = "currentAtomicService";
 	static final String PARAM_ATOMIC_SERVICE_ID = "atomicServiceId";
+	static final String PARAM_WORKFLOW_ID = "workflowId";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -143,6 +147,7 @@ public class CloudManagerPortlet {
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
 						atomicServiceInstances.get(currentAtomicService));
 				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE_ID, currentAtomicServiceId);
+				model.addAttribute(PARAM_WORKFLOW_ID, portalWorkflowIds.get(0));
 			}
 		} else {
 			atomicServiceInstances = new HashMap<AtomicService, List<AtomicServiceInstance>>();
@@ -207,7 +212,7 @@ public class CloudManagerPortlet {
 		
 		List<InitialConfiguration> initialconfigurations = cloudFacade.getInitialConfigurations(atomicServiceId);
 		
-		if(initialconfigurations != null && initialconfigurations.size() > 0) {
+		if(initialconfigurations != null && initialconfigurations.size() > 0 && initialconfigurations.get(0).getId() != null) {
 			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]", workflowId, initialconfigurations.get(0).getId());
 			workflowManagement.addAtomicServiceToWorkflow(workflowId, initialconfigurations.get(0).getId());
 		} else {
@@ -280,6 +285,33 @@ public class CloudManagerPortlet {
 		response.setRenderParameter(PARAM_INVOCATION_RESULT, result);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID,
 				invokeAtomicServiceRequest.getAtomicServiceInstanceId());
+	}
+	
+	@ResourceMapping("instanceStatus")
+	public void checkInstanceStatus(@RequestParam(PARAM_WORKFLOW_ID) String workflowId,
+			@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String instanceId,
+			ResourceResponse response) {
+		log.trace("Processing atomic service instance status request for workflow [{}], atomic service [{}] and instance [{}]",
+				new String[] {workflowId, atomicServiceId, instanceId});
+		AtomicServiceStatus atomicServiceStatus = workflowManagement.getStatus(workflowId, atomicServiceId);
+		
+		if(atomicServiceStatus != null && atomicServiceStatus.getInstances() != null) {
+			for(AtomicServiceInstanceStatus instanceStatus :atomicServiceStatus.getInstances()) {
+				if(instanceStatus.getId() != null && instanceStatus.getId().equals(instanceId)) {
+					try {
+						log.trace("Returning status [{}] for instance [{}]", instanceStatus.getStatus(), instanceId);
+						response.getWriter().write(instanceStatus.getStatus().toString());
+					} catch (IOException e) {
+						log.warn("Could not return instance status for id [{}]", instanceId);
+					}
+					
+					break;
+				}
+			}
+		} else {
+			log.warn("Could not retrieve status for workflow [{}] and atomic service [{}]", workflowId, atomicServiceId);
+		}
 	}
 	
 	private void filterAtomicService(List<AtomicService> atomicServices) {

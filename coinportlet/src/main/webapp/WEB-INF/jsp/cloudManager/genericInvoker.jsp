@@ -10,10 +10,22 @@
 		<c:when test="${fn:length(activeAtomicServices) > 0}">
 			<div class="coin-tabs-container">
 				<div class="coin-tabs">
-					<c:forEach var="atomicService" items="${activeAtomicServices}">
+					<c:forEach var="atomicService" items="${activeAtomicServices}" varStatus="status">
 						<c:choose>
+							<c:when test="${atomicService.atomicServiceId == currentAtomicServiceId and status.first}">
+								<span class="coin-tab coin-selected coin-first">
+							</c:when>
+							<c:when test="${atomicService.atomicServiceId == currentAtomicServiceId and status.last}">
+								<span class="coin-tab coin-selected coin-last">
+							</c:when>
 							<c:when test="${atomicService.atomicServiceId == currentAtomicServiceId}">
-								<span class="coin-tab selected">
+								<span class="coin-tab coin-selected">
+							</c:when>
+							<c:when test="${status.first}">
+								<span class="coin-tab coin-first">
+							</c:when>
+							<c:when test="${status.last}">
+								<span class="coin-tab coin-last">
 							</c:when>
 							<c:otherwise>
 								<span class="coin-tab">
@@ -46,10 +58,35 @@
 				</div>
 				<div class="coin-tab-content">
 					<c:forEach var="atomicServiceInstance" items="${atomicServiceInstances}" varStatus="status">
-						<span class="instance-label">
+						<span class="coin-instance-label">
 							<spring:message code="cloud.manager.portlet.instance.sequence.label" arguments="${status.index + 1}"/>
-							${atomicServiceInstance.name}<br/>
 						</span>
+						<c:set var="statusId">status-${atomicServiceInstance.instanceId}</c:set>
+						Name: ${atomicServiceInstance.name}<br/>
+						Id: ${atomicServiceInstance.instanceId}<br/>
+						Status: <span id="${statusId}">${atomicServiceInstance.status}</span>
+						
+						<portlet:resourceURL var="statusLink" id="instanceStatus">
+							<portlet:param name="workflowId" value="${workflowId}"/>
+							<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
+							<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.instanceId}"/>
+						</portlet:resourceURL>
+						<script type="text/javascript">
+						    jQuery(document).ready(function() {
+						    	window.updateStatus = function(statusLink, elementId) {
+						    		jQuery.get(statusLink, function(status) {
+						    			jQuery('#' + elementId).text(status);
+						    		});
+						    	};
+						    	
+						    	setInterval("updateStatus('${statusLink}', '${statusId}')", 5000);
+						    });
+						</script>
+						
+						
+						<c:if test="${not status.last}">
+							<hr/>
+						</c:if>
 					</c:forEach>
 				</div>
 			</div>
