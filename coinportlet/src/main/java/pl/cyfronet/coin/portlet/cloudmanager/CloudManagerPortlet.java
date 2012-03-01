@@ -440,7 +440,6 @@ public class CloudManagerPortlet {
 							for(AtomicService as : atomicServices) {
 								if(as.getAtomicServiceId().equals(atomicServiceStatus.getId())) {
 									log.trace("Found active atomic service {}", as.toString());
-									log.trace("hello");
 									atomicService = as;
 									break;
 								}
