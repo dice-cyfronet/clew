@@ -37,6 +37,6 @@ public class AirTest {
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
 		
-		System.out.println(air.getWorkflow("4f4dc984866488548d000268"));	
+		System.out.println(air.getWorkflow("4f4e3fbc866488548d001d6a"));	
 	}
 }

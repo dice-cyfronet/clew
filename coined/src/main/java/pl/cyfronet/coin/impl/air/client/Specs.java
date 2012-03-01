@@ -119,4 +119,15 @@ public class Specs {
 	public void setDisk(Integer disk) {
 		this.disk = disk;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Specs [memory=" + memory + ", mac=" + mac + ", ip=" + ip
+				+ ", cpu=" + cpu + ", id=" + id + ", disk=" + disk + "]";
+	}
+	
+	
 }

@@ -34,17 +34,24 @@ public class BasicRsAuthenticationHandler implements RequestHandler {
 	public Response handleRequest(Message m, ClassResourceInfo resourceClass) {
 		AuthorizationPolicy policy = (AuthorizationPolicy) m
 				.get(AuthorizationPolicy.class);
-		String username = policy.getUserName();
-		String password = policy.getPassword();
-		if (authenticator.isAuthenticated(username, password)) {
-			// let request to continue
-			return null;
-		} else {
-			// authentication failed, request the authetication, add the
-			// realm name if needed to the value of WWW-Authenticate
-			return Response.status(401).header("WWW-Authenticate", "Basic")
-					.build();
+		if (policy != null) {
+			String username = policy.getUserName();
+			String password = policy.getPassword();
+			if (authenticator.isAuthenticated(username, password)) {
+				// let request to continue
+				return null;
+			}
 		}
+		// authentication failed, request the authetication, add the
+		// realm name if needed to the value of WWW-Authenticate
+		return Response.status(401).header("WWW-Authenticate", "Basic").build();
+	}
+
+	/**
+	 * @param authenticator the authenticator to set
+	 */
+	public void setAuthenticator(AuthenticationHandler authenticator) {
+		this.authenticator = authenticator;
 	}
 
 }

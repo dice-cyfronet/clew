@@ -83,16 +83,18 @@
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />
 			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>
 
-	<jaxrs:server id="coinRSEndpoint-test" address="http://0.0.0.0:${port}">
+	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}">
 		<jaxrs:serviceBeans>
 			<ref bean="wsCloudManager" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />
 			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>
 
@@ -101,7 +103,7 @@
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
 		inheritHeaders="true">
 		<jaxrs:providers>
-			<ref bean="air-jsonProvider" />
+			<ref bean="air-jsonProvider" />			
 		</jaxrs:providers>
 	</jaxrs:client>
 
@@ -150,4 +152,24 @@
 
 	<util:map id="jsonNamespaceMap" map-class="java.util.Hashtable">
 	</util:map>
+	
+	<!-- security -->
+	<bean id="authenticationInterceptor"
+		class="pl.cyfronet.coin.impl.security.BasicRsAuthenticationHandler">
+		<property name="authenticator" ref="authenticationHandler" />
+	</bean>
+
+	<bean id="authenticationHandler" class="pl.cyfronet.coin.impl.security.AuthenticationHandler">
+		<property name="users">
+			<map>
+				<entry>
+					<key>
+						<value>${username}</value>
+					</key>
+					<value>${password}</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
 </beans>
