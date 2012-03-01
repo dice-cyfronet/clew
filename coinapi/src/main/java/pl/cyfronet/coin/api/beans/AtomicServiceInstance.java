@@ -43,12 +43,6 @@ public class AtomicServiceInstance {
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
 	}
-	
-	@Override
-	public String toString() {
-		return "AtomicServiceInstance [instanceId=" + instanceId
-				+ ", toString()=" + super.toString() + "]";
-	}
 
 	public Status getStatus() {
 		return status;
@@ -72,5 +66,12 @@ public class AtomicServiceInstance {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
+				+ ", instanceId=" + instanceId + ", status=" + status
+				+ ", name=" + name + "]";
 	}
 }

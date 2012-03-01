@@ -64,7 +64,15 @@
 						<c:set var="statusId">status-${atomicServiceInstance.instanceId}</c:set>
 						Name: ${atomicServiceInstance.name}<br/>
 						Id: ${atomicServiceInstance.instanceId}<br/>
-						Status: <span id="${statusId}">${atomicServiceInstance.status}</span>
+						Status: <span id="${statusId}">${atomicServiceInstance.status}</span><br/>
+						<c:if test="${currentAtomicService.http}">
+							<portlet:renderURL var="invokeAtomicService">
+								<portlet:param name="action" value="invokeAtomicService"/>
+								<portlet:param name="atomicServiceId" value="${currentAtomicService.atomicServiceId}"/>
+								<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.instanceId}"/>
+							</portlet:renderURL>
+							<a class="coin-link" href="${invokeAtomicService}"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a>
+						</c:if>
 						
 						<portlet:resourceURL var="statusLink" id="instanceStatus">
 							<portlet:param name="workflowId" value="${workflowId}"/>
@@ -75,7 +83,9 @@
 						    jQuery(document).ready(function() {
 						    	window.updateStatus = function(statusLink, elementId) {
 						    		jQuery.get(statusLink, function(status) {
-						    			jQuery('#' + elementId).text(status);
+						    			if(jQuery('#' + elementId).text() != status) {
+						    				jQuery('#' + elementId).text(status);
+						    			}
 						    		});
 						    	};
 						    	

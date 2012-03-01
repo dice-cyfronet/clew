@@ -1,6 +1,12 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,10 +20,12 @@ import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+import org.springframework.web.util.HtmlUtils;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.WorkflowManagement;
@@ -59,6 +68,10 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_DEVELOPER_MODE = "developerMode";
 	static final String MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES = "activeAtomicServices";
 	static final String MODEL_BEAN_CURRENT_ATOMIC_SERVICE_ID = "currentAtomicServiceId";
+	static final String MODEL_BEAN_CURRENT_ATOMIC_SERVICE = "currentAtomicService";
+	static final String MODEL_BEAN_AS_INVOCATION_POSSIBLE = "atomicServiceInvokable";
+	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
+	static final String MODEL_BEAN_AS_WSDL_ENDPOINT = "atomicServiceWsdlEndpoint";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -146,6 +159,7 @@ public class CloudManagerPortlet {
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances.keySet());
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
 						atomicServiceInstances.get(currentAtomicService));
+				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, currentAtomicService);
 				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE_ID, currentAtomicServiceId);
 				model.addAttribute(PARAM_WORKFLOW_ID, portalWorkflowIds.get(0));
 			}
@@ -253,25 +267,54 @@ public class CloudManagerPortlet {
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
-	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID)
-			String atomicServiceInstanceId, @RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
+	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
+			@RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
 			String invocationResult, Model model) {
-//		AtomicServiceInstance atomicServiceInstance =
-//				cloudFacade.getAtomicServiceInstance(atomicServiceInstanceId);
-//		
-//		if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
-//			InvokeAtomicServiceRequest iasr = new InvokeAtomicServiceRequest();
-//			iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
-//			model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
-//		}
-//		
-//		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST,
-//				getAtomicServiceMethods(atomicServiceInstance));
-//		
-//		if(invocationResult != null) {
-//			//TODO: in future do not use request parameter to pass AS invocation result
-//			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
-//		}
+		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
+		AtomicService atomicService = null;
+		
+		for(AtomicService as : atomicServices) {
+			if(as.getAtomicServiceId().equals(atomicServiceId)) {
+				atomicService = as;
+				break;
+			}
+		}
+		
+		if(atomicService != null) {
+			String workflowId = getWorkflowIds(WorkflowType.portal).get(0);
+			String configurationId = cloudFacade.getInitialConfigurations(atomicServiceId).get(0).getId();
+			model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, atomicService);
+			
+			if(atomicService.getName().equals("HelloWorld")) {
+				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
+				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
+						messages.getMessage("cloud.manager.portlet.hello.as.methods", null, null)));
+				model.addAttribute(MODEL_BEAN_AS_WSDL_ENDPOINT, 
+						messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
+						replace("{workflowId}", workflowId).replace("{configurationId}", configurationId) + "?wsdl");
+				
+				if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
+					InvokeAtomicServiceRequest iasr = new InvokeAtomicServiceRequest();
+					iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
+					iasr.setMessageBody(messages.getMessage("cloud.manager.portlet.hello.as.envelope", null, null));
+					iasr.setWorkflowId(workflowId);
+					iasr.setConfigurationId(configurationId);
+					iasr.setAtomicServiceId(atomicServiceId);
+					model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
+				}
+				
+			} else {
+				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
+			}
+		} else {
+			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, messages.getMessage("cloud.manager.portlet.no.atomic.service.found", null, null));
+		}
+		
+		if(invocationResult != null) {
+			//TODO: in future do not use request parameter to pass AS invocation result
+			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
+		}
 		
 		return "cloudManager/invokeAtomicService";
 	}
@@ -279,10 +322,17 @@ public class CloudManagerPortlet {
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
 	public void doActionInvokeAtomicService(@ModelAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)
 			InvokeAtomicServiceRequest invokeAtomicServiceRequest, ActionResponse response) {
-		String result = invokeAtomicService(invokeAtomicServiceRequest.getAtomicServiceInstanceId(),
-				invokeAtomicServiceRequest.getMethod(), invokeAtomicServiceRequest.getMessageBody());
+		String result = null;
+		
+		try {
+			result = invokeAtomicService(invokeAtomicServiceRequest);
+		} catch (Exception e) {
+			result = "Error occurred: " + e.getMessage();
+		}
+		
 		response.setRenderParameter(PARAM_ACTION, ACTION_INVOKE_ATOMIC_SERVICE);
-		response.setRenderParameter(PARAM_INVOCATION_RESULT, result);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, invokeAtomicServiceRequest.getAtomicServiceId());
+		response.setRenderParameter(PARAM_INVOCATION_RESULT, HtmlUtils.htmlEscape(result));
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID,
 				invokeAtomicServiceRequest.getAtomicServiceInstanceId());
 	}
@@ -324,14 +374,32 @@ public class CloudManagerPortlet {
 		}
 	}
 
-	private String invokeAtomicService(String atomicServiceInstanceId,
-			String method, String messageBody) {
-		return "hello " + messageBody;
-	}
-
-	private List<String> getAtomicServiceMethods(
-			AtomicServiceInstance atomicServiceInstance) {
-		return Arrays.asList(new String[] {"method1", "method2", "method3"});
+	private String invokeAtomicService(InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
+		URL asUrl = new URL(messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
+				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId()));
+		URLConnection connection = asUrl.openConnection();
+		connection.setRequestProperty("SOAPAction", request.getMethod());
+		connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+		connection.setDoOutput(true);
+		
+		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+		out.write(request.getMessageBody());
+		out.flush();
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		StringBuilder response = new StringBuilder();
+		String line = null;
+		
+		while((line = in.readLine()) != null) {
+			response.append(line).append("\n");
+		}
+		
+		out.close();
+		in.close();
+		
+		//TODO
+		
+		return response.toString();
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType) {
@@ -371,6 +439,8 @@ public class CloudManagerPortlet {
 							
 							for(AtomicService as : atomicServices) {
 								if(as.getAtomicServiceId().equals(atomicServiceStatus.getId())) {
+									log.trace("Found active atomic service {}", as.toString());
+									log.trace("hello");
 									atomicService = as;
 									break;
 								}
