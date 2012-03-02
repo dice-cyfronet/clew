@@ -3,16 +3,14 @@ package pl.cyfronet.coin.portlet.datamanager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.portlet.ResourceResponse;
-import javax.ws.rs.core.HttpHeaders;
+import javax.portlet.ResourceURL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +46,10 @@ public class DataManagerPortlet {
 			
 			for(File file : location.listFiles()) {
 				if(file.isFile()) {
-					files.add(file.getName());
+					ResourceURL url = response.createResourceURL();
+					url.setResourceID("getFile");
+					url.setParameter("fileName", file.getName());
+					files.add(file.getName() + "|" + url.toString());
 				}
 			}
 			
@@ -59,7 +60,6 @@ public class DataManagerPortlet {
 			}
 			
 			builder.deleteCharAt(builder.length() - 1);
-			log.debug("Returning file list: [{}]", builder.toString());
 		} else {
 			builder.append("Location [").append(fileLocation)
 					.append("] is not a browsable directory");
@@ -75,6 +75,7 @@ public class DataManagerPortlet {
 	@ResourceMapping("getFile")
 	public void getFile(@RequestParam("fileName") String fileName, ResourceResponse response) {
 		String path = fileLocation + "/" + fileName;
+		log.debug("Serving file [{}]", path);
 		File file = new File(path);
 		
 		if(file.exists() && file.isFile()) {
@@ -84,7 +85,7 @@ public class DataManagerPortlet {
 			response.setContentLength((int) file.length());
 			
 			try {
-				FileCopyUtils.copy(new BufferedReader(new FileReader(file)), response.getWriter());
+				FileCopyUtils.copy(new FileInputStream(file), response.getPortletOutputStream());
 			} catch (Exception e) {
 				log.warn("Could not serve file [{}]", path);
 			}
