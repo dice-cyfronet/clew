@@ -74,4 +74,13 @@ public class MockCloudFacade implements CloudFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
+	 */
+	@Override
+	public String getDocumentation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

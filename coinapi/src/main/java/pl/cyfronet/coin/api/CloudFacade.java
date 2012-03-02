@@ -15,6 +15,7 @@
  */
 package pl.cyfronet.coin.api;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.jws.WebMethod;
@@ -87,4 +88,8 @@ public interface CloudFacade {
 	@Path("/as/{atomicServiceId}/configurations")
 	List<InitialConfiguration> getInitialConfigurations(
 			@PathParam("atomicServiceId") String atomicServiceId);
+	
+	@GET
+	@Path("/")
+	String getDocumentation();
 }

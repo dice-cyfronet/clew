@@ -16,7 +16,9 @@
 
 package pl.cyfronet.coin.impl;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -38,6 +40,11 @@ import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 public class CloudFacadeImpl implements CloudFacade {
 
 	/**
+	 * Line separator.
+	 */
+	private static final String NL = System.getProperty("line.separator"); //$NON-NLS-1$
+
+	/**
 	 * Logger.
 	 */
 	private static final Logger logger = LoggerFactory
@@ -57,7 +64,7 @@ public class CloudFacadeImpl implements CloudFacade {
 		logger.debug("Get atomic services");
 		return manager.getAtomicServices();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -72,8 +79,11 @@ public class CloudFacadeImpl implements CloudFacade {
 		manager.createAtomicService(atomicServiceInstanceId, atomicService);
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#getInitialConfigurations(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.api.CloudFacade#getInitialConfigurations(java.lang.String
+	 * )
 	 */
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
@@ -85,12 +95,41 @@ public class CloudFacadeImpl implements CloudFacade {
 			throw new WebApplicationException(e, 404);
 		}
 	}
-	
+
 	/**
 	 * Set cloud manager.
 	 * @param manager Cloud manager implementation.
 	 */
 	public void setManager(CloudManager manager) {
 		this.manager = manager;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
+	 */
+	@Override
+	public String getDocumentation() {
+		ClassLoader cl = CloudFacadeImpl.class.getClassLoader();		
+		String content = getFileContent(cl.getResourceAsStream("www/index.html"));
+		return content.replace("${'", "$('").replaceAll("'}", "')").replace("${init};", "$(init);");
+	}
+	
+	/**
+	 * Get input stream content.
+	 * @param is Input stream with file content.
+	 * @return Input stream content.
+	 */
+	public String getFileContent(InputStream is) {
+		StringBuilder text = new StringBuilder();
+		Scanner scanner = new Scanner(is);
+		try {
+			while (scanner.hasNextLine()) {
+				text.append(scanner.nextLine() + NL);
+			}
+		} finally {
+			scanner.close();
+		}
+		return text.toString();
 	}
 }
