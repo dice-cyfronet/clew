@@ -91,6 +91,7 @@ public class CloudManagerImpl implements CloudManager {
 			atomicService.setShared(applianceType.isShared());
 			atomicService.setScalable(applianceType.isScalable());
 			atomicService.setVnc(applianceType.isVnc());
+			atomicService.setPublished(applianceType.isPublished());
 			atomicServices.add(atomicService);
 		}
 		return atomicServices;

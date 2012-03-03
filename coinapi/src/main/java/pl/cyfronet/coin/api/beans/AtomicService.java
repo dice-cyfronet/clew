@@ -34,6 +34,7 @@ public class AtomicService {
 	private boolean http;
 	private boolean shared;
 	private boolean scalable;
+	private boolean published;
 	
 	public AtomicService() {
 	}
@@ -70,14 +71,6 @@ public class AtomicService {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Override
-	public String toString() {
-		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
-				+ name + ", description=" + description + ", endpoint="
-				+ endpoint + ", vnc=" + vnc + ", http=" + http + ", shared="
-				+ shared + "]";
 	}
 
 	public List<Endpoint> getEndpoint() {
@@ -124,5 +117,31 @@ public class AtomicService {
 	 */
 	public void setScalable(boolean scalable) {
 		this.scalable = scalable;
+	}
+
+	/**
+	 * @return the published
+	 */
+	public boolean isPublished() {
+		return published;
+	}
+
+	/**
+	 * @param published the published to set
+	 */
+	public void setPublished(boolean published) {
+		this.published = published;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
+				+ name + ", description=" + description + ", endpoint="
+				+ endpoint + ", vnc=" + vnc + ", http=" + http + ", shared="
+				+ shared + ", scalable=" + scalable + ", published="
+				+ published + "]";
 	}
 }
