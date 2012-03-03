@@ -23,8 +23,8 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @RequestMapping("VIEW")
 public class DataManagerPortlet {
 	private final Logger log = LoggerFactory.getLogger(DataManagerPortlet.class);
-	
-	@Value("#{properties['data.management.file.location']}")
+
+	@Value("${data.management.file.location}")
 	private String fileLocation;
 	
 	@RequestMapping
