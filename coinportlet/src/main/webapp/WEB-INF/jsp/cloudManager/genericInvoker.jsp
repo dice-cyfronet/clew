@@ -87,9 +87,10 @@
 						    				jQuery('#' + elementId).text(status);
 						    			}
 						    		});
+						    		
+						    		setTimeout("updateStatus('${statusLink}', '${statusId}')", 2000);
 						    	};
-						    	
-						    	setInterval("updateStatus('${statusLink}', '${statusId}')", 5000);
+						    	updateStatus('${statusLink}', '${statusId}');
 						    });
 						</script>
 						

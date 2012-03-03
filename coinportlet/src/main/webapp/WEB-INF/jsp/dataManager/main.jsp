@@ -23,10 +23,10 @@
 		    		}
 		    		
 		    		jQuery('#files').html(files);
+		    		setTimeout("updateFiles()", 2000);
 		    	});
 	    	};
-	    	
-	    	setInterval("updateFiles()", 5000);
+	    	updateFiles();
 	    });
 	</script>
 </div>
