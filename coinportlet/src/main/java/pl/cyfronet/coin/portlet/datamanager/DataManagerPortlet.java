@@ -1,9 +1,7 @@
 package pl.cyfronet.coin.portlet.datamanager;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +57,9 @@ public class DataManagerPortlet {
 				builder.append(file).append(";");
 			}
 			
-			builder.deleteCharAt(builder.length() - 1);
+			if(builder.length() > 0) {
+				builder.deleteCharAt(builder.length() - 1);
+			}
 		} else {
 			builder.append("Location [").append(fileLocation)
 					.append("] is not a browsable directory");
