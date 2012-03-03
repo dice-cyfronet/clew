@@ -61,8 +61,7 @@ public class DataManagerPortlet {
 				builder.deleteCharAt(builder.length() - 1);
 			}
 		} else {
-			builder.append("Location [").append(fileLocation)
-					.append("] is not a browsable directory");
+			log.warn("Location [{}] is not a browsable directory", fileLocation);
 		}
 		
 		try {
