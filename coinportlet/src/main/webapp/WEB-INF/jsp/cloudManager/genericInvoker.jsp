@@ -94,7 +94,6 @@
 						    });
 						</script>
 						
-						
 						<c:if test="${not status.last}">
 							<hr/>
 						</c:if>
