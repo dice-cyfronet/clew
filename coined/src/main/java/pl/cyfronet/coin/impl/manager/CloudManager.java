@@ -26,6 +26,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
@@ -33,32 +34,81 @@ import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
  */
 public interface CloudManager {
 
-	List<AtomicService> getAtomicServices() throws CloudFacadeException;
+	/**
+	 * Get list of all registered atomic services.
+	 * @return List of all registered atomic services.
+	 * @throws CloudFacadeException
+	 */
+	List<AtomicService> getAtomicServices();
 
+	/**
+	 * Start atomic service in defined context. If the request is send into
+	 * development context than new Atomic Service Instance will be spawn.
+	 * Otherwise new Atomic Service required for context is registered and
+	 * Atmosphere will take care of the whole optimization process. The
+	 * optimization process is specific for every Atomic Service (e.g. some of
+	 * the Atomic Services can be shared/scaled other not).
+	 * @param atomicServiceId Atomic Service id.
+	 * @param name New instance name.
+	 * @param contextId Context id.
+	 * @return Atomic Service Instance id.
+	 * @throws AtomicServiceNotFoundException Thrown when atomic service is not
+	 *             found.
+	 * @throws CloudFacadeException
+	 */
 	String startAtomicService(String atomicServiceId, String name,
 			String contextId) throws AtomicServiceNotFoundException,
 			CloudFacadeException;
 
+	/**
+	 * Create Atomic Service from running Atomic Service Instance.
+	 * @param atomicServiceInstanceId Atomic Service Instance id.
+	 * @param atomicService Information about new Atomic Service.
+	 * @throws AtomicServiceInstanceNotFoundException
+	 * @throws CloudFacadeException
+	 */
 	void createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
 
 	/**
-	 * @param workflow
-	 * @param username
-	 * @return
+	 * Start workflow. There can be many workflow type Workflows but only one
+	 * portal and development workflow.
+	 * @param workflow Workflow start request. It contains information about
+	 *            required Atomic Services.
+	 * @param username Workflow owner username.
+	 * @return Workflow context id.
+	 * @throws WorkflowStartException Thrown when workflow cannot be started.
+	 *             E.g. user tries to start second development or portal
+	 *             workflow.
 	 */
-	String startWorkflow(WorkflowStartRequest workflow, String username);
+	String startWorkflow(WorkflowStartRequest workflow, String username)
+			throws WorkflowStartException;
 
+	/**
+	 * Stop workflow.
+	 * @param contextId Workflow context id.
+	 */
 	void stopWorkflow(String contextId);
 
+	/**
+	 * Get workflow status.
+	 * @param contextId Workflow context id.
+	 * @return Workflow status.
+	 */
 	WorkflowStatus getWorkflowStatus(String contextId);
 
-	List<WorkflowBaseInfo> getWorkflows(String username);
-	
 	/**
-	 * @param atomicServiceId
-	 * @return
+	 * Get user workflows.
+	 * @param username User name.
+	 * @return List of user workflows.
+	 */
+	List<WorkflowBaseInfo> getWorkflows(String username);
+
+	/**
+	 * Get Atomic Service initial configurations.
+	 * @param atomicServiceId Atomic Service id.
+	 * @return List of Atomic Service configurations.
 	 */
 	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId)
 			throws ApplianceTypeNotFound;

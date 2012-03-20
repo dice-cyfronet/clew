@@ -48,6 +48,7 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ContextIdFactory;
 
@@ -219,7 +220,12 @@ public class CloudManagerPortlet {
 			WorkflowStartRequest wsr = new WorkflowStartRequest();
 			wsr.setName("Portal workflow"); //TODO - change this ???
 			wsr.setType(WorkflowType.portal);
-			workflowId = workflowManagement.startWorkflow(wsr);
+			try {
+				workflowId = workflowManagement.startWorkflow(wsr);
+			} catch (WorkflowStartException e) {
+				// TODO Auto-generated catch block
+				log.warn("Error while starting workflow", e);
+			}
 		} else {
 			workflowId = workflowIds.get(0);
 		}

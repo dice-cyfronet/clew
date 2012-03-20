@@ -18,7 +18,6 @@ package pl.cyfronet.coin.impl.air.client;
 
 import java.util.Arrays;
 
-import org.apache.cxf.jaxrs.provider.JSONProvider;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,7 +34,7 @@ public class WorkflowManagementTest {
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
 		        new String[] {"wm-test.xml",});
-//		// of course, an ApplicationContext is just a BeanFactory
+		// of course, an ApplicationContext is just a BeanFactory
 		BeanFactory factory = (BeanFactory) appContext;
 		
 		WorkflowManagement wm = factory.getBean("wm-client", WorkflowManagement.class);
@@ -51,7 +50,7 @@ public class WorkflowManagementTest {
 		start.setPriority(55);
 		start.setAsConfigIds(Arrays.asList("4f438218866488709400005f"));
 		start.setType(WorkflowType.portal);
-//		
+		
 //		System.out.println(start);		
 //		
 //		System.out.println(wm.startWorkflow(start));

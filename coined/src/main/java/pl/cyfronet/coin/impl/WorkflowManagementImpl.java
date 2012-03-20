@@ -30,6 +30,7 @@ import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
@@ -48,7 +49,8 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 			.getLogger(WorkflowManagementImpl.class);
 
 	@Override
-	public String startWorkflow(WorkflowStartRequest workflow) {
+	public String startWorkflow(WorkflowStartRequest workflow)
+			throws WorkflowStartException {
 		return manager.startWorkflow(workflow, "developer");
 	}
 

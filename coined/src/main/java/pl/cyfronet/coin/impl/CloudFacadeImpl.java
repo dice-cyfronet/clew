@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.RedirectionInfo;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
@@ -96,6 +97,31 @@ public class CloudFacadeImpl implements CloudFacade {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
+	 */
+	@Override
+	public String getDocumentation() {
+		ClassLoader cl = CloudFacadeImpl.class.getClassLoader();
+		String content = getFileContent(cl
+				.getResourceAsStream("www/index.html"));
+		return content.replace("${'", "$('").replaceAll("'}", "')")
+				.replace("${init};", "$(init);");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#addRedirection(java.lang.String,
+	 * java.lang.String, pl.cyfronet.coin.api.beans.RedirectionInfo)
+	 */
+	@Override
+	public String addRedirection(String contextId, String asiId,
+			RedirectionInfo redirectionInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/**
 	 * Set cloud manager.
 	 * @param manager Cloud manager implementation.
@@ -104,17 +130,7 @@ public class CloudFacadeImpl implements CloudFacade {
 		this.manager = manager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
-	 */
-	@Override
-	public String getDocumentation() {
-		ClassLoader cl = CloudFacadeImpl.class.getClassLoader();		
-		String content = getFileContent(cl.getResourceAsStream("www/index.html"));
-		return content.replace("${'", "$('").replaceAll("'}", "')").replace("${init};", "$(init);");
-	}
-	
+
 	/**
 	 * Get input stream content.
 	 * @param is Input stream with file content.

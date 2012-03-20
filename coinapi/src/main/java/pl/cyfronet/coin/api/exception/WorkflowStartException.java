@@ -14,21 +14,25 @@
  * the License.
  */
 
-package pl.cyfronet.coin.api.beans;
+package pl.cyfronet.coin.api.exception;
+
 
 /**
- * VM statuses. Order is important - last entries has biggest importance.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-public enum Status {
+public class WorkflowStartException extends Exception {
 
-	running,
+	/**
+	 * Serial version UID
+	 */
+	private static final long serialVersionUID = -7304598858233606777L;
+
+	public WorkflowStartException() {
+		super();
+	}
 	
-	paused,
-		
-	booting,
-	
-	stopping,
-	
-	stopped
+	public WorkflowStartException(String message) {
+		super(message);
+	}
 }

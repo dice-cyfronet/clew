@@ -17,18 +17,58 @@
 package pl.cyfronet.coin.api.beans;
 
 /**
- * VM statuses. Order is important - last entries has biggest importance.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-public enum Status {
+public class RedirectionInfo {
 
-	running,
+	private String name;
 	
-	paused,
-		
-	booting,
+	private boolean http;
 	
-	stopping,
+	private Integer port;
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the http
+	 */
+	public boolean isHttp() {
+		return http;
+	}
+
+	/**
+	 * @param http the http to set
+	 */
+	public void setHttp(boolean http) {
+		this.http = http;
+	}
+
+	/**
+	 * @return the port
+	 */
+	public Integer getPort() {
+		return port;
+	}
+
+	/**
+	 * @param port the port to set
+	 */
+	public void setPort(Integer port) {
+		this.port = port;
+	}
 	
-	stopped
+	
 }

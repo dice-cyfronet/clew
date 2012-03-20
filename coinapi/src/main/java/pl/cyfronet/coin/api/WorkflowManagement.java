@@ -32,6 +32,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
  * REST service dedicated for managing workflow lifecycle.
@@ -51,7 +52,8 @@ public interface WorkflowManagement {
 	 * Start new workflow. This action will trigger generation of the unique
 	 * workflow id. For workflow user can add atomic services (list of required
 	 * atomic services can be available while starting workflow or latter on
-	 * during workflow run).
+	 * during workflow run). There can be many workflow type
+	 * Workflows but only one portal and development workflow.
 	 * <p>
 	 * Service will be published as a REST service which consumes JSON with
 	 * following format: <code>
@@ -60,11 +62,15 @@ public interface WorkflowManagement {
 	 * <p>
 	 * @param workflow Workflow specification
 	 * @return Workflow id.
+	 * @throws WorkflowStartException Thrown when workflow cannot be started.
+	 *             E.g. user tries to start second development or portal
+	 *             workflow.
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Path("/start")
-	String startWorkflow(WorkflowStartRequest workflow);
+	String startWorkflow(WorkflowStartRequest workflow)
+			throws WorkflowStartException;
 
 	/**
 	 * Stop workflow. It will stop all atomic services executed for the

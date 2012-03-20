@@ -33,9 +33,11 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -78,7 +80,7 @@ public class CloudManagerImpl implements CloudManager {
 	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getAtomicServices()
 	 */
 	@Override
-	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
+	public List<AtomicService> getAtomicServices() {
 		List<ApplianceType> applianceTypes = air.getApplianceTypes();
 		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
 		for (ApplianceType applianceType : applianceTypes) {
@@ -110,6 +112,9 @@ public class CloudManagerImpl implements CloudManager {
 		logger.debug("Add atomic service [{} {}] into workflow [{}]",
 				new Object[] { name, atomicServiceId, contextId });
 		registerVms(contextId, Arrays.asList(atomicServiceId), defaultPriority);
+
+		// TODO information from Atmosphere about atomis service instance id
+		// needed!
 		return null;
 	}
 
@@ -133,12 +138,24 @@ public class CloudManagerImpl implements CloudManager {
 	 * coin.api.beans.Workflow, java.lang.String)
 	 */
 	@Override
-	public String startWorkflow(WorkflowStartRequest workflow, String username) {
+	public String startWorkflow(WorkflowStartRequest workflow, String username)
+			throws WorkflowStartException {
 		logger.debug("starting workflow {} for {} user", workflow, username);
 
 		Integer priority = workflow.getPriority();
-		if (priority != null) {
+		if (priority == null) {
 			priority = defaultPriority;
+		}
+
+		WorkflowType type = workflow.getType();
+		if (type == WorkflowType.portal || type == WorkflowType.development) {
+			List<WorkflowBaseInfo> workflows = getWorkflows(username);
+			for (WorkflowBaseInfo wInfo : workflows) {
+				if (wInfo.getType() == type) {
+					throw new WorkflowStartException(String.format(
+							"Cannot start two %s workflows", type));
+				}
+			}
 		}
 
 		// FIXME error handling
@@ -222,6 +239,15 @@ public class CloudManagerImpl implements CloudManager {
 			}
 		}
 
+		for (AtomicServiceStatus asStatus : asStatuses.values()) {
+			Status status = null;
+			for (AtomicServiceInstanceStatus asiStatus : asStatus
+					.getInstances()) {
+				status = getHigherState(status, asiStatus.getStatus());
+			}
+			asStatus.setStatus(status);
+		}
+
 		List<AtomicServiceStatus> ases = new ArrayList<AtomicServiceStatus>(
 				asStatuses.values());
 		workflow.setAses(ases);
@@ -243,11 +269,13 @@ public class CloudManagerImpl implements CloudManager {
 		List<ApplianceConfiguration> typeConfigurations = type
 				.getConfigurations();
 		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();
-		for (ApplianceConfiguration applianceConfiguration : typeConfigurations) {
-			InitialConfiguration configuration = new InitialConfiguration();
-			configuration.setId(applianceConfiguration.getId());
-			configuration.setName(applianceConfiguration.getConfig_name());
-			configurations.add(configuration);
+		if (typeConfigurations != null) {
+			for (ApplianceConfiguration applianceConfiguration : typeConfigurations) {
+				InitialConfiguration configuration = new InitialConfiguration();
+				configuration.setId(applianceConfiguration.getId());
+				configuration.setName(applianceConfiguration.getConfig_name());
+				configurations.add(configuration);
+			}
 		}
 
 		return configurations;
@@ -327,7 +355,13 @@ public class CloudManagerImpl implements CloudManager {
 			atmosphere.addRequiredAppliances(request);
 		}
 	}
-	
+
+	private Status getHigherState(Status currentState, Status newState) {
+		return currentState != null
+				&& currentState.ordinal() > newState.ordinal() ? currentState
+				: newState;
+	}
+
 	/**
 	 * Set atmosphere client.
 	 * @param atmosphere Atmosphere client.
