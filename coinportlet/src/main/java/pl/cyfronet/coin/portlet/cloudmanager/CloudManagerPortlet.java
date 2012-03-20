@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,8 +96,6 @@ public class CloudManagerPortlet {
 	@RequestMapping
 	public String doView(Model model, RenderRequest request, PortletResponse response) {
 		log.debug("Generating the main view");
-		log.info("aaa param value: {}", (request.getParameter("aaa") == null ? "null" :
-			request.getParameter("aaa")));
 		
 		if(portal.getUserRoles(request).contains("developer")) {
 			model.addAttribute(MODEL_BEAN_DEVELOPER_MODE, true);

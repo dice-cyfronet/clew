@@ -10,4 +10,14 @@
 
 	<!-- The controllers will be discovered automatically. -->
 	<context:component-scan base-package="pl.cyfronet.coin.portlet.login"/>
+	
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+    	<property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+        	<list>
+        		<value>classpath:coinportlet-constants.properties</value>
+        		<value>classpath:coinportlet-constants-override.properties</value>
+        	</list>
+        </property>
+    </bean>
 </beans>
