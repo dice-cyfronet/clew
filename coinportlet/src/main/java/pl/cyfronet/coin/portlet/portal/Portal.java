@@ -7,9 +7,11 @@ import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 
 import org.apache.jetspeed.CommonPortletServices;
+import org.apache.jetspeed.administration.PortalAdministration;
 import org.apache.jetspeed.security.Role;
 import org.apache.jetspeed.security.RoleManager;
 import org.apache.jetspeed.security.SecurityException;
+import org.apache.jetspeed.security.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,13 @@ public class Portal {
 		}
 		
 		return roles;
+	}
+	
+	public void login(PortletRequest request) {
+		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
+				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
+		PortalAdministration adm = null;
+		
 	}
 
 	public String getUserName(RenderRequest request) {

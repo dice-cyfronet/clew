@@ -97,6 +97,8 @@ public class CloudManagerPortlet {
 	@RequestMapping
 	public String doView(Model model, RenderRequest request, PortletResponse response) {
 		log.debug("Generating the main view");
+		log.info("aaa param value: {}", (request.getParameter("aaa") == null ? "null" :
+			request.getParameter("aaa")));
 		
 		if(portal.getUserRoles(request).contains("developer")) {
 			model.addAttribute(MODEL_BEAN_DEVELOPER_MODE, true);

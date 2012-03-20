@@ -32,4 +32,18 @@
         </supports>
         <resource-bundle>coin-data-manager-portlet</resource-bundle>
     </portlet>
+    <portlet>
+        <portlet-name>coin-login</portlet-name>
+        <display-name>Login Portlet</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/portlet-config/coin-login-portlet.xml</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <resource-bundle>coin-login-portlet</resource-bundle>
+    </portlet>
 </portlet-app>
