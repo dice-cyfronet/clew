@@ -100,6 +100,27 @@ public class CloudManagerTest {
 		assertATAndAs(type2, as2);
 	}
 
+	@Test(expectedExceptions = {ApplianceTypeNotFound.class})
+	public void shouldTrowExceptionWhenASIsNotFound() throws Exception {
+		// given
+		CloudManagerImpl manager = new CloudManagerImpl();
+		AirClient air = mock(AirClient.class);
+		manager.setAir(air);
+
+		ApplianceType type1 = new ApplianceType();
+		type1.setName("type1");
+
+		ApplianceType type2 = new ApplianceType();
+		type1.setName("type2");
+		
+		// when
+		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2));
+		manager.getInitialConfigurations("nonExisting");
+			
+		// then
+
+	}
+	
 	@Test
 	public void shouldStartNewAtomicService() throws Exception {
 		// given
