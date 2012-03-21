@@ -24,6 +24,14 @@
 		    		
 		    		jQuery('#files').html(files);
 		    		setTimeout("updateFiles()", 2000);
+		    		
+		    		//the size of the page might have changed
+		    		//so lets notify the parent window about the change
+		    		pm({
+		        		target: parent,
+		        		type: 'resizeEvent',
+		        		data: {size: (document.body.scrollHeight + 20)}
+		        	});
 		    	});
 	    	};
 	    	updateFiles();
