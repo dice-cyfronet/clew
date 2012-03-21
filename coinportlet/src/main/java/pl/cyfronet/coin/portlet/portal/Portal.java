@@ -8,9 +8,12 @@ import javax.portlet.RenderRequest;
 
 import org.apache.jetspeed.CommonPortletServices;
 import org.apache.jetspeed.administration.PortalAdministration;
+import org.apache.jetspeed.administration.RegistrationException;
+import org.apache.jetspeed.security.PasswordCredential;
 import org.apache.jetspeed.security.Role;
 import org.apache.jetspeed.security.RoleManager;
 import org.apache.jetspeed.security.SecurityException;
+import org.apache.jetspeed.security.User;
 import org.apache.jetspeed.security.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +37,31 @@ public class Portal {
 		
 		return roles;
 	}
-	
-	public void login(PortletRequest request) {
-		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
-				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
-		PortalAdministration adm = null;
-		
-	}
 
 	public String getUserName(RenderRequest request) {
 		return request.getUserPrincipal().getName();
+	}
+
+	public void registerUser(String userName, String token, PortletRequest request) {
+		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
+				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
+		PortalAdministration portalAdministration = (PortalAdministration) request.getPortletSession().getPortletContext().
+				getAttribute(CommonPortletServices.CPS_PORTAL_ADMINISTRATION);
+		try {
+			if(!userManager.userExists(userName)) {
+				//creating new user
+				portalAdministration.registerUser(userName, portalAdministration.generatePassword());
+			}
+			
+			//updating user password
+			User user = userManager.getUser(userName);
+			PasswordCredential pc = userManager.getPasswordCredential(user);
+			pc.setPassword(token, false);
+			userManager.storePasswordCredential(pc);
+		} catch (SecurityException e) {
+			log.error("Could not register or update user [{}]", userName, e);
+		} catch (RegistrationException e) {
+			log.error("Could not register or update user [{}]", userName, e);
+		}
 	}
 }

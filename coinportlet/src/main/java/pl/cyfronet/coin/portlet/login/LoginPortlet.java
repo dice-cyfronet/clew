@@ -1,7 +1,11 @@
 package pl.cyfronet.coin.portlet.login;
 
+import java.util.Map;
+
+import javax.annotation.Resource;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +34,7 @@ public class LoginPortlet {
 	@Value("${login.portlet.password.parameter.name}") private String passwordParameterName;
 	@Value("${login.portlet.destination.parameter.name}") private String destinationParameterName;
 	
+	@Resource(name = "pageMapping") Map<String, String> pageMapping;
 	@Autowired Portal portal;
 	
 	@RequestMapping
@@ -40,10 +45,16 @@ public class LoginPortlet {
 		log.info("Processing login request for user [{}], token [{}] and destination [{}]",
 				new String[] {user, token, destination});
 		
-		if(user != null && token != null) {
+		if(user != null && token != null && destination != null) {
+			//TODO: add token validation
+			
+			if(request.getUserPrincipal() == null) {
+				portal.registerUser(user, token, request);
+			}
+			
 			model.addAttribute(MODEL_BEAN_USER_LOGIN, user);
 			model.addAttribute(MODEL_BEAN_USER_TOKEN, token);
-			model.addAttribute(MODEL_BEAN_USER_DESTINATION, destination);
+			model.addAttribute(MODEL_BEAN_USER_DESTINATION, pageMapping.get(destination));
 			model.addAttribute(MODEL_BEAN_LOGIN_SERVLET_PATH, loginServletPath);
 			model.addAttribute(MODEL_BEAN_LOGIN_PARAMETER_NAME, loginParameterName);
 			model.addAttribute(MODEL_BEAN_PASSWORD_PARAMETER_NAME, passwordParameterName);
