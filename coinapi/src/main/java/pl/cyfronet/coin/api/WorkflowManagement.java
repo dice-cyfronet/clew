@@ -52,8 +52,8 @@ public interface WorkflowManagement {
 	 * Start new workflow. This action will trigger generation of the unique
 	 * workflow id. For workflow user can add atomic services (list of required
 	 * atomic services can be available while starting workflow or latter on
-	 * during workflow run). There can be many workflow type
-	 * Workflows but only one portal and development workflow.
+	 * during workflow run). There can be many workflow type Workflows but only
+	 * one portal and development workflow.
 	 * <p>
 	 * Service will be published as a REST service which consumes JSON with
 	 * following format: <code>
@@ -89,7 +89,7 @@ public interface WorkflowManagement {
 	@PUT
 	@Path("/{workflowId}/as/{asConfigId}")
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asConfigId);
+			@PathParam("asConfigId") String asConfigId, String name);
 
 	/**
 	 * Remove atomic service from running workflow.

@@ -232,7 +232,7 @@ public class CloudManagerPortlet {
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 && initialconfigurations.get(0).getId() != null) {
 			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]", workflowId, initialconfigurations.get(0).getId());
-			workflowManagement.addAtomicServiceToWorkflow(workflowId, initialconfigurations.get(0).getId());
+			workflowManagement.addAtomicServiceToWorkflow(workflowId, initialconfigurations.get(0).getId(), null);
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);

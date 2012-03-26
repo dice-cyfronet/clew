@@ -65,8 +65,9 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	}
 
 	@Override
-	public void addAtomicServiceToWorkflow(String contextId, String asId) {
-		manager.startAtomicService(asId, null, contextId);
+	public void addAtomicServiceToWorkflow(String contextId, String asId,
+			String name) {
+		manager.startAtomicService(asId, name, contextId);
 	}
 
 	@Override
