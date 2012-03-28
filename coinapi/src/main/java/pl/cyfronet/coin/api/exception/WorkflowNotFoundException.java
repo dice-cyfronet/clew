@@ -14,29 +14,19 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.air.client;
-
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+package pl.cyfronet.coin.api.exception;
 
 /**
+ * Thrown when <strong>user</strong> workflow is not found. It means that
+ * workflow with defined context id can (but not have to) exist but it doesn't
+ * belongs to this user.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-public class AirTest {
+public class WorkflowNotFoundException extends Exception {
 
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-		        new String[] {"air-test.xml",});
-//		// of course, an ApplicationContext is just a BeanFactory
-		BeanFactory factory = (BeanFactory) appContext;
-		
-		AirClient air = factory.getBean("air-client", AirClient.class);
+	/**
+	 * Serial version UID
+	 */
+	private static final long serialVersionUID = 6823966272806907966L;
 
-		try {
-			System.out.println(air.getWorkflow("nonexisting"));
-		} catch(Exception e) {
-			System.err.println(e.getClass());
-		}
-	}
 }

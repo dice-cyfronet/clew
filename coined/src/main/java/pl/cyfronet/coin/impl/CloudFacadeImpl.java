@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
-import pl.cyfronet.coin.api.beans.RedirectionInfo;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
@@ -38,7 +38,8 @@ import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
  * Web service which exposes functionality given by the cloud manager.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class CloudFacadeImpl implements CloudFacade {
+public class CloudFacadeImpl extends UsernameAwareService implements
+		CloudFacade {
 
 	/**
 	 * Line separator.
@@ -77,7 +78,12 @@ public class CloudFacadeImpl implements CloudFacade {
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
-		manager.createAtomicService(atomicServiceInstanceId, atomicService);
+		try {
+			manager.createAtomicService(atomicServiceInstanceId, atomicService,
+					getUsername());
+		} catch (WorkflowNotFoundException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	/*
@@ -110,18 +116,6 @@ public class CloudFacadeImpl implements CloudFacade {
 				.replace("${init};", "$(init);");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#addRedirection(java.lang.String,
-	 * java.lang.String, pl.cyfronet.coin.api.beans.RedirectionInfo)
-	 */
-	@Override
-	public String addRedirection(String contextId, String asiId,
-			RedirectionInfo redirectionInfo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	/**
 	 * Set cloud manager.
 	 * @param manager Cloud manager implementation.
@@ -129,7 +123,6 @@ public class CloudFacadeImpl implements CloudFacade {
 	public void setManager(CloudManager manager) {
 		this.manager = manager;
 	}
-
 
 	/**
 	 * Get input stream content.

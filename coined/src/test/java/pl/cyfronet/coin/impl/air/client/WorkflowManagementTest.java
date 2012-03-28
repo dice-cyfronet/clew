@@ -16,8 +16,6 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,7 +29,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
  */
 public class WorkflowManagementTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
 		        new String[] {"wm-test.xml",});
 		// of course, an ApplicationContext is just a BeanFactory
@@ -48,12 +46,14 @@ public class WorkflowManagementTest {
 		start.setDescription("my description");
 		start.setName("workflowName");
 		start.setPriority(55);
-		start.setAsConfigIds(Arrays.asList("4f438218866488709400005f"));
 		start.setType(WorkflowType.portal);
 		
 //		System.out.println(start);		
 //		
 //		System.out.println(wm.startWorkflow(start));
+		
+		wm.stopWorkflow("4f730f87866488401c000191");
+		
 //		wm.stopWorkflow("4f4dc97a866488548d000253");
 		
 //		System.out.println(wm.getWorkflows());
@@ -65,6 +65,6 @@ public class WorkflowManagementTest {
 //		System.out.println(wm.getInitialConfigurations("@neurist Services"));
 		
 		//wm.addAtomicServiceToWorkflow("4f4dc984866488548d000268", "4f4dde29866488548d0002fa");
-		System.out.println(wm.getStatus("4f4e0bdb866488548d000f01"));
+		//System.out.println(wm.getStatus("4f4e0bdb866488548d000f01"));
 	}
 }

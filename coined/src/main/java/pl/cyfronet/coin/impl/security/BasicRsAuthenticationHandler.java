@@ -22,12 +22,14 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class BasicRsAuthenticationHandler implements RequestHandler {
 
+	@Autowired
 	private AuthenticationHandler authenticator;
 
 	@Override

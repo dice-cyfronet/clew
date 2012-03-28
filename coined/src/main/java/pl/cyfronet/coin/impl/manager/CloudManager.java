@@ -26,6 +26,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
@@ -51,25 +52,33 @@ public interface CloudManager {
 	 * @param atomicServiceId Atomic Service id.
 	 * @param name New instance name.
 	 * @param contextId Context id.
+	 * @param username User name.
 	 * @return Atomic Service Instance id.
 	 * @throws AtomicServiceNotFoundException Thrown when atomic service is not
 	 *             found.
 	 * @throws CloudFacadeException
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
+	 *             workflow with defined context id belongs to other user.
 	 */
 	String startAtomicService(String atomicServiceId, String name,
-			String contextId) throws AtomicServiceNotFoundException,
-			CloudFacadeException;
+			String contextId, String username)
+			throws AtomicServiceNotFoundException, CloudFacadeException,
+			WorkflowNotFoundException;
 
 	/**
 	 * Create Atomic Service from running Atomic Service Instance.
 	 * @param atomicServiceInstanceId Atomic Service Instance id.
 	 * @param atomicService Information about new Atomic Service.
+	 * @param username User name.
 	 * @throws AtomicServiceInstanceNotFoundException
 	 * @throws CloudFacadeException
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
+	 *             workflow with defined context id belongs to other user.
 	 */
 	void createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
+			AtomicService atomicService, String username)
+			throws AtomicServiceInstanceNotFoundException,
+			CloudFacadeException, WorkflowNotFoundException;
 
 	/**
 	 * Start workflow. There can be many workflow type Workflows but only one
@@ -77,6 +86,7 @@ public interface CloudManager {
 	 * @param workflow Workflow start request. It contains information about
 	 *            required Atomic Services.
 	 * @param username Workflow owner username.
+	 * @param username User name.
 	 * @return Workflow context id.
 	 * @throws WorkflowStartException Thrown when workflow cannot be started.
 	 *             E.g. user tries to start second development or portal
@@ -88,20 +98,29 @@ public interface CloudManager {
 	/**
 	 * Stop workflow.
 	 * @param contextId Workflow context id.
+	 * @param username User name.
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
+	 *             workflow with defined context id belongs to other user.
 	 */
-	void stopWorkflow(String contextId);
+	void stopWorkflow(String contextId, String username)
+			throws WorkflowNotFoundException;
 
 	/**
 	 * Get workflow status.
 	 * @param contextId Workflow context id.
 	 * @return Workflow status.
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
+	 *             workflow with defined context id belongs to other user.
 	 */
-	WorkflowStatus getWorkflowStatus(String contextId);
+	WorkflowStatus getWorkflowStatus(String contextId, String username)
+			throws WorkflowNotFoundException;
 
 	/**
 	 * Get user workflows.
 	 * @param username User name.
 	 * @return List of user workflows.
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
+	 *             workflow with defined context id belongs to other user.
 	 */
 	List<WorkflowBaseInfo> getWorkflows(String username);
 

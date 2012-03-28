@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
@@ -107,8 +109,10 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public String startAtomicService(String atomicServiceId, String name,
-			String contextId) throws AtomicServiceNotFoundException,
-			CloudFacadeException {
+			String contextId, String username)
+			throws AtomicServiceNotFoundException, CloudFacadeException,
+			WorkflowNotFoundException {
+		checkIfWorkflowBelongsToUser(contextId, username);
 		logger.debug("Add atomic service [{} {}] into workflow [{}]",
 				new Object[] { name, atomicServiceId, contextId });
 		registerVms(contextId, Arrays.asList(atomicServiceId), defaultPriority);
@@ -126,7 +130,7 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public void createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService)
+			AtomicService atomicService, String username)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		throw new CloudFacadeException("Not impolemented yet");
 	}
@@ -174,9 +178,10 @@ public class CloudManagerImpl implements CloudManager {
 	 * pl.cyfronet.coin.impl.manager.CloudManager#stopWorkflow(java.lang.String)
 	 */
 	@Override
-	public void stopWorkflow(String contextId) {
+	public void stopWorkflow(String contextId, String username)
+			throws WorkflowNotFoundException {
 		logger.debug("stopping workflow {}", contextId);
-		// FIXME error handling
+		checkIfWorkflowBelongsToUser(contextId, username);
 		try {
 			atmosphere.removeRequiredAppliances(contextId);
 		} catch (Exception e) {
@@ -192,8 +197,9 @@ public class CloudManagerImpl implements CloudManager {
 	 * .String)
 	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(String contextId) {
-		WorkflowDetail detail = air.getWorkflow(contextId);
+	public WorkflowStatus getWorkflowStatus(String contextId, String username)
+			throws WorkflowNotFoundException {
+		WorkflowDetail detail = getUserWorkflow(contextId, username);
 
 		WorkflowStatus workflow = new WorkflowStatus();
 		workflow.setName(detail.getName());
@@ -356,10 +362,59 @@ public class CloudManagerImpl implements CloudManager {
 		}
 	}
 
+	/**
+	 * Get higher state, the order is as follow (starting from the lower one):
+	 * running, paused, booting, stopping, stopped.
+	 * @param currentState Current state.
+	 * @param newState New state.
+	 * @return Higher state.
+	 */
 	private Status getHigherState(Status currentState, Status newState) {
 		return currentState != null
 				&& currentState.ordinal() > newState.ordinal() ? currentState
 				: newState;
+	}
+
+	/**
+	 * Get workflow identified by context id. It also checks if the workflow
+	 * belongs to current user. If not than exception is thrown.
+	 * @param contextId Workflow context id.
+	 * @param username Workflow owner username.
+	 * @return Workflow detail.
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or it
+	 *             does not belong to the user.
+	 */
+	private WorkflowDetail getUserWorkflow(String contextId, String username)
+			throws WorkflowNotFoundException {
+
+		try {
+			WorkflowDetail detail = air.getWorkflow(contextId);
+			if (detail != null && detail.getVph_username().equals(username)) {
+				return detail;
+			} else {
+				// workflow is found, but it does not depend to selected user.
+				throw new WorkflowNotFoundException();
+			}
+		} catch (ServerWebApplicationException e) {
+			if (e.getResponse().getStatus() == 404) {
+				throw new WorkflowNotFoundException();
+			} else {
+				throw new CloudFacadeException();
+			}
+		}
+	}
+
+	/**
+	 * Check if workflow identified by context id belongs to defined user. If
+	 * not than exception is throw.
+	 * @param contextId Workflow context id.
+	 * @param username Workflow owner username.
+	 * @throws WorkflowNotFoundException Thrown when workflow is not found or it
+	 *             does not belong to the user.
+	 */
+	private void checkIfWorkflowBelongsToUser(String contextId, String username)
+			throws WorkflowNotFoundException {
+		getUserWorkflow(contextId, username);
 	}
 
 	/**

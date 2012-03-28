@@ -33,6 +33,8 @@ public class WorkflowDetail {
 
 	private String id;
 
+	private String vph_username;
+
 	private WorkflowType workflow_type;
 
 	private Integer priority;
@@ -40,7 +42,7 @@ public class WorkflowDetail {
 	private String description;
 
 	private Status state;
-	
+
 	private List<Vms> vms;
 
 	/**
@@ -69,6 +71,20 @@ public class WorkflowDetail {
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the vph_username
+	 */
+	public String getVph_username() {
+		return vph_username;
+	}
+
+	/**
+	 * @param vph_username the vph_username to set
+	 */
+	public void setVph_username(String vph_username) {
+		this.vph_username = vph_username;
 	}
 
 	/**
@@ -141,14 +157,15 @@ public class WorkflowDetail {
 		this.workflow_type = workflow_type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "WorkflowDetail [name=" + name + ", id=" + id
-				+ ", workflow_type=" + workflow_type + ", priority=" + priority
-				+ ", description=" + description + ", state=" + state
-				+ ", vms=" + vms + "]";
+				+ ", vph_username=" + vph_username + ", workflow_type="
+				+ workflow_type + ", priority=" + priority + ", description="
+				+ description + ", state=" + state + ", vms=" + vms + "]";
 	}
 }

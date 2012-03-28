@@ -11,7 +11,6 @@ import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
-import pl.cyfronet.coin.api.beans.RedirectionInfo;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -81,16 +80,6 @@ public class MockCloudFacade implements CloudFacade {
 	 */
 	@Override
 	public String getDocumentation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#addRedirection(java.lang.String, java.lang.String, pl.cyfronet.coin.api.beans.RedirectionInfo)
-	 */
-	@Override
-	public String addRedirection(String contextId, String asiId,
-			RedirectionInfo redirectionInfo) {
 		// TODO Auto-generated method stub
 		return null;
 	}

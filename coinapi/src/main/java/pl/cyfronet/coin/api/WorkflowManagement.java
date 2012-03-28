@@ -29,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.RedirectionInfo;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
@@ -41,6 +42,11 @@ import pl.cyfronet.coin.api.exception.WorkflowStartException;
 @Path("/")
 public interface WorkflowManagement {
 
+	/**
+	 * Get user workflows. Identification of the user is taken from the security
+	 * infrastructure.
+	 * @return List of user workflows.
+	 */
 	@GET
 	@Path("/list")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -133,4 +139,22 @@ public interface WorkflowManagement {
 	@Path("/{workflowId}/as/{asConfigId}")
 	AtomicServiceStatus getStatus(@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asId);
+	
+	/**
+	 * Adds redirection to the Atomic Service Instance. This method will throws
+	 * Forbidden (403 HTTP code) if user will try to add redirection into atomic
+	 * service instance executed in other context than development.
+	 * @param contextId Atomic Service Instance execution context id (a.k.a.
+	 *            workflow)
+	 * @param asiId Atomic Service Instance id.
+	 * @param redirectionInfo Bean containing information about new required
+	 *            redirection.
+	 * @return Redirection URI (e.g. http://url.to.redirected.http.pl for HTTP,
+	 *         149.156.10.131:235334 for others).
+	 */
+	@POST
+	@Path("/asi/{contextId}/{asiId}/redirection/add")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	String addRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId, RedirectionInfo redirectionInfo);
 }

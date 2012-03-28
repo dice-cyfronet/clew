@@ -16,7 +16,6 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
-import org.apache.cxf.jaxrs.provider.JSONProvider;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,7 +34,6 @@ public class CloudFacadeTest {
 		BeanFactory factory = (BeanFactory) appContext;
 		
 		CloudFacade cf = factory.getBean("cf-client", CloudFacade.class);
-		JSONProvider provider = factory.getBean("jsonProvider", JSONProvider.class);
 		
 		System.out.println(cf.getAtomicServices());
 		

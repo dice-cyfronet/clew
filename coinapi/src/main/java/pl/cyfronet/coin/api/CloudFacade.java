@@ -21,9 +21,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,7 +30,6 @@ import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
-import pl.cyfronet.coin.api.beans.RedirectionInfo;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 
@@ -90,24 +87,6 @@ public interface CloudFacade {
 	@Path("/as/{atomicServiceId}/configurations")
 	List<InitialConfiguration> getInitialConfigurations(
 			@PathParam("atomicServiceId") String atomicServiceId);
-
-	/**
-	 * Adds redirection to the Atomic Service Instance. This method will throws
-	 * Forbidden (403 HTTP code) if user will try to add redirection into atomic
-	 * service instance executed in other context than development.
-	 * @param contextId Atomic Service Instance execution context id (a.k.a.
-	 *            workflow)
-	 * @param asiId Atomic Service Instance id.
-	 * @param redirectionInfo Bean containing information about new required
-	 *            redirection.
-	 * @return Redirection URI (e.g. http://url.to.redirected.http.pl for HTTP,
-	 *         149.156.10.131:235334 for others).
-	 */
-	@POST
-	@Path("/asi/{contextId}/{asiId}/redirection/add")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	String addRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId, RedirectionInfo redirectionInfo);
 
 	/**
 	 * Get documentation page content.

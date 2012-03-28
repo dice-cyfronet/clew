@@ -14,29 +14,16 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.air.client;
-
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+package pl.cyfronet.coin.impl.security.mi;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class AirTest {
+public enum TicketAuthStatus {
 
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-		        new String[] {"air-test.xml",});
-//		// of course, an ApplicationContext is just a BeanFactory
-		BeanFactory factory = (BeanFactory) appContext;
-		
-		AirClient air = factory.getBean("air-client", AirClient.class);
+	INVALID,
+	VALID,
+	EXPIRED;
 
-		try {
-			System.out.println(air.getWorkflow("nonexisting"));
-		} catch(Exception e) {
-			System.err.println(e.getClass());
-		}
-	}
 }

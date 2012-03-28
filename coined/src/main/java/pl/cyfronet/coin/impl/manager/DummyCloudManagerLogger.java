@@ -39,10 +39,6 @@ public class DummyCloudManagerLogger implements CloudManager {
 	private static final Logger logger = LoggerFactory
 			.getLogger(DummyCloudManagerLogger.class);
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.CloudManager#getAtomicServices()
-	 */
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.info("Get atomic services - returning two dummy atomic services");
@@ -50,15 +46,10 @@ public class DummyCloudManagerLogger implements CloudManager {
 				.asList(new AtomicService("as1"), new AtomicService("as2"));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.CloudManager#startAtomicService(java.lang.String,
-	 * java.lang.String)
-	 */
 	@Override
 	public String startAtomicService(String atomicServiceId, String name,
-			String contextId) throws AtomicServiceNotFoundException,
-			CloudFacadeException {
+			String contextId, String username)
+			throws AtomicServiceNotFoundException, CloudFacadeException {
 		logger.info(
 				"Start atomic service [{}, name {}] in {} context - generated id returned",
 				new Object[] { atomicServiceId, name, contextId });
@@ -70,14 +61,9 @@ public class DummyCloudManagerLogger implements CloudManager {
 		return System.currentTimeMillis() + "";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.CloudManager#createAtomicService(java.lang.String,
-	 * pl.cyfronet.coin.api.beans.AtomicService)
-	 */
 	@Override
 	public void createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService)
+			AtomicService atomicService, String username)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.info("Create atomic service from {}", atomicServiceInstanceId);
 		if (atomicService != null) {
@@ -91,44 +77,29 @@ public class DummyCloudManagerLogger implements CloudManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.manager.CloudManager#startWorkflow(pl.cyfronet.coin.api.beans.Workflow)
-	 */
 	@Override
 	public String startWorkflow(WorkflowStartRequest workflow, String username) {
 		logger.debug("starting workflow {} for {} user", workflow, username);
 		return "workflowId";
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.manager.CloudManager#stopWorkflow(java.lang.String)
-	 */
 	@Override
-	public void stopWorkflow(String contextId) {
+	public void stopWorkflow(String contextId, String username) {
 		logger.debug("stopping workflow {}", contextId);
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getWorkflowStatus(java.lang.String)
-	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(String contextId) {
+	public WorkflowStatus getWorkflowStatus(String contextId, String username) {
 		logger.debug("Get workflow status {}", contextId);
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getInitialConfiguration(java.lang.String)
-	 */
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getWorkflows(java.lang.String)
-	 */
 	@Override
 	public List<WorkflowBaseInfo> getWorkflows(String username) {
 		// TODO Auto-generated method stub

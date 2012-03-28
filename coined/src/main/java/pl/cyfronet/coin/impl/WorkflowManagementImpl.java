@@ -26,17 +26,20 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.RedirectionInfo;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
+import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class WorkflowManagementImpl implements WorkflowManagement {
+public class WorkflowManagementImpl extends UsernameAwareService implements
+		WorkflowManagement {
 
 	// throw new WebApplicationException(403);
 
@@ -51,23 +54,35 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	@Override
 	public String startWorkflow(WorkflowStartRequest workflow)
 			throws WorkflowStartException {
-		return manager.startWorkflow(workflow, "developer");
+		return manager.startWorkflow(workflow, getUsername());
 	}
 
 	@Override
 	public void stopWorkflow(String workflowId) {
-		manager.stopWorkflow(workflowId);
+		try {
+			manager.stopWorkflow(workflowId, getUsername());
+		} catch (WorkflowNotFoundException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	@Override
 	public WorkflowStatus getStatus(String contextId) {
-		return manager.getWorkflowStatus(contextId);
+		try {
+			return manager.getWorkflowStatus(contextId, getUsername());
+		} catch (WorkflowNotFoundException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	@Override
 	public void addAtomicServiceToWorkflow(String contextId, String asId,
 			String name) {
-		manager.startAtomicService(asId, name, contextId);
+		try {
+			manager.startAtomicService(asId, name, contextId, getUsername());
+		} catch (WorkflowNotFoundException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	@Override
@@ -82,16 +97,22 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 		logger.debug("Get atomic service [{}] for workflow [{}]", asId,
 				workflowId);
 
-		WorkflowStatus workflowStatus = manager.getWorkflowStatus(workflowId);
-		List<AtomicServiceStatus> asStatuses = workflowStatus.getAses();
-		if (asStatuses != null) {
-			for (AtomicServiceStatus atomicServiceStatus : asStatuses) {
-				if (atomicServiceStatus.getId().equals(asId)) {
-					return atomicServiceStatus;
+		WorkflowStatus workflowStatus;
+		try {
+			workflowStatus = manager.getWorkflowStatus(workflowId,
+					getUsername());
+			List<AtomicServiceStatus> asStatuses = workflowStatus.getAses();
+			if (asStatuses != null) {
+				for (AtomicServiceStatus atomicServiceStatus : asStatuses) {
+					if (atomicServiceStatus.getId().equals(asId)) {
+						return atomicServiceStatus;
+					}
 				}
 			}
+			throw new WebApplicationException(404);
+		} catch (WorkflowNotFoundException e) {
+			throw new WebApplicationException(404);
 		}
-		throw new WebApplicationException(404);
 	}
 
 	/*
@@ -100,7 +121,8 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 	 */
 	@Override
 	public UserWorkflows getWorkflows() {
-		String username = "developer";
+
+		String username = getUsername();
 		UserWorkflows wrapper = new UserWorkflows();
 		wrapper.setUsername(username);
 		try {
@@ -110,6 +132,13 @@ public class WorkflowManagementImpl implements WorkflowManagement {
 			wrapper.setWorkflows(new ArrayList<WorkflowBaseInfo>());
 		}
 		return wrapper;
+	}
+
+	@Override
+	public String addRedirection(String contextId, String asiId,
+			RedirectionInfo redirectionInfo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**

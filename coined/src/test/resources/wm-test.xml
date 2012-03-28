@@ -21,8 +21,9 @@
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
-	<jaxrs:client id="wm-client" address="http://vph.cyfronet.pl:9099/workflow"		
+	<jaxrs:client id="wm-client" address="http://localhost:9099/workflow"		
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
+		username="vphshare" password="TODO"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />

@@ -29,6 +29,9 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -40,6 +43,7 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
@@ -100,7 +104,7 @@ public class CloudManagerTest {
 		assertATAndAs(type2, as2);
 	}
 
-	@Test(expectedExceptions = {ApplianceTypeNotFound.class})
+	@Test(expectedExceptions = { ApplianceTypeNotFound.class })
 	public void shouldTrowExceptionWhenASIsNotFound() throws Exception {
 		// given
 		CloudManagerImpl manager = new CloudManagerImpl();
@@ -112,15 +116,15 @@ public class CloudManagerTest {
 
 		ApplianceType type2 = new ApplianceType();
 		type1.setName("type2");
-		
+
 		// when
 		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2));
 		manager.getInitialConfigurations("nonExisting");
-			
+
 		// then
 
 	}
-	
+
 	@Test
 	public void shouldStartNewAtomicService() throws Exception {
 		// given
@@ -128,26 +132,71 @@ public class CloudManagerTest {
 		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
 		manager.setAtmosphere(atmosphere);
 
+		AirClient air = mock(AirClient.class);
+		manager.setAir(air);
+
 		final String atomicServiceId = "asId";
 		final String name = "name";
 		final String contextId = "contextId";
+		String username = "user";
+
+		WorkflowDetail wd = new WorkflowDetail();
+		wd.setVph_username(username);
 
 		// when
+		mockGetWorkflow(air, contextId, username);
 		when(
 				atmosphere
 						.addRequiredAppliances(argThat(new AddRequiredAppliancesRequestMatcher(
 								contextId, atomicServiceId)))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
 
-		String id = manager
-				.startAtomicService(atomicServiceId, name, contextId);
+		String id = manager.startAtomicService(atomicServiceId, name,
+				contextId, username);
 
 		// then
 		verify(atmosphere, times(1)).addRequiredAppliances(
 				any(AddRequiredAppliancesRequest.class));
 
+		verify(air, times(1)).getWorkflow(contextId);
+
 		// TODO Atmosphere should return ASI instance in response.
 		assertNull(id);
+	}
+
+	@Test(expectedExceptions = WorkflowNotFoundException.class)
+	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotExist()
+			throws Exception {
+		// given
+		CloudManagerImpl manager = new CloudManagerImpl();
+		AirClient air = mock(AirClient.class);
+		manager.setAir(air);
+
+		String contextId = "contextId";
+
+		// when
+		mockGetNonExistingWorkflow(air, contextId);
+		manager.startAtomicService("1", "name", contextId, "user");
+
+		// then
+	}
+
+	@Test(expectedExceptions = WorkflowNotFoundException.class)
+	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotBelongToTheUser()
+			throws Exception {
+		// given
+		// given
+		CloudManagerImpl manager = new CloudManagerImpl();
+		AirClient air = mock(AirClient.class);
+		manager.setAir(air);
+
+		String contextId = "contextId";
+
+		// when
+		mockGetWorkflow(air, contextId, "otherUser");
+		manager.startAtomicService("1", "name", contextId, "user");
+
+		// then
 	}
 
 	@Test
@@ -288,16 +337,31 @@ public class CloudManagerTest {
 		manager.setAir(air);
 		manager.setAtmosphere(atmosphere);
 		String contextId = "contextId";
+		String username = "user";
 
 		// when
-
-		manager.stopWorkflow(contextId);
+		mockGetWorkflow(air, contextId, username);
+		manager.stopWorkflow(contextId, username);
 
 		// then
 		verify(air, times(1)).stopWorkflow(contextId);
+		verify(air, times(1)).getWorkflow(contextId);
 		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
 	}
 
+	@Test
+	public void shouldTrowWorkflowNotFoundWhenStoppingNonExistingWorkflow() throws Exception {
+		// given
+		CloudManagerImpl manager = new CloudManagerImpl();
+		AirClient air = mock(AirClient.class);
+		manager.setAir(air);
+		
+		// when
+
+		// then
+
+	}
+	
 	@Test
 	public void shouldGetWorkflowStatus() throws Exception {
 		// given
@@ -309,6 +373,7 @@ public class CloudManagerTest {
 		String name = "name";
 		String description = "description";
 		int priority = 40;
+		String username = "user";
 
 		WorkflowDetail workflowDetail = new WorkflowDetail();
 		workflowDetail.setName(name);
@@ -316,6 +381,7 @@ public class CloudManagerTest {
 		workflowDetail.setPriority(priority);
 		workflowDetail.setState(Status.booting);
 		workflowDetail.setWorkflow_type(WorkflowType.development);
+		workflowDetail.setVph_username(username);
 
 		Vms vm1 = getVms("name1", "as1", "conf1", "sTemplate1", "1",
 				Status.running);
@@ -333,7 +399,7 @@ public class CloudManagerTest {
 		when(air.getTypeFromConfig("conf2"))
 				.thenReturn(getApplianceType("as2"));
 
-		WorkflowStatus status = manager.getWorkflowStatus(contextId);
+		WorkflowStatus status = manager.getWorkflowStatus(contextId, username);
 
 		// then
 
@@ -510,5 +576,27 @@ public class CloudManagerTest {
 		assertEquals(at.isScalable(), as.isScalable());
 		assertEquals(at.isShared(), as.isShared());
 		assertEquals(at.isVnc(), as.isVnc());
+	}
+
+	/**
+	 * @param air
+	 * @param username
+	 */
+	private void mockGetWorkflow(AirClient air, String contextId,
+			String username) {
+		WorkflowDetail wd = new WorkflowDetail();
+		wd.setVph_username(username);
+		when(air.getWorkflow(contextId)).thenReturn(wd);
+	}
+
+	/**
+	 * @param air
+	 * @param contextId
+	 */
+	private void mockGetNonExistingWorkflow(AirClient air, String contextId) {
+		when(air.getWorkflow(contextId))
+				.thenThrow(
+						new ServerWebApplicationException(Response.status(404)
+								.build()));
 	}
 }

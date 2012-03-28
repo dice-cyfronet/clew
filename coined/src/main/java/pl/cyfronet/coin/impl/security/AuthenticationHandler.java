@@ -16,32 +16,28 @@
 
 package pl.cyfronet.coin.impl.security;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Required;
-
 /**
+ * Authentication handler specific for concrete deployment. For example for
+ * VPH-Share password is used to pass user ticket.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-public class AuthenticationHandler {
+public interface AuthenticationHandler {
 
 	/**
-	 * Map of allowed users to this system with their corresponding passwords.
+	 * Check if user is authenticated.
+	 * @param username User name from basic authentication field.
+	 * @param password Password from basic authentication field.
+	 * @return True if user is authenticated.
 	 */
-	private Map<String, String> users;
-	
-	public boolean isAuthenticated(String username, String password) {
-		String realPassword = users.get(username);
-		return realPassword != null && realPassword.equals(password);
-	}
-	
+	boolean isAuthenticated(String username, String password);
+
 	/**
-	 * Set user names and passwords.
-	 * @param users Information about authorized users.
+	 * Get user name. We need password because in some deployment (e.g.
+	 * VPH-Share) all information about user is stored in ticket which is passed
+	 * inside password field.
+	 * @param username User name from basic authentication field.
+	 * @param password Password from basic authentication field.
+	 * @return User name.
 	 */
-	@Required
-	public void setUsers(Map<String, String> users) {
-		this.users = users;
-	}
+	String getUsername(String username, String password);
 }

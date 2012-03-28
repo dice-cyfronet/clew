@@ -38,6 +38,8 @@
 		<prop key="air.url"></prop>
 		<prop key="air.username"></prop>
 		<prop key="air.password"></prop>
+
+		<prop key="secret"></prop>
 	</osgix:cm-properties>
 
 	<bean
@@ -50,31 +52,19 @@
 
 	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
 		<property name="manager" ref="dummyCloudManager" />
+		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
 	<bean name="wsCloudManager" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
 		<property name="manager" ref="cloudManager" />
+		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
 	<bean name="workflow-management" class="pl.cyfronet.coin.impl.WorkflowManagementImpl">
 		<property name="manager" ref="cloudManager" />
+		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
-	<bean id="securityInterceptor"
-		class="pl.cyfronet.coin.impl.security.BasicAuthAuthorizationInterceptor">
-		<property name="users">
-			<map>
-				<entry key="${username}" value="${password}" />
-			</map>
-		</property>
-	</bean>
-
-	<jaxws:endpoint id="coinWSEndpoint-test" implementor="#wsCloudManager-test"
-		address="http://0.0.0.0:${port}/coin-test">
-		<jaxws:inInterceptors>
-			<ref bean="securityInterceptor" />
-		</jaxws:inInterceptors>
-	</jaxws:endpoint>
 
 	<jaxrs:server id="workflow-management-rs" address="http://0.0.0.0:${port}/workflow">
 		<jaxrs:serviceBeans>
@@ -103,7 +93,7 @@
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
 		inheritHeaders="true">
 		<jaxrs:providers>
-			<ref bean="air-jsonProvider" />			
+			<ref bean="air-jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:client>
 
@@ -159,6 +149,17 @@
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
+	<bean id="authenticationHandler"
+		class="pl.cyfronet.coin.impl.security.mi.MasterInterfaceAuthenticationHandler">
+		<property name="ipAddress" value="0.0.0.0" />
+		<property name="modAuthTkt">
+			<bean class="pl.cyfronet.coin.impl.security.mi.ModAuthTkt">
+				<property name="secret" value="${secret}" />
+			</bean>
+		</property>
+	</bean>
+
+<!-- 
 	<bean id="authenticationHandler" class="pl.cyfronet.coin.impl.security.AuthenticationHandler">
 		<property name="users">
 			<map>
@@ -171,5 +172,5 @@
 			</map>
 		</property>
 	</bean>
-
+ -->
 </beans>
