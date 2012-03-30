@@ -84,7 +84,6 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	/* (non-Javadoc)
 	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#getPerformedActions()
 	 */
-	@Override
 	public Map<String, AllocationActionPerformed> getPerformedActions() {
 		// TODO Auto-generated method stub
 		return null;
@@ -93,7 +92,6 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	/* (non-Javadoc)
 	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#addPerformedAction(pl.cyfronet.dyrealla.allocation.AllocationActionPerformed)
 	 */
-	@Override
 	public void addPerformedAction(AllocationActionPerformed action) {
 		// TODO Auto-generated method stub
 		
@@ -102,7 +100,6 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	/* (non-Javadoc)
 	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#getDuration()
 	 */
-	@Override
 	public long getDuration() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -111,7 +108,6 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	/* (non-Javadoc)
 	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#setDuration(long)
 	 */
-	@Override
 	public void setDuration(long duration) {
 		// TODO Auto-generated method stub
 		
