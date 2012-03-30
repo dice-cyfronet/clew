@@ -18,6 +18,7 @@ package pl.cyfronet.coin.impl.manager;
 
 import java.util.Map;
 
+import pl.cyfronet.dyrealla.allocation.AllocationActionPerformed;
 import pl.cyfronet.dyrealla.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.allocation.OperationStatus;
 
@@ -78,5 +79,41 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	 */
 	@Override
 	public void setOperationStatus(OperationStatus arg0) {
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#getPerformedActions()
+	 */
+	@Override
+	public Map<String, AllocationActionPerformed> getPerformedActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#addPerformedAction(pl.cyfronet.dyrealla.allocation.AllocationActionPerformed)
+	 */
+	@Override
+	public void addPerformedAction(AllocationActionPerformed action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#getDuration()
+	 */
+	@Override
+	public long getDuration() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#setDuration(long)
+	 */
+	@Override
+	public void setDuration(long duration) {
+		// TODO Auto-generated method stub
+		
 	}
 }
