@@ -39,6 +39,10 @@
         <property name="suffix" value=".jsp"/>
     </bean>
     
+    <!-- Portlet multipart resolver for file upload support -->
+    <bean id="portletMultipartResolver"
+        class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver"/>
+    
 	<!-- Default ExceptionHandler -->
     <bean id="defaultExceptionHandler" class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver">
         <property name="defaultErrorView" value="fatal/error"/>

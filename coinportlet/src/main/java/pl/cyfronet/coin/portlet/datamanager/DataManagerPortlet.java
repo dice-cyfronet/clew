@@ -17,12 +17,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 @Controller
 @RequestMapping("VIEW")
 public class DataManagerPortlet {
 	private final Logger log = LoggerFactory.getLogger(DataManagerPortlet.class);
+	
+	private static final String PARAM_ACTION = "action";
+	
+	private static final String ACTION_UPLOAD_FILE = "uploadFile";
 
 	@Value("${data.management.file.location}")
 	private String fileLocation;
@@ -32,6 +37,25 @@ public class DataManagerPortlet {
 		log.debug("Generating data portlet main view for location [{}]", fileLocation);
 		
 		return "dataManager/main";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_UPLOAD_FILE)
+	public String doViewUploadFile() {
+		return "dataManager/fileUpload";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_UPLOAD_FILE)
+	public void doActionUploadFile(@RequestParam("file") MultipartFile file) {
+		if(!file.isEmpty()) {
+			File target = new File(fileLocation + "/" + file.getOriginalFilename());
+			log.info("Saving file {} in LOBCDER under location {}", file.getOriginalFilename(), target.getAbsolutePath());
+			
+			try {
+				file.transferTo(target);
+			} catch (Exception e) {
+				log.error("Could not save file {} in LOBCDER", file.getOriginalFilename());
+			}
+		}
 	}
 	
 	@ResourceMapping("fileList")

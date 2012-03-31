@@ -1,5 +1,9 @@
 <%@ include file="../include.jsp" %>
 
+<portlet:renderURL var="uploadFile">
+    <portlet:param name="action" value="uploadFile"/>
+</portlet:renderURL>
+
 <div class="coin-content">
 	<span class="coin-top-dir">LOBCDER files</span>
 	<div id="files" class="coin-file-list">Loading files ...</div>
@@ -37,4 +41,13 @@
 	    	updateFiles();
 	    });
 	</script>
+	<div class="menu-bottom">
+		<ul>
+			<li>
+				<a class="coin-link" href="${uploadFile}">
+					<spring:message code="data.manager.portlet.upload.file.link.label"/>
+				</a>
+			</li>
+		</ul>
+	</div>
 </div>
