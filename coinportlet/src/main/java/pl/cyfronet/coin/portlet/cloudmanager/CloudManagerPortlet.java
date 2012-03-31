@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceResponse;
@@ -48,6 +49,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.portlet.portal.Portal;
+import pl.cyfronet.coin.portlet.util.ClientFactory;
 import pl.cyfronet.coin.portlet.util.ContextIdFactory;
 
 @Controller
@@ -87,9 +89,7 @@ public class CloudManagerPortlet {
 	static final String ACTION_DEVELOPMENT = "development";
 	static final String ACTION_STOP_WORKFLOW = "stopWorkflow";
 	
-	@Autowired private CloudFacade cloudFacade;
-	@Autowired private WorkflowManagement workflowManagement;
-	@Autowired private ContextIdFactory contextIdFactory;
+	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
 	@Autowired private MessageSource messages;
 	
@@ -131,13 +131,13 @@ public class CloudManagerPortlet {
 			@RequestParam(required = false, value = PARAM_CURRENT_ATOMIC_SERVICE) String currentAtomicServiceId) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
 		
-		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.portal);
+		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.portal, request);
 		log.debug("Workflow ids for user TODO: " + portalWorkflowIds);
 		Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances = null;
 		
 		if(portalWorkflowIds.size() > 0) {
 			atomicServiceInstances =
-					getAtomicServiceInstances(portalWorkflowIds.get(0));
+					getAtomicServiceInstances(portalWorkflowIds.get(0), request);
 			
 			if(atomicServiceInstances.size() > 0) {
 				AtomicService currentAtomicService = null;
@@ -178,22 +178,22 @@ public class CloudManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_STOP_WORKFLOW)
 	public void doActionStopWorkflow(@RequestParam("workflowType") WorkflowType workflowType,
-			ActionResponse response) {
+			PortletRequest request, ActionResponse response) {
 		log.info("Stopping workflows of type [{}]", workflowType);
-		List<String> workflowIds = getWorkflowIds(workflowType);
+		List<String> workflowIds = getWorkflowIds(workflowType, request);
 		
 		if(workflowIds.size() > 0) {
 			for(String workflowId : workflowIds) {
-				workflowManagement.stopWorkflow(workflowId);
+				clientFactory.getWorkflowManagement(request).stopWorkflow(workflowId);
 			}
 		}
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
-	public String doViewStartAtomicService(Model model) {
+	public String doViewStartAtomicService(Model model, PortletRequest request) {
 		log.debug("Generating the atomic service startup parameters view");
 		
-		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		filterAtomicService(atomicServices);
 		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES, atomicServices);
 		
@@ -206,10 +206,10 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public void doActionStartAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID)
-			String atomicServiceId, ActionResponse response) {
+			String atomicServiceId, PortletRequest request, ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
-		List<String> workflowIds = getWorkflowIds(WorkflowType.portal);
+		List<String> workflowIds = getWorkflowIds(WorkflowType.portal, request);
 		String workflowId = null;
 		
 		if(workflowIds.size() == 0) {
@@ -217,7 +217,7 @@ public class CloudManagerPortlet {
 			wsr.setName("Portal workflow"); //TODO - change this ???
 			wsr.setType(WorkflowType.portal);
 			try {
-				workflowId = workflowManagement.startWorkflow(wsr);
+				workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
 			} catch (WorkflowStartException e) {
 				// TODO Auto-generated catch block
 				log.warn("Error while starting workflow", e);
@@ -228,11 +228,14 @@ public class CloudManagerPortlet {
 		
 		log.debug("Retrieving initial configurations for atomic service with id [{}]", atomicServiceId);
 		
-		List<InitialConfiguration> initialconfigurations = cloudFacade.getInitialConfigurations(atomicServiceId);
+		List<InitialConfiguration> initialconfigurations =
+				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId);
 		
-		if(initialconfigurations != null && initialconfigurations.size() > 0 && initialconfigurations.get(0).getId() != null) {
-			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]", workflowId, initialconfigurations.get(0).getId());
-			workflowManagement.addAtomicServiceToWorkflow(workflowId, initialconfigurations.get(0).getId(), null);
+		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
+				initialconfigurations.get(0).getId() != null) {
+			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
+					workflowId, initialconfigurations.get(0).getId());
+			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId, initialconfigurations.get(0).getId(), null);
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
@@ -255,7 +258,7 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SAVE_ATOMIC_SERVICE)
 	public void doActionSaveAtomicService(@ModelAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)
-			SaveAtomicServiceRequest saveAtomicServiceRequest, Model model) {
+			SaveAtomicServiceRequest saveAtomicServiceRequest, Model model, PortletRequest request) {
 		AtomicService atomicService = new AtomicService();
 		atomicService.setHttp(true);
 		atomicService.setName(saveAtomicServiceRequest.getName());
@@ -267,15 +270,15 @@ public class CloudManagerPortlet {
 		endpoint.setPort(Integer.parseInt(saveAtomicServiceRequest.getPorts().split(",")[0]));
 		atomicService.setEndpoint(new ArrayList<Endpoint>());
 		atomicService.getEndpoint().add(endpoint);
-		cloudFacade.createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
+		clientFactory.getCloudFacade(request).createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
 	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
 			@RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
-			String invocationResult, Model model) {
-		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
+			String invocationResult, Model model, PortletRequest request) {
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		AtomicService atomicService = null;
 		
 		for(AtomicService as : atomicServices) {
@@ -286,8 +289,8 @@ public class CloudManagerPortlet {
 		}
 		
 		if(atomicService != null) {
-			String workflowId = getWorkflowIds(WorkflowType.portal).get(0);
-			String configurationId = cloudFacade.getInitialConfigurations(atomicServiceId).get(0).getId();
+			String workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
+			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
 			model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, atomicService);
 			
 			if(atomicService.getName().equals("HelloWorld")) {
@@ -345,10 +348,10 @@ public class CloudManagerPortlet {
 	public void checkInstanceStatus(@RequestParam(PARAM_WORKFLOW_ID) String workflowId,
 			@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String instanceId,
-			ResourceResponse response) {
+			PortletRequest request, ResourceResponse response) {
 		log.trace("Processing atomic service instance status request for workflow [{}], atomic service [{}] and instance [{}]",
 				new String[] {workflowId, atomicServiceId, instanceId});
-		AtomicServiceStatus atomicServiceStatus = workflowManagement.getStatus(workflowId, atomicServiceId);
+		AtomicServiceStatus atomicServiceStatus = clientFactory.getWorkflowManagement(request).getStatus(workflowId, atomicServiceId);
 		
 		if(atomicServiceStatus != null && atomicServiceStatus.getInstances() != null) {
 			for(AtomicServiceInstanceStatus instanceStatus :atomicServiceStatus.getInstances()) {
@@ -406,9 +409,9 @@ public class CloudManagerPortlet {
 		return response.toString();
 	}
 	
-	private List<String> getWorkflowIds(WorkflowType workflowType) {
+	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {
 		List<String> result = new ArrayList<String>();
-		UserWorkflows userWorkflows = workflowManagement.getWorkflows();
+		UserWorkflows userWorkflows = clientFactory.getWorkflowManagement(request).getWorkflows();
 		
 		if(userWorkflows != null) {
 			if(userWorkflows.getWorkflows() != null) {
@@ -425,10 +428,10 @@ public class CloudManagerPortlet {
 		return result;
 	}
 	
-	private Map<AtomicService, List<AtomicServiceInstance>> getAtomicServiceInstances(String workflowId) {
+	private Map<AtomicService, List<AtomicServiceInstance>> getAtomicServiceInstances(String workflowId, PortletRequest request) {
 		Map<AtomicService, List<AtomicServiceInstance>> result = new LinkedHashMap<AtomicService, List<AtomicServiceInstance>>();
-		WorkflowStatus workflowStatus = workflowManagement.getStatus(workflowId);
-		List<AtomicService> atomicServices = cloudFacade.getAtomicServices();
+		WorkflowStatus workflowStatus = clientFactory.getWorkflowManagement(request).getStatus(workflowId);
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		
 		if(workflowStatus != null) {
 			if(workflowStatus.getAses() != null) {

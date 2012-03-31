@@ -12,9 +12,11 @@ import org.apache.jetspeed.administration.RegistrationException;
 import org.apache.jetspeed.security.PasswordCredential;
 import org.apache.jetspeed.security.Role;
 import org.apache.jetspeed.security.RoleManager;
+import org.apache.jetspeed.security.SecurityAttribute;
 import org.apache.jetspeed.security.SecurityException;
 import org.apache.jetspeed.security.User;
 import org.apache.jetspeed.security.UserManager;
+import org.apache.jetspeed.userinfo.UserInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +60,11 @@ public class Portal {
 			PasswordCredential pc = userManager.getPasswordCredential(user);
 			pc.setPassword(token, false);
 			userManager.storePasswordCredential(pc);
+			
+			//setting the token as one of the user's attributes
+			SecurityAttribute tokenAttribute = user.getSecurityAttributes().getAttribute("token", true);
+			tokenAttribute.setStringValue(token);
+			userManager.updateUser(user);
 		} catch (SecurityException e) {
 			log.error("Could not register or update user [{}]", userName, e);
 		} catch (RegistrationException e) {
