@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.util.HtmlUtils;
 
-import pl.cyfronet.coin.api.CloudFacade;
-import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
@@ -50,7 +48,6 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
-import pl.cyfronet.coin.portlet.util.ContextIdFactory;
 
 @Controller
 @RequestMapping("VIEW")
@@ -73,6 +70,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_AS_INVOCATION_POSSIBLE = "atomicServiceInvokable";
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
 	static final String MODEL_BEAN_AS_WSDL_ENDPOINT = "atomicServiceWsdlEndpoint";
+	static final String MODEL_BEAN_DEVELOPMENT_INSTANCES = "developmentAtomicServiceInstances";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -123,6 +121,23 @@ public class CloudManagerPortlet {
 	public String doViewDevelopment(Model model, RenderRequest request, PortletResponse response) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_DEVELOPMENT);
 		
+		
+		
+		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.development, request);
+		Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances = null;
+		
+		if(portalWorkflowIds.size() > 0) {
+			atomicServiceInstances =
+					getAtomicServiceInstances(portalWorkflowIds.get(0), request);
+			
+			if(atomicServiceInstances.size() > 0) {
+				model.addAttribute(MODEL_BEAN_DEVELOPMENT_INSTANCES, atomicServiceInstances);
+				model.addAttribute(PARAM_WORKFLOW_ID, portalWorkflowIds.get(0));
+			}
+		} else {
+			atomicServiceInstances = new HashMap<AtomicService, List<AtomicServiceInstance>>();
+		}
+		
 		return "cloudManager/development";
 	}
 
@@ -132,7 +147,6 @@ public class CloudManagerPortlet {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
 		
 		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.portal, request);
-		log.debug("Workflow ids for user TODO: " + portalWorkflowIds);
 		Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances = null;
 		
 		if(portalWorkflowIds.size() > 0) {
