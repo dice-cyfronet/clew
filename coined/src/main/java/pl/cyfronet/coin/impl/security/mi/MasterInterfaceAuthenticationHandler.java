@@ -37,8 +37,13 @@ public class MasterInterfaceAuthenticationHandler implements
 
 	@Override
 	public boolean isAuthenticated(String username, String password) {
-		return modAuthTkt.validateTicket(unwrap(password), ipAddress, 0,
-				System.currentTimeMillis()) == TicketAuthStatus.VALID;
+		try {
+			return modAuthTkt.validateTicket(unwrap(password), ipAddress, 0,
+					System.currentTimeMillis()) == TicketAuthStatus.VALID;
+		} catch (Exception e) {
+			logger.warn("Exception thrown while validating ticket", e);
+			return false;
+		}
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class MasterInterfaceAuthenticationHandler implements
 			String ticket = unwrap(password);
 			UserInfo userInfo = new UserInfo(ticket);
 			return userInfo.getUserId();
-		} catch (WrongTicketFormatException e) {
+		} catch (Exception e) {
 			logger.warn("Wrong ticket format", e);
 			return null;
 		}
