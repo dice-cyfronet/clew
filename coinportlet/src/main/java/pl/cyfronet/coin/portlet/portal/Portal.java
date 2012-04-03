@@ -9,6 +9,7 @@ import javax.portlet.RenderRequest;
 import org.apache.jetspeed.CommonPortletServices;
 import org.apache.jetspeed.administration.PortalAdministration;
 import org.apache.jetspeed.administration.RegistrationException;
+import org.apache.jetspeed.security.GroupManager;
 import org.apache.jetspeed.security.PasswordCredential;
 import org.apache.jetspeed.security.Role;
 import org.apache.jetspeed.security.RoleManager;
@@ -22,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 public class Portal {
 	private static final Logger log = LoggerFactory.getLogger(Portal.class);
+	
+	private static final String DEVELOPER_ROLE = "developer";
 	
 	public List<String> getUserRoles(PortletRequest request) {
 		List<String> roles = new ArrayList<String>();
@@ -49,6 +52,9 @@ public class Portal {
 				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
 		PortalAdministration portalAdministration = (PortalAdministration) request.getPortletSession().getPortletContext().
 				getAttribute(CommonPortletServices.CPS_PORTAL_ADMINISTRATION);
+		RoleManager roleManager = (RoleManager) request.getPortletSession().getPortletContext().
+				getAttribute(CommonPortletServices.CPS_ROLE_MANAGER_COMPONENT);
+		
 		try {
 			if(!userManager.userExists(userName)) {
 				//creating new user
@@ -60,6 +66,15 @@ public class Portal {
 			PasswordCredential pc = userManager.getPasswordCredential(user);
 			pc.setPassword(token, false);
 			userManager.storePasswordCredential(pc);
+			
+			//TODO: remove this role hack in the future
+			//<<<
+			if(!roleManager.roleExists(DEVELOPER_ROLE)) {
+				roleManager.addRole(DEVELOPER_ROLE);
+			}
+			
+			roleManager.addRoleToUser(userName, DEVELOPER_ROLE);
+			//>>>
 			
 			//setting the token as one of the user's attributes
 			SecurityAttribute tokenAttribute = user.getSecurityAttributes().getAttribute("token", true);
