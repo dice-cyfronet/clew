@@ -44,7 +44,7 @@ public class Portal {
 		return request.getUserPrincipal().getName();
 	}
 
-	public void registerUser(String userName, String token, PortletRequest request) {
+	public void updateUser(String userName, String token, PortletRequest request) {
 		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
 				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
 		PortalAdministration portalAdministration = (PortalAdministration) request.getPortletSession().getPortletContext().

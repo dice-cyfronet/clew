@@ -2,16 +2,23 @@ package pl.cyfronet.coin.portlet.util;
 
 import javax.portlet.PortletRequest;
 
+import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.jetspeed.CommonPortletServices;
 import org.apache.jetspeed.security.SecurityAttribute;
 import org.apache.jetspeed.security.SecurityException;
 import org.apache.jetspeed.security.UserManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.WorkflowManagement;
 
 public class ClientFactory {
+	private static final Logger log = LoggerFactory.getLogger(ClientFactory.class);
+	
+	private static final String HEADER_AUTHORIZATION = "Authorization";
+	
 	private CloudFacade cloudFacade;
 	private WorkflowManagement workflowManagement;
 	
@@ -61,7 +68,12 @@ public class ClientFactory {
 		}
 
 		String authorizationHeader = "Basic " 
-			    + org.apache.cxf.common.util.Base64Utility.encode(("user:" + token).getBytes());
-		WebClient.client(proxy).header("Authorization", authorizationHeader);
+			    + org.apache.cxf.common.util.Base64Utility.encode((
+			    		request.getUserPrincipal().getName() + ":" + token).getBytes());
+		Client client = WebClient.client(proxy);
+		client.reset();
+		client.header(HEADER_AUTHORIZATION, authorizationHeader);
+		log.debug("Client instance enriched with the following 'Authorization' entry: {}",
+				client.getHeaders().get("Authorization"));
 	}
 }

@@ -48,11 +48,7 @@ public class LoginPortlet {
 		if(user != null && token != null && destination != null) {
 			//TODO: add token validation
 			log.debug("Token contents: {}", new String(Base64.decodeBase64(token)));
-			
-			if(request.getUserPrincipal() == null) {
-				portal.registerUser(user, token, request);
-			}
-			
+			portal.updateUser(user, token, request);
 			model.addAttribute(MODEL_BEAN_USER_LOGIN, user);
 			model.addAttribute(MODEL_BEAN_USER_TOKEN, token);
 			model.addAttribute(MODEL_BEAN_USER_DESTINATION, pageMapping.get(destination));
