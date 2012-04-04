@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,11 +155,20 @@ public class CloudManagerImpl implements CloudManager {
 
 		WorkflowType type = workflow.getType();
 		if (type == WorkflowType.portal || type == WorkflowType.development) {
-			List<WorkflowBaseInfo> workflows = getWorkflows(username);
-			for (WorkflowBaseInfo wInfo : workflows) {
-				if (wInfo.getType() == type) {
-					throw new WorkflowStartException(String.format(
-							"Cannot start two %s workflows", type));
+			try {
+				List<WorkflowBaseInfo> workflows = getWorkflows(username);
+				for (WorkflowBaseInfo wInfo : workflows) {
+					if (wInfo.getType() == type) {
+						throw new WorkflowStartException(String.format(
+								"Cannot start two %s workflows", type));
+					}
+				}
+			} catch (WebApplicationException e) {
+				// 400 is thrown if user is not know by AIR. Most probably user
+				// is starting workflow for the first time.
+				if (e.getResponse().getStatus() != 400) {
+					throw new WorkflowStartException(
+							"Unable to register new workflow in AIR");
 				}
 			}
 		}

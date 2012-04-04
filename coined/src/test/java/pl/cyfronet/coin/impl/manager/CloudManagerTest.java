@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
@@ -283,6 +284,46 @@ public class CloudManagerTest {
 		assertEquals(wId, workflowId);
 	}
 
+	@Test
+	public void shouldStartWorkflowForNewUser() throws Exception {
+		// given
+		CloudManagerImpl manager = new CloudManagerImpl();
+		AirClient air = mock(AirClient.class);
+		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
+
+		manager.setAir(air);
+		manager.setAtmosphere(atmosphere);
+
+		WorkflowStartRequest startRequest = new WorkflowStartRequest();
+		String name = "name";
+		String username = "username";
+		String description = "description";
+		int priority = 40;
+		WorkflowType workflowType = WorkflowType.portal;
+		String wId = "workflowId";
+
+		startRequest.setName(name);
+		startRequest.setDescription(description);
+		startRequest.setPriority(priority);
+		startRequest.setType(workflowType);
+		
+		// when
+		when(air.getUserWorkflows(username)).thenThrow(
+				new WebApplicationException(400));
+		when(
+				air.startWorkflow(name, username, description, priority,
+						workflowType)).thenReturn(wId);
+
+		String workflowId = manager.startWorkflow(startRequest, username);
+
+		// then
+		verify(air, times(1)).getUserWorkflows(username);
+		verify(air, times(1)).startWorkflow(name, username, description,
+				priority, workflowType);
+
+		assertEquals(wId, workflowId);
+	}
+
 	@DataProvider(name = "workflowType")
 	public Object[][] getWorkflowTypes() {
 		return new Object[][] { { WorkflowType.development },
@@ -350,18 +391,19 @@ public class CloudManagerTest {
 	}
 
 	@Test
-	public void shouldTrowWorkflowNotFoundWhenStoppingNonExistingWorkflow() throws Exception {
+	public void shouldTrowWorkflowNotFoundWhenStoppingNonExistingWorkflow()
+			throws Exception {
 		// given
 		CloudManagerImpl manager = new CloudManagerImpl();
 		AirClient air = mock(AirClient.class);
 		manager.setAir(air);
-		
+
 		// when
 
 		// then
 
 	}
-	
+
 	@Test
 	public void shouldGetWorkflowStatus() throws Exception {
 		// given
