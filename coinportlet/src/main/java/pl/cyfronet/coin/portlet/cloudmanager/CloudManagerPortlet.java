@@ -230,6 +230,7 @@ public class CloudManagerPortlet {
 			WorkflowStartRequest wsr = new WorkflowStartRequest();
 			wsr.setName("Portal workflow"); //TODO - change this ???
 			wsr.setType(WorkflowType.portal);
+			
 			try {
 				workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
 			} catch (WorkflowStartException e) {
