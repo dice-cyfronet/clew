@@ -15,9 +15,9 @@
 
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
-		<atmosphere.api.version>0.1.0</atmosphere.api.version>
-		<atmosphere.commons.version>0.3.2-SNAPSHOT</atmosphere.commons.version>
-		<atmosphere.version>0.5.1-SNAPSHOT</atmosphere.version>
+		<atmosphere.api.version>0.6.0-SNAPSHOT</atmosphere.api.version>
+		<atmosphere.commons.version>0.6.0-SNAPSHOT</atmosphere.commons.version>
+		<atmosphere.version>0.6.0-SNAPSHOT</atmosphere.version>
 	</properties>
 
 	<dependencies>

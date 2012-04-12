@@ -281,10 +281,10 @@ public class CloudManagerPortlet {
 		
 		Endpoint endpoint = new Endpoint();
 		endpoint.setInvocationPath(saveAtomicServiceRequest.getInvocationEndpoint());
-		endpoint.setServiceDescription(saveAtomicServiceRequest.getDescriptionEndpoint());
+		endpoint.setDescription(saveAtomicServiceRequest.getDescriptionEndpoint());
 		endpoint.setPort(Integer.parseInt(saveAtomicServiceRequest.getPorts().split(",")[0]));
-		atomicService.setEndpoint(new ArrayList<Endpoint>());
-		atomicService.getEndpoint().add(endpoint);
+		atomicService.setEndpoints(new ArrayList<Endpoint>());
+		atomicService.getEndpoints().add(endpoint);
 		clientFactory.getCloudFacade(request).createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
 	}
 

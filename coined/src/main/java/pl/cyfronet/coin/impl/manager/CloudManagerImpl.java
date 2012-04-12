@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
@@ -42,14 +43,18 @@ import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.impl.air.client.ASEndpoint;
+import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
-import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
+import pl.cyfronet.dyrealla.ApplianceNotFoundException;
+import pl.cyfronet.dyrealla.DyReAllaException;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
+import pl.cyfronet.dyrealla.allocation.impl.ApplianceIdentityImpl;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
 /**
@@ -78,6 +83,8 @@ public class CloudManagerImpl implements CloudManager {
 	 * Default workflow priority.
 	 */
 	private Integer defaultPriority;
+
+	private String defaultSiteId;
 
 	/*
 	 * (non-Javadoc)
@@ -117,7 +124,8 @@ public class CloudManagerImpl implements CloudManager {
 		checkIfWorkflowBelongsToUser(contextId, username);
 		logger.debug("Add atomic service [{} {}] into workflow [{}]",
 				new Object[] { name, atomicServiceId, contextId });
-		registerVms(contextId, Arrays.asList(atomicServiceId), defaultPriority);
+		registerVms(contextId, Arrays.asList(atomicServiceId),
+				Arrays.asList(name), defaultPriority);
 
 		// TODO information from Atmosphere about atomis service instance id
 		// needed!
@@ -134,7 +142,50 @@ public class CloudManagerImpl implements CloudManager {
 	public void createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService, String username)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		throw new CloudFacadeException("Not impolemented yet");
+		AddAtomicServiceRequest addASRequest = new AddAtomicServiceRequest();
+		addASRequest.setClient("rest");
+		addASRequest.setDescription(atomicService.getDescription());
+		addASRequest.setEndpoints(getAsEndpoints(atomicService.getEndpoints()));
+		addASRequest.setHttp(atomicService.isHttp());
+		addASRequest.setIn_proxy(atomicService.isInProxy());
+		addASRequest.setName(atomicService.getName());
+		addASRequest.setPublished(atomicService.isPublished());
+		addASRequest.setScalable(atomicService.isScalable());
+		addASRequest.setShared(atomicService.isShared());
+		addASRequest.setVnc(atomicService.isShared());
+
+		String atomicServiceId = air.addAtomicService(addASRequest);
+		try {
+			atmosphere.createTemplate(atomicServiceInstanceId,
+					atomicService.getName(), defaultSiteId, atomicServiceId);
+		} catch (ApplianceNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DyReAllaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param endpoints
+	 * @return
+	 */
+	private List<ASEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
+		if (endpoints != null) {
+			List<ASEndpoint> asEndpoints = new ArrayList<ASEndpoint>();
+			for (Endpoint endpoint : endpoints) {
+				ASEndpoint asEndpoint = new ASEndpoint();
+				asEndpoint.setDescription(endpoint.getDescription());
+				asEndpoint.setDescriptor(endpoint.getDescriptor());
+				asEndpoint.setInvocation_path(endpoint.getInvocationPath());
+				asEndpoint.setPort(endpoint.getPort());
+				asEndpoint.setService_name(endpoint.getServiceName());
+				asEndpoints.add(asEndpoint);
+			}
+			return asEndpoints;
+		}
+		return null;
 	}
 
 	/*
@@ -178,7 +229,7 @@ public class CloudManagerImpl implements CloudManager {
 				workflow.getDescription(), priority, workflow.getType());
 		List<String> ids = workflow.getAsConfigIds();
 
-		registerVms(workflowId, ids, priority);
+		registerVms(workflowId, ids, null, priority);
 
 		return workflowId;
 	}
@@ -357,20 +408,42 @@ public class CloudManagerImpl implements CloudManager {
 	 * @param priority Workflow priority.
 	 */
 	private void registerVms(String contextId, List<String> configIds,
-			Integer priority) {
+			List<String> names, Integer priority) {
 		if (configIds != null && configIds.size() > 0) {
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
 					"Registering required atomic services in atmosphere {}",
 					Arrays.toString(ids));
 
-			AddRequiredAppliancesRequest request = new AddRequiredAppliancesRequestImpl();
+			AddRequiredAppliancesRequestImpl request = new AddRequiredAppliancesRequestImpl();
 			request.setImportanceLevel(priority);
 			request.setCorrelationId(contextId);
-			request.setApplianceInitConfigIds(ids);
+			request.setApplianceIdentities(getApplianceIdentities(configIds,
+					names));
 
 			atmosphere.addRequiredAppliances(request);
 		}
+	}
+
+	/**
+	 * @param configIds
+	 * @return
+	 */
+	private List<ApplianceIdentityImpl> getApplianceIdentities(
+			List<String> configIds, List<String> names) {
+		List<ApplianceIdentityImpl> identities = new ArrayList<ApplianceIdentityImpl>();
+		for (int i = 0; i < configIds.size(); i++) {
+			String asId = configIds.get(i);
+			ApplianceIdentityImpl identity = new ApplianceIdentityImpl();
+			identity.setInitConfId(asId);
+			String name = null;
+			if (names != null && names.size() > i) {
+				name = names.get(i);
+			}
+			identity.setName(name);
+			identities.add(identity);
+		}
+		return identities;
 	}
 
 	/**
@@ -450,5 +523,12 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	public void setAir(AirClient air) {
 		this.air = air;
+	}
+
+	/**
+	 * @param defaultSiteId the defaultSiteId to set
+	 */
+	public void setDefaultSiteId(String defaultSiteId) {
+		this.defaultSiteId = defaultSiteId;
 	}
 }

@@ -43,22 +43,22 @@ public interface AirClient {
 			@FormParam("description") String description,
 			@FormParam("priority") Integer priority,
 			@FormParam("workflow_type") WorkflowType type);
-	
+
 	@POST
 	@Path("/workflow/stop")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	void stopWorkflow(@FormParam("context_id") String contextId);
-	
+
 	@GET
 	@Path("workflow/get_user_workflows/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
 	List<WorkflowDetail> getUserWorkflows(@PathParam("username") String username);
-	
+
 	@GET
 	@Path("workflow/{contextId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	WorkflowDetail getWorkflow(@PathParam("contextId") String contextId);
-	
+
 	@GET
 	@Path("/get_appliance_types")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -67,8 +67,13 @@ public interface AirClient {
 	@GET
 	@Path("/get_appliance_config/{conf_id}")
 	String getApplianceConfig(@PathParam("conf_id") String configId);
-	
+
 	@GET
 	@Path("/get_appliance_type_for_config/{conf_id}")
 	ApplianceType getTypeFromConfig(@PathParam("conf_id") String configId);
+
+	@POST
+	@Path("/add_appliance_type_json")
+	@Consumes(MediaType.APPLICATION_JSON)
+	String addAtomicService(AddAtomicServiceRequest addAtomicService);
 }

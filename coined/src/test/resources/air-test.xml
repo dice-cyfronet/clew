@@ -37,6 +37,22 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
 
+	<jaxrs:client id="air-client-local" address="http://localhost:9000"
+		username="vphshare" password="airtraffic123"
+		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
+		inheritHeaders="true">
+		<jaxrs:providers>
+			<!-- <ref bean="jaxbProvider" />-->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="logInbound" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="logOutbound" />
+		</jaxrs:outInterceptors>
+	</jaxrs:client>
+	
 	<bean id="jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />

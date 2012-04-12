@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
@@ -46,6 +47,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -137,27 +139,26 @@ public class CloudManagerTest {
 		manager.setAir(air);
 
 		final String atomicServiceId = "asId";
-		final String name = "name";
+		final String name = "asIdName";
 		final String contextId = "contextId";
 		String username = "user";
 
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 
+		AddRequiredAppliancesRequestMatcher matcher = new AddRequiredAppliancesRequestMatcher(
+				contextId, true, atomicServiceId);
+
 		// when
 		mockGetWorkflow(air, contextId, username);
-		when(
-				atmosphere
-						.addRequiredAppliances(argThat(new AddRequiredAppliancesRequestMatcher(
-								contextId, atomicServiceId)))).thenReturn(
+		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
 
 		String id = manager.startAtomicService(atomicServiceId, name,
 				contextId, username);
 
 		// then
-		verify(atmosphere, times(1)).addRequiredAppliances(
-				any(AddRequiredAppliancesRequest.class));
+		verify(atmosphere, times(1)).addRequiredAppliances(argThat(matcher));
 
 		verify(air, times(1)).getWorkflow(contextId);
 
@@ -306,7 +307,7 @@ public class CloudManagerTest {
 		startRequest.setDescription(description);
 		startRequest.setPriority(priority);
 		startRequest.setType(workflowType);
-		
+
 		// when
 		when(air.getUserWorkflows(username)).thenThrow(
 				new WebApplicationException(400));
@@ -589,6 +590,105 @@ public class CloudManagerTest {
 		assertEquals(WorkflowType.workflow, infos.get(1).getType());
 	}
 
+	@Test
+	public void shouldCreateAtomicServiceWithoutEndpoints() throws Exception {
+		// given
+		String cloudSite = "cyfronet-nova";
+		
+		CloudManagerImpl manager = new CloudManagerImpl();
+		AirClient air = mock(AirClient.class);
+		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
+		manager.setDefaultSiteId(cloudSite);
+		
+		manager.setAir(air);
+		manager.setAtmosphere(atmosphere);
+
+		String asiId = "23";
+		String asId = "1";
+		String asAirId = "asdf3432";
+		String asName = "name";
+		String asDescription = "description";
+		String username = "user";
+
+		AtomicService as = new AtomicService();
+		as.setName(asName);
+		as.setDescription(asDescription);
+		as.setHttp(true);
+
+		AddAtomicServiceMatcher matcher = new AddAtomicServiceMatcher(as);
+
+		// when
+		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
+
+		when(atmosphere.createTemplate(asiId, asName, cloudSite, asAirId))
+				.thenReturn(asId);
+
+		manager.createAtomicService(asiId, as, username);
+
+		// then
+		verify(air, times(1)).addAtomicService(argThat(matcher));
+		verify(atmosphere, times(1)).createTemplate(asiId, asName, cloudSite,
+				asAirId);
+	}
+
+	@Test
+	public void shouldCreateAtomicServiceWithEndpoints() throws Exception {
+		// given
+				String cloudSite = "cyfronet-nova";
+				
+				CloudManagerImpl manager = new CloudManagerImpl();
+				AirClient air = mock(AirClient.class);
+				DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
+				manager.setDefaultSiteId(cloudSite);
+				
+				manager.setAir(air);
+				manager.setAtmosphere(atmosphere);
+
+				String asiId = "23";
+				String asId = "1";
+				String asAirId = "asdf3432";
+				String asName = "name";
+				String asDescription = "description";
+				String username = "user";
+
+				AtomicService as = new AtomicService();
+				as.setName(asName);
+				as.setDescription(asDescription);
+				as.setHttp(true);
+
+				Endpoint e1 = new Endpoint();
+				e1.setDescription("e1 description");
+				e1.setDescriptor("<wsdl/>");
+				e1.setInvocationPath("/service1/path");
+				e1.setPort(8080);
+				e1.setServiceName("e1ServiceName");
+				
+				Endpoint e2 = new Endpoint();
+				e2.setDescription("e2 description");
+				e2.setDescriptor("<wadl></wadl>");
+				e2.setInvocationPath("/service2/path");
+				e2.setPort(8080);
+				e2.setServiceName("e2ServiceName");
+				
+				as.setEndpoints(Arrays.asList(e1, e2));
+				
+				AddAtomicServiceMatcher matcher = new AddAtomicServiceMatcher(as);
+
+				// when
+				when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
+
+				when(atmosphere.createTemplate(asiId, asName, cloudSite, asAirId))
+						.thenReturn(asId);
+
+				manager.createAtomicService(asiId, as, username);
+
+				// then
+				verify(air, times(1)).addAtomicService(argThat(matcher));
+				verify(atmosphere, times(1)).createTemplate(asiId, asName, cloudSite,
+						asAirId);
+
+	}
+	
 	private ApplianceType getApplianceType(String name) {
 		ApplianceType at = new ApplianceType();
 		at.setName(name);

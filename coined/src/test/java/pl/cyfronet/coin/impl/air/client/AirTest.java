@@ -16,27 +16,50 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class AirTest {
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-		        new String[] {"air-test.xml",});
-//		// of course, an ApplicationContext is just a BeanFactory
+				new String[] { "air-test.xml", });
+		// // of course, an ApplicationContext is just a BeanFactory
 		BeanFactory factory = (BeanFactory) appContext;
-		
+
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
-		try {
-			System.out.println(air.getWorkflow("nonexisting"));
-		} catch(Exception e) {
-			System.err.println(e.getClass());
-		}
+		ASEndpoint asE1 = new ASEndpoint();
+		asE1.setDescription("endpoint description");
+		asE1.setDescriptor("<wsdl/>");
+		asE1.setInvocation_path("/gimias");
+		asE1.setPort(9000);
+		asE1.setService_name("gimias");
+		
+		ASEndpoint asE2 = new ASEndpoint();
+		asE2.setDescription("endpoint description 2");
+		asE2.setDescriptor("<wsdl 2/>");
+		asE2.setInvocation_path("/gimias2");
+		asE2.setPort(9001);
+		asE2.setService_name("gimias2");
+		
+		AddAtomicServiceRequest request = new AddAtomicServiceRequest();
+		request.setClient("rest");
+		request.setDescription("description");
+		request.setHttp(true);
+		request.setIn_proxy(true);
+		request.setName("asName");
+		request.setPublished(true);
+		request.setScalable(true);
+		request.setShared(true);
+		request.setVnc(true);
+		request.setEndpoints(Arrays.asList(asE1, asE2));
+		
+		air.addAtomicService(request);
 	}
 }

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Bean which describes atomic service (vm template).
- * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
+ * @author <a href="mailto:d.harezlak@cyfronet.pl>Daniel Harezlak</a>
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @XmlRootElement
@@ -29,16 +29,17 @@ public class AtomicService {
 	private String atomicServiceId;
 	private String name;
 	private String description;
-	private List<Endpoint> endpoint;
+	private List<Endpoint> endpoints;
 	private boolean vnc;
 	private boolean http;
 	private boolean shared;
 	private boolean scalable;
 	private boolean published;
-	
+	private boolean inProxy;
+
 	public AtomicService() {
 	}
-	
+
 	public AtomicService(String name) {
 		this.name = name;
 	}
@@ -73,12 +74,12 @@ public class AtomicService {
 		this.description = description;
 	}
 
-	public List<Endpoint> getEndpoint() {
-		return endpoint;
+	public List<Endpoint> getEndpoints() {
+		return endpoints;
 	}
 
-	public void setEndpoint(List<Endpoint> endpoint) {
-		this.endpoint = endpoint;
+	public void setEndpoints(List<Endpoint> endpoints) {
+		this.endpoints = endpoints;
 	}
 
 	public boolean isVnc() {
@@ -133,15 +134,30 @@ public class AtomicService {
 		this.published = published;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return the inProxy
+	 */
+	public boolean isInProxy() {
+		return inProxy;
+	}
+
+	/**
+	 * @param inProxy the inProxy to set
+	 */
+	public void setInProxy(boolean inProxy) {
+		this.inProxy = inProxy;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
-				+ name + ", description=" + description + ", endpoint="
-				+ endpoint + ", vnc=" + vnc + ", http=" + http + ", shared="
+				+ name + ", description=" + description + ", endpoints="
+				+ endpoints + ", vnc=" + vnc + ", http=" + http + ", shared="
 				+ shared + ", scalable=" + scalable + ", published="
-				+ published + "]";
+				+ published + ", inProxy=" + inProxy + "]";
 	}
 }

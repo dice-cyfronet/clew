@@ -16,12 +16,13 @@
 
 package pl.cyfronet.coin.impl.manager;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
 import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
+import pl.cyfronet.dyrealla.allocation.ApplianceIdentity;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -33,10 +34,18 @@ public class AddRequiredAppliancesRequestMatcher extends
 
 	private String[] atomicServiceIds;
 
+	private boolean checkName;
+
 	public AddRequiredAppliancesRequestMatcher(String contextId,
 			String... atomicServiceIds) {
+		this(contextId, false, atomicServiceIds);
+	}
+
+	public AddRequiredAppliancesRequestMatcher(String contextId,
+			boolean checkName, String... atomicServiceIds) {
 		this.contextId = contextId;
 		this.atomicServiceIds = atomicServiceIds;
+		this.checkName = checkName;
 	}
 
 	/*
@@ -47,8 +56,28 @@ public class AddRequiredAppliancesRequestMatcher extends
 	public boolean matches(Object arg0) {
 		AddRequiredAppliancesRequest request = (AddRequiredAppliancesRequest) arg0;
 		return request.getCorrelationId().equals(contextId)
-				&& Arrays.equals(request.getApplianceInitConfigIds(),
-						atomicServiceIds);
+				&& equals(request.getApplianceIdentities(), atomicServiceIds);
+	}
+
+	private boolean equals(List<ApplianceIdentity> identites,
+			String[] atomicServiceIds) {
+		if (identites.size() == atomicServiceIds.length) {
+			for (int i = 0; i < identites.size(); i++) {
+				ApplianceIdentity identity = identites.get(i);
+				String id = atomicServiceIds[i];
+				String name = checkName ? id + "Name" : null;
+				if (!equals(identity.getInitConfId(), id)
+						|| !equals(identity.getName(), name)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean equals(String a, String b) {
+		return a != null ? a.equals(b) : b == null;
 	}
 
 	/*
