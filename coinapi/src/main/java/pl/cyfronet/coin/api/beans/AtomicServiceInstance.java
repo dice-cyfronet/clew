@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,33 +25,26 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @XmlRootElement
-public class AtomicServiceInstance {
+public class AtomicServiceInstance extends StatusBean {
+
 	private String atomicServiceId;
-	private String instanceId;
-	private Status status;
-	private String name;
+
+	private Credential credential;
+
+	private List<Redirection> redirections;
 	
-	public AtomicServiceInstance() {
+	/**
+	 * @return the credential
+	 */
+	public Credential getCredential() {
+		return credential;
 	}
 
-	public AtomicServiceInstance(String name) {
-		this.name = name;
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
+	/**
+	 * @param credential the credential to set
+	 */
+	public void setCredential(Credential credential) {
+		this.credential = credential;
 	}
 
 	public String getAtomicServiceId() {
@@ -60,18 +55,17 @@ public class AtomicServiceInstance {
 		this.atomicServiceId = atomicServiceId;
 	}
 
-	public String getName() {
-		return name;
+	/**
+	 * @return the redirections
+	 */
+	public List<Redirection> getRedirections() {
+		return redirections;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String toString() {
-		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
-				+ ", instanceId=" + instanceId + ", status=" + status
-				+ ", name=" + name + "]";
+	/**
+	 * @param redirections the redirections to set
+	 */
+	public void setRedirections(List<Redirection> redirections) {
+		this.redirections = redirections;
 	}
 }

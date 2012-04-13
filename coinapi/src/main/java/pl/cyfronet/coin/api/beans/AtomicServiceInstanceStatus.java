@@ -20,6 +20,7 @@ package pl.cyfronet.coin.api.beans;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
+@Deprecated
 public class AtomicServiceInstanceStatus extends StatusBean {
 
 	/* (non-Javadoc)

@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.manager;
+package pl.cyfronet.coin.impl.manager.atmosphere;
 
 import java.util.Map;
 

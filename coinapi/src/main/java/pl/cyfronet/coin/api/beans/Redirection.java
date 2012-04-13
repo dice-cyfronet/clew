@@ -20,13 +20,15 @@ package pl.cyfronet.coin.api.beans;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class RedirectionInfo {
+public class Redirection {
 
 	private String name;
 	
 	private boolean http;
 	
-	private Integer port;
+	private Integer toPort;
+	
+	private Integer fromPort;
 
 	/**
 	 * @return the name
@@ -59,16 +61,28 @@ public class RedirectionInfo {
 	/**
 	 * @return the port
 	 */
-	public Integer getPort() {
-		return port;
+	public Integer getToPort() {
+		return toPort;
 	}
 
 	/**
 	 * @param port the port to set
 	 */
-	public void setPort(Integer port) {
-		this.port = port;
+	public void setToPort(Integer port) {
+		this.toPort = port;
 	}
-	
-	
+
+	/**
+	 * @return the fromPort
+	 */
+	public Integer getFromPort() {
+		return fromPort;
+	}
+
+	/**
+	 * @param fromPort the fromPort to set
+	 */
+	public void setFromPort(Integer fromPort) {
+		this.fromPort = fromPort;
+	}
 }

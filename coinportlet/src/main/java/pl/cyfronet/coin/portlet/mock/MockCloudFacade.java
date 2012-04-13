@@ -40,7 +40,7 @@ public class MockCloudFacade implements CloudFacade {
 		
 		for(int i = 0; i < initialNumberOfAtomicServiceInstances; i++) {
 			AtomicServiceInstance atomicServiceInstance = new AtomicServiceInstance();
-			atomicServiceInstance.setInstanceId(String.valueOf(currentTime++));
+			atomicServiceInstance.setId(String.valueOf(currentTime++));
 			atomicServiceInstance.setName("Mock atomic service instance nr " + (i + 1));
 			atomicServiceInstance.setStatus(Status.values()[random.nextInt(Status.values().length)]);
 			

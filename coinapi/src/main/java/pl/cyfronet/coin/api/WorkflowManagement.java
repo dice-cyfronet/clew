@@ -29,8 +29,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
-import pl.cyfronet.coin.api.beans.RedirectionInfo;
+import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
@@ -109,6 +110,17 @@ public interface WorkflowManagement {
 			@PathParam("asConfigId") String asConfigId);
 
 	/**
+	 * Get full information about workflow.
+	 * @param workflowId Workflow id.
+	 * @return Workflow structure (workflow name, type, atomic service instances
+	 *         running in the scope of this workflow).
+	 */
+	@GET
+	@Path("/{workflowId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	Workflow getWorkflow(@PathParam("workflowId") String workflowId);
+
+	/**
 	 * Get status of all atomic services executed in the scope of workflow.
 	 * @param workflowId Workflow id.
 	 * @return Status of all atomic services executed for defined workflow in
@@ -120,9 +132,10 @@ public interface WorkflowManagement {
 	 * ]} 
 	 * </code>
 	 */
+	@Deprecated
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/{workflowId}")
+	@Path("/{workflowId}/status")
 	WorkflowStatus getStatus(@PathParam("workflowId") String workflowId);
 
 	/**
@@ -134,12 +147,13 @@ public interface WorkflowManagement {
 	 *   	{id: "atomicServiceInstanceId", "status": "OK", message: "message"}, ...
 	 * 	]}</code>
 	 */
+	@Deprecated
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/{workflowId}/as/{asConfigId}")
+	@Path("/{workflowId}/as/{asConfigId}/status")
 	AtomicServiceStatus getStatus(@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asId);
-	
+
 	/**
 	 * Adds redirection to the Atomic Service Instance. This method will throws
 	 * Forbidden (403 HTTP code) if user will try to add redirection into atomic
@@ -156,5 +170,5 @@ public interface WorkflowManagement {
 	@Path("/asi/{contextId}/{asiId}/redirection/add")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	String addRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId, RedirectionInfo redirectionInfo);
+			@PathParam("asiId") String asiId, Redirection redirectionInfo);
 }

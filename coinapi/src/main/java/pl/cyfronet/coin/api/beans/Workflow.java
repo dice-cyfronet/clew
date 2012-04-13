@@ -18,19 +18,17 @@ package pl.cyfronet.coin.api.beans;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-@Deprecated
-@XmlRootElement
-public class WorkflowStatus {
+public class Workflow {
 
 	private String name;
 	
-	private List<AtomicServiceStatus> ases;
+	private WorkflowType type;
+	
+	private List<AtomicServiceInstance> atomicServiceInstances;
 
 	/**
 	 * @return the name
@@ -47,25 +45,31 @@ public class WorkflowStatus {
 	}
 
 	/**
-	 * @return the ases
+	 * @return the type
 	 */
-	public List<AtomicServiceStatus> getAses() {
-		return ases;
+	public WorkflowType getType() {
+		return type;
 	}
 
 	/**
-	 * @param ases the ases to set
+	 * @param type the type to set
 	 */
-	public void setAses(List<AtomicServiceStatus> ases) {
-		this.ases = ases;
+	public void setType(WorkflowType type) {
+		this.type = type;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the atomicServiceInstances
 	 */
-	@Override
-	public String toString() {
-		return "WorkflowStatus [name=" + name + ", ases=" + ases + "]";
+	public List<AtomicServiceInstance> getAtomicServiceInstances() {
+		return atomicServiceInstances;
+	}
+
+	/**
+	 * @param atomicServiceInstances the atomicServiceInstances to set
+	 */
+	public void setAtomicServiceInstances(
+			List<AtomicServiceInstance> atomicServiceInstances) {
+		this.atomicServiceInstances = atomicServiceInstances;
 	}
 }
-

@@ -474,7 +474,7 @@ public class CloudManagerPortlet {
 								for(AtomicServiceInstanceStatus ass : atomicServiceStatus.getInstances()) {
 									AtomicServiceInstance asi = new AtomicServiceInstance();
 									asi.setAtomicServiceId(atomicService.getAtomicServiceId());
-									asi.setInstanceId(ass.getId());
+									asi.setId(ass.getId());
 									asi.setName(ass.getName());
 									asi.setStatus(ass.getStatus());
 									instances.add(asi);

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
+@Deprecated
 @XmlRootElement
 public class AtomicServiceStatus extends StatusBean {
 

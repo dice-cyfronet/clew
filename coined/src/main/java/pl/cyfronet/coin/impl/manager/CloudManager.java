@@ -20,6 +20,7 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
@@ -112,6 +113,7 @@ public interface CloudManager {
 	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
 	 *             workflow with defined context id belongs to other user.
 	 */
+	@Deprecated
 	WorkflowStatus getWorkflowStatus(String contextId, String username)
 			throws WorkflowNotFoundException;
 
@@ -131,4 +133,12 @@ public interface CloudManager {
 	 */
 	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId)
 			throws ApplianceTypeNotFound;
+
+	/**
+	 * @param workflowId
+	 * @param username
+	 * @return
+	 */
+	Workflow getWorkflow(String workflowId, String username)
+			throws WorkflowNotFoundException;
 }

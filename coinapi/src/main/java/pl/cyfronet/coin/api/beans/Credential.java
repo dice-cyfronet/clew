@@ -16,56 +16,40 @@
 
 package pl.cyfronet.coin.api.beans;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-@Deprecated
-@XmlRootElement
-public class WorkflowStatus {
+public class Credential {
 
-	private String name;
+	private String username;
+
+	private String password;
 	
-	private List<AtomicServiceStatus> ases;
-
 	/**
-	 * @return the name
+	 * @return the username
 	 */
-	public String getName() {
-		return name;
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param username the username to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
-	 * @return the ases
+	 * @return the password
 	 */
-	public List<AtomicServiceStatus> getAses() {
-		return ases;
+	public String getPassword() {
+		return password;
 	}
 
 	/**
-	 * @param ases the ases to set
+	 * @param password the password to set
 	 */
-	public void setAses(List<AtomicServiceStatus> ases) {
-		this.ases = ases;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "WorkflowStatus [name=" + name + ", ases=" + ases + "]";
-	}
+	public void setPassword(String password) {
+		this.password = password;
+	}	
 }
-

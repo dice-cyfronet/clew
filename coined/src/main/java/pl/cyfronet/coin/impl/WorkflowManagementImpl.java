@@ -26,8 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
-import pl.cyfronet.coin.api.beans.RedirectionInfo;
+import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
@@ -135,8 +136,17 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
+	public Workflow getWorkflow(String workflowId) {
+		try {
+			return manager.getWorkflow(workflowId, getUsername());
+		} catch (WorkflowNotFoundException e) {
+			throw new WebApplicationException(404);
+		}
+	}
+
+	@Override
 	public String addRedirection(String contextId, String asiId,
-			RedirectionInfo redirectionInfo) {
+			Redirection redirectionInfo) {
 		// TODO Auto-generated method stub
 		return null;
 	}

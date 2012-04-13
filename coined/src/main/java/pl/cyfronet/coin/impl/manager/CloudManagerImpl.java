@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -29,11 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
+import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowStatus;
@@ -85,6 +89,8 @@ public class CloudManagerImpl implements CloudManager {
 	private Integer defaultPriority;
 
 	private String defaultSiteId;
+
+	private Properties credentialProperties;
 
 	/*
 	 * (non-Javadoc)
@@ -323,6 +329,57 @@ public class CloudManagerImpl implements CloudManager {
 		return workflow;
 	}
 
+	@Override
+	public Workflow getWorkflow(String contextId, String username)
+			throws WorkflowNotFoundException {
+		WorkflowDetail detail = getUserWorkflow(contextId, username);
+
+		Workflow workflow = new Workflow();
+		workflow.setName(detail.getName());
+		workflow.setType(detail.getWorkflow_type());
+
+		List<Vms> vms = detail.getVms();
+		if (vms != null) {
+			List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
+			for (Vms vm : vms) {
+				if (vm.getVms_id() == null) {
+					// /AIR returns vms:[null] when workflow does not have VMs
+					// and it is parsed by CXF as Vms object with all properties
+					// set to null.
+					continue;
+				}
+
+				AtomicServiceInstance instance = new AtomicServiceInstance();
+				instance.setAtomicServiceId(vm.getAppliance_type());
+				instance.setId(vm.getVms_id());
+				instance.setStatus(vm.getState());
+				instance.setName(vm.getName());
+				instance.setMessage(""); // TODO
+
+				if (detail.getWorkflow_type() == WorkflowType.development) {
+					instance.setCredential(getCredential(vm.getVms_id()));
+				}
+
+				instances.add(instance);
+
+			}
+			workflow.setAtomicServiceInstances(instances);
+		}
+
+		return workflow;
+	}
+
+	/**
+	 * @param vms_id
+	 * @return
+	 */
+	private Credential getCredential(String vms_id) {
+		Credential cred = new Credential();
+		cred.setUsername(credentialProperties.getProperty(vms_id + ".username"));
+		cred.setPassword(credentialProperties.getProperty(vms_id + ".password"));
+		return cred;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -530,5 +587,12 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	public void setDefaultSiteId(String defaultSiteId) {
 		this.defaultSiteId = defaultSiteId;
+	}
+
+	/**
+	 * @param credentialProperties
+	 */
+	public void setCredentialProperties(Properties credentialProperties) {
+		this.credentialProperties = credentialProperties;
 	}
 }
