@@ -21,6 +21,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -70,6 +71,7 @@ public interface CloudFacade {
 	@PUT
 	@Path("as/{atomicServiceInstanceId}")
 	@WebMethod(operationName = "createAtomicService")
+	@Consumes({ MediaType.APPLICATION_JSON })
 	void createAtomicService(
 			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
 			@WebParam(name = "atomicService") AtomicService atomicService)

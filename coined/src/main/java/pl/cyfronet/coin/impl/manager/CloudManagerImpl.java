@@ -106,7 +106,7 @@ public class CloudManagerImpl implements CloudManager {
 			atomicService.setDescription(applianceType.getDescription());
 			atomicService.setHttp(applianceType.isHttp()
 					&& applianceType.isIn_proxy());
-			atomicService.setName(applianceType.getName());
+			atomicService.setName(applianceType.getName());			
 			atomicService.setShared(applianceType.isShared());
 			atomicService.setScalable(applianceType.isScalable());
 			atomicService.setVnc(applianceType.isVnc());

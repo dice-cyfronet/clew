@@ -21,7 +21,16 @@
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
+	<jaxrs:client id="cf-client-local" address="http://localhost:4567"			    
+		serviceClass="pl.cyfronet.coin.api.CloudFacade"
+		inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>		
+	</jaxrs:client>
+	
 	<jaxrs:client id="cf-client" address="https://vph.cyfronet.pl/cloudfacade"		
+	    username="test" password="ODBiNWY0ZTQyMzEyYWU5MjNhN2U2MjdkZDY4Yzg0YzE0ZjhjMWYyZmRoYXJlemxhayFkZXZlbG9wZXIhZGhhcmV6bGFrLERhbmllbCBIYXJlemxhaywsLCw="
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		inheritHeaders="true">
 		<jaxrs:providers>

@@ -17,6 +17,7 @@
 package pl.cyfronet.coin.impl.air.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -63,7 +64,10 @@ public class AirTest {
 //		air.addAtomicService(request);
 		
 		try {			
-			air.getUserWorkflows("nonExisting");
+			List<ApplianceType> types = air.getApplianceTypes();
+			for (ApplianceType applianceType : types) {
+				System.out.println(applianceType.getName() + " " + applianceType.isHttp());
+			}
 		} catch (Exception e) {
 			System.out.println(e.getClass());
 		}

@@ -50,18 +50,15 @@
 		</property>
 	</bean>
 
-	<bean name="wsCloudManager-test" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
-		<property name="manager" ref="dummyCloudManager" />
-		<property name="authenticator" ref="authenticationHandler" />
-	</bean>
-
-	<bean name="wsCloudManager" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
-		<property name="manager" ref="cloudManager" />
+	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
+		<property name="manager" ref="cloudManager" /> 
+		<!-- <property name="manager" ref="dummyCloudManager" /> -->
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
 	<bean name="workflow-management" class="pl.cyfronet.coin.impl.WorkflowManagementImpl">
 		<property name="manager" ref="cloudManager" />
+		<!-- <property name="manager" ref="dummyCloudManager" /> -->
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
@@ -79,7 +76,7 @@
 
 	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}">
 		<jaxrs:serviceBeans>
-			<ref bean="wsCloudManager" />
+			<ref bean="cloudFacade" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />
@@ -158,19 +155,4 @@
 			</bean>
 		</property>
 	</bean>
-
-<!-- 
-	<bean id="authenticationHandler" class="pl.cyfronet.coin.impl.security.AuthenticationHandler">
-		<property name="users">
-			<map>
-				<entry>
-					<key>
-						<value>${username}</value>
-					</key>
-					<value>${password}</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
- -->
 </beans>

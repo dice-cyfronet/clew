@@ -42,17 +42,17 @@ public class WorkflowManagementTest {
 //		System.out.println(wm.getWorkflows());
 		
 		
-		WorkflowStartRequest start = new WorkflowStartRequest();
-		start.setDescription("my description");
-		start.setName("workflowName");
-		start.setPriority(55);
-		start.setType(WorkflowType.portal);
+//		WorkflowStartRequest start = new WorkflowStartRequest();
+//		start.setDescription("my description");
+//		start.setName("workflowName");
+//		start.setPriority(55);
+//		start.setType(WorkflowType.portal);
 		
 //		System.out.println(start);		
 //		
 //		System.out.println(wm.startWorkflow(start));
 		
-		wm.stopWorkflow("4f730f87866488401c000191");
+//		wm.stopWorkflow("4f730f87866488401c000191");
 		
 //		wm.stopWorkflow("4f4dc97a866488548d000253");
 		
@@ -66,5 +66,7 @@ public class WorkflowManagementTest {
 		
 		//wm.addAtomicServiceToWorkflow("4f4dc984866488548d000268", "4f4dde29866488548d0002fa");
 		//System.out.println(wm.getStatus("4f4e0bdb866488548d000f01"));
+		
+		System.out.println(wm.getWorkflows());
 	}
 }
