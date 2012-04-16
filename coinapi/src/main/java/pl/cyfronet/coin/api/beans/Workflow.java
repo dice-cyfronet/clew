@@ -18,10 +18,13 @@ package pl.cyfronet.coin.api.beans;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
+@XmlRootElement
 public class Workflow {
 
 	private String name;
