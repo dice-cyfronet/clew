@@ -9,8 +9,8 @@
 
 <div class="coin-content">
 	<c:choose>
-		<c:when test="${fn:length(developmentAtomicServiceInstances) > 0}">
-			Number of development atomic services: ${fn:length(developmentAtomicServiceInstances)} 
+		<c:when test="${fn:length(activeAtomicServices) > 0}">
+			<%@ include file="asInstanceList.jsp" %>
 		</c:when>
 		<c:otherwise>
 			<spring:message code="cloud.manager.portlet.no.development.instances"/>

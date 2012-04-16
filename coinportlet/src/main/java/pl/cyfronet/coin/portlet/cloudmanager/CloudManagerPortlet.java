@@ -36,14 +36,12 @@ import org.springframework.web.util.HtmlUtils;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
-import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
+import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.portlet.portal.Portal;
@@ -70,7 +68,6 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_AS_INVOCATION_POSSIBLE = "atomicServiceInvokable";
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
 	static final String MODEL_BEAN_AS_WSDL_ENDPOINT = "atomicServiceWsdlEndpoint";
-	static final String MODEL_BEAN_DEVELOPMENT_INSTANCES = "developmentAtomicServiceInstances";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -78,6 +75,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_CURRENT_ATOMIC_SERVICE = "currentAtomicService";
 	static final String PARAM_ATOMIC_SERVICE_ID = "atomicServiceId";
 	static final String PARAM_WORKFLOW_ID = "workflowId";
+	static final String PARAM_WORKFLOW_TYPE = "workflowType";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -105,23 +103,22 @@ public class CloudManagerPortlet {
 			String view = (String) model.asMap().get(MODEL_BEAN_VIEW);
 			
 			if(view.equals(ACTION_GENERIC_INVOKER)) {
-				return doViewGenericInvoker(model, request, response, null);
+				return doViewGenericInvoker(null, model, request, response);
 			} else if(view.equals(ACTION_DEVELOPMENT)) {
-				return doViewDevelopment(model, request, response);
+				return doViewDevelopment(null, model, request, response);
 			} else {
 				return doViewWorkflows(model, request, response);
 			}
 		} else {
 			//returning default view
-			return doViewGenericInvoker(model, request, response, null);
+			return doViewGenericInvoker(null, model, request, response);
 		}
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_DEVELOPMENT)
-	public String doViewDevelopment(Model model, RenderRequest request, PortletResponse response) {
+	public String doViewDevelopment(@RequestParam(required = false, value = PARAM_CURRENT_ATOMIC_SERVICE) String currentAtomicServiceId,
+			Model model, RenderRequest request, PortletResponse response) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_DEVELOPMENT);
-		
-		
 		
 		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.development, request);
 		Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances = null;
@@ -131,7 +128,26 @@ public class CloudManagerPortlet {
 					getAtomicServiceInstances(portalWorkflowIds.get(0), request);
 			
 			if(atomicServiceInstances.size() > 0) {
-				model.addAttribute(MODEL_BEAN_DEVELOPMENT_INSTANCES, atomicServiceInstances);
+				AtomicService currentAtomicService = null;
+				
+				if(currentAtomicServiceId == null) {
+					currentAtomicService = new ArrayList<AtomicService>(
+							atomicServiceInstances.keySet()).get(0);
+					currentAtomicServiceId = currentAtomicService.getAtomicServiceId();
+				} else {
+					for(AtomicService as : atomicServiceInstances.keySet()) {
+						if(as.getAtomicServiceId().equals(currentAtomicServiceId)) {
+							currentAtomicService = as;
+							break;
+						}
+					}
+				}
+				
+				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances.keySet());
+				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
+						atomicServiceInstances.get(currentAtomicService));
+				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, currentAtomicService);
+				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE_ID, currentAtomicServiceId);
 				model.addAttribute(PARAM_WORKFLOW_ID, portalWorkflowIds.get(0));
 			}
 		} else {
@@ -142,8 +158,8 @@ public class CloudManagerPortlet {
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_GENERIC_INVOKER)
-	public String doViewGenericInvoker(Model model, RenderRequest request, PortletResponse response, 
-			@RequestParam(required = false, value = PARAM_CURRENT_ATOMIC_SERVICE) String currentAtomicServiceId) {
+	public String doViewGenericInvoker(@RequestParam(required = false, value = PARAM_CURRENT_ATOMIC_SERVICE) String currentAtomicServiceId,
+			Model model, RenderRequest request, PortletResponse response) {
 		model.addAttribute(MODEL_BEAN_VIEW, ACTION_GENERIC_INVOKER);
 		
 		List<String> portalWorkflowIds = getWorkflowIds(WorkflowType.portal, request);
@@ -204,12 +220,14 @@ public class CloudManagerPortlet {
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
-	public String doViewStartAtomicService(Model model, PortletRequest request) {
-		log.debug("Generating the atomic service startup parameters view");
+	public String doViewStartAtomicService(@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
+			Model model, PortletRequest request) {
+		log.debug("Generating the atomic service startup parameters view for workflow type [{}]", workflowType);
 		
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
-		filterAtomicService(atomicServices);
+		filterAtomicService(atomicServices, workflowType);
 		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES, atomicServices);
+		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
 		
 		if(!model.containsAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST)) {
 			model.addAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST, new StartAtomicServiceRequest());
@@ -220,21 +238,22 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public void doActionStartAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID)
-			String atomicServiceId, PortletRequest request, ActionResponse response) {
+			String atomicServiceId, PortletRequest request,
+			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
+			ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
-		List<String> workflowIds = getWorkflowIds(WorkflowType.portal, request);
+		List<String> workflowIds = getWorkflowIds(workflowType, request);
 		String workflowId = null;
 		
 		if(workflowIds.size() == 0) {
 			WorkflowStartRequest wsr = new WorkflowStartRequest();
-			wsr.setName("Portal workflow"); //TODO - change this ???
-			wsr.setType(WorkflowType.portal);
+			wsr.setName(workflowType.name() + " workflow");
+			wsr.setType(workflowType);
 			
 			try {
 				workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
 			} catch (WorkflowStartException e) {
-				// TODO Auto-generated catch block
 				log.warn("Error while starting workflow", e);
 			}
 		} else {
@@ -250,13 +269,13 @@ public class CloudManagerPortlet {
 				initialconfigurations.get(0).getId() != null) {
 			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
 					workflowId, initialconfigurations.get(0).getId());
-			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId, initialconfigurations.get(0).getId(), null);
+			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
+					initialconfigurations.get(0).getId(), "Ask user about it?");
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
 		}
-		
-		response.setRenderParameter(PARAM_ACTION, ACTION_GENERIC_INVOKER);
+
 		response.setRenderParameter(PARAM_CURRENT_ATOMIC_SERVICE, atomicServiceId);
 	}
 
@@ -366,32 +385,37 @@ public class CloudManagerPortlet {
 			PortletRequest request, ResourceResponse response) {
 		log.trace("Processing atomic service instance status request for workflow [{}], atomic service [{}] and instance [{}]",
 				new String[] {workflowId, atomicServiceId, instanceId});
-		AtomicServiceStatus atomicServiceStatus = clientFactory.getWorkflowManagement(request).getStatus(workflowId, atomicServiceId);
 		
-		if(atomicServiceStatus != null && atomicServiceStatus.getInstances() != null) {
-			for(AtomicServiceInstanceStatus instanceStatus :atomicServiceStatus.getInstances()) {
-				if(instanceStatus.getId() != null && instanceStatus.getId().equals(instanceId)) {
-					try {
-						log.trace("Returning status [{}] for instance [{}]", instanceStatus.getStatus(), instanceId);
-						response.getWriter().write(instanceStatus.getStatus().toString());
-					} catch (IOException e) {
-						log.warn("Could not return instance status for id [{}]", instanceId);
-					}
-					
-					break;
+		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
+		boolean statusRetrieved = false;
+		
+		for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
+			if(asi.getId() != null && asi.getId().equals(instanceId)) {
+				try {
+					response.getWriter().write(asi.getStatus().toString());
+				} catch (IOException e) {
+					log.warn("Could not write instance status to the http writer", e);
 				}
+				
+				statusRetrieved = true;
+				
+				break;
 			}
-		} else {
+		}
+		
+		if(!statusRetrieved) {
 			log.warn("Could not retrieve status for workflow [{}] and atomic service [{}]", workflowId, atomicServiceId);
 		}
 	}
 	
-	private void filterAtomicService(List<AtomicService> atomicServices) {
-		for(Iterator<AtomicService> i = atomicServices.iterator(); i.hasNext();) {
-			AtomicService atomicService = i.next();
-			
-			if(!atomicService.isHttp() && !atomicService.isVnc()) {
-				i.remove();
+	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
+		if(workflowType != WorkflowType.development) {
+			for(Iterator<AtomicService> i = atomicServices.iterator(); i.hasNext();) {
+				AtomicService atomicService = i.next();
+				
+				if(!atomicService.isHttp() && !atomicService.isVnc()) {
+					i.remove();
+				}
 			}
 		}
 	}
@@ -444,54 +468,37 @@ public class CloudManagerPortlet {
 	}
 	
 	private Map<AtomicService, List<AtomicServiceInstance>> getAtomicServiceInstances(String workflowId, PortletRequest request) {
+		log.debug("Retrieving atomic service instances for workflow id [{}]", workflowId);
+		
 		Map<AtomicService, List<AtomicServiceInstance>> result = new LinkedHashMap<AtomicService, List<AtomicServiceInstance>>();
-		WorkflowStatus workflowStatus = clientFactory.getWorkflowManagement(request).getStatus(workflowId);
+		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		
-		if(workflowStatus != null) {
-			if(workflowStatus.getAses() != null) {
-				log.debug("Processing active atomic services for workflow id [{}] in number of [{}]", workflowId, workflowStatus.getAses().size());
+		if(workflow != null && workflow.getAtomicServiceInstances() != null) {
+			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
+				AtomicService as = getAtomicService(asi.getAtomicServiceId(), atomicServices);
 				
-				for(AtomicServiceStatus atomicServiceStatus : workflowStatus.getAses()) {
-					if(atomicServiceStatus.getInstances() != null) {
-						log.debug("Number of instances for atomic service [{}] is [{}]", atomicServiceStatus.getId(), atomicServiceStatus.getInstances().size());
-						
-						if(atomicServiceStatus.getInstances().size() > 0) {
-							AtomicService atomicService = null;
-							
-							for(AtomicService as : atomicServices) {
-								if(as.getAtomicServiceId().equals(atomicServiceStatus.getId())) {
-									log.trace("Found active atomic service {}", as.toString());
-									atomicService = as;
-									break;
-								}
-							}
-							
-							if(atomicService != null) {
-								List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
-								result.put(atomicService, instances);
-								
-								for(AtomicServiceInstanceStatus ass : atomicServiceStatus.getInstances()) {
-									AtomicServiceInstance asi = new AtomicServiceInstance();
-									asi.setAtomicServiceId(atomicService.getAtomicServiceId());
-									asi.setId(ass.getId());
-									asi.setName(ass.getName());
-									asi.setStatus(ass.getStatus());
-									instances.add(asi);
-								}
-							} else {
-								log.warn("Could not find atomic service information bean for atomic service [{}]", atomicServiceStatus.getId());
-							}
-						}
-					} else {
-						log.warn("Atomic service instance list for atomic service [{}] is null", atomicServiceStatus.getId());
-					}
+				if(!result.keySet().contains(as)) {
+					result.put(as, new ArrayList<AtomicServiceInstance>());
 				}
+				
+				result.get(as).add(asi);
 			}
 		} else {
 			log.warn("Received empty workflow status for workflow id [{}]", workflowId);
 		}
 		
 		return result;
+	}
+
+	private AtomicService getAtomicService(String atomicServiceId,
+			List<AtomicService> atomicServices) {
+		for(AtomicService as : atomicServices) {
+			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
+				return as;
+			}
+		}
+		
+		return null;
 	}
 }

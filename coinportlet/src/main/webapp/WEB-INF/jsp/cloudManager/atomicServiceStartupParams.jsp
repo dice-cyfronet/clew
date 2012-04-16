@@ -15,6 +15,7 @@
 				<portlet:actionURL var="startAs">
 					<portlet:param name="action" value="startAtomicService"/>
 					<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+					<portlet:param name="workflowType" value="${workflowType}"/>
 				</portlet:actionURL>
 				<a class="coin-link" href="${startAs}"><spring:message code="cloud.manager.portlet.start.atomic.service"/></a>
 			</span>
