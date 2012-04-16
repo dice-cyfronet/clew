@@ -42,6 +42,10 @@
 		<prop key="secret"></prop>
 	</osgix:cm-properties>
 
+	<osgix:cm-properties id="as-sec"
+		persistent-id="pl.cyfronet.coins.ascredentials">
+	</osgix:cm-properties>
+	
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
@@ -50,6 +54,14 @@
 		</property>
 	</bean>
 
+	<bean id="as-sec-props"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="propertiesArray">
+			<ref bean="as-sec" />
+		</property>
+	</bean>
+	
 	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
 		<property name="manager" ref="cloudManager" /> 
 		<!-- <property name="manager" ref="dummyCloudManager" /> -->
@@ -94,6 +106,7 @@
 		</jaxrs:providers>
 	</jaxrs:client>
 
+	
 	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />
@@ -113,6 +126,12 @@
 					<value>applianceType</value>
 				</entry>
 			</map>
+		</property>
+		<property name="arrayKeys">
+		    <list>
+		        <value>endpoints</value>
+		        <value>vms</value>		        
+		    </list>		    
 		</property>
 	</bean>
 

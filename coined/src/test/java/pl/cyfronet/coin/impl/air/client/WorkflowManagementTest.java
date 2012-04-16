@@ -68,5 +68,6 @@ public class WorkflowManagementTest {
 		//System.out.println(wm.getStatus("4f4e0bdb866488548d000f01"));
 		
 		System.out.println(wm.getWorkflows());
+		System.out.println(wm.getWorkflow("4f7c5555866488556c00003f"));
 	}
 }

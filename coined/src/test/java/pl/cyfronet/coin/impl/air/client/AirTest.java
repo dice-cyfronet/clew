@@ -33,43 +33,45 @@ public class AirTest {
 		// // of course, an ApplicationContext is just a BeanFactory
 		BeanFactory factory = (BeanFactory) appContext;
 
-		AirClient air = factory.getBean("air-client", AirClient.class);
+		AirClient air = factory.getBean("air-client-local", AirClient.class);
 
-//		ASEndpoint asE1 = new ASEndpoint();
-//		asE1.setDescription("endpoint description");
-//		asE1.setDescriptor("<wsdl/>");
-//		asE1.setInvocation_path("/gimias");
-//		asE1.setPort(9000);
-//		asE1.setService_name("gimias");
-//		
-//		ASEndpoint asE2 = new ASEndpoint();
-//		asE2.setDescription("endpoint description 2");
-//		asE2.setDescriptor("<wsdl 2/>");
-//		asE2.setInvocation_path("/gimias2");
-//		asE2.setPort(9001);
-//		asE2.setService_name("gimias2");
-//		
-//		AddAtomicServiceRequest request = new AddAtomicServiceRequest();
-//		request.setClient("rest");
-//		request.setDescription("description");
-//		request.setHttp(true);
-//		request.setIn_proxy(true);
-//		request.setName("asName");
-//		request.setPublished(true);
-//		request.setScalable(true);
-//		request.setShared(true);
-//		request.setVnc(true);
-//		request.setEndpoints(Arrays.asList(asE1, asE2));
-//		
-//		air.addAtomicService(request);
+		ASEndpoint asE1 = new ASEndpoint();
+		asE1.setDescription("endpoint description");
+		asE1.setDescriptor("<wsdl/>");
+		asE1.setInvocation_path("/gimias");
+		asE1.setPort(9000);
+		asE1.setService_name("gimias");
 		
-		try {			
-			List<ApplianceType> types = air.getApplianceTypes();
-			for (ApplianceType applianceType : types) {
-				System.out.println(applianceType.getName() + " " + applianceType.isHttp());
-			}
-		} catch (Exception e) {
-			System.out.println(e.getClass());
-		}
+		ASEndpoint asE2 = new ASEndpoint();
+		asE2.setDescription("endpoint description 2");
+		asE2.setDescriptor("<wsdl 2/>");
+		asE2.setInvocation_path("/gimias2");
+		asE2.setPort(9001);
+		asE2.setService_name("gimias2");
+		
+		AddAtomicServiceRequest request = new AddAtomicServiceRequest();
+		request.setClient("rest");
+		request.setDescription("description");
+		request.setHttp(true);
+		request.setIn_proxy(true);
+		request.setName("asName");
+		request.setPublished(true);
+		request.setScalable(true);
+		request.setShared(true);
+		request.setVnc(true);
+		request.setEndpoints(Arrays.asList(asE1));
+		
+//		System.out.println(air.getUserWorkflows("marek"));
+		
+		air.addAtomicService(request);
+		
+//		try {			
+//			List<ApplianceType> types = air.getApplianceTypes();
+//			for (ApplianceType applianceType : types) {
+//				System.out.println(applianceType.getName() + " " + applianceType.isHttp());
+//			}
+//		} catch (Exception e) {
+//			System.out.println(e.getClass());
+//		}
 	}
 }

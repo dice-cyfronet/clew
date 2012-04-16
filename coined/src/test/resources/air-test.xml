@@ -27,7 +27,7 @@
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<!-- <ref bean="jaxbProvider" />-->
-			<ref bean="jsonProvider" />
+			<ref bean="air-jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
 			<ref bean="logInbound" />
@@ -37,13 +37,12 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
 
-	<jaxrs:client id="air-client-local" address="http://localhost:9000"
+	<jaxrs:client id="air-client-local" address="http://localhost:4567"
 		username="vphshare" password="airtraffic123"
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
 		inheritHeaders="true">
 		<jaxrs:providers>
-			<!-- <ref bean="jaxbProvider" />-->
-			<ref bean="jsonProvider" />
+			<ref bean="air-jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
 			<ref bean="logInbound" />
@@ -53,10 +52,18 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
 	
-	<bean id="jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
+	<bean id="jsonProvider2" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	
+	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />
 		<property name="supportUnwrapped" value="true" />
+		<property name="arrayKeys">
+		    <list>
+		        <value>endpoints</value>		        
+		    </list>
+		    
+		</property>
 		<property name="collectionWrapperMap">
 			<map>
 				<entry>
@@ -74,4 +81,5 @@
 			</map>
 		</property>
 	</bean>
+	
 </beans>

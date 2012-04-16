@@ -23,7 +23,7 @@
 
 	<jaxrs:client id="wm-client" address="https://vph.cyfronet.pl/cloudfacade/workflow"		
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
-		username="test" password="ODBiNWY0ZTQyMzEyYWU5MjNhN2U2MjdkZDY4Yzg0YzE0ZjhjMWYyZmRoYXJlemxhayFkZXZlbG9wZXIhZGhhcmV6bGFrLERhbmllbCBIYXJlemxhaywsLCw="		
+		username="test" password="OGEyOTQ0OTlmZDA2YTc1MDNhNTkyYjE1MGUzNjUxOTI0ZjhjMzA1N2RoYXJlemxhayFkZXZlbG9wZXIhZGhhcmV6bGFrLERhbmllbCBIYXJlemxhaywsLCw="		
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />

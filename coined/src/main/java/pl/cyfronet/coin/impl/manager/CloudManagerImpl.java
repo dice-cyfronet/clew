@@ -106,7 +106,7 @@ public class CloudManagerImpl implements CloudManager {
 			atomicService.setDescription(applianceType.getDescription());
 			atomicService.setHttp(applianceType.isHttp()
 					&& applianceType.isIn_proxy());
-			atomicService.setName(applianceType.getName());			
+			atomicService.setName(applianceType.getName());
 			atomicService.setShared(applianceType.isShared());
 			atomicService.setScalable(applianceType.isScalable());
 			atomicService.setVnc(applianceType.isVnc());
@@ -375,8 +375,12 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	private Credential getCredential(String vms_id) {
 		Credential cred = new Credential();
-		cred.setUsername(credentialProperties.getProperty(vms_id + ".username"));
-		cred.setPassword(credentialProperties.getProperty(vms_id + ".password"));
+		if (credentialProperties != null) {
+			cred.setUsername(credentialProperties.getProperty(vms_id
+					+ ".username"));
+			cred.setPassword(credentialProperties.getProperty(vms_id
+					+ ".password"));
+		}
 		return cred;
 	}
 

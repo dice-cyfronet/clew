@@ -29,6 +29,7 @@
 		<property name="air" ref="air-client" />
 		<property name="defaultPriority" value="40" />
 		<property name="defaultSiteId" value="cyfronet-nova" />
+		<!-- <property name="credentialProperties" ref="as-sec-props" /> -->
 	</bean>
 	
 	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService"/>
