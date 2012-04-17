@@ -76,12 +76,12 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	 * pl.cyfronet.coin.api.beans.AtomicService)
 	 */
 	@Override
-	public void createAtomicService(String atomicServiceInstanceId,
+	public String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
 		try {
-			manager.createAtomicService(atomicServiceInstanceId, atomicService,
+			return manager.createAtomicService(atomicServiceInstanceId, atomicService,
 					getUsername());
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);

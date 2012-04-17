@@ -26,6 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -66,7 +67,7 @@ public interface CloudFacade {
 	@POST
 	@Path("as/create_from/{atomicServiceInstanceId}")
 	@Consumes({ MediaType.APPLICATION_JSON })
-	void createAtomicService(
+	String createAtomicService(
 			@PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
@@ -94,6 +95,20 @@ public interface CloudFacade {
 	List<InitialConfiguration> getInitialConfigurations(
 			@PathParam("atomicServiceId") String atomicServiceId);
 
+//	@GET
+//	@Path("/as/{atomicServiceId}/endpoints")
+//	List<Endpoint> getEdnpoints(
+//			@PathParam("atomicServiceId") String atomicServiceId);
+//
+//	@GET
+//	@Path("/as/{atomicServiceId}/endpoint/{serviceName}/{invocationPath}")
+//	String getEndpointDescriptor(
+//			@PathParam("atomicServiceId") String atomicServiceId,
+//			@PathParam("serviceName") String serviceName,
+//			@PathParam("invocationPath") String invocationPath);
+
+	
+	
 	/**
 	 * Get documentation page content.
 	 * @return Documentation page content.
