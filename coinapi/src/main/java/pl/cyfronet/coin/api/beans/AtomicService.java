@@ -36,6 +36,7 @@ public class AtomicService {
 	private boolean scalable;
 	private boolean published;
 	private boolean inProxy;
+	private boolean active;
 
 	public AtomicService() {
 	}
@@ -148,8 +149,21 @@ public class AtomicService {
 		this.inProxy = inProxy;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -158,9 +172,10 @@ public class AtomicService {
 				+ name + ", description=" + description + ", endpoints="
 				+ endpoints + ", vnc=" + vnc + ", http=" + http + ", shared="
 				+ shared + ", scalable=" + scalable + ", published="
-				+ published + ", inProxy=" + inProxy + "]";
+				+ published + ", inProxy=" + inProxy + ", active=" + active
+				+ "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
