@@ -24,6 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -31,7 +32,7 @@ import pl.cyfronet.coin.api.beans.Endpoint;
  */
 public class CloudFacadeTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
 		        new String[] {"cf-test.xml",});
 //		// of course, an ApplicationContext is just a BeanFactory
@@ -41,23 +42,38 @@ public class CloudFacadeTest {
 		
 		System.out.println(cf.getAtomicServices());
 		
-//		AtomicService as = new AtomicService();
-//		as.setName("asTest123");
-//		as.setDescription("as description");
-//		as.setHttp(true);
-//		
-//		Endpoint e = new Endpoint();
-//		e.setDescription("e1 test");
-//		e.setDescriptor("<wsdl/>");
-//		e.setInvocationPath("/service/path");
-//		e.setPort(9090);
-//		e.setServiceName("gimias");
-//		
-//		//as.setEndpoints(Arrays.asList(e));
-//		
-//		cf.createAtomicService("227", as);
+		AtomicService as = new AtomicService();
+		as.setName("mkAs");
+		as.setDescription("as description");
+		as.setHttp(true);
+		as.setPublished(true);
+		as.setInProxy(true);
 		
-		System.out.println(cf.getInitialConfigurations("@neurist with VNC"));
+		Endpoint e = new Endpoint();
+		e.setDescription("e1 test");
+		e.setDescriptor("<wsdl/>");
+		e.setInvocationPath("/service/path");
+		e.setPort(9090);
+		e.setServiceName("gimias");
+		
+		Endpoint e2 = new Endpoint();
+		e2.setDescription("e1 test");
+		e2.setDescriptor("<wsdl/>");
+		e2.setInvocationPath("/service/path");
+		e2.setPort(9090);
+		e2.setServiceName("gimias");
+		
+		as.setEndpoints(Arrays.asList(e));
+		
+		cf.createAtomicService("234", as);
+		
+		InitialConfiguration initConf = new InitialConfiguration();
+		initConf.setName("mkAsConfig");
+		initConf.setPayload("<initmk/>");
+		
+		System.out.println(cf.addInitialConfiguration("mkAs", initConf));
+		
+//		System.out.println(cf.getInitialConfigurations("@neurist with VNC"));
 		
 		
 	}

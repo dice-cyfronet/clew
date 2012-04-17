@@ -198,10 +198,10 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 		// given
 
 		Properties credentialProp = new Properties();
-		credentialProp.put("id1.username", "vm1Username");
-		credentialProp.put("id1.password", "vm1Password");
-		credentialProp.put("id2.username", "vm2Username");
-		credentialProp.put("id2.password", "vm2Password");
+		credentialProp.put("type1.username", "vm1Username");
+		credentialProp.put("type1.password", "vm1Password");
+		credentialProp.put("type2.username", "vm2Username");
+		credentialProp.put("type2.password", "vm2Password");
 
 		CloudManagerImpl manager = new CloudManagerImpl();
 		AirClient air = mock(AirClient.class);

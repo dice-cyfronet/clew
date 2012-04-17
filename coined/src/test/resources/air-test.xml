@@ -52,8 +52,6 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
 	
-	<bean id="jsonProvider2" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
-	
 	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />

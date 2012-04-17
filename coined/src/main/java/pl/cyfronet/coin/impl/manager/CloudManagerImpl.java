@@ -45,6 +45,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.ASEndpoint;
@@ -145,7 +146,7 @@ public class CloudManagerImpl implements CloudManager {
 	 * .String, pl.cyfronet.coin.api.beans.AtomicService)
 	 */
 	@Override
-	public void createAtomicService(String atomicServiceInstanceId,
+	public String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService, String username)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		AddAtomicServiceRequest addASRequest = new AddAtomicServiceRequest();
@@ -164,12 +165,13 @@ public class CloudManagerImpl implements CloudManager {
 		try {
 			atmosphere.createTemplate(atomicServiceInstanceId,
 					atomicService.getName(), defaultSiteId, atomicServiceId);
+			return atomicServiceId;
 		} catch (ApplianceNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO remove added atomic service type
+			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO remove added atomic service type
+			throw new CloudFacadeException(e.getMessage());
 		}
 	}
 
@@ -357,7 +359,7 @@ public class CloudManagerImpl implements CloudManager {
 				instance.setMessage(""); // TODO
 
 				if (detail.getWorkflow_type() == WorkflowType.development) {
-					instance.setCredential(getCredential(vm.getVms_id()));
+					instance.setCredential(getCredential(vm.getAppliance_type()));
 				}
 
 				instances.add(instance);
@@ -430,6 +432,35 @@ public class CloudManagerImpl implements CloudManager {
 		}
 
 		return workflows;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.impl.manager.CloudManager#addInitialConfiguration(java
+	 * .lang.String, pl.cyfronet.coin.api.beans.InitialConfiguration)
+	 */
+	@Override
+	public String addInitialConfiguration(String atomicServiceId,
+			InitialConfiguration initialConfiguration)
+			throws AtomicServiceInstanceNotFoundException,
+			InitialConfigurationAlreadyExistException, CloudFacadeException {
+		try {
+			String addedConfigurationId = air.addInitialConfiguration(
+					initialConfiguration.getName(), atomicServiceId,
+					initialConfiguration.getPayload());
+
+			return addedConfigurationId;
+		} catch (ServerWebApplicationException e) {
+			if (e.getMessage() != null) {
+				if (e.getMessage().contains("not found in AIR")) {
+					throw new AtomicServiceInstanceNotFoundException();
+				} else if (e.getMessage().contains("duplicated configuration")) {
+					throw new InitialConfigurationAlreadyExistException();
+				}
+			}
+			throw new CloudFacadeException(e.getMessage());
+		}
 	}
 
 	/**

@@ -33,7 +33,9 @@ public class InitialConfiguration {
 	 * Configuration id.
 	 */
 	private String id;
-
+	
+	private String payload;
+	
 	/**
 	 * @return the name
 	 */
@@ -60,5 +62,19 @@ public class InitialConfiguration {
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the payload
+	 */
+	public String getPayload() {
+		return payload;
+	}
+
+	/**
+	 * @param payload the payload to set
+	 */
+	public void setPayload(String payload) {
+		this.payload = payload;
 	}
 }

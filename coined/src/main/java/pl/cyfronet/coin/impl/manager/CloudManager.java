@@ -27,6 +27,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
@@ -71,12 +72,13 @@ public interface CloudManager {
 	 * @param atomicServiceInstanceId Atomic Service Instance id.
 	 * @param atomicService Information about new Atomic Service.
 	 * @param username User name.
+	 * @return New created atomic service id.
 	 * @throws AtomicServiceInstanceNotFoundException
 	 * @throws CloudFacadeException
 	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
 	 *             workflow with defined context id belongs to other user.
 	 */
-	void createAtomicService(String atomicServiceInstanceId,
+	String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService, String username)
 			throws AtomicServiceInstanceNotFoundException,
 			CloudFacadeException, WorkflowNotFoundException;
@@ -141,4 +143,14 @@ public interface CloudManager {
 	 */
 	Workflow getWorkflow(String workflowId, String username)
 			throws WorkflowNotFoundException;
+
+	/**
+	 * @param atomicServiceId
+	 * @param initialConfiguration
+	 * @return
+	 */
+	String addInitialConfiguration(String atomicServiceId,
+			InitialConfiguration initialConfiguration)
+			throws AtomicServiceInstanceNotFoundException,
+			InitialConfigurationAlreadyExistException, CloudFacadeException;
 }

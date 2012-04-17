@@ -29,7 +29,9 @@ import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
@@ -101,6 +103,23 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		} catch (ApplianceTypeNotFound e) {
 			throw new WebApplicationException(e, 404);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.api.CloudFacade#addInitialConfiguration(java.lang.String
+	 * , pl.cyfronet.coin.api.beans.InitialConfiguration)
+	 */
+	@Override
+	public String addInitialConfiguration(String atomicServiceId,
+			InitialConfiguration initialConfiguration)
+			throws AtomicServiceNotFoundException,
+			AtomicServiceInstanceNotFoundException, CloudFacadeException,
+			InitialConfigurationAlreadyExistException {
+
+		return manager.addInitialConfiguration(atomicServiceId,
+				initialConfiguration);
 	}
 
 	/*

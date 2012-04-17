@@ -64,7 +64,7 @@ public class DummyCloudManagerLogger implements CloudManager {
 	}
 
 	@Override
-	public void createAtomicService(String atomicServiceInstanceId,
+	public String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService, String username)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.info("Create atomic service from {}", atomicServiceInstanceId);
@@ -77,6 +77,7 @@ public class DummyCloudManagerLogger implements CloudManager {
 		} else {
 			logger.info("Atomic service metadata empty");
 		}
+		return "id";
 	}
 
 	@Override
@@ -114,6 +115,16 @@ public class DummyCloudManagerLogger implements CloudManager {
 	@Override
 	public Workflow getWorkflow(String workflowId, String username)
 			throws WorkflowNotFoundException {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.manager.CloudManager#addInitialConfiguration(java.lang.String, pl.cyfronet.coin.api.beans.InitialConfiguration)
+	 */
+	@Override
+	public String addInitialConfiguration(String atomicServiceId,
+			InitialConfiguration initialConfiguration) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

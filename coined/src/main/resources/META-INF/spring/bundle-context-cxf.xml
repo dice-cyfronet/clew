@@ -54,14 +54,6 @@
 		</property>
 	</bean>
 
-	<bean id="as-sec-props"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="propertiesArray">
-			<ref bean="as-sec" />
-		</property>
-	</bean>
-	
 	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
 		<property name="manager" ref="cloudManager" /> 
 		<!-- <property name="manager" ref="dummyCloudManager" /> -->

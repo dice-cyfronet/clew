@@ -146,12 +146,13 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		when(atmosphere.createTemplate(asiId, asName, cloudSite, asAirId))
 				.thenReturn(asId);
 
-		manager.createAtomicService(asiId, as, username);
+		String createdAsId = manager.createAtomicService(asiId, as, username);
 
 		// then
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(asiId, asName, cloudSite,
 				asAirId);
+		assertEquals(asAirId, createdAsId);
 	}
 
 	@Test
@@ -203,12 +204,12 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		when(atmosphere.createTemplate(asiId, asName, cloudSite, asAirId))
 				.thenReturn(asId);
 
-		manager.createAtomicService(asiId, as, username);
+		String createdAsId = manager.createAtomicService(asiId, as, username);
 
 		// then
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(asiId, asName, cloudSite,
 				asAirId);
-
+		assertEquals(asAirId, createdAsId);
 	}
 }

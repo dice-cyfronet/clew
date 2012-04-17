@@ -76,4 +76,10 @@ public interface AirClient {
 	@Path("/add_appliance_type_json")
 	@Consumes(MediaType.APPLICATION_JSON)
 	String addAtomicService(AddAtomicServiceRequest addAtomicService);
+
+	@POST
+	@Path("/upload_appliance_config")
+	String addInitialConfiguration(@FormParam("config_name") String configName,
+			@FormParam("appliance_type") String applianceType,
+			@FormParam("config_text") String configText);
 }

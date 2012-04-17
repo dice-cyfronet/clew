@@ -17,13 +17,9 @@ package pl.cyfronet.coin.api;
 
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,7 +28,9 @@ import javax.ws.rs.core.MediaType;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 
 /**
  * Web service definition of the cloud facade which exposes methods allowing to
@@ -40,7 +38,6 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
  * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-@WebService(targetNamespace = "http://cyfronet.pl/coin")
 @Path("/")
 public interface CloudFacade {
 
@@ -53,8 +50,6 @@ public interface CloudFacade {
 	@GET
 	@Path("as/list")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@WebMethod(operationName = "getAtomicServices")
-	@WebResult(name = "atomicServices")
 	List<AtomicService> getAtomicServices() throws CloudFacadeException;
 
 	/**
@@ -68,14 +63,23 @@ public interface CloudFacade {
 	 * @throws CloudFacadeException Thrown when error while creating atomic
 	 *             service (vm template) occurs.
 	 */
-	@PUT
-	@Path("as/{atomicServiceInstanceId}")
-	@WebMethod(operationName = "createAtomicService")
+	@POST
+	@Path("as/create_from/{atomicServiceInstanceId}")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	void createAtomicService(
-			@WebParam(name = "atomicServiceInstanceId") @PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
-			@WebParam(name = "atomicService") AtomicService atomicService)
+			@PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
+			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
+
+	@POST
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Path("/as/{atomicServiceId}/configuration")
+	String addInitialConfiguration(
+			@PathParam("atomicServiceId") String atomicServiceId,
+			InitialConfiguration initialConfiguration)
+			throws AtomicServiceNotFoundException,
+			AtomicServiceInstanceNotFoundException, CloudFacadeException,
+			InitialConfigurationAlreadyExistException;
 
 	/**
 	 * Get initial configurations for given atomic service (a.k.a. appliance

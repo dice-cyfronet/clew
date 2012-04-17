@@ -1,0 +1,1 @@
+{"description":"as description","endpoints":{"description":"e1 test","descriptor":"<wsdl\/>","invocationPath":"\/service\/path","port":9090,"serviceName":"gimias"},"http":true,"inProxy":false,"name":"asTest","published":false,"scalable":false,"shared":false,"vnc":false}
