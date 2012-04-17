@@ -168,7 +168,7 @@ public class CloudManagerImpl implements CloudManager {
 		try {
 			atmosphere.createTemplate(atomicServiceInstanceId,
 					atomicService.getName(), defaultSiteId, atomicServiceId);
-			return atomicServiceId;
+			return atomicService.getName();
 		} catch (ApplianceNotFoundException e) {
 			// TODO remove added atomic service type
 			throw new AtomicServiceInstanceNotFoundException();

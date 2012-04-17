@@ -155,7 +155,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(asiId, asName, cloudSite,
 				asAirId);
-		assertEquals(asAirId, createdAsId);
+		assertEquals(asName, createdAsId);
 	}
 
 	@Test
@@ -214,6 +214,6 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(asiId, asName, cloudSite,
 				asAirId);
-		assertEquals(asAirId, createdAsId);
+		assertEquals(asName, createdAsId);
 	}
 }
