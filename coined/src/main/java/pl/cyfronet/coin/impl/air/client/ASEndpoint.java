@@ -32,6 +32,8 @@ public class ASEndpoint {
 	
 	private String service_name;
 
+	private String endpoint_type;
+	
 	/**
 	 * @return the invocation_path
 	 */
@@ -100,5 +102,19 @@ public class ASEndpoint {
 	 */
 	public void setService_name(String service_name) {
 		this.service_name = service_name;
+	}
+
+	/**
+	 * @return the endpoint_type
+	 */
+	public String getEndpoint_type() {
+		return endpoint_type;
+	}
+
+	/**
+	 * @param endpoint_type the endpoint_type to set
+	 */
+	public void setEndpoint_type(String endpoint_type) {
+		this.endpoint_type = endpoint_type;
 	}
 }

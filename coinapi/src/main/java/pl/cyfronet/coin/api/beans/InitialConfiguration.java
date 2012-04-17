@@ -77,4 +77,13 @@ public class InitialConfiguration {
 	public void setPayload(String payload) {
 		this.payload = payload;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "InitialConfiguration [name=" + name + ", id=" + id
+				+ ", payload=" + payload + "]";
+	}
 }

@@ -35,6 +35,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
 import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -112,6 +113,8 @@ public class CloudManagerImpl implements CloudManager {
 			atomicService.setScalable(applianceType.isScalable());
 			atomicService.setVnc(applianceType.isVnc());
 			atomicService.setPublished(applianceType.isPublished());
+			atomicService.setActive(applianceType.getTemplates_count() > 0);
+			
 			atomicServices.add(atomicService);
 		}
 		return atomicServices;
@@ -190,6 +193,9 @@ public class CloudManagerImpl implements CloudManager {
 				asEndpoint.setPort(endpoint.getPort());
 				asEndpoint.setService_name(endpoint.getServiceName());
 				asEndpoints.add(asEndpoint);
+				asEndpoint
+						.setEndpoint_type(endpoint.getType() == null ? EndpointType.REST
+								.toString() : endpoint.getType().toString());
 			}
 			return asEndpoints;
 		}

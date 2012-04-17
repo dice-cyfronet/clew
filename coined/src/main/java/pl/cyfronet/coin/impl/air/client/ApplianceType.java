@@ -43,6 +43,8 @@ public class ApplianceType {
 	
 	private String description;
 	
+	private int templates_count;
+	
 	private List<ApplianceConfiguration> configurations;
 
 	/**
@@ -158,6 +160,20 @@ public class ApplianceType {
 	}
 
 	/**
+	 * @return the templates_count
+	 */
+	public int getTemplates_count() {
+		return templates_count;
+	}
+
+	/**
+	 * @param templates_count the templates_count to set
+	 */
+	public void setTemplates_count(int templates_count) {
+		this.templates_count = templates_count;
+	}
+
+	/**
 	 * @return the configurations
 	 */
 	public List<ApplianceConfiguration> getConfigurations() {
@@ -176,10 +192,10 @@ public class ApplianceType {
 	 */
 	@Override
 	public String toString() {
-		return "ApplianceType [name=" + name + ", vnd=" + vnc + ", in_proxy="
+		return "ApplianceType [name=" + name + ", vnc=" + vnc + ", in_proxy="
 				+ in_proxy + ", published=" + published + ", scalable="
 				+ scalable + ", shared=" + shared + ", http=" + http
-				+ ", description=" + description + ", configurations="
-				+ configurations + "]";
+				+ ", description=" + description + ", templates_count="
+				+ templates_count + ", configurations=" + configurations + "]";
 	}
 }

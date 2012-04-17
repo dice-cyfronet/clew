@@ -13,6 +13,8 @@ public class Endpoint {
 	
 	private String serviceName;
 	
+	private EndpointType type; 
+	
 	public String getDescription() {
 		return description;
 	}
@@ -54,5 +56,17 @@ public class Endpoint {
 	 */
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
+	}
+	/**
+	 * @return the type
+	 */
+	public EndpointType getType() {
+		return type;
+	}
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(EndpointType type) {
+		this.type = type;
 	}
 }

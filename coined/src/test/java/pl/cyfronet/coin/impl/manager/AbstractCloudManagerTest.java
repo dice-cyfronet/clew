@@ -64,6 +64,7 @@ public abstract class AbstractCloudManagerTest {
 		assertEquals(at.isScalable(), as.isScalable());
 		assertEquals(at.isShared(), as.isShared());
 		assertEquals(at.isVnc(), as.isVnc());
+		assertEquals(at.getTemplates_count() > 0, as.isActive());
 	}
 	
 	/**

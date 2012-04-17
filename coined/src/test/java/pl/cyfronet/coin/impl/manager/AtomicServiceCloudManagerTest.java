@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
@@ -58,17 +59,19 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		type1.setScalable(true);
 		type1.setShared(true);
 		type1.setVnc(true);
+		type1.setTemplates_count(0);
 
 		ApplianceType type2 = new ApplianceType();
 		type2.setPublished(false);
-		type1.setName("type2");
-		type1.setDescription("type2 description");
-		type1.setHttp(false);
-		type1.setIn_proxy(false);
-		type1.setPublished(false);
-		type1.setScalable(false);
-		type1.setShared(false);
-		type1.setVnc(false);
+		type2.setName("type2");
+		type2.setDescription("type2 description");
+		type2.setHttp(false);
+		type2.setIn_proxy(false);
+		type2.setPublished(false);
+		type2.setScalable(false);
+		type2.setShared(false);
+		type2.setVnc(false);
+		type2.setTemplates_count(2);
 
 		// when
 		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2));
@@ -186,6 +189,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		e1.setInvocationPath("/service1/path");
 		e1.setPort(8080);
 		e1.setServiceName("e1ServiceName");
+		e1.setType(EndpointType.WS);
 
 		Endpoint e2 = new Endpoint();
 		e2.setDescription("e2 description");
@@ -193,7 +197,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		e2.setInvocationPath("/service2/path");
 		e2.setPort(8080);
 		e2.setServiceName("e2ServiceName");
-
+		
 		as.setEndpoints(Arrays.asList(e1, e2));
 
 		AddAtomicServiceMatcher matcher = new AddAtomicServiceMatcher(as);

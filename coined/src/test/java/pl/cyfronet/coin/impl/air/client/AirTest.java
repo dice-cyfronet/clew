@@ -41,20 +41,23 @@ public class AirTest {
 		asE1.setInvocation_path("/gimias");
 		asE1.setPort(9000);
 		asE1.setService_name("gimias");
-
+		asE1.setEndpoint_type("ws");
+		
 		ASEndpoint asE2 = new ASEndpoint();
-		asE2.setDescription("endpoint description 2");
+		asE2.setDescription("endpoint description 3");
 		asE2.setDescriptor("<wsdl 2/>");
 		asE2.setInvocation_path("/gimias2");
 		asE2.setPort(9001);
 		asE2.setService_name("gimias2");
+		asE1.setEndpoint_type("rest");
 
 		AddAtomicServiceRequest request = new AddAtomicServiceRequest();
+		
 		request.setClient("rest");
 		request.setDescription("description");
 		request.setHttp(true);
 		request.setIn_proxy(true);
-		request.setName("asName");
+		request.setName("as name with space 3");
 		request.setPublished(true);
 		request.setScalable(true);
 		request.setShared(true);
@@ -63,18 +66,20 @@ public class AirTest {
 
 		// System.out.println(air.getUserWorkflows("marek"));
 
-		// air.addAtomicService(request);
+		//System.out.println(air.addAtomicService(request));
 
 		// System.out.println(air.getWorkflow("4f8c38d68664883031005412"));
 
-		try {
-			System.out.println(air.addInitialConfiguration("ArchLinuxTestConf",
-					"euHeart Services", "<mk><init/></mk>"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println(e.getClass());
-		}
+//		try {
+//			System.out.println(air.addInitialConfiguration("ArchLinuxTestConf",
+//					"euHeart Services", "<mk><init/></mk>"));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println(e.getClass());
+//		}
 
+		System.out.println(air.getApplianceTypes());
+		
 		// try {
 		// List<ApplianceType> types = air.getApplianceTypes();
 		// for (ApplianceType applianceType : types) {

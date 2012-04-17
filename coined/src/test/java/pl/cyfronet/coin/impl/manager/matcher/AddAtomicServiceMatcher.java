@@ -23,6 +23,7 @@ import org.hamcrest.Description;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.impl.air.client.ASEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 
@@ -85,6 +86,9 @@ public class AddAtomicServiceMatcher extends
 	 * @return
 	 */
 	private boolean equals(ASEndpoint asEndpoint, Endpoint endpoint) {
+		EndpointType endpointType = endpoint.getType() == null ? EndpointType.REST
+				: endpoint.getType();
+
 		return asEndpoint.getInvocation_path().equals(
 				endpoint.getInvocationPath())
 				&& asEndpoint.getPort() == endpoint.getPort()
@@ -92,7 +96,9 @@ public class AddAtomicServiceMatcher extends
 						.equals(endpoint.getDescription())
 				&& asEndpoint.getDescriptor().equals(endpoint.getDescriptor())
 				&& asEndpoint.getService_name().equals(
-						endpoint.getServiceName());
+						endpoint.getServiceName())
+				&& asEndpoint.getEndpoint_type()
+						.equals(endpointType.toString());
 	}
 
 	/*

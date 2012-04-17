@@ -118,6 +118,9 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			AtomicServiceInstanceNotFoundException, CloudFacadeException,
 			InitialConfigurationAlreadyExistException {
 
+		logger.debug("Creating new atomic service from {}, metadata: {}",
+				atomicServiceId, initialConfiguration);
+
 		return manager.addInitialConfiguration(atomicServiceId,
 				initialConfiguration);
 	}
