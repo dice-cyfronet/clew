@@ -13,7 +13,9 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 
 public class MockCloudFacade implements CloudFacade {
 	private static final Logger log = LoggerFactory.getLogger(MockCloudFacade.class);
@@ -80,6 +82,19 @@ public class MockCloudFacade implements CloudFacade {
 	 */
 	@Override
 	public String getDocumentation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#addInitialConfiguration(java.lang.String, pl.cyfronet.coin.api.beans.InitialConfiguration)
+	 */
+	@Override
+	public String addInitialConfiguration(String atomicServiceId,
+			InitialConfiguration initialConfiguration)
+			throws AtomicServiceNotFoundException,
+			AtomicServiceInstanceNotFoundException, CloudFacadeException,
+			InitialConfigurationAlreadyExistException {
 		// TODO Auto-generated method stub
 		return null;
 	}
