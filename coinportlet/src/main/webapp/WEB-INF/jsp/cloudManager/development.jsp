@@ -21,7 +21,7 @@
 			<li>
 				<a class="coin-link" href="${startAtomicService}"><spring:message code="cloud.manager.portlet.start.atomic.service.instance.label"/></a>
 			</li>
-			<c:if test="${fn:length(developmentAtomicServiceInstances) > 0}">
+			<c:if test="${fn:length(activeAtomicServices) > 0}">
 				<li>
 					<portlet:actionURL var="stopAtomicServices">
 						<portlet:param name="action" value="stopWorkflow"/>

@@ -57,7 +57,7 @@ public class ClientFactory {
 			
 			if(tokenAttribute != null) {
 				token = tokenAttribute.getStringValue();
-				log.trace("Token [{}] retrieved for user [{}]", token, request.getUserPrincipal().getName());
+//				log.trace("Token [{}] retrieved for user [{}]", token, request.getUserPrincipal().getName());
 			}
 		} catch (SecurityException e) {
 			throw new IllegalArgumentException("Could not obtain user token from security attribute map");
@@ -74,7 +74,7 @@ public class ClientFactory {
 		Client client = WebClient.client(proxy);
 		client.reset();
 		client.header(HEADER_AUTHORIZATION, authorizationHeader);
-		log.debug("Client instance enriched with the following 'Authorization' entry: {}",
-				client.getHeaders().get(HEADER_AUTHORIZATION));
+//		log.trace("Client instance enriched with the following 'Authorization' entry: {}",
+//				client.getHeaders().get(HEADER_AUTHORIZATION));
 	}
 }

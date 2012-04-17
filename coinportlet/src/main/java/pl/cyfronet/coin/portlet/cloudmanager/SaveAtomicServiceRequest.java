@@ -1,11 +1,23 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
+import javax.validation.constraints.DecimalMin;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+
 public class SaveAtomicServiceRequest {
+	@NotEmpty
 	private String atomicServiceInstanceId;
+	@NotEmpty
 	private String name;
 	private String description;
 	private String descriptionEndpoint;
+	@NotEmpty
+	private String invocationName;
+	@NotEmpty
 	private String invocationEndpoint;
+	@NotEmpty @DecimalMin("1")
+	private String invocationPort;
 	private String ports;
 	
 	public String getName() {
@@ -43,5 +55,17 @@ public class SaveAtomicServiceRequest {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getInvocationPort() {
+		return invocationPort;
+	}
+	public void setInvocationPort(String invocationPort) {
+		this.invocationPort = invocationPort;
+	}
+	public String getInvocationName() {
+		return invocationName;
+	}
+	public void setInvocationName(String invocationName) {
+		this.invocationName = invocationName;
 	}
 }

@@ -39,6 +39,9 @@
         <property name="suffix" value=".jsp"/>
     </bean>
     
+    <!-- Global form validation utility -->
+    <bean id="globalValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+    
     <!-- Portlet multipart resolver for file upload support -->
     <bean id="portletMultipartResolver"
         class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver"/>

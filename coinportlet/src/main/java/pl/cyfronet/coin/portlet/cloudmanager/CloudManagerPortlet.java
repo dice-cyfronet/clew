@@ -23,10 +23,13 @@ import javax.portlet.ResourceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -88,6 +91,7 @@ public class CloudManagerPortlet {
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
 	@Autowired private MessageSource messages;
+	@Autowired private Validator validator;
 	
 	@RequestMapping
 	public String doView(Model model, RenderRequest request, PortletResponse response) {
@@ -280,7 +284,7 @@ public class CloudManagerPortlet {
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SAVE_ATOMIC_SERVICE)
-	public String doViewSaveAtomicService(@RequestParam("") String atomicServiceInstanceId, Model model) {
+	public String doViewSaveAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId, Model model) {
 		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
 			SaveAtomicServiceRequest sasr = new SaveAtomicServiceRequest();
 			sasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
@@ -292,19 +296,28 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SAVE_ATOMIC_SERVICE)
 	public void doActionSaveAtomicService(@ModelAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)
-			SaveAtomicServiceRequest saveAtomicServiceRequest, Model model, PortletRequest request) {
-		AtomicService atomicService = new AtomicService();
-		atomicService.setHttp(true);
-		atomicService.setName(saveAtomicServiceRequest.getName());
-		atomicService.setDescription(saveAtomicServiceRequest.getDescription());
+			SaveAtomicServiceRequest saveAtomicServiceRequest, BindingResult errors, Model model,
+			PortletRequest request, ActionResponse response) {
+		validator.validate(saveAtomicServiceRequest, errors);
 		
-		Endpoint endpoint = new Endpoint();
-		endpoint.setInvocationPath(saveAtomicServiceRequest.getInvocationEndpoint());
-		endpoint.setDescription(saveAtomicServiceRequest.getDescriptionEndpoint());
-		endpoint.setPort(Integer.parseInt(saveAtomicServiceRequest.getPorts().split(",")[0]));
-		atomicService.setEndpoints(new ArrayList<Endpoint>());
-		atomicService.getEndpoints().add(endpoint);
-		clientFactory.getCloudFacade(request).createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
+		if(errors.hasErrors()) {
+			response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, saveAtomicServiceRequest.getAtomicServiceInstanceId());
+			response.setRenderParameter(PARAM_ACTION, ACTION_SAVE_ATOMIC_SERVICE);
+		} else {
+			AtomicService atomicService = new AtomicService();
+			atomicService.setHttp(true);
+			atomicService.setName(saveAtomicServiceRequest.getName());
+			atomicService.setDescription(saveAtomicServiceRequest.getDescription());
+			
+			Endpoint endpoint = new Endpoint();
+			endpoint.setInvocationPath(saveAtomicServiceRequest.getInvocationEndpoint());
+			endpoint.setPort(Integer.parseInt(saveAtomicServiceRequest.getInvocationPort()));
+			endpoint.setServiceName(saveAtomicServiceRequest.getInvocationName());
+			atomicService.setEndpoints(new ArrayList<Endpoint>());
+			atomicService.getEndpoints().add(endpoint);
+			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());
+			clientFactory.getCloudFacade(request).createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
+		}
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
@@ -389,22 +402,30 @@ public class CloudManagerPortlet {
 		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
 		boolean statusRetrieved = false;
 		
-		for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
-			if(asi.getId() != null && asi.getId().equals(instanceId)) {
-				try {
-					response.getWriter().write(asi.getStatus().toString());
-				} catch (IOException e) {
-					log.warn("Could not write instance status to the http writer", e);
+		if(workflow != null) {
+			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
+				if(asi.getId() != null && asi.getId().equals(instanceId)) {
+					try {
+						response.getWriter().write(asi.getStatus().toString());
+					} catch (IOException e) {
+						log.warn("Could not write instance status to the http writer", e);
+					}
+					
+					statusRetrieved = true;
+					
+					break;
 				}
-				
-				statusRetrieved = true;
-				
-				break;
 			}
 		}
 		
 		if(!statusRetrieved) {
-			log.warn("Could not retrieve status for workflow [{}] and atomic service [{}]", workflowId, atomicServiceId);
+			log.warn("Could not retrieve status for workflow [{}] and atomic service [{}]. Returning empty status.", workflowId, atomicServiceId);
+			
+			try {
+				response.getWriter().write("");
+			} catch (IOException e) {
+				log.warn("Could not write instance status to the http writer", e);
+			}
 		}
 	}
 	
@@ -413,7 +434,7 @@ public class CloudManagerPortlet {
 			for(Iterator<AtomicService> i = atomicServices.iterator(); i.hasNext();) {
 				AtomicService atomicService = i.next();
 				
-				if(!atomicService.isHttp() && !atomicService.isVnc()) {
+				if(!atomicService.isPublished()) {
 					i.remove();
 				}
 			}
