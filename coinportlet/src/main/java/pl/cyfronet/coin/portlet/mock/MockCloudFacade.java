@@ -60,11 +60,12 @@ public class MockCloudFacade implements CloudFacade {
 	}
 
 	@Override
-	public void createAtomicService(String atomicServiceInstanceId,
+	public String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		atomicService.setAtomicServiceId(String.valueOf(System.currentTimeMillis()));
 		atomicServices.add(atomicService);
+		return "id";
 	}
 
 	/* (non-Javadoc)
