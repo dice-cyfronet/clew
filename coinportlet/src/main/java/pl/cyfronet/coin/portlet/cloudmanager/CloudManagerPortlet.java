@@ -23,12 +23,12 @@ import javax.portlet.ResourceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +46,10 @@ import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
@@ -87,6 +91,7 @@ public class CloudManagerPortlet {
 	static final String ACTION_WORKFLOWS = "workflows";
 	static final String ACTION_DEVELOPMENT = "development";
 	static final String ACTION_STOP_WORKFLOW = "stopWorkflow";
+	static final String ACTION_AS_SAVING_STATE = "asSavingState";
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -315,8 +320,35 @@ public class CloudManagerPortlet {
 			endpoint.setServiceName(saveAtomicServiceRequest.getInvocationName());
 			atomicService.setEndpoints(new ArrayList<Endpoint>());
 			atomicService.getEndpoints().add(endpoint);
+			atomicService.setPublished(true);
+			atomicService.setHttp(true);
 			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());
-			clientFactory.getCloudFacade(request).createAtomicService(saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
+			
+			String atomicServiceId = clientFactory.getCloudFacade(request).createAtomicService(
+					saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
+			
+			if(atomicServiceId != null) {
+				log.debug("Successfully retrieved new atomic service id of value [{}]", atomicServiceId);
+				
+				InitialConfiguration ic = new InitialConfiguration();
+				ic.setName("Initial configuration");
+				ic.setPayload("<initialConfiguration/>");
+				
+				try {
+					clientFactory.getCloudFacade(request).addInitialConfiguration(atomicServiceId, ic);
+				} catch (Exception e) {
+					log.warn("Could not save initial cofiguration for atomic service with id [{}]", atomicServiceId, e);
+				}
+				
+				response.setRenderParameter(PARAM_ACTION, ACTION_AS_SAVING_STATE);
+				response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+			} else {
+				log.warn("New atomic service id is null");
+				errors.addError(new FieldError(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, "name",
+						"Could not create new AS. Maybe the name is not unique?"));
+				response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, saveAtomicServiceRequest.getAtomicServiceInstanceId());
+				response.setRenderParameter(PARAM_ACTION, ACTION_SAVE_ATOMIC_SERVICE);
+			}
 		}
 	}
 
@@ -426,6 +458,44 @@ public class CloudManagerPortlet {
 			} catch (IOException e) {
 				log.warn("Could not write instance status to the http writer", e);
 			}
+		}
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_AS_SAVING_STATE)
+	public String doViewAsSavingState(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			Model model) {
+		log.trace("Generating AS saving state view for id [{}]", atomicServiceId);
+		model.addAttribute(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+		
+		return "cloudManager/asSavingState";
+	}
+	
+	@ResourceMapping("asSavingStatus")
+	public void checkAsStatus(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			PortletRequest request, ResourceResponse response) {
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
+		
+		for(AtomicService as : atomicServices) {
+			log.trace("AS id: [{}]", as.getAtomicServiceId() == null ? "null": as.getAtomicServiceId());
+			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
+				try {
+					if(as.isActive()) {
+						response.getWriter().write("done");
+					} else {
+						response.getWriter().write("saving");
+					}
+					
+					return;
+				} catch (IOException e) {
+					log.warn("Could not write atomic service status to the http writer", e);
+				}
+			}
+		}
+		
+		try {
+			response.getWriter().write("unknown AS with id " + atomicServiceId);
+		} catch (IOException e) {
+			log.warn("Could not write atomic service status to the http writer", e);
 		}
 	}
 	
