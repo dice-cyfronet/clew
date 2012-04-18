@@ -12,7 +12,6 @@
 		<c:otherwise>
 			<c:choose>
 				<c:when test="${atomicServiceInvokable}">
-					<a  class="coin-link" href='${atomicServiceWsdlEndpoint}'>WSDL</a><br/>
 					<form:form action='${invokeAtomicService}' modelAttribute='invokeAtomicServiceRequest'>
 						<form:hidden path="atomicServiceInstanceId"/>
 						<form:hidden path="workflowId"/>
@@ -24,12 +23,12 @@
 							</label>
 							<form:select path="method" items="${atomicServiceMethodList}"/>
 						</div>
-						<div>
-							<label for="messageBody">
-								<spring:message code="cloud.manager.portlet.submit.atomic.service.message.body.label"/>
+						<c:forEach var="formField" items="${invokeAtomicServiceRequest.formFields}" varStatus="index">
+							<label for="invokeAtomicServiceRequest.formFields[${index.index}].value">
+								${formField.name}
 							</label>
-							<form:textarea path="messageBody" cols="40" rows="6"/>
-						</div>
+							<form:input path="invokeAtomicServiceRequest.formFields[${index.index}].value"/>
+						</c:forEach>
 						<input type='submit' value='<spring:message code='cloud.manager.portlet.invoke.atomic.service.request'/>'/>
 					</form:form>
 				</c:when>

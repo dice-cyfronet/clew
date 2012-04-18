@@ -13,6 +13,16 @@
 	    			if(jQuery('#asSavingState').text() != status) {
 	    				jQuery('#asSavingState').text(status);
 	    			}
+	    			
+	    			jQuery('#asSavingState').css('opacity', '1.0');
+	    			
+	    			if(status != 'done') {
+	    				jQuery('#asSavingState').animate({
+	    					opacity: 0
+	    				}, 2000, function() {
+	    					//on animation completed
+	    				});
+    				}
 
 	    			if(status == 'done') {
 	    				jQuery('#asSavingState').css('visibility', 'visible');

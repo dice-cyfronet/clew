@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
@@ -40,16 +42,13 @@ import org.springframework.web.util.HtmlUtils;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
-import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
-import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
-import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
@@ -74,7 +73,6 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_CURRENT_ATOMIC_SERVICE = "currentAtomicService";
 	static final String MODEL_BEAN_AS_INVOCATION_POSSIBLE = "atomicServiceInvokable";
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
-	static final String MODEL_BEAN_AS_WSDL_ENDPOINT = "atomicServiceWsdlEndpoint";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -292,6 +290,7 @@ public class CloudManagerPortlet {
 	public String doViewSaveAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId, Model model) {
 		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
 			SaveAtomicServiceRequest sasr = new SaveAtomicServiceRequest();
+			sasr.setInvocationPort("80");
 			sasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
@@ -322,6 +321,7 @@ public class CloudManagerPortlet {
 			atomicService.getEndpoints().add(endpoint);
 			atomicService.setPublished(true);
 			atomicService.setHttp(true);
+			atomicService.setInProxy(true);
 			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());
 			
 			String atomicServiceId = clientFactory.getCloudFacade(request).createAtomicService(
@@ -331,7 +331,7 @@ public class CloudManagerPortlet {
 				log.debug("Successfully retrieved new atomic service id of value [{}]", atomicServiceId);
 				
 				InitialConfiguration ic = new InitialConfiguration();
-				ic.setName("Initial configuration");
+				ic.setName(atomicServiceId + " initial configuration");
 				ic.setPayload("<initialConfiguration/>");
 				
 				try {
@@ -372,26 +372,38 @@ public class CloudManagerPortlet {
 			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
 			model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, atomicService);
 			
-			if(atomicService.getName().equals("HelloWorld")) {
-				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
+			if(atomicService.getEndpoints() != null && atomicService.getEndpoints().size() > 0 &&
+					atomicService.getEndpoints().get(0).getType() == EndpointType.REST) {
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
-						messages.getMessage("cloud.manager.portlet.hello.as.methods", null, null)));
-				model.addAttribute(MODEL_BEAN_AS_WSDL_ENDPOINT, 
-						messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-						replace("{workflowId}", workflowId).replace("{configurationId}", configurationId) + "?wsdl");
+						atomicService.getEndpoints().get(0).getServiceName()));
 				
 				if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
 					InvokeAtomicServiceRequest iasr = new InvokeAtomicServiceRequest();
 					iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
-					iasr.setMessageBody(messages.getMessage("cloud.manager.portlet.hello.as.envelope", null, null));
 					iasr.setWorkflowId(workflowId);
 					iasr.setConfigurationId(configurationId);
 					iasr.setAtomicServiceId(atomicServiceId);
+					iasr.setFormFields(new ArrayList<FormField>());
+					
+					if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
+						Pattern pattern = Pattern.compile("(\\{.+?\\})");
+						Matcher matcher = pattern.matcher(atomicService.getEndpoints().get(0).getInvocationPath());
+						
+						while(matcher.find()) {
+							FormField formField = new FormField();
+							formField.setName(matcher.group(0));
+							formField.setValue("");
+							iasr.getFormFields().add(formField);
+						}
+					}
+					
+					log.trace("For REST invocation the following parameters were found: [{}]", iasr.getFormFields());
+					
 					model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
 				}
-				
 			} else {
 				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
+				model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, "No AS service defined :(");
 			}
 		} else {
 			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, messages.getMessage("cloud.manager.portlet.no.atomic.service.found", null, null));
@@ -512,31 +524,32 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		URL asUrl = new URL(messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId()));
-		URLConnection connection = asUrl.openConnection();
-		connection.setRequestProperty("SOAPAction", request.getMethod());
-		connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
-		connection.setDoOutput(true);
-		
-		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-		out.write(request.getMessageBody());
-		out.flush();
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		StringBuilder response = new StringBuilder();
-		String line = null;
-		
-		while((line = in.readLine()) != null) {
-			response.append(line).append("\n");
-		}
-		
-		out.close();
-		in.close();
-		
-		//TODO
-		
-		return response.toString();
+//		URL asUrl = new URL(messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
+//				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId()));
+//		URLConnection connection = asUrl.openConnection();
+//		connection.setRequestProperty("SOAPAction", request.getMethod());
+//		connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+//		connection.setDoOutput(true);
+//		
+//		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+//		out.write(request.getMessageBody());
+//		out.flush();
+//		
+//		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//		StringBuilder response = new StringBuilder();
+//		String line = null;
+//		
+//		while((line = in.readLine()) != null) {
+//			response.append(line).append("\n");
+//		}
+//		
+//		out.close();
+//		in.close();
+//		
+//		//TODO
+//		
+//		return response.toString();
+		return "";
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {

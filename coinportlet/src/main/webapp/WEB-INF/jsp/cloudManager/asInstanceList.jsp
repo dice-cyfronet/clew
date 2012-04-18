@@ -27,7 +27,7 @@
 				</c:when>
 				<c:otherwise>
 					<portlet:renderURL var="showAtomicService">
-						<portlet:param name="action" value="genericInvoker"/>
+						<portlet:param name="action" value="${view}"/>
 						<portlet:param name="currentAtomicService" value="${atomicService.atomicServiceId}"/>
 					</portlet:renderURL>
 					<a class="coin-link" href="${showAtomicService}">${atomicService.name}</a>

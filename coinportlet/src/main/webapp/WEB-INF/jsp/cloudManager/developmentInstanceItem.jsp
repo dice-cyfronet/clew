@@ -11,7 +11,12 @@
 		<c:if test="${atomicServiceInstance.redirections != null and fn:length(atomicServiceInstance.redirections) > 0}">
 			Access methods:
 			<c:forEach var="redirection" items="${atomicServiceInstance.redirections}">
-				Type: ${redirection.name}, port: ${redirection.fromPort}<br/>
+				<c:if test="${redirection.name == 'ssh'}">
+				Type: ${redirection.name}, host: ${redirection.host}, port: ${redirection.fromPort}<br/>
+				<c:if test="${atomicServiceInstance.credential != null}">
+					Credentials: ${atomicServiceInstance.credential.username}:${atomicServiceInstance.credential.password}<br/>
+				</c:if>
+				</c:if>
 			</c:forEach>
 		</c:if>
 		
@@ -46,6 +51,7 @@
 		    		
 		    		setTimeout("updateStatus('${statusLink}', '${statusId}')", 2000);
 		    	};
+		    	
 		    	updateStatus('${statusLink}', '${statusId}');
 		    });
 		</script>

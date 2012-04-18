@@ -43,6 +43,8 @@
 			<form:input path="invocationEndpoint"/>
 			<form:errors path="invocationEndpoint" cssClass="portlet-msg-error"/>
 		</div>
+		<form:hidden path="invocationPort"/>
+		<!--
 		<div>
 			<label for="invocationPort">
 				<spring:message code="cloud.manager.portlet.save.atomic.service.invocation.port.label"/>
@@ -50,6 +52,7 @@
 			<form:input path="invocationPort"/>
 			<form:errors path="invocationPort" cssClass="portlet-msg-error"/>
 		</div>
+		-->
 		<!-- 
 		<div>
 			<label for="ports">
