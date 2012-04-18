@@ -34,7 +34,7 @@
 		    		pm({
 		        		target: parent,
 		        		type: 'resizeEvent',
-		        		data: {size: (document.body.scrollHeight + 20)}
+		        		data: {size: (document.body.scrollHeight)}
 		        	});
 		    	});
 	    	};
