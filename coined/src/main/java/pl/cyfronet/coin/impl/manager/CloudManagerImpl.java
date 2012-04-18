@@ -37,6 +37,7 @@ import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
@@ -114,7 +115,7 @@ public class CloudManagerImpl implements CloudManager {
 			atomicService.setVnc(applianceType.isVnc());
 			atomicService.setPublished(applianceType.isPublished());
 			atomicService.setActive(applianceType.getTemplates_count() > 0);
-			
+
 			atomicServices.add(atomicService);
 		}
 		return atomicServices;
@@ -364,6 +365,9 @@ public class CloudManagerImpl implements CloudManager {
 				instance.setName(vm.getName());
 				instance.setMessage(""); // TODO
 
+				// FIXME temporary
+				addRedirections(instance);
+
 				if (detail.getWorkflow_type() == WorkflowType.development) {
 					instance.setCredential(getCredential(vm.getAppliance_type()));
 				}
@@ -375,6 +379,19 @@ public class CloudManagerImpl implements CloudManager {
 		}
 
 		return workflow;
+	}
+
+	/**
+	 * @param instance
+	 */
+	private void addRedirections(AtomicServiceInstance instance) {
+		Redirection ssh = new Redirection();
+		ssh.setHost("10.10.10.10");
+		ssh.setFromPort(20);
+		ssh.setToPort(20);
+		ssh.setHttp(false);
+		ssh.setName("ssh");
+		instance.setRedirections(Arrays.asList(ssh));
 	}
 
 	/**

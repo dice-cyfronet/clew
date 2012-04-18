@@ -30,6 +30,8 @@ public class Redirection {
 	
 	private Integer fromPort;
 
+	private String host;
+	
 	/**
 	 * @return the name
 	 */
@@ -86,12 +88,26 @@ public class Redirection {
 		this.fromPort = fromPort;
 	}
 
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return host;
+	}
+
+	/**
+	 * @param host the host to set
+	 */
+	public void setHost(String host) {
+		this.host = host;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "Redirection [name=" + name + ", http=" + http + ", toPort="
-				+ toPort + ", fromPort=" + fromPort + "]";
+				+ toPort + ", fromPort=" + fromPort + ", host=" + host + "]";
 	}
 }

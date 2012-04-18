@@ -66,7 +66,7 @@ public class AirTest {
 
 		// System.out.println(air.getUserWorkflows("marek"));
 
-		System.out.println(air.addAtomicService(request));
+//		System.out.println(air.addAtomicService(request));
 
 		// System.out.println(air.getWorkflow("4f8c38d68664883031005412"));
 
@@ -89,5 +89,7 @@ public class AirTest {
 		// } catch (Exception e) {
 		// System.out.println(e.getClass());
 		// }
+		
+		System.out.println(air.getWorkflow("4f7c5555866488556c00003f"));
 	}
 }

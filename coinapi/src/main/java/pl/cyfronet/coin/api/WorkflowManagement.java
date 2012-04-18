@@ -94,9 +94,9 @@ public interface WorkflowManagement {
 	 * @param asId Atomic service configuration id.
 	 */
 	@PUT
-	@Path("/{workflowId}/as/{asConfigId}")
+	@Path("/{workflowId}/as/{asConfigId}/{name}")
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asConfigId, String name);
+			@PathParam("asConfigId") String asConfigId, @PathParam("name") String name);
 
 	/**
 	 * Remove atomic service from running workflow.

@@ -38,6 +38,8 @@ public class Vms {
 	
 	private Status state;
 	
+	private String internal_port_mappings;
+	
 	/**
 	 * @return the name
 	 */
@@ -136,6 +138,20 @@ public class Vms {
 		this.state = state;
 	}
 
+	/**
+	 * @return the internal_port_mappings
+	 */
+	public String getInternal_port_mappings() {
+		return internal_port_mappings;
+	}
+
+	/**
+	 * @param internal_port_mappings the internal_port_mappings to set
+	 */
+	public void setInternal_port_mappings(String internal_port_mappings) {
+		this.internal_port_mappings = internal_port_mappings;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -144,8 +160,7 @@ public class Vms {
 		return "Vms [name=" + name + ", specs=" + specs + ", conf_id="
 				+ conf_id + ", appliance_type=" + appliance_type
 				+ ", source_template=" + source_template + ", vms_id=" + vms_id
-				+ ", state=" + state + "]";
+				+ ", state=" + state + ", internal_port_mappings="
+				+ internal_port_mappings + "]";
 	}
-	
-	
 }
