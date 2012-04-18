@@ -47,6 +47,8 @@ public class ApplianceType {
 	
 	private List<ApplianceConfiguration> configurations;
 
+	private List<ASEndpoint> endpoints;
+	
 	/**
 	 * @return the name
 	 */
@@ -187,6 +189,20 @@ public class ApplianceType {
 		this.configurations = configurations;
 	}
 
+	/**
+	 * @return the endpoints
+	 */
+	public List<ASEndpoint> getEndpoints() {
+		return endpoints;
+	}
+
+	/**
+	 * @param endpoints the endpoints to set
+	 */
+	public void setEndpoints(List<ASEndpoint> endpoints) {
+		this.endpoints = endpoints;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -196,6 +212,7 @@ public class ApplianceType {
 				+ in_proxy + ", published=" + published + ", scalable="
 				+ scalable + ", shared=" + shared + ", http=" + http
 				+ ", description=" + description + ", templates_count="
-				+ templates_count + ", configurations=" + configurations + "]";
+				+ templates_count + ", configurations=" + configurations
+				+ ", endpoints=" + endpoints + "]";
 	}
 }

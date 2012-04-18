@@ -85,4 +85,13 @@ public class Redirection {
 	public void setFromPort(Integer fromPort) {
 		this.fromPort = fromPort;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Redirection [name=" + name + ", http=" + http + ", toPort="
+				+ toPort + ", fromPort=" + fromPort + "]";
+	}
 }

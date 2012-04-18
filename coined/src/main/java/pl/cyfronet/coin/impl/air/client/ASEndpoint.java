@@ -34,6 +34,22 @@ public class ASEndpoint {
 
 	private String endpoint_type;
 	
+	private String id;
+	
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	/**
 	 * @return the invocation_path
 	 */
@@ -116,5 +132,16 @@ public class ASEndpoint {
 	 */
 	public void setEndpoint_type(String endpoint_type) {
 		this.endpoint_type = endpoint_type;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ASEndpoint [invocation_path=" + invocation_path
+				+ ", description=" + description + ", descriptor=" + descriptor
+				+ ", port=" + port + ", service_name=" + service_name
+				+ ", endpoint_type=" + endpoint_type + ", id=" + id + "]";
 	}
 }

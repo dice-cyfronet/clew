@@ -75,4 +75,13 @@ public class Workflow {
 			List<AtomicServiceInstance> atomicServiceInstances) {
 		this.atomicServiceInstances = atomicServiceInstances;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Workflow [name=" + name + ", type=" + type
+				+ ", atomicServiceInstances=" + atomicServiceInstances + "]";
+	}
 }

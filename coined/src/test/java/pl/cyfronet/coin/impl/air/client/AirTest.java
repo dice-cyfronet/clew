@@ -42,6 +42,7 @@ public class AirTest {
 		asE1.setPort(9000);
 		asE1.setService_name("gimias");
 		asE1.setEndpoint_type("ws");
+		//asE1.setEndpoint_type("REST");
 		
 		ASEndpoint asE2 = new ASEndpoint();
 		asE2.setDescription("endpoint description 3");
@@ -49,7 +50,6 @@ public class AirTest {
 		asE2.setInvocation_path("/gimias2");
 		asE2.setPort(9001);
 		asE2.setService_name("gimias2");
-		asE1.setEndpoint_type("rest");
 
 		AddAtomicServiceRequest request = new AddAtomicServiceRequest();
 		
@@ -57,7 +57,7 @@ public class AirTest {
 		request.setDescription("description");
 		request.setHttp(true);
 		request.setIn_proxy(true);
-		request.setName("as name with space 3");
+		request.setName("yyyy");
 		request.setPublished(true);
 		request.setScalable(true);
 		request.setShared(true);
@@ -66,7 +66,7 @@ public class AirTest {
 
 		// System.out.println(air.getUserWorkflows("marek"));
 
-		//System.out.println(air.addAtomicService(request));
+		System.out.println(air.addAtomicService(request));
 
 		// System.out.println(air.getWorkflow("4f8c38d68664883031005412"));
 
@@ -78,7 +78,7 @@ public class AirTest {
 //			System.out.println(e.getClass());
 //		}
 
-		System.out.println(air.getApplianceTypes());
+		//System.out.println(air.getApplianceTypes());
 		
 		// try {
 		// List<ApplianceType> types = air.getApplianceTypes();

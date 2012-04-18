@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
+import pl.cyfronet.coin.impl.air.client.ASEndpoint;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
@@ -61,6 +62,15 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		type1.setVnc(true);
 		type1.setTemplates_count(0);
 
+		ASEndpoint type1AsEndpoint = new ASEndpoint();
+		type1AsEndpoint.setDescription("description");
+		type1AsEndpoint.setDescriptor(null);
+		type1AsEndpoint.setEndpoint_type("WS");
+		type1AsEndpoint.setId("123asd");
+		type1AsEndpoint.setInvocation_path("invocation/path");
+		type1AsEndpoint.setPort(9090);
+		type1AsEndpoint.setService_name("gimias");
+		
 		ApplianceType type2 = new ApplianceType();
 		type2.setPublished(false);
 		type2.setName("type2");

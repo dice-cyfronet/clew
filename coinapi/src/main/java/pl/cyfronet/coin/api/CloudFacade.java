@@ -96,6 +96,10 @@ public interface CloudFacade {
 			@PathParam("atomicServiceId") String atomicServiceId);
 
 //	@GET
+//	@Path("/as/services_set")
+//	String getServicesSet();
+	
+//	@GET
 //	@Path("/as/{atomicServiceId}/endpoints")
 //	List<Endpoint> getEdnpoints(
 //			@PathParam("atomicServiceId") String atomicServiceId);

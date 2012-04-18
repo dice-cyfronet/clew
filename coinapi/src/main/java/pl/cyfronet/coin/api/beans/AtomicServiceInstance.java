@@ -68,4 +68,14 @@ public class AtomicServiceInstance extends StatusBean {
 	public void setRedirections(List<Redirection> redirections) {
 		this.redirections = redirections;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
+				+ ", credential=" + credential + ", redirections="
+				+ redirections + "]";
+	}
 }

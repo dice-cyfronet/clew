@@ -65,15 +65,16 @@ public class CloudFacadeTest {
 		
 		as.setEndpoints(Arrays.asList(e));
 		
-		cf.createAtomicService("234", as);
+		//cf.createAtomicService("234", as);
 		
 		InitialConfiguration initConf = new InitialConfiguration();
 		initConf.setName("mkAsConfig");
 		initConf.setPayload("<initmk/>");
 		
-		System.out.println(cf.addInitialConfiguration("mkAs", initConf));
+	//	System.out.println(cf.addInitialConfiguration("mkAs", initConf));
 		
-//		System.out.println(cf.getInitialConfigurations("@neurist with VNC"));
+		//System.out.println(cf.getInitialConfigurations("@neurist with VNC"));
+		
 		
 		
 	}
