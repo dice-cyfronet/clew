@@ -35,7 +35,7 @@ public class AirTest {
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
-		ASEndpoint asE1 = new ASEndpoint();
+		ATEndpoint asE1 = new ATEndpoint();
 		asE1.setDescription("endpoint description");
 		asE1.setDescriptor("<wsdl/>");
 		asE1.setInvocation_path("/gimias");
@@ -44,7 +44,7 @@ public class AirTest {
 		asE1.setEndpoint_type("ws");
 		//asE1.setEndpoint_type("REST");
 		
-		ASEndpoint asE2 = new ASEndpoint();
+		ATEndpoint asE2 = new ATEndpoint();
 		asE2.setDescription("endpoint description 3");
 		asE2.setDescriptor("<wsdl 2/>");
 		asE2.setInvocation_path("/gimias2");
@@ -90,6 +90,11 @@ public class AirTest {
 		// System.out.println(e.getClass());
 		// }
 		
-		System.out.println(air.getWorkflow("4f7c5555866488556c00003f"));
+		//System.out.println(air.getWorkflow("4f8eafde86648824da00b15b"));
+		List<ApplianceType> types = air.getApplianceTypes();
+		
+		for (ApplianceType applianceType : types) {
+			System.out.println(applianceType);
+		}
 	}
 }

@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
-import pl.cyfronet.coin.impl.air.client.ASEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
@@ -62,7 +62,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		type1.setVnc(true);
 		type1.setTemplates_count(0);
 
-		ASEndpoint type1AsEndpoint = new ASEndpoint();
+		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
 		type1AsEndpoint.setDescriptor(null);
 		type1AsEndpoint.setEndpoint_type("WS");
@@ -70,6 +70,16 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		type1AsEndpoint.setInvocation_path("invocation/path");
 		type1AsEndpoint.setPort(9090);
 		type1AsEndpoint.setService_name("gimias");
+		
+		ATEndpoint type2AsEndpoint = new ATEndpoint();
+		type2AsEndpoint.setDescription("description");
+		type2AsEndpoint.setDescriptor("GET POST /hello/{name}");
+		type2AsEndpoint.setId("www");
+		type2AsEndpoint.setInvocation_path("path");
+		type2AsEndpoint.setPort(9090);
+		type2AsEndpoint.setService_name("gimias");
+		
+		type1.setEndpoints(Arrays.asList(type1AsEndpoint, type2AsEndpoint));
 		
 		ApplianceType type2 = new ApplianceType();
 		type2.setPublished(false);

@@ -50,11 +50,12 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
-import pl.cyfronet.coin.impl.air.client.ASEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
+import pl.cyfronet.coin.impl.air.client.Specs;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
@@ -115,10 +116,52 @@ public class CloudManagerImpl implements CloudManager {
 			atomicService.setVnc(applianceType.isVnc());
 			atomicService.setPublished(applianceType.isPublished());
 			atomicService.setActive(applianceType.getTemplates_count() > 0);
+			atomicService.setEndpoints(getEndpoints(applianceType
+					.getEndpoints()));
 
 			atomicServices.add(atomicService);
 		}
 		return atomicServices;
+	}
+
+	/**
+	 * @param endpoints
+	 * @return
+	 */
+	private List<Endpoint> getEndpoints(List<ATEndpoint> atEndpoints) {
+		List<Endpoint> asEndpoints = null;
+		if (atEndpoints != null) {
+			asEndpoints = new ArrayList<Endpoint>();
+			for (ATEndpoint atEndpoint : atEndpoints) {
+				asEndpoints.add(getEndpoint(atEndpoint));
+			}
+		}
+
+		return asEndpoints;
+	}
+
+	/**
+	 * @param atEndpoint
+	 * @return
+	 */
+	private Endpoint getEndpoint(ATEndpoint atEndpoint) {
+		Endpoint asEndpoint = new Endpoint();
+		asEndpoint.setDescription(atEndpoint.getDescription());
+		asEndpoint.setDescriptor(atEndpoint.getDescriptor());
+		asEndpoint.setInvocationPath(atEndpoint.getInvocation_path());
+		asEndpoint.setPort(atEndpoint.getPort());
+		asEndpoint.setServiceName(atEndpoint.getService_name());
+		asEndpoint.setType(getEdnpointType(atEndpoint.getEndpoint_type()));
+
+		return asEndpoint;
+	}
+
+	/**
+	 * @param endpoint_type
+	 * @return
+	 */
+	private EndpointType getEdnpointType(String endpoint_type) {
+		return "WS".equals(endpoint_type) ? EndpointType.WS : EndpointType.REST;
 	}
 
 	/*
@@ -183,11 +226,11 @@ public class CloudManagerImpl implements CloudManager {
 	 * @param endpoints
 	 * @return
 	 */
-	private List<ASEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
+	private List<ATEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
 		if (endpoints != null) {
-			List<ASEndpoint> asEndpoints = new ArrayList<ASEndpoint>();
+			List<ATEndpoint> asEndpoints = new ArrayList<ATEndpoint>();
 			for (Endpoint endpoint : endpoints) {
-				ASEndpoint asEndpoint = new ASEndpoint();
+				ATEndpoint asEndpoint = new ATEndpoint();
 				asEndpoint.setDescription(endpoint.getDescription());
 				asEndpoint.setDescriptor(endpoint.getDescriptor());
 				asEndpoint.setInvocation_path(endpoint.getInvocationPath());
@@ -366,7 +409,7 @@ public class CloudManagerImpl implements CloudManager {
 				instance.setMessage(""); // TODO
 
 				// FIXME temporary
-				addRedirections(instance);
+				addRedirections(instance, vm);
 
 				if (detail.getWorkflow_type() == WorkflowType.development) {
 					instance.setCredential(getCredential(vm.getAppliance_type()));
@@ -383,12 +426,23 @@ public class CloudManagerImpl implements CloudManager {
 
 	/**
 	 * @param instance
+	 * @param vm
 	 */
-	private void addRedirections(AtomicServiceInstance instance) {
+	private void addRedirections(AtomicServiceInstance instance, Vms vm) {
+
+		Specs specs = vm.getSpecs();
+		String ip = "10.10.10.10";
+		if (specs != null) {
+			List<String> ips = specs.getIp();
+			if (ips != null && ips.size() > 0) {
+				ip = ips.get(0);
+			}
+		}
+
 		Redirection ssh = new Redirection();
-		ssh.setHost("10.10.10.10");
-		ssh.setFromPort(20);
-		ssh.setToPort(20);
+		ssh.setHost(ip);
+		ssh.setFromPort(22);
+		ssh.setToPort(22);
 		ssh.setHttp(false);
 		ssh.setName("ssh");
 		instance.setRedirections(Arrays.asList(ssh));

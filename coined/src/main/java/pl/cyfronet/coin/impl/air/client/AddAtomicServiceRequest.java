@@ -44,7 +44,7 @@ public class AddAtomicServiceRequest {
 	
 	private boolean vnc;
 	
-	private List<ASEndpoint> endpoints;
+	private List<ATEndpoint> endpoints;
 
 	/**
 	 * @return the client
@@ -175,14 +175,14 @@ public class AddAtomicServiceRequest {
 	/**
 	 * @return the endpoints
 	 */
-	public List<ASEndpoint> getEndpoints() {
+	public List<ATEndpoint> getEndpoints() {
 		return endpoints;
 	}
 
 	/**
 	 * @param endpoints the endpoints to set
 	 */
-	public void setEndpoints(List<ASEndpoint> endpoints) {
+	public void setEndpoints(List<ATEndpoint> endpoints) {
 		this.endpoints = endpoints;
 	}
 }

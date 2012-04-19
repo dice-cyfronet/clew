@@ -17,14 +17,20 @@
 package pl.cyfronet.coin.impl.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.Status;
+import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
@@ -65,8 +71,37 @@ public abstract class AbstractCloudManagerTest {
 		assertEquals(at.isShared(), as.isShared());
 		assertEquals(at.isVnc(), as.isVnc());
 		assertEquals(at.getTemplates_count() > 0, as.isActive());
+
+		List<ATEndpoint> atEndpoints = at.getEndpoints();
+		if (atEndpoints != null) {
+			List<Endpoint> asEndpoints = as.getEndpoints();
+
+			assertNotNull(asEndpoints);
+			int atSize = atEndpoints.size();
+			assertEquals(atSize, asEndpoints.size());
+
+			for (int i = 0; i < atSize; i++) {
+				assertAtAndAsEndpoint(atEndpoints.get(i), asEndpoints.get(i));
+			}
+		}
 	}
-	
+
+	/**
+	 * @param asEndpoint
+	 * @param endpoint
+	 */
+	private void assertAtAndAsEndpoint(ATEndpoint atEndpoint,
+			Endpoint asEndpoint) {
+		assertEquals(atEndpoint.getDescription(), asEndpoint.getDescription());
+		assertEquals(atEndpoint.getDescriptor(), asEndpoint.getDescriptor());
+		EndpointType type = "WS".equals(atEndpoint.getEndpoint_type()) ? EndpointType.WS
+				: EndpointType.REST;
+		assertEquals(type, asEndpoint.getType());
+		assertEquals(atEndpoint.getInvocation_path(), asEndpoint.getInvocationPath());
+		assertEquals(atEndpoint.getPort().intValue(), asEndpoint.getPort());
+		assertEquals(atEndpoint.getService_name(), asEndpoint.getServiceName());
+	}
+
 	/**
 	 * @param air
 	 * @param username

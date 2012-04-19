@@ -17,6 +17,7 @@
 package pl.cyfronet.coin.impl.air.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,57 +26,80 @@ import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class CloudFacadeTest {
 
+	private static CloudFacade cf;
+
 	public static void main(String[] args) throws Exception {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
-		        new String[] {"cf-test.xml",});
-//		// of course, an ApplicationContext is just a BeanFactory
-		BeanFactory factory = (BeanFactory) appContext;
-		
-		CloudFacade cf = factory.getBean("cf-client", CloudFacade.class);
-		
-		System.out.println(cf.getAtomicServices());
-		
-		AtomicService as = new AtomicService();
-		as.setName("mkAs");
-		as.setDescription("as description");
-		as.setHttp(true);
-		as.setPublished(true);
-		as.setInProxy(true);
-		
+		initCloudFacde();
+
+		printAtomicServices();
+
+	}
+
+	static void printAtomicServices() {
+		List<AtomicService> atomicServices = cf.getAtomicServices();
+
+		for (AtomicService atomicService : atomicServices) {
+			System.out.println(atomicService);
+		}
+	}
+
+	static void addInitialConfiguration(String atomicServiceId, String name)
+			throws AtomicServiceNotFoundException,
+			AtomicServiceInstanceNotFoundException, CloudFacadeException,
+			InitialConfigurationAlreadyExistException {
+		InitialConfiguration initConf = new InitialConfiguration();
+		initConf.setName(name);
+		initConf.setPayload("<init/>");
+
+		System.out.println(cf
+				.addInitialConfiguration(atomicServiceId, initConf));
+	}
+
+	static void addAtomicService(String atomicServiceInstanceId, String asName) {
+		AtomicService atomicService = new AtomicService();
+		atomicService.setName("mkAs");
+		atomicService.setDescription("as description");
+		atomicService.setHttp(true);
+		atomicService.setPublished(true);
+		atomicService.setInProxy(true);
+
 		Endpoint e = new Endpoint();
 		e.setDescription("e1 test");
 		e.setDescriptor("<wsdl/>");
 		e.setInvocationPath("/service/path");
 		e.setPort(9090);
 		e.setServiceName("gimias");
-		
+
 		Endpoint e2 = new Endpoint();
 		e2.setDescription("e1 test");
 		e2.setDescriptor("<wsdl/>");
 		e2.setInvocationPath("/service/path");
 		e2.setPort(9090);
 		e2.setServiceName("gimias");
-		
-		as.setEndpoints(Arrays.asList(e));
-		
-		//cf.createAtomicService("234", as);
-		
-		InitialConfiguration initConf = new InitialConfiguration();
-		initConf.setName("mkAsConfig");
-		initConf.setPayload("<initmk/>");
-		
-	//	System.out.println(cf.addInitialConfiguration("mkAs", initConf));
-		
-		//System.out.println(cf.getInitialConfigurations("@neurist with VNC"));
-		
-		
-		
+
+		atomicService.setEndpoints(Arrays.asList(e));
+
+		System.out
+				.println("atomic service id: "
+						+ cf.createAtomicService(atomicServiceInstanceId,
+								atomicService));
+	}
+
+	private static void initCloudFacde() throws Exception {
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
+				new String[] { "cf-test.xml", });
+		BeanFactory factory = (BeanFactory) appContext;
+
+		cf = factory.getBean("cf-client", CloudFacade.class);
 	}
 }

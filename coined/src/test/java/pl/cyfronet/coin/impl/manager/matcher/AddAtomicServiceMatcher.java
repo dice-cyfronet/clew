@@ -24,7 +24,7 @@ import org.hamcrest.Description;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
-import pl.cyfronet.coin.impl.air.client.ASEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 
 /**
@@ -63,7 +63,7 @@ public class AddAtomicServiceMatcher extends
 	 * @param endpoint
 	 * @return
 	 */
-	private boolean equals(List<ASEndpoint> asEndpoints,
+	private boolean equals(List<ATEndpoint> asEndpoints,
 			List<Endpoint> endpoints) {
 		if (asEndpoints != null && endpoints != null) {
 			if (asEndpoints.size() == endpoints.size()) {
@@ -85,7 +85,7 @@ public class AddAtomicServiceMatcher extends
 	 * @param endpoint
 	 * @return
 	 */
-	private boolean equals(ASEndpoint asEndpoint, Endpoint endpoint) {
+	private boolean equals(ATEndpoint asEndpoint, Endpoint endpoint) {
 		EndpointType endpointType = endpoint.getType() == null ? EndpointType.REST
 				: endpoint.getType();
 

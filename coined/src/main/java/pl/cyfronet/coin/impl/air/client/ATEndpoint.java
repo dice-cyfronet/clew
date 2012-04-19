@@ -20,7 +20,7 @@ package pl.cyfronet.coin.impl.air.client;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class ASEndpoint {
+public class ATEndpoint {
 
 	private String invocation_path;
 	
