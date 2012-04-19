@@ -17,7 +17,7 @@ import pl.cyfronet.coin.api.WorkflowManagement;
 public class ClientFactory {
 	private static final Logger log = LoggerFactory.getLogger(ClientFactory.class);
 	
-	private static final String HEADER_AUTHORIZATION = "Authorization";
+	public static final String HEADER_AUTHORIZATION = "Authorization";
 	
 	private CloudFacade cloudFacade;
 	private WorkflowManagement workflowManagement;
@@ -42,11 +42,7 @@ public class ClientFactory {
 		return workflowManagement;
 	}
 	
-	private void attachBasicAuth(PortletRequest request, Object proxy) {
-		if(request.getUserPrincipal() == null) {
-			throw new IllegalArgumentException("Portlet request does not contain user principal");
-		}
-
+	public String createBasicAuthHeader(PortletRequest request) {
 		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
 				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
 		String token = null;
@@ -57,7 +53,6 @@ public class ClientFactory {
 			
 			if(tokenAttribute != null) {
 				token = tokenAttribute.getStringValue();
-//				log.trace("Token [{}] retrieved for user [{}]", token, request.getUserPrincipal().getName());
 			}
 		} catch (SecurityException e) {
 			throw new IllegalArgumentException("Could not obtain user token from security attribute map");
@@ -68,13 +63,18 @@ public class ClientFactory {
 					"with id " + request.getPortletSession().getId());
 		}
 
-		String authorizationHeader = "Basic " 
+		return "Basic " 
 			    + org.apache.cxf.common.util.Base64Utility.encode((
 			    		request.getUserPrincipal().getName() + ":" + token).getBytes());
+	}
+	
+	private void attachBasicAuth(PortletRequest request, Object proxy) {
+		if(request.getUserPrincipal() == null) {
+			throw new IllegalArgumentException("Portlet request does not contain user principal");
+		}
+
 		Client client = WebClient.client(proxy);
 		client.reset();
-		client.header(HEADER_AUTHORIZATION, authorizationHeader);
-//		log.trace("Client instance enriched with the following 'Authorization' entry: {}",
-//				client.getHeaders().get(HEADER_AUTHORIZATION));
+		client.header(HEADER_AUTHORIZATION, createBasicAuthHeader(request));
 	}
 }

@@ -20,7 +20,7 @@
 			</c:forEach>
 		</c:if>
 		
-		<c:if test="${currentAtomicService.http}">
+		<c:if test="${currentAtomicService.http and view == 'genericInvoker'}">
 			<portlet:renderURL var="invokeAtomicService">
 				<portlet:param name="action" value="invokeAtomicService"/>
 				<portlet:param name="atomicServiceId" value="${currentAtomicService.atomicServiceId}"/>

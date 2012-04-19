@@ -9,6 +9,7 @@ public class InvokeAtomicServiceRequest {
 	private String configurationId;
 	private String atomicServiceId;
 	private List<FormField> formFields;
+	private String invocationPath;
 	
 	public String getMethod() {
 		return method;
@@ -45,5 +46,21 @@ public class InvokeAtomicServiceRequest {
 	}
 	public void setFormFields(List<FormField> formFields) {
 		this.formFields = formFields;
+	}
+	
+	@Override
+	public String toString() {
+		return "InvokeAtomicServiceRequest [method=" + method
+				+ ", atomicServiceInstanceId=" + atomicServiceInstanceId
+				+ ", workflowId=" + workflowId + ", configurationId="
+				+ configurationId + ", atomicServiceId=" + atomicServiceId
+				+ ", formFields=" + formFields + "]";
+	}
+	
+	public String getInvocationPath() {
+		return invocationPath;
+	}
+	public void setInvocationPath(String invocationPath) {
+		this.invocationPath = invocationPath;
 	}
 }

@@ -3,7 +3,6 @@ package pl.cyfronet.coin.portlet.cloudmanager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -357,6 +356,8 @@ public class CloudManagerPortlet {
 			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
 			@RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
 			String invocationResult, Model model, PortletRequest request) {
+		log.debug("Atomic service invocation request called for AS id [{}] and AS instance id [{}]", atomicServiceId, atomicServiceInstanceId);
+		
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		AtomicService atomicService = null;
 		
@@ -386,31 +387,36 @@ public class CloudManagerPortlet {
 					iasr.setFormFields(new ArrayList<FormField>());
 					
 					if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
-						Pattern pattern = Pattern.compile("(\\{.+?\\})");
+						Pattern pattern = Pattern.compile("\\{(.+?)\\}");
 						Matcher matcher = pattern.matcher(atomicService.getEndpoints().get(0).getInvocationPath());
 						
 						while(matcher.find()) {
 							FormField formField = new FormField();
-							formField.setName(matcher.group(0));
+							formField.setName(matcher.group(1));
 							formField.setValue("");
 							iasr.getFormFields().add(formField);
 						}
+						
+						iasr.setInvocationPath(atomicService.getEndpoints().get(0).getInvocationPath());
 					}
 					
 					log.trace("For REST invocation the following parameters were found: [{}]", iasr.getFormFields());
 					
+					model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
 					model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
 				}
 			} else {
 				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
-				model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, "No AS service defined :(");
+				model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, "Endpoint definition not present or wrong service type");
 			}
 		} else {
+			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
 			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, messages.getMessage("cloud.manager.portlet.no.atomic.service.found", null, null));
 		}
 		
 		if(invocationResult != null) {
 			//TODO: in future do not use request parameter to pass AS invocation result
+			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
 			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
 		}
 		
@@ -419,11 +425,12 @@ public class CloudManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
 	public void doActionInvokeAtomicService(@ModelAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)
-			InvokeAtomicServiceRequest invokeAtomicServiceRequest, ActionResponse response) {
+			InvokeAtomicServiceRequest invokeAtomicServiceRequest, PortletRequest request, ActionResponse response) {
 		String result = null;
+		log.info("Invoking service with the following request [{}]", invokeAtomicServiceRequest);
 		
 		try {
-			result = invokeAtomicService(invokeAtomicServiceRequest);
+			result = invokeAtomicService(request, invokeAtomicServiceRequest);
 		} catch (Exception e) {
 			result = "Error occurred: " + e.getMessage();
 		}
@@ -523,33 +530,40 @@ public class CloudManagerPortlet {
 		}
 	}
 
-	private String invokeAtomicService(InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-//		URL asUrl = new URL(messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-//				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId()));
-//		URLConnection connection = asUrl.openConnection();
-//		connection.setRequestProperty("SOAPAction", request.getMethod());
-//		connection.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
-//		connection.setDoOutput(true);
-//		
+	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
+		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
+				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId());
+		urlPath += request.getInvocationPath();
+		
+		for(FormField field : request.getFormFields()) {
+			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
+		}
+		
+		log.debug("URL for service invocation is [{}]", urlPath);
+		
+		URL asUrl = new URL(urlPath);
+		URLConnection connection = asUrl.openConnection();
+		connection.setRequestProperty(clientFactory.HEADER_AUTHORIZATION, clientFactory.createBasicAuthHeader(portletRequest));
+		connection.setDoOutput(true);
+		
 //		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
 //		out.write(request.getMessageBody());
 //		out.flush();
-//		
-//		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-//		StringBuilder response = new StringBuilder();
-//		String line = null;
-//		
-//		while((line = in.readLine()) != null) {
-//			response.append(line).append("\n");
-//		}
-//		
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		StringBuilder response = new StringBuilder();
+		String line = null;
+		
+		while((line = in.readLine()) != null) {
+			response.append(line).append("\n");
+		}
+		
 //		out.close();
-//		in.close();
-//		
-//		//TODO
-//		
-//		return response.toString();
-		return "";
+		in.close();
+		
+		//TODO
+		
+		return response.toString();
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {

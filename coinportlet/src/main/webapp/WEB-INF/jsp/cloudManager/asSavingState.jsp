@@ -25,7 +25,7 @@
     				}
 
 	    			if(status == 'done') {
-	    				jQuery('#asSavingState').css('visibility', 'visible');
+	    				jQuery('#mainPage').css('visibility', 'visible');
 	    			} else {
 	    				setTimeout("updateAsSavingStatus('${asSavingStatusLink}')", 2000);
 	    			}

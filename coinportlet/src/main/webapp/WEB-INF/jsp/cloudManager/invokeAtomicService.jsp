@@ -17,17 +17,20 @@
 						<form:hidden path="workflowId"/>
 						<form:hidden path="configurationId"/>
 						<form:hidden path="atomicServiceId"/>
+						<form:hidden path="invocationPath"/>
 						<div>
 							<label for="method">
 								<spring:message code="cloud.manager.portlet.submit.atomic.service.method.label"/>
 							</label>
 							<form:select path="method" items="${atomicServiceMethodList}"/>
 						</div>
+						Provide values for the following service parameters:<br/>
 						<c:forEach var="formField" items="${invokeAtomicServiceRequest.formFields}" varStatus="index">
-							<label for="invokeAtomicServiceRequest.formFields[${index.index}].value">
+							<label for="formFields[${index.index}].value">
 								${formField.name}
 							</label>
-							<form:input path="invokeAtomicServiceRequest.formFields[${index.index}].value"/>
+							<form:input path="formFields[${index.index}].value"/><br/>
+							<form:hidden path="formFields[${index.index}].name"/>
 						</c:forEach>
 						<input type='submit' value='<spring:message code='cloud.manager.portlet.invoke.atomic.service.request'/>'/>
 					</form:form>
