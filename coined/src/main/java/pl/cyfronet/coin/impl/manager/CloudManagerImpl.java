@@ -431,21 +431,20 @@ public class CloudManagerImpl implements CloudManager {
 	private void addRedirections(AtomicServiceInstance instance, Vms vm) {
 
 		Specs specs = vm.getSpecs();
-		String ip = "10.10.10.10";
 		if (specs != null) {
 			List<String> ips = specs.getIp();
 			if (ips != null && ips.size() > 0) {
-				ip = ips.get(0);
+				String ip = ips.get(0);
+				Redirection ssh = new Redirection();
+				ssh.setHost(ip);
+				ssh.setFromPort(22);
+				ssh.setToPort(22);
+				ssh.setHttp(false);
+				ssh.setName("ssh");
+				instance.setRedirections(Arrays.asList(ssh));
 			}
 		}
 
-		Redirection ssh = new Redirection();
-		ssh.setHost(ip);
-		ssh.setFromPort(22);
-		ssh.setToPort(22);
-		ssh.setHttp(false);
-		ssh.setName("ssh");
-		instance.setRedirections(Arrays.asList(ssh));
 	}
 
 	/**
