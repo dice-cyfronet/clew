@@ -26,11 +26,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 
 /**
@@ -95,24 +95,24 @@ public interface CloudFacade {
 	List<InitialConfiguration> getInitialConfigurations(
 			@PathParam("atomicServiceId") String atomicServiceId);
 
-//	@GET
-//	@Path("/as/services_set")
-//	String getServicesSet();
-	
-//	@GET
-//	@Path("/as/{atomicServiceId}/endpoints")
-//	List<Endpoint> getEdnpoints(
-//			@PathParam("atomicServiceId") String atomicServiceId);
-//
-//	@GET
-//	@Path("/as/{atomicServiceId}/endpoint/{serviceName}/{invocationPath}")
-//	String getEndpointDescriptor(
-//			@PathParam("atomicServiceId") String atomicServiceId,
-//			@PathParam("serviceName") String serviceName,
-//			@PathParam("invocationPath") String invocationPath);
+	// @GET
+	// @Path("/as/services_set")
+	// String getServicesSet();
 
-	
-	
+	// @GET
+	// @Path("/as/{atomicServiceId}/endpoints")
+	// List<Endpoint> getEdnpoints(
+	// @PathParam("atomicServiceId") String atomicServiceId);
+	//
+	@GET
+	@Path("/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}")
+	String getEndpointDescriptor(
+			@PathParam("atomicServiceId") String atomicServiceId,
+			@PathParam("servicePort") int servicePort,
+			@PathParam("invocationPath") String invocationPath)
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException;
+
 	/**
 	 * Get documentation page content.
 	 * @return Documentation page content.

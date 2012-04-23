@@ -31,6 +31,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 
 /**
@@ -128,4 +129,15 @@ public class DummyCloudManagerLogger implements CloudManager {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getEndpointPayload(java.lang.String, int, java.lang.String)
+	 */
+	@Override
+	public String getEndpointPayload(String atomicServiceId, int servicePort,
+			String invocationPath)
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

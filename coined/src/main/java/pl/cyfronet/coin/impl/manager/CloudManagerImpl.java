@@ -47,6 +47,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
@@ -58,7 +59,6 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Specs;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 import pl.cyfronet.dyrealla.ApplianceNotFoundException;
 import pl.cyfronet.dyrealla.DyReAllaException;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
@@ -470,7 +470,7 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) throws ApplianceTypeNotFound {
+			String atomicServiceId) throws AtomicServiceNotFoundException {
 
 		ApplianceType type = getApplianceType(atomicServiceId);
 		List<ApplianceConfiguration> typeConfigurations = type
@@ -539,15 +539,48 @@ public class CloudManagerImpl implements CloudManager {
 		}
 	}
 
+	@Override
+	public String getEndpointPayload(String atomicServiceId, int servicePort,
+			String invocationPath) throws AtomicServiceNotFoundException,
+			EndpointNotFoundException {
+		ATEndpoint endpoint = getEndpoint(atomicServiceId, servicePort,
+				invocationPath);
+		String endpointId = endpoint.getId();
+		return air.getEndpointDescriptor(endpointId);
+	}
+
+	private ATEndpoint getEndpoint(String atomicServiceId, int servicePort,
+			String invocationPath) throws AtomicServiceNotFoundException,
+			EndpointNotFoundException {
+
+		ApplianceType type = getApplianceType(atomicServiceId);
+
+		for (ATEndpoint endpoint : type.getEndpoints()) {
+			int endpointPort = endpoint.getPort();
+			String endpointInvocationPath = endpoint.getInvocation_path();
+			logger.debug("Comparing {}=={} and {}=={}", new Object[] {
+					endpointPort, servicePort, endpointInvocationPath,
+					invocationPath });
+			if (endpointPort == servicePort
+					&& endpointInvocationPath.equals(invocationPath)) {
+				return endpoint;
+			}
+		}
+
+		logger.debug("Endpoint {}:{}/{} not found", new Object[] {
+				atomicServiceId, servicePort, invocationPath });
+		throw new EndpointNotFoundException();
+	}
+
 	/**
 	 * Get appliance type information.
 	 * @param applianceTypeName Appliance type name.
 	 * @return Appliance type information.
-	 * @throws ApplianceTypeNotFound Thrown, when appliance type is not found in
-	 *             AIR.
+	 * @throws AtomicServiceInstanceNotFoundException Thrown, when appliance
+	 *             type is not found in AIR.
 	 */
 	private ApplianceType getApplianceType(String applianceTypeName)
-			throws ApplianceTypeNotFound {
+			throws AtomicServiceNotFoundException {
 		List<ApplianceType> applianceTypes = air.getApplianceTypes();
 
 		for (ApplianceType applianceType : applianceTypes) {
@@ -557,7 +590,8 @@ public class CloudManagerImpl implements CloudManager {
 			}
 		}
 
-		throw new ApplianceTypeNotFound(applianceTypeName);
+		logger.debug("Atomic service {} not found", applianceTypeName);
+		throw new AtomicServiceNotFoundException();
 	}
 
 	/**

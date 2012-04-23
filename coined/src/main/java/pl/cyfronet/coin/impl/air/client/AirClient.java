@@ -82,4 +82,8 @@ public interface AirClient {
 	String addInitialConfiguration(@FormParam("config_name") String configName,
 			@FormParam("appliance_type") String applianceType,
 			@FormParam("config_text") String configText);
+
+	@GET
+	@Path("/get_endpoint_descriptor/{endpointId}")
+	String getEndpointDescriptor(@PathParam("endpointId") String endpointId);
 }

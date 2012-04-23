@@ -41,8 +41,9 @@ public class CloudFacadeTest {
 	public static void main(String[] args) throws Exception {
 		initCloudFacde();
 
-		printAtomicServices();
-
+		//printAtomicServices();
+		//addAtomicService("cyfronet-nova-vm-208", "SecHelloWorld");
+		addInitialConfiguration("SecHelloWorld", "secHelloWorldInitConf");
 	}
 
 	static void printAtomicServices() {
@@ -67,25 +68,18 @@ public class CloudFacadeTest {
 
 	static void addAtomicService(String atomicServiceInstanceId, String asName) {
 		AtomicService atomicService = new AtomicService();
-		atomicService.setName("mkAs");
-		atomicService.setDescription("as description");
+		atomicService.setName(asName);
+		atomicService.setDescription("Hello world REST and WS service secured using Security Proxy");
 		atomicService.setHttp(true);
 		atomicService.setPublished(true);
 		atomicService.setInProxy(true);
 
 		Endpoint e = new Endpoint();
-		e.setDescription("e1 test");
-		e.setDescriptor("<wsdl/>");
-		e.setInvocationPath("/service/path");
-		e.setPort(9090);
-		e.setServiceName("gimias");
-
-		Endpoint e2 = new Endpoint();
-		e2.setDescription("e1 test");
-		e2.setDescriptor("<wsdl/>");
-		e2.setInvocationPath("/service/path");
-		e2.setPort(9090);
-		e2.setServiceName("gimias");
+		e.setDescription("Simple hello world REST");
+		e.setDescriptor("");
+		e.setInvocationPath("/hello/{name}");
+		e.setPort(80);
+		e.setServiceName("HelloWorld");
 
 		atomicService.setEndpoints(Arrays.asList(e));
 

@@ -99,4 +99,14 @@ public class MockCloudFacade implements CloudFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getEndpointDescriptor(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String getEndpointDescriptor(String atomicServiceId,
+			int servicePort, String invocationPath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

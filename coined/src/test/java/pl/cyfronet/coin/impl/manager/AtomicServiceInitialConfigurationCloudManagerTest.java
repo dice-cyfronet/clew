@@ -28,10 +28,10 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
-import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -86,7 +86,7 @@ public class AtomicServiceInitialConfigurationCloudManagerTest {
 		verify(air, times(2)).getApplianceTypes();
 	}
 
-	@Test(expectedExceptions = ApplianceTypeNotFound.class)
+	@Test(expectedExceptions = AtomicServiceNotFoundException.class)
 	public void shouldThrownASNotFoundException() throws Exception {
 		// given
 		CloudManagerImpl manager = new CloudManagerImpl();

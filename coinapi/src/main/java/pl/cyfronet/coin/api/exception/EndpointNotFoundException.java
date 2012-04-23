@@ -14,20 +14,21 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.manager.exception;
+package pl.cyfronet.coin.api.exception;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.xml.ws.WebFault;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class ApplianceTypeNotFound extends Exception {
+@WebFault
+public class EndpointNotFoundException extends WebApplicationException {
 
-	/**
-	 * Serial version UID.
-	 */
-	private static final long serialVersionUID = 2699880053281006352L;
+	private static final long serialVersionUID = 3805274312799326244L;
 
-	public ApplianceTypeNotFound(String typeName) {
-		super(String.format("Appliance %s not found", typeName));
+	public EndpointNotFoundException() {
+		super(Response.Status.NOT_FOUND);
 	}
-
 }

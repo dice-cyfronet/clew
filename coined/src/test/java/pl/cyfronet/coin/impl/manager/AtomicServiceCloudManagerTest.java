@@ -32,10 +32,10 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
-import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 import pl.cyfronet.coin.impl.manager.matcher.AddAtomicServiceMatcher;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
@@ -128,7 +128,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		try {
 			manager.getInitialConfigurations("nonExisting");
 			fail();
-		} catch(ApplianceTypeNotFound e) {
+		} catch(AtomicServiceNotFoundException e) {
 			//this exception should be thrown
 		}
 

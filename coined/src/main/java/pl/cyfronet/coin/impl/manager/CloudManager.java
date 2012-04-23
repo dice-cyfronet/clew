@@ -27,10 +27,10 @@ import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
-import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -134,7 +134,7 @@ public interface CloudManager {
 	 * @return List of Atomic Service configurations.
 	 */
 	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId)
-			throws ApplianceTypeNotFound;
+			throws AtomicServiceNotFoundException;
 
 	/**
 	 * @param workflowId
@@ -153,4 +153,9 @@ public interface CloudManager {
 			InitialConfiguration initialConfiguration)
 			throws AtomicServiceInstanceNotFoundException,
 			InitialConfigurationAlreadyExistException, CloudFacadeException;
+
+	String getEndpointPayload(String atomicServiceId, int servicePort,
+			String invocationPath)
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException;
 }

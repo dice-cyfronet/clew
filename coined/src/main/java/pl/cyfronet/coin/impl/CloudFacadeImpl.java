@@ -31,10 +31,10 @@ import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
-import pl.cyfronet.coin.impl.manager.exception.ApplianceTypeNotFound;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
@@ -81,8 +81,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
 		try {
-			return manager.createAtomicService(atomicServiceInstanceId, atomicService,
-					getUsername());
+			return manager.createAtomicService(atomicServiceInstanceId,
+					atomicService, getUsername());
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
@@ -96,13 +96,9 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	 */
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) {
+			String atomicServiceId) throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
-		try {
-			return manager.getInitialConfigurations(atomicServiceId);
-		} catch (ApplianceTypeNotFound e) {
-			throw new WebApplicationException(e, 404);
-		}
+		return manager.getInitialConfigurations(atomicServiceId);
 	}
 
 	/*
@@ -123,6 +119,31 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 		return manager.addInitialConfiguration(atomicServiceId,
 				initialConfiguration);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * pl.cyfronet.coin.api.CloudFacade#getEndpointDescriptor(java.lang.String,
+	 * java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String getEndpointDescriptor(String atomicServiceId,
+			int servicePort, String invocationPath)
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException {
+
+		logger.debug("Getting endpoint descriptor for {}:{}/{}", new Object[] {
+				atomicServiceId, servicePort, invocationPath });
+		logger.debug("contains %2f {}", invocationPath.contains("%2f"));
+		logger.debug("equals {}", invocationPath.equals("/my/path"));
+
+		String descriptor = manager.getEndpointPayload(atomicServiceId, servicePort,				
+				invocationPath);
+		
+		logger.debug("Descriptor value: {}", descriptor);
+		
+		return descriptor;
 	}
 
 	/*
