@@ -90,11 +90,13 @@
 		</jaxrs:providers>
 	</jaxrs:server>
  
+	 
 	<jaxrs:server id="documentationRSEndpoint" address="http://0.0.0.0:${port}">
 		<jaxrs:serviceBeans>
 			<ref bean="documentationService" />
 		</jaxrs:serviceBeans>
 	</jaxrs:server>
+	
 	
 	<jaxrs:client id="air-client" address="${air.url}"
 		username="${air.username}" password="${air.password}"
