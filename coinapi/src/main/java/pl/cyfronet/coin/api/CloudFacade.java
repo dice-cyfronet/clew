@@ -49,7 +49,7 @@ public interface CloudFacade {
 	 *             services list occurs.
 	 */
 	@GET
-	@Path("as/list")
+	@Path("/list")
 	@Produces({ MediaType.APPLICATION_JSON })
 	List<AtomicService> getAtomicServices() throws CloudFacadeException;
 
@@ -65,7 +65,7 @@ public interface CloudFacade {
 	 *             service (vm template) occurs.
 	 */
 	@POST
-	@Path("as/create_from/{atomicServiceInstanceId}")
+	@Path("/create_from/{atomicServiceInstanceId}")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	String createAtomicService(
 			@PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
@@ -74,7 +74,7 @@ public interface CloudFacade {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@Path("/as/{atomicServiceId}/configuration")
+	@Path("/{atomicServiceId}/configuration")
 	String addInitialConfiguration(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			InitialConfiguration initialConfiguration)
@@ -91,16 +91,16 @@ public interface CloudFacade {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/as/{atomicServiceId}/configurations")
+	@Path("/{atomicServiceId}/configurations")
 	List<InitialConfiguration> getInitialConfigurations(
 			@PathParam("atomicServiceId") String atomicServiceId);
 
 	@GET
-	@Path("/as/services_set")
+	@Path("/services_set")
 	String getServicesSet();
 
 	@GET
-	@Path("/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}/get_as_id")
+	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}/get_as_id")
 	String getAtomicServiceId(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			@PathParam("servicePort") int servicePort,
@@ -109,7 +109,7 @@ public interface CloudFacade {
 			EndpointNotFoundException;
 	
 	@GET
-	@Path("/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}")
+	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}")
 	String getEndpointDescriptor(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			@PathParam("servicePort") int servicePort,

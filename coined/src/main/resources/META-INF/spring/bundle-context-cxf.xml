@@ -79,7 +79,7 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
-	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}">
+	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}/as">
 		<jaxrs:serviceBeans>
 			<ref bean="cloudFacade" />
 		</jaxrs:serviceBeans>
@@ -89,7 +89,7 @@
 			<ref bean="authenticationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>
-
+ 
 	<jaxrs:server id="documentationRSEndpoint" address="http://0.0.0.0:${port}">
 		<jaxrs:serviceBeans>
 			<ref bean="documentationService" />
