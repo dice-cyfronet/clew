@@ -94,7 +94,7 @@ public abstract class AbstractCloudManagerTest {
 			Endpoint asEndpoint) {
 		assertEquals(atEndpoint.getDescription(), asEndpoint.getDescription());
 		assertEquals(atEndpoint.getDescriptor(), asEndpoint.getDescriptor());
-		EndpointType type = "WS".equals(atEndpoint.getEndpoint_type()) ? EndpointType.WS
+		EndpointType type = "WS".equalsIgnoreCase(atEndpoint.getEndpoint_type()) ? EndpointType.WS
 				: EndpointType.REST;
 		assertEquals(type, asEndpoint.getType());
 		assertEquals(atEndpoint.getInvocation_path(), asEndpoint.getInvocationPath());

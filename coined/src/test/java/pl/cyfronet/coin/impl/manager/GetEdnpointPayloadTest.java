@@ -16,7 +16,6 @@
 
 package pl.cyfronet.coin.impl.manager;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,7 +24,6 @@ import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -33,16 +31,12 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetEdnpointPayloadTest {
-
-	private AirClient air;
-	private CloudManagerImpl manager = new CloudManagerImpl();
+public class GetEdnpointPayloadTest extends AbstractManagerWithAirTest {
 
 	private int servicePort = 80;
 	private String existingInvocationPath = "/my/path";
@@ -51,13 +45,6 @@ public class GetEdnpointPayloadTest {
 
 	private String receivedDescriptor;
 	private String endpointId;
-
-	@BeforeMethod
-	protected void setUp() {
-		manager = new CloudManagerImpl();
-		air = mock(AirClient.class);
-		manager.setAir(air);
-	}
 
 	@Test
 	public void shouldGetEndpointPayload() throws Exception {

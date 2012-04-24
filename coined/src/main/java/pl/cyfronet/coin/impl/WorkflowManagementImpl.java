@@ -25,13 +25,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.WorkflowManagement;
-import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
@@ -68,15 +66,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public WorkflowStatus getStatus(String contextId) {
-		try {
-			return manager.getWorkflowStatus(contextId, getUsername());
-		} catch (WorkflowNotFoundException e) {
-			throw new WebApplicationException(404);
-		}
-	}
-
-	@Override
 	public void addAtomicServiceToWorkflow(String contextId, String asId,
 			String name) {
 		try {
@@ -91,29 +80,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		logger.debug("Remove atomic service [{}] from workflow [{}]", asId,
 				workflowId);
 		throw new WebApplicationException(501);
-	}
-
-	@Override
-	public AtomicServiceStatus getStatus(String workflowId, String asId) {
-		logger.debug("Get atomic service [{}] for workflow [{}]", asId,
-				workflowId);
-
-		WorkflowStatus workflowStatus;
-		try {
-			workflowStatus = manager.getWorkflowStatus(workflowId,
-					getUsername());
-			List<AtomicServiceStatus> asStatuses = workflowStatus.getAses();
-			if (asStatuses != null) {
-				for (AtomicServiceStatus atomicServiceStatus : asStatuses) {
-					if (atomicServiceStatus.getId().equals(asId)) {
-						return atomicServiceStatus;
-					}
-				}
-			}
-			throw new WebApplicationException(404);
-		} catch (WorkflowNotFoundException e) {
-			throw new WebApplicationException(404);
-		}
 	}
 
 	/*

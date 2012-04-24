@@ -65,7 +65,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
 		type1AsEndpoint.setDescriptor(null);
-		type1AsEndpoint.setEndpoint_type("WS");
+		type1AsEndpoint.setEndpoint_type("ws");
 		type1AsEndpoint.setId("123asd");
 		type1AsEndpoint.setInvocation_path("invocation/path");
 		type1AsEndpoint.setPort(9090);

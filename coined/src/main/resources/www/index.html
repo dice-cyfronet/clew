@@ -1,255 +1,371 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-	<meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
-	<link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" rel="stylesheet" />
-	<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' type='text/javascript'></script>
-	<script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js' type='text/javascript'></script>
-	<title>Cloud Facade - VPH-Share</title>
-	
-	<script>
-		var init = function() {
-			$('#tabs').tabs();$('#workflow-accordion').accordion({
-		    	autoHeight: false
-			});
-			$('#as-accordion').accordion({
-				autoHeight: false
-			});
-		};
-		$(init);
-	</script>
-	
-	<style type="text/css">
-		body{ 
-  			font: 62.5% "Trebuchet MS", 
-  			sans-serif; margin: 50px;
-		}
-		
-		.method {
-			width: 100px;
-		}
-		
-		#workflow-accordion {
-			width: 97%;
-		}
-		
-		#as-accordion {
-			width: 97%;
-		}
-		
-		#tabs {
-			height: 90%;
-		}
-	</style>
-	
+<meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+<link type="text/css"
+	href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css"
+	rel="stylesheet" />
+<script
+	src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'
+	type='text/javascript'></script>
+<script
+	src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js'
+	type='text/javascript'></script>
+<title>Cloud Facade - VPH-Share</title>
+
+<script>
+	var init = function() {
+		$('#tabs').tabs();
+		$('#workflow-accordion').accordion({
+			autoHeight : false
+		});
+		$('#as-accordion').accordion({
+			autoHeight : false
+		});
+	};
+	$(init);
+</script>
+
+<style type="text/css">
+body {
+	font: 62.5% "Trebuchet MS", sans-serif;
+	margin: 50px;
+}
+
+.method {
+	width: 100px;
+}
+
+#workflow-accordion {
+	width: 97%;
+}
+
+#as-accordion {
+	width: 97%;
+}
+
+#tabs {
+	height: 90%;
+}
+</style>
+
 </head>
 
 <body>
 
-	<div class="ui-state-error ui-corner-all" style="padding: 8px; margin-bottom: 6px">
-		<strong>Note!</strong> 
-		The operations listed below are secured with the <i>Basic Authentication</i>
-		HTTP mechanism. The user/password pair was supplied to authorized parties.
+	<div class="ui-state-error ui-corner-all"
+		style="padding: 8px; margin-bottom: 6px">
+		<strong>Note!</strong> The operations listed below are secured with
+		the <i>Basic Authentication</i> HTTP mechanism. The user/password pair
+		was supplied to authorized parties.
 	</div>
 
-<div class="content">
-	<div id="tabs">
-		<ul>
-			<li><a href="#workflow-accordion">Workflow</a></li>
-			<li><a href="#as-accordion">Atomic Service</a></li>
-		</ul>
-		<div id="workflow-accordion">
-			<h3><a href="#"><strong class="method">GET</strong> <strong>/workflow/list</strong> - gets the JSON structure of user workflows</a></h3>
-			<div>	
-				<p>The structure of the returned JSON includes:</p>			
-				<ul> 
-					<li><strong>username</strong> - user name</li>
-					<li>List of user workflows:
-						<ul>
-							<li>(required) <strong>id</strong> - workflow id</li>
-							<li>(required) <strong>name</strong> - workflow name</li>
-							<li>(required) <strong>type</strong> - workflow type (possible values <i>workflow</i>, <i>development</i>, <i>portal</i>)</li>
-						</ul>
-					</li>
-				</ul>				
+	<div class="content">
+		<div id="tabs">
+			<ul>
+				<li><a href="#workflow-accordion">Workflow</a></li>
+				<li><a href="#as-accordion">Atomic Service</a></li>
+			</ul>
+			<div id="workflow-accordion">
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/workflow/list</strong>
+						- gets the JSON structure of user workflows</a>
+				</h3>
+				<div>
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>username</strong> - user name</li>
+						<li><strong>workflows</strong> - list of user workflows:
+							<ul>
+								<li>(required) <strong>id</strong> - workflow id
+								</li>
+								<li>(required) <strong>name</strong> - workflow name
+								</li>
+								<li>(required) <strong>type</strong> - workflow type
+									(possible values <i>workflow</i>, <i>development</i>, <i>portal</i>)
+								</li>
+							</ul></li>
+					</ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}</strong>
+						- gets the JSON structure workflow identified by workflowId</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> - workflow id
+							(acquired when starting the workflow)
+						</li>
+					</ul>
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>name</strong> - workflow name</li>
+						<li><strong>type</strong> - workflow type (possible values <i>workflow</i>,
+							<i>development</i>, <i>portal</i>)</li>
+						<li><strong>atomicServiceInstances</strong> - list of atomic
+							service instances created in the scope of this workflow:
+							<ul>
+								<li><strong>id</strong> - atomic service instance id</li>
+								<li><strong>name</strong> - atomic service instance name</li>
+								<li><strong>status</strong> - atomic service instance status (<i>running</i>, <i>paused</i>, <i>booting</i>, <i>stopping</i> or <i>stopped</i>)</li>
+								<li><strong>message</strong> - diagnostic message ()</li>
+								<li><strong>atomicServiceId</strong> - id of the atomic service used to create this instance</li>
+								<li><strong>credential</strong> - credential allowing to login into atomic service instance (not empty only in <i>development</i> workflow)</li>
+								<li><strong>redirections</strong> - list of redirections
+									created for this atomic service instance:
+									<ul>
+										<li><strong>name</strong> - redirection name</li>
+										<li><strong>http</strong> - if <i>true</i> than http traffic is redirected, TCP/UDP otherwise</li>
+										<li><strong>host</strong> - public entry point host for the redirection. Full redirection is <i>host:fromPort</i></li>
+										<li><strong>fromPort</strong> - public entry point port for the redirection. Full redirection is <i>host:fromPort</i></li>
+										<li><strong>toPort</strong> - port where traffic from public entry point will be forwarded in atomic service instance</li>
+									</ul></li>
+							</ul></li>
+					</ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/workflow/start</strong>
+						- starts new workflow for the user</a>
+				</h3>
+				<div>
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li>(required) <strong>name</strong> - workflow name
+						</li>
+						<li>(optional) <strong>description</strong> - workflow
+							description
+						</li>
+						<li>(optional) <strong>priority</strong> - workflow priority
+						</li>
+						<li>(optional) <strong>type</strong> - workflow type
+							(possible values <i>workflow</i>, <i>development</i>, <i>portal</i>)
+						</li>
+						<li>(optional) <strong>asConfigIds</strong> - list of
+							required workflow atomic services configurations
+						</li>
+					</ul>
+					<p>
+						The operation returns the <strong>200</strong> status code and the
+						<strong>id</strong> of the created workflow instance on success.
+						The <strong>400</strong> status code and problem explanation is
+						given when the operation failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}</strong>
+						- stops workflow</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> - workflow id
+							(acquired when starting the workflow)
+						</li>
+					</ul>
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">PUT</strong> <strong>/workflow/{workflowId}/as/{asConfigId}/{name}</strong>
+						- adds atomic service to workflow</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asConfigId</strong> atomic service
+							configuration id
+						</li>
+						<li>(optional) body can contain atomic service instance name</li>
+					</ul>
+
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/as/{asConfigId}</strong>
+						- remove atomic service to workflow</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asConfigId</strong> atomic service
+							configuration id
+						</li>
+					</ul>
+
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
 			</div>
-			<h3><a href="#"><strong class="method">POST</strong> <strong>/workflow/start</strong> - starts new workflow for the user</a></h3>
-			<div>
-				<p>The structure of the JSON request includes:</p>
-				<ul>
-					<li>(required) <strong>name</strong> - workflow name</li>
-					<li>(optional) <strong>description</strong> - workflow description</li>
-					<li>(optional) <strong>priority</strong> - workflow priority</li>
-					<li>(optional) <strong>type</strong> - workflow type (possible values <i>workflow</i>, <i>development</i>, <i>portal</i>)</li>
-					<li>(optional) <strong>asConfigIds</strong> - list of required workflow atomic services configurations</li>
-				</ul>
-				<p>
-					The operation returns the <strong>200</strong> status code and the <strong>id</strong> of the 
-					created workflow instance on success. The <strong>400</strong> status code and problem 
-					explanation is given when the operation failed. 
-				</p>
-			</div>
-			<h3><a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}</strong> - stops workflow</a></h3>
-			<div>				
-				<ul>
-					<li>(required) <strong>workflowId</strong> - workflow id (acquired when starting the workflow)</li>
-				</ul>
-				<p>
-					The operation returns the <strong>200</strong> status code on success and the 
-					<strong>400</strong> status code and problem explanation when failed. 
-				</p>
-			</div>
-			<h3><a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/status (deprecated)</strong> - gets workflow status</a></h3>
-			<div>
-				<ul>
-					<li>(required) <strong>workflowId</strong> - workflow id (acquired when starting the workflow)</li>
-				</ul>
-				<p>The structure of the returned JSON file includes:</p>
-				<ul>
-					<li><strong>name</strong> - workflow name.</li>
-					<li><strong>ases</strong> - list of atomic services assigned to this workflow statuses:
-						<ul>
-							<li><strong>id</strong> - atomic service id</li>
-							<li><strong>name</strong> - atomic service name</li>
-							<li><strong>status</strong> - atomic service status (possible values: <i>running</i>,
-								<i>paused</i>, <i>stopped</i>, <i>booting</i>, <i>stopping</i>)</li>
-							<li><strong>message</strong> - status message</li>
-							<li><strong>instances</strong> list of atomic service instances:
-								<ul>
-									<li><strong>id</strong> - atomic service instance id</li>
-									<li><strong>name</strong> - atomic service instance name</li>
-									<li><strong>status</strong> - atomic service instance status (possible values: <i>running</i>,
-										<i>paused</i>, <i>stopped</i>, <i>booting</i>, <i>stopping</i>)</li>
-									<li><strong>message</strong> - status message</li>
-								</ul>
-							</li>
-						</ul>
-					</li>									
-				</ul>
-			</div>
-			<h3><a href="#"><strong class="method">PUT</strong> <strong>/workflow/{workflowId}/as/{asConfigId}/{name}</strong> - adds atomic service to workflow</a></h3>
-			<div>
-				<ul>
-					<li>(required) <strong>workflowId</strong> workflow id</li>
-					<li>(required) <strong>asConfigId</strong> atomic service configuration id</li>
-					<li>(optional) body can contain atomic service instance name</li>
-				</ul>
-				
-				<p>
-					The operation returns the <strong>200</strong> status code on success and the 
-					<strong>400</strong> status code and problem explanation when failed. 
-				</p>
-			</div>
-			<h3><a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/as/{asConfigId}/status (deprecated)</strong> - gets atomic service status</a></h3>
-			<div>
-				<ul>
-					<li>(required) <strong>workflowId</strong> workflow id</li>
-					<li>(required) <strong>asConfigId</strong> atomic service configuration id</li>
-				</ul>
-				<p>The structure of the returned JSON file includes:</p>
-				<ul>
-					<li><strong>id</strong> - atomic service id</li>
-					<li><strong>name</strong> - atomic service name</li>
-					<li><strong>status</strong> - atomic service status (possible values: <i>running</i>,
-						<i>paused</i>, <i>stopped</i>, <i>booting</i>, <i>stopping</i>)</li>
-					<li><strong>message</strong> - status message</li>
-					<li><strong>instances</strong> list of atomic service instances:
-						<ul>
-							<li><strong>id</strong> - atomic service instance id</li>
-							<li><strong>name</strong> - atomic service instance name</li>
-							<li><strong>status</strong> - atomic service instance status (possible values: <i>running</i>,
-								<i>paused</i>, <i>stopped</i>, <i>booting</i>, <i>stopping</i>)</li>
-							<li><strong>message</strong> - status message</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-			<h3><a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/as/{asConfigId}</strong> - remove atomic service to workflow</a></h3>
-			<div>
-				<ul>
-					<li>(required) <strong>workflowId</strong> workflow id</li>
-					<li>(required) <strong>asConfigId</strong> atomic service configuration id</li>
-				</ul>
-				
-				<p>
-					The operation returns the <strong>200</strong> status code on success and the 
-					<strong>400</strong> status code and problem explanation when failed. 
-				</p>
-			</div>
-		</div>
-		<div id="as-accordion">
-			<h3><a href="#"><strong class="method">GET</strong> <strong>/as/list</strong> - gets the JSON structure of all registered atomic services</a></h3>
-			<div>	
-				<p>The structure of the returned JSON includes array of:</p>			
-				<ul> 
-					<li><strong>username</strong> - user name</li>
-					<li>List of user workflows:
-						<ul>
-							<li><strong>atomicServiceId</strong> - atomic service id</li>
-							<li><strong>name</strong> - atomic service name</li>
-							<li><strong>description</strong> - atomic service description</li>
-							<li><strong>vnc</strong> - true if atomic service provides VNC</li>
-							<li><strong>http</strong> - true if atomic service provides http service</li>
-							<li><strong>shared</strong> - true if atomic service can be shared among workflows</li>
-							<li><strong>scalable</strong> - true if atomic service can be multiplicated amoung workflow</li>
-							<li><strong>publisher</strong> - true if atomic service is published for the end users</li>
-						</ul>
-					</li>
-				</ul>				
-			</div>
-			<h3><a href="#"><strong class="method">POST</strong> <strong>as/create_from/{atomicServiceInstanceId}</strong> - create new atomic service</a></h3>
-			<div>	
-				<ul>
-					<li><strong>atomicServiceInstanceId</strong> - For this atomic service instance new atomic service will be created</li>
-				</ul>
-				<p>The structure of the JSON request includes:</p>			
-				<ul> 
-					<li>(required, unique) <strong>name</strong> - atomic service name</li>
-					<li><strong>description</strong> - atomic service description</li>
-					<li><strong>vnc</strong> - true if atomic service delivers VNC </li>
-					<li><strong>http</strong> - true if atomic service delivers HTTP service (e.g. web or rest service)</li>
-					<li><strong>shared</strong> - true if atomic service can be shared among many workflows </li>
-					<li><strong>scalable</strong> - true if atomic service is stateless and new VM can spanned by atmosphere</li>
-					<li><strong>published</strong> - true if atomic service is published by the owner and is can be started in production workflows</li>
-					<li><strong>inProxy</strong> - true if atomic service endpoints will be added into proxy</li>
-					<li><strong>endpoints</strong> - list of atomic service endpoints:
-						<ul>
-							<li>(required) <strong>invocationPath</strong> - path to the service</li>
-							<li>(required) <strong>port</strong> - service port</li>
-							<li>(required) <strong>serviceName</strong> - service name</li>
-							<li><strong>type</strong> - service type: REST or WS (REST by default)</li>
-							<li><strong>descriptor</strong> - service descriptor (e.g. WSDL, WADL)</li>
-							<li><strong>description</strong> - endpoint description</li>
-						</ul>
-					</li>
-				</ul>		
-				The operation returns the <strong>200</strong> status code on success and the 
-					<strong>400</strong> status code and problem explanation when failed. 		
-			</div>
-			<h3><a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong> - gets atomic service configurations</a></h3>
-			<div>	
-				<p>The structure of the returned JSON includes:</p>			
-				<ul> 
-					<li><strong>id</strong> - configuration id</li>
-					<li><strong>name</strong> - configuration name</li>
-				</ul>				
-			</div>
-			<h3><a href="#"><strong class="method">POST</strong> <strong>/as/{atomicServiceId}/configurations</strong> - Add new atomic service configuration</a></h3>
-			<div>	
-				<ul>
-					<li><strong>atomicServiceId</strong> - For this atomic service configuration will be added</li>
-				</ul>
-				<p>The structure of the JSON request includes:</p>			
-				<ul> 
-					<li>(required, unique) <strong>name</strong> - configuration name</li>
-					<li>(required) <strong>payload</strong> - configuration payload</li>
-				</ul>	
-				
-				The operation returns the <strong>200</strong> status code on success and the 
-					<strong>400</strong> status code and problem explanation when failed. 			
+			<div id="as-accordion">
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/as/list</strong>
+						- gets the JSON structure of all registered atomic services</a>
+				</h3>
+				<div>
+					<p>The structure of the returned JSON includes array of:</p>
+					<ul>
+						<li><strong>username</strong> - user name</li>
+						<li>List of user workflows:
+							<ul>
+								<li><strong>atomicServiceId</strong> - atomic service id</li>
+								<li><strong>name</strong> - atomic service name</li>
+								<li><strong>description</strong> - atomic service
+									description</li>
+								<li><strong>vnc</strong> - true if atomic service provides
+									VNC</li>
+								<li><strong>http</strong> - true if atomic service provides
+									http service</li>
+								<li><strong>shared</strong> - true if atomic service can be
+									shared among workflows</li>
+								<li><strong>scalable</strong> - true if atomic service can
+									be multiplicated amoung workflow</li>
+								<li><strong>publisher</strong> - true if atomic service is
+									published for the end users</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>as/create_from/{atomicServiceInstanceId}</strong>
+						- create new atomic service</a>
+				</h3>
+				<div>
+					<ul>
+						<li><strong>atomicServiceInstanceId</strong> - For this
+							atomic service instance new atomic service will be created</li>
+					</ul>
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li>(required, unique) <strong>name</strong> - atomic service
+							name
+						</li>
+						<li><strong>description</strong> - atomic service description</li>
+						<li><strong>vnc</strong> - true if atomic service delivers
+							VNC</li>
+						<li><strong>http</strong> - true if atomic service delivers
+							HTTP service (e.g. web or rest service)</li>
+						<li><strong>shared</strong> - true if atomic service can be
+							shared among many workflows</li>
+						<li><strong>scalable</strong> - true if atomic service is
+							stateless and new VM can spanned by atmosphere</li>
+						<li><strong>published</strong> - true if atomic service is
+							published by the owner and is can be started in production
+							workflows</li>
+						<li><strong>inProxy</strong> - true if atomic service
+							endpoints will be added into proxy</li>
+						<li><strong>endpoints</strong> - list of atomic service
+							endpoints:
+							<ul>
+								<li>(required) <strong>invocationPath</strong> - path to
+									the service
+								</li>
+								<li>(required) <strong>port</strong> - service port
+								</li>
+								<li>(required) <strong>serviceName</strong> - service name
+								</li>
+								<li><strong>type</strong> - service type: REST or WS (REST by default)</li>
+								<li><strong>descriptor</strong> - service descriptor (e.g. WSDL, WADL)</li>
+								<li><strong>description</strong> - endpoint description</li>
+							</ul></li>
+					</ul>
+					The operation returns the <strong>200</strong> status code on
+					success and the <strong>400</strong> status code and problem
+					explanation when failed.
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong>
+						- gets atomic service configurations</a>
+				</h3>
+				<div>
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>id</strong> - configuration id</li>
+						<li><strong>name</strong> - configuration name</li>
+					</ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/as/{atomicServiceId}/configurations</strong>
+						- Add new atomic service configuration</a>
+				</h3>
+				<div>
+					<ul>
+						<li><strong>atomicServiceId</strong> - For this atomic
+							service configuration will be added</li>
+					</ul>
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li>(required, unique) <strong>name</strong> - configuration
+							name
+						</li>
+						<li>(required) <strong>payload</strong> - configuration
+							payload
+						</li>
+					</ul>
+
+					The operation returns the <strong>200</strong> status code on
+					success and the <strong>400</strong> status code and problem
+					explanation when failed.
+				</div>
+				<h3><a href="#"><strong class="method">GET</strong> <strong>/as/services_set</strong> - Get atomic services set in the taverna format</a></h3>
+				<div>
+					<i>Currently only WS endpoints are returned</i>
+					<pre>
+&lt;serviceDescriptions xmlns="http://taverna.sf.net/2009/xml/servicedescription"&gt;
+  &lt;providers&gt;
+    &lt;provider&gt;
+      &lt;providerId xmlns="http://taverna.sf.net/2008/xml/t2flow"&gt;http://taverna.sf.net/2010/service-provider/wsdl&lt;/providerId&gt;
+      &lt;configBean xmlns="http://taverna.sf.net/2008/xml/t2flow" encoding="xstream"&gt;
+        &lt;net.sf.taverna.t2.activities.wsdl.servicedescriptions.WSDLServiceProviderConfig xmlns=""&gt;
+          &lt;uri serialization="custom"&gt;
+            &lt;java.net.URI&gt;
+              &lt;default&gt;
+                &lt;string&gt;http://path/to/wsdl&lt;/string&gt;
+              &lt;/default&gt;
+            &lt;/java.net.URI&gt;
+          &lt;/uri&gt;
+        &lt;/net.sf.taverna.t2.activities.wsdl.servicedescriptions.WSDLServiceProviderConfig&gt;
+      &lt;/configBean&gt;
+    &lt;/provider&gt;
+    ...
+  &lt;/providers&gt;
+&lt;/serviceDescriptions&gt;  
+					</pre>
+				</div>
+				<h3><a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}</strong> - Get endpoint descriptor</a></h3>
+				<div>
+					<ul>
+						<li>(required) <strong>atomicServiceId</strong> - atomic service id</li>
+						<li>(required) <strong>servicePort</strong> - endpoint port</li>
+						<li>(required) <strong>invocationPath</strong> - encoded invocation path (/ should be changed into %2f)</li>
+					</ul>
+					
+					The operation returns the <strong>200</strong> status code and descriptor value on
+					success and the <strong>400</strong> status code and problem
+					explanation when failed.
+				</div>
+				<h3><a href="#"><strong class="method">GET</strong> <strong>/{descriptorPath}/get_as_id</strong> - Get atomic service id for given descriptor</a></h3>
+				<div>
+					<ul>
+						<li>(required) <strong>descriptorPath</strong> - descriptor endpoint (see previous tab for details)</li>
+					</ul>
+					
+					The operation returns the <strong>200</strong> status code and descriptor value on
+					success and the <strong>400</strong> status code and problem
+					explanation when failed.
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </body>
 </html>

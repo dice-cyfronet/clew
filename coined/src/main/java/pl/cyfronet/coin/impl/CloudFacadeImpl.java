@@ -16,9 +16,7 @@
 
 package pl.cyfronet.coin.impl;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -27,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -35,6 +35,7 @@ import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
+import pl.cyfronet.coin.impl.utils.FileUtils;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
@@ -42,11 +43,6 @@ import pl.cyfronet.coin.impl.manager.CloudManager;
  */
 public class CloudFacadeImpl extends UsernameAwareService implements
 		CloudFacade {
-
-	/**
-	 * Line separator.
-	 */
-	private static final String NL = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	/**
 	 * Logger.
@@ -58,6 +54,14 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	 * Cloud manager.
 	 */
 	private CloudManager manager;
+
+	private String coinBaseUrl;
+
+	private String serviceTemplatesTemplate = FileUtils
+			.getFileContent("services_set/serviceDescriptions.tpl");
+	
+	private String providerTemplate = FileUtils
+			.getFileContent("services_set/provider.tpl");
 
 	/*
 	 * (non-Javadoc)
@@ -121,42 +125,75 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 				initialConfiguration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.CloudFacade#getEndpointDescriptor(java.lang.String,
-	 * java.lang.String, java.lang.String)
+	@Override
+	public String getServicesSet() {
+
+		StringBuilder sb = new StringBuilder();
+
+		List<AtomicService> atomicServices = manager.getAtomicServices();
+		for (AtomicService atomicService : atomicServices) {
+			writeAtomicServiceEndpointIntoServicesSet(sb, atomicService);
+		}
+
+		return String.format(serviceTemplatesTemplate, sb);
+	}
+
+	/**
+	 * @param sb
+	 * @param atomicService
 	 */
+	private void writeAtomicServiceEndpointIntoServicesSet(StringBuilder sb,
+			AtomicService atomicService) {
+		for (Endpoint endpoint : atomicService.getEndpoints()) {
+			logger.debug("endpoint type: {}", endpoint.getType());
+			if (endpoint.getType() == EndpointType.WS) {
+				String descriptorUrl = getDescriptorUrl(
+						atomicService.getName(), endpoint);
+				String providerSection = getProviderServiceSetSection(descriptorUrl);
+				sb.append(providerSection);
+			}
+		}
+	}
+
+	private String getProviderServiceSetSection(String providerDescriptorUrl) {
+		return String.format(providerTemplate, providerDescriptorUrl);
+	}
+
+	private String getDescriptorUrl(String atomicServiceId, Endpoint m) {
+		String descriptorUrl = String.format("%s/as/%s/endpoint/%s/%s",
+				new Object[] { coinBaseUrl, atomicServiceId, m.getPort(),
+						getDecodedInvocationPath(m.getInvocationPath()) });
+		return descriptorUrl;
+	}
+
+	private String getDecodedInvocationPath(String path) {
+		return path.replaceAll("/", "%2f");
+	}
+
 	@Override
 	public String getEndpointDescriptor(String atomicServiceId,
 			int servicePort, String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
-
 		logger.debug("Getting endpoint descriptor for {}:{}/{}", new Object[] {
 				atomicServiceId, servicePort, invocationPath });
-		logger.debug("contains %2f {}", invocationPath.contains("%2f"));
-		logger.debug("equals {}", invocationPath.equals("/my/path"));
 
-		String descriptor = manager.getEndpointPayload(atomicServiceId, servicePort,				
-				invocationPath);
-		
+		String descriptor = manager.getEndpointPayload(atomicServiceId,
+				servicePort, invocationPath);
+
 		logger.debug("Descriptor value: {}", descriptor);
-		
+
 		return descriptor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
-	 */
 	@Override
-	public String getDocumentation() {
-		ClassLoader cl = CloudFacadeImpl.class.getClassLoader();
-		String content = getFileContent(cl
-				.getResourceAsStream("www/index.html"));
-		return content.replace("${'", "$('").replaceAll("'}", "')")
-				.replace("${init};", "$(init);");
+	public String getAtomicServiceId(String atomicServiceId, int servicePort,
+			String invocationPath)
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException {
+		// check if atomic service with given id is registered in Atmosphere.
+		AtomicService atomicService = manager.getAtomicService(atomicServiceId);
+		return atomicService.getAtomicServiceId();
 	}
 
 	/**
@@ -168,20 +205,9 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	}
 
 	/**
-	 * Get input stream content.
-	 * @param is Input stream with file content.
-	 * @return Input stream content.
+	 * @param coinBaseUrl the coinBaseUrl to set
 	 */
-	public String getFileContent(InputStream is) {
-		StringBuilder text = new StringBuilder();
-		Scanner scanner = new Scanner(is);
-		try {
-			while (scanner.hasNextLine()) {
-				text.append(scanner.nextLine() + NL);
-			}
-		} finally {
-			scanner.close();
-		}
-		return text.toString();
+	public void setCoinBaseUrl(String coinBaseUrl) {
+		this.coinBaseUrl = coinBaseUrl;
 	}
 }

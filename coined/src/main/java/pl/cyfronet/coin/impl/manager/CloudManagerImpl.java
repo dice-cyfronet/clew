@@ -18,9 +18,7 @@ package pl.cyfronet.coin.impl.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.ws.rs.WebApplicationException;
@@ -31,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.AtomicServiceInstanceStatus;
-import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
@@ -42,7 +38,6 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -102,36 +97,47 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public List<AtomicService> getAtomicServices() {
-		List<ApplianceType> applianceTypes = air.getApplianceTypes();
+		List<ApplianceType> applianceTypes = getApplianceTypes();
 		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
 		for (ApplianceType applianceType : applianceTypes) {
-			AtomicService atomicService = new AtomicService();
-			atomicService.setAtomicServiceId(applianceType.getName());
-			atomicService.setDescription(applianceType.getDescription());
-			atomicService.setHttp(applianceType.isHttp()
-					&& applianceType.isIn_proxy());
-			atomicService.setName(applianceType.getName());
-			atomicService.setShared(applianceType.isShared());
-			atomicService.setScalable(applianceType.isScalable());
-			atomicService.setVnc(applianceType.isVnc());
-			atomicService.setPublished(applianceType.isPublished());
-			atomicService.setActive(applianceType.getTemplates_count() > 0);
-			atomicService.setEndpoints(getEndpoints(applianceType
-					.getEndpoints()));
-
+			AtomicService atomicService = getAtomicService(applianceType);
 			atomicServices.add(atomicService);
 		}
 		return atomicServices;
 	}
 
+	@Override
+	public AtomicService getAtomicService(String atomicServiceId)
+			throws AtomicServiceNotFoundException {
+		ApplianceType applianceType = getApplianceType(atomicServiceId);
+		return getAtomicService(applianceType);
+	}
+
+	private AtomicService getAtomicService(ApplianceType applianceType) {
+		AtomicService atomicService = new AtomicService();
+		atomicService.setAtomicServiceId(applianceType.getName());
+		atomicService.setDescription(applianceType.getDescription());
+		atomicService.setHttp(applianceType.isHttp()
+				&& applianceType.isIn_proxy());
+		atomicService.setName(applianceType.getName());
+		atomicService.setShared(applianceType.isShared());
+		atomicService.setScalable(applianceType.isScalable());
+		atomicService.setVnc(applianceType.isVnc());
+		atomicService.setPublished(applianceType.isPublished());
+		atomicService.setActive(applianceType.getTemplates_count() > 0);
+		atomicService.setEndpoints(getEndpoints(applianceType));
+
+		return atomicService;
+	}
+	
 	/**
 	 * @param endpoints
 	 * @return
 	 */
-	private List<Endpoint> getEndpoints(List<ATEndpoint> atEndpoints) {
-		List<Endpoint> asEndpoints = null;
+	private List<Endpoint> getEndpoints(ApplianceType applianceType) {
+		List<ATEndpoint> atEndpoints = applianceType.getEndpoints();
+		List<Endpoint> asEndpoints = new ArrayList<Endpoint>();
 		if (atEndpoints != null) {
-			asEndpoints = new ArrayList<Endpoint>();
 			for (ATEndpoint atEndpoint : atEndpoints) {
 				asEndpoints.add(getEndpoint(atEndpoint));
 			}
@@ -161,7 +167,8 @@ public class CloudManagerImpl implements CloudManager {
 	 * @return
 	 */
 	private EndpointType getEdnpointType(String endpoint_type) {
-		return "WS".equals(endpoint_type) ? EndpointType.WS : EndpointType.REST;
+		return "WS".equalsIgnoreCase(endpoint_type) ? EndpointType.WS
+				: EndpointType.REST;
 	}
 
 	/*
@@ -308,77 +315,6 @@ public class CloudManagerImpl implements CloudManager {
 			logger.error("error in atmosphere");
 		}
 		air.stopWorkflow(contextId);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#getWorkflowStatus(java.lang
-	 * .String)
-	 */
-	@Override
-	public WorkflowStatus getWorkflowStatus(String contextId, String username)
-			throws WorkflowNotFoundException {
-		WorkflowDetail detail = getUserWorkflow(contextId, username);
-
-		WorkflowStatus workflow = new WorkflowStatus();
-		workflow.setName(detail.getName());
-
-		List<Vms> vms = detail.getVms();
-		Map<String, AtomicServiceStatus> asStatuses = new HashMap<String, AtomicServiceStatus>();
-		if (vms != null) {
-			for (Vms vm : vms) {
-				if (vm.getVms_id() == null) {
-					// /AIR returns vms:[null] when workflow does not have VMs
-					// and it is parsed by CXF as Vms object with all properties
-					// set to null.
-					continue;
-				}
-				// but in AIR type internal id is returned instead of type name.
-				// String type = vm.getAppliance_type();
-				// if (type == null) {
-				// // get type from AIR once again if it is empty
-				// type = getAtomicServiceTypeName(vm.getConf_id());
-				// }
-				String type = getAtomicServiceTypeName(vm.getConf_id());
-				AtomicServiceStatus asStatus = asStatuses.get(type);
-				if (asStatus == null) {
-					asStatus = new AtomicServiceStatus();
-					asStatus.setId(type);
-					asStatus.setName(type);
-					asStatuses.put(type, asStatus);
-				}
-				AtomicServiceInstanceStatus asiStatus = new AtomicServiceInstanceStatus();
-				asiStatus.setId(vm.getVms_id());
-				asiStatus.setName(vm.getName());
-				asiStatus.setStatus(vm.getState());
-				asiStatus.setMessage(""); // TODO
-
-				List<AtomicServiceInstanceStatus> asiStatuses = asStatus
-						.getInstances();
-				if (asiStatuses == null) {
-					asiStatuses = new ArrayList<AtomicServiceInstanceStatus>();
-					asStatus.setInstances(asiStatuses);
-				}
-
-				asiStatuses.add(asiStatus);
-			}
-		}
-
-		for (AtomicServiceStatus asStatus : asStatuses.values()) {
-			Status status = null;
-			for (AtomicServiceInstanceStatus asiStatus : asStatus
-					.getInstances()) {
-				status = getHigherState(status, asiStatus.getStatus());
-			}
-			asStatus.setStatus(status);
-		}
-
-		List<AtomicServiceStatus> ases = new ArrayList<AtomicServiceStatus>(
-				asStatuses.values());
-		workflow.setAses(ases);
-
-		return workflow;
 	}
 
 	@Override
@@ -549,6 +485,19 @@ public class CloudManagerImpl implements CloudManager {
 		return air.getEndpointDescriptor(endpointId);
 	}
 
+	@Override
+	public List<Endpoint> getEndpoints() {
+		List<ApplianceType> types = getApplianceTypes();
+		List<Endpoint> allEndpoints = new ArrayList<Endpoint>();
+		for (ApplianceType type : types) {
+			List<Endpoint> typeEndpoints = getEndpoints(type);
+			if (typeEndpoints != null) {
+				allEndpoints.addAll(typeEndpoints);
+			}
+		}
+		return allEndpoints;
+	}
+
 	private ATEndpoint getEndpoint(String atomicServiceId, int servicePort,
 			String invocationPath) throws AtomicServiceNotFoundException,
 			EndpointNotFoundException {
@@ -572,6 +521,10 @@ public class CloudManagerImpl implements CloudManager {
 		throw new EndpointNotFoundException();
 	}
 
+	private List<ApplianceType> getApplianceTypes() {
+		return air.getApplianceTypes();
+	}
+
 	/**
 	 * Get appliance type information.
 	 * @param applianceTypeName Appliance type name.
@@ -581,7 +534,7 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	private ApplianceType getApplianceType(String applianceTypeName)
 			throws AtomicServiceNotFoundException {
-		List<ApplianceType> applianceTypes = air.getApplianceTypes();
+		List<ApplianceType> applianceTypes = getApplianceTypes();
 
 		for (ApplianceType applianceType : applianceTypes) {
 			String name = applianceType.getName();
@@ -592,15 +545,6 @@ public class CloudManagerImpl implements CloudManager {
 
 		logger.debug("Atomic service {} not found", applianceTypeName);
 		throw new AtomicServiceNotFoundException();
-	}
-
-	/**
-	 * Get atomic service type name.
-	 * @param configurationId Atomic service type configuration id.
-	 * @return Atomic service type name.
-	 */
-	private String getAtomicServiceTypeName(String configurationId) {
-		return air.getTypeFromConfig(configurationId).getName();
 	}
 
 	/**
@@ -646,19 +590,6 @@ public class CloudManagerImpl implements CloudManager {
 			identities.add(identity);
 		}
 		return identities;
-	}
-
-	/**
-	 * Get higher state, the order is as follow (starting from the lower one):
-	 * running, paused, booting, stopping, stopped.
-	 * @param currentState Current state.
-	 * @param newState New state.
-	 * @return Higher state.
-	 */
-	private Status getHigherState(Status currentState, Status newState) {
-		return currentState != null
-				&& currentState.ordinal() > newState.ordinal() ? currentState
-				: newState;
 	}
 
 	/**

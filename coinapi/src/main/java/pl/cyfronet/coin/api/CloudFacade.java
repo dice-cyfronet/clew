@@ -95,15 +95,19 @@ public interface CloudFacade {
 	List<InitialConfiguration> getInitialConfigurations(
 			@PathParam("atomicServiceId") String atomicServiceId);
 
-	// @GET
-	// @Path("/as/services_set")
-	// String getServicesSet();
+	@GET
+	@Path("/as/services_set")
+	String getServicesSet();
 
-	// @GET
-	// @Path("/as/{atomicServiceId}/endpoints")
-	// List<Endpoint> getEdnpoints(
-	// @PathParam("atomicServiceId") String atomicServiceId);
-	//
+	@GET
+	@Path("/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}/get_as_id")
+	String getAtomicServiceId(
+			@PathParam("atomicServiceId") String atomicServiceId,
+			@PathParam("servicePort") int servicePort,
+			@PathParam("invocationPath") String invocationPath)			
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException;
+	
 	@GET
 	@Path("/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}")
 	String getEndpointDescriptor(
@@ -112,12 +116,4 @@ public interface CloudFacade {
 			@PathParam("invocationPath") String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;
-
-	/**
-	 * Get documentation page content.
-	 * @return Documentation page content.
-	 */
-	@GET
-	@Path("/")
-	String getDocumentation();
 }

@@ -55,7 +55,8 @@
 	</bean>
 
 	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
-		<property name="manager" ref="cloudManager" /> 
+		<property name="coinBaseUrl" value="${coinBaseUrl}" /> 
+		<property name="manager" ref="cloudManager" />
 		<!-- <property name="manager" ref="dummyCloudManager" /> -->
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
@@ -89,6 +90,12 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
+	<jaxrs:server id="documentationRSEndpoint" address="http://0.0.0.0:${port}">
+		<jaxrs:serviceBeans>
+			<ref bean="documentationService" />
+		</jaxrs:serviceBeans>
+	</jaxrs:server>
+	
 	<jaxrs:client id="air-client" address="${air.url}"
 		username="${air.username}" password="${air.password}"
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"

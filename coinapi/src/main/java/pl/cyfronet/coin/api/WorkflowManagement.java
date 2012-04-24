@@ -28,12 +28,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import pl.cyfronet.coin.api.beans.AtomicServiceStatus;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
@@ -119,40 +117,6 @@ public interface WorkflowManagement {
 	@Path("/{workflowId}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	Workflow getWorkflow(@PathParam("workflowId") String workflowId);
-
-	/**
-	 * Get status of all atomic services executed in the scope of workflow.
-	 * @param workflowId Workflow id.
-	 * @return Status of all atomic services executed for defined workflow in
-	 *         JSON format: <code>
-	 * {"name": "workflowName" ases: [
-	 * 	{"id": "asId", "status": "OK", "message": "message", instances: [
-	 *   	{id: "atomicServiceInstanceId", "status": "OK", message: "message"], ...
-	 * 	]}, ...
-	 * ]} 
-	 * </code>
-	 */
-	@Deprecated
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/{workflowId}/status")
-	WorkflowStatus getStatus(@PathParam("workflowId") String workflowId);
-
-	/**
-	 * Get atomic service executed for defined workflow status.
-	 * @param workflowId Workflow id.
-	 * @param asId Atomic service id.
-	 * @return Atomic service status in JSON format:
-	 *         <code>{"id": "asId", "status": "OK", "message": "message", instances: [
-	 *   	{id: "atomicServiceInstanceId", "status": "OK", message: "message"}, ...
-	 * 	]}</code>
-	 */
-	@Deprecated
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	@Path("/{workflowId}/as/{asConfigId}/status")
-	AtomicServiceStatus getStatus(@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asId);
 
 	/**
 	 * Adds redirection to the Atomic Service Instance. This method will throws

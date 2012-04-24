@@ -22,8 +22,8 @@
   http://www.springframework.org/schema/osgi
   http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<bean id="dummyCloudManager" class="pl.cyfronet.coin.impl.manager.DummyCloudManagerLogger" />
-
+    <bean id="documentationService" class="pl.cyfronet.coin.impl.DocumentationServiceImpl" />
+    
 	<bean id="cloudManager" class="pl.cyfronet.coin.impl.manager.CloudManagerImpl">
 		<property name="atmosphere" ref="atmosphere" />  
 		<property name="air" ref="air-client" />
@@ -32,5 +32,5 @@
 		<property name="credentialProperties" ref="as-sec" />
 	</bean>
 	
-	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService"/>
+	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService" />
 </beans>									   

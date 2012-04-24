@@ -15,6 +15,7 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 
 public class MockCloudFacade implements CloudFacade {
@@ -79,15 +80,6 @@ public class MockCloudFacade implements CloudFacade {
 	}
 
 	/* (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
-	 */
-	@Override
-	public String getDocumentation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see pl.cyfronet.coin.api.CloudFacade#addInitialConfiguration(java.lang.String, pl.cyfronet.coin.api.beans.InitialConfiguration)
 	 */
 	@Override
@@ -106,6 +98,27 @@ public class MockCloudFacade implements CloudFacade {
 	@Override
 	public String getEndpointDescriptor(String atomicServiceId,
 			int servicePort, String invocationPath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getServicesSet()
+	 */
+	@Override
+	public String getServicesSet() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.coin.api.CloudFacade#getAtomicServiceId(java.lang.String, int, java.lang.String)
+	 */
+	@Override
+	public String getAtomicServiceId(String atomicServiceId, int servicePort,
+			String invocationPath)
+			throws AtomicServiceInstanceNotFoundException,
+			EndpointNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}

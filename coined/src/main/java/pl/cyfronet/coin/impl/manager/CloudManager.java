@@ -19,11 +19,11 @@ package pl.cyfronet.coin.impl.manager;
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.beans.WorkflowStatus;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -43,6 +43,17 @@ public interface CloudManager {
 	 * @throws CloudFacadeException
 	 */
 	List<AtomicService> getAtomicServices();
+
+	/**
+	 * Get atomic service.
+	 * @param atomicServiceId Atomic service instance. Right now it is equals
+	 *            into atomic service name.
+	 * @return Atomic service
+	 * @throws AtomicServiceNotFoundException Thrown if atomic service with
+	 *             given id is not registered in atmosphere.
+	 */
+	AtomicService getAtomicService(String atomicServiceId)
+			throws AtomicServiceNotFoundException;
 
 	/**
 	 * Start atomic service in defined context. If the request is send into
@@ -109,17 +120,6 @@ public interface CloudManager {
 			throws WorkflowNotFoundException;
 
 	/**
-	 * Get workflow status.
-	 * @param contextId Workflow context id.
-	 * @return Workflow status.
-	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
-	 *             workflow with defined context id belongs to other user.
-	 */
-	@Deprecated
-	WorkflowStatus getWorkflowStatus(String contextId, String username)
-			throws WorkflowNotFoundException;
-
-	/**
 	 * Get user workflows.
 	 * @param username User name.
 	 * @return List of user workflows.
@@ -158,4 +158,6 @@ public interface CloudManager {
 			String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;
+
+	List<Endpoint> getEndpoints();
 }

@@ -14,22 +14,27 @@
  * the License.
  */
 
-package pl.cyfronet.coin.api.beans;
+package pl.cyfronet.coin.impl.manager;
+
+import static org.mockito.Mockito.mock;
+
+import org.testng.annotations.BeforeMethod;
+
+import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-@Deprecated
-public class AtomicServiceInstanceStatus extends StatusBean {
+public abstract class AbstractManagerWithAirTest {
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "AtomicServiceInstanceStatus [getId()=" + getId()
-				+ ", getMessage()=" + getMessage() + ", getStatus()="
-				+ getStatus() + ", getName()=" + getName() + "]";
+	protected CloudManagerImpl manager;
+	protected AirClient air;
+
+	@BeforeMethod
+	protected void setUp() {
+		manager = new CloudManagerImpl();
+		air = mock(AirClient.class);
+		manager.setAir(air);
 	}
 }
