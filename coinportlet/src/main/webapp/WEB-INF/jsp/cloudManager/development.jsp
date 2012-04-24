@@ -16,7 +16,7 @@
 			<spring:message code="cloud.manager.portlet.no.development.instances"/>
 		</c:otherwise>
 	</c:choose>
-	<div class="menu-bottom">
+	<div class="coin-menu-bottom">
 		<ul>
 			<li>
 				<a class="coin-link" href="${startAtomicService}">Start new development instance</a>

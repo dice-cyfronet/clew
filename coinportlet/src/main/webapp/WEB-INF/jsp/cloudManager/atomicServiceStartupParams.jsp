@@ -21,11 +21,11 @@
 			</span>
 		</div>
 	</c:forEach>
-</div>
-<div class="menu-bottom">
-	<ul>
-		<li>
-			<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
-		</li>
-	</ul>
+	<div class="coin-menu-bottom">
+		<ul>
+			<li>
+				<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
+			</li>
+		</ul>
+	</div>
 </div>

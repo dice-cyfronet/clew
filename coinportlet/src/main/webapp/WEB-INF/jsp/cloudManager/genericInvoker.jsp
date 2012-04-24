@@ -12,10 +12,10 @@
 			<%@ include file="asInstanceList.jsp" %>
 		</c:when>
 		<c:otherwise>
-			<spring:message code="cloud.manager.portlet.no.atomic.service.instances"/>
+			<div><spring:message code="cloud.manager.portlet.no.atomic.service.instances"/></div>
 		</c:otherwise>
 	</c:choose>
-	<div class="menu-bottom">
+	<div class="coin-menu-bottom">
 		<ul>
 			<li>
 				<a class="coin-link" href="${startAtomicService}"><spring:message code="cloud.manager.portlet.start.atomic.service.instance.label"/></a>
