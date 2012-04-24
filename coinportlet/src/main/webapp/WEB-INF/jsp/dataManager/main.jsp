@@ -15,19 +15,23 @@
 		    		var files = '';
 		    		
 		    		if(fileList !== "") {
+		    			files += '<ul>';
 			    		var list = fileList.split(';');
 			    		
 			    		for(var i = 0; file = list[i], i < list.length; i++) {
 			    			var fileName = file.split('|')[0];
 			    			var url = file.split('|')[1];
-			    			files += '<a class="coin-link" href="' + url + '">' + fileName + '</a>';
+			    			var size = file.split('|')[2];
+			    			files += '<li><a href="' + url + '">' + fileName + '</a><span class="coin-file-size">' + size + '</span></li>';
 			    		}
+			    		
+			    		files += '</ul>';
 		    		} else {
 		    			files = 'no files';
 		    		}
 		    		
 		    		jQuery('#files').html(files);
-		    		setTimeout("updateFiles()", 2000);
+		    		//setTimeout("updateFiles()", 2000);
 		    		
 		    		//the size of the page might have changed
 		    		//so lets notify the parent window about the change
@@ -41,7 +45,7 @@
 	    	updateFiles();
 	    });
 	</script>
-	<div class="menu-bottom">
+	<div class="coin-menu-bottom">
 		<ul>
 			<li>
 				<a class="coin-link" href="${uploadFile}">

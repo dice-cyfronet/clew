@@ -76,7 +76,7 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:client>
-	<jaxrs:client id="cf-client" address="https://vph.cyfronet.pl/cloudfacade"
+	<jaxrs:client id="cf-client" address="https://vph.cyfronet.pl/cloudfacade/as"
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		threadSafe="true"
 		inheritHeaders="true">
