@@ -1,6 +1,6 @@
 <%@ include file="../include.jsp" %>
 
-<div class="coin-content">
+<div class="coin-content coin-content-no-tabs">
 	Authorizing and retrieving content...
 	<form id="loginForm" action="${loginServletPath}" style="visibility: hidden;">
 		<input type="text" name="${loginParameterName}" value="${userLogin}"/>

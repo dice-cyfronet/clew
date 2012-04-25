@@ -4,7 +4,7 @@
     <portlet:param name="action" value="uploadFile"/>
 </portlet:renderURL>
 
-<div class="coin-content">
+<div class="coin-content coin-content-no-tabs">
 	<span class="coin-top-dir">LOBCDER files</span>
 	<div id="files" class="coin-file-list">Loading files ...</div>
 	<portlet:resourceURL id="fileList" var="fileList"/>

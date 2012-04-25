@@ -134,31 +134,15 @@ public class CloudManagerPortlet {
 					getAtomicServiceInstances(portalWorkflowIds.get(0), request);
 			
 			if(atomicServiceInstances.size() > 0) {
-				AtomicService currentAtomicService = null;
-				
-				if(currentAtomicServiceId == null) {
-					currentAtomicService = new ArrayList<AtomicService>(
-							atomicServiceInstances.keySet()).get(0);
-					currentAtomicServiceId = currentAtomicService.getAtomicServiceId();
-				} else {
-					for(AtomicService as : atomicServiceInstances.keySet()) {
-						if(as.getAtomicServiceId().equals(currentAtomicServiceId)) {
-							currentAtomicService = as;
-							break;
-						}
-					}
-				}
-				
-				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances.keySet());
-				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
-						atomicServiceInstances.get(currentAtomicService));
-				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, currentAtomicService);
-				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE_ID, currentAtomicServiceId);
 				model.addAttribute(PARAM_WORKFLOW_ID, portalWorkflowIds.get(0));
 			}
-		} else {
+		}
+		
+		if(atomicServiceInstances == null) {
 			atomicServiceInstances = new HashMap<AtomicService, List<AtomicServiceInstance>>();
 		}
+		
+		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances);
 		
 		return "cloudManager/development";
 	}
@@ -176,26 +160,7 @@ public class CloudManagerPortlet {
 					getAtomicServiceInstances(portalWorkflowIds.get(0), request);
 			
 			if(atomicServiceInstances.size() > 0) {
-				AtomicService currentAtomicService = null;
-				
-				if(currentAtomicServiceId == null) {
-					currentAtomicService = new ArrayList<AtomicService>(
-							atomicServiceInstances.keySet()).get(0);
-					currentAtomicServiceId = currentAtomicService.getAtomicServiceId();
-				} else {
-					for(AtomicService as : atomicServiceInstances.keySet()) {
-						if(as.getAtomicServiceId().equals(currentAtomicServiceId)) {
-							currentAtomicService = as;
-							break;
-						}
-					}
-				}
-				
-				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances.keySet());
-				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_INSTANCES, 
-						atomicServiceInstances.get(currentAtomicService));
-				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, currentAtomicService);
-				model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE_ID, currentAtomicServiceId);
+				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES_WITH_INSTANCES, atomicServiceInstances);
 				model.addAttribute(PARAM_WORKFLOW_ID, portalWorkflowIds.get(0));
 			}
 		} else {

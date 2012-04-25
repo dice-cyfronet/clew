@@ -4,35 +4,38 @@
 	<portlet:param name="action" value="invokeAtomicService"/>
 </portlet:actionURL>
 
-<div class="coin-content">
+<div class="coin-content coin-content-no-tabs">
 	<c:choose>
 		<c:when test="${negativeMessage != null}">
-			<p>${negativeMessage}</p>
+			<div class="coin-error-panel">${negativeMessage}</div>
 		</c:when>
 		<c:otherwise>
 			<c:choose>
 				<c:when test="${atomicServiceInvokable}">
-					<form:form action='${invokeAtomicService}' modelAttribute='invokeAtomicServiceRequest'>
+					<form:form class="coin-form" action='${invokeAtomicService}' modelAttribute='invokeAtomicServiceRequest'>
 						<form:hidden path="atomicServiceInstanceId"/>
 						<form:hidden path="workflowId"/>
 						<form:hidden path="configurationId"/>
 						<form:hidden path="atomicServiceId"/>
 						<form:hidden path="invocationPath"/>
-						<div>
+						<div class="coin-form-input">
 							<label for="method">
 								<spring:message code="cloud.manager.portlet.submit.atomic.service.method.label"/>
 							</label>
 							<form:select path="method" items="${atomicServiceMethodList}"/>
 						</div>
-						Provide values for the following service parameters:<br/>
 						<c:forEach var="formField" items="${invokeAtomicServiceRequest.formFields}" varStatus="index">
-							<label for="formFields[${index.index}].value">
-								${formField.name}
-							</label>
-							<form:input path="formFields[${index.index}].value"/><br/>
-							<form:hidden path="formFields[${index.index}].name"/>
+							<div class="coin-form-input">
+								<label for="formFields[${index.index}].value">
+									Request parameter <i>${formField.name}</i>
+								</label>
+								<form:input path="formFields[${index.index}].value"/><br/>
+								<form:hidden path="formFields[${index.index}].name"/>
+							</div>
 						</c:forEach>
-						<input type='submit' value='<spring:message code='cloud.manager.portlet.invoke.atomic.service.request'/>'/>
+						<div class="coin-form-submit">
+							<input type='submit' value='<spring:message code='cloud.manager.portlet.invoke.atomic.service.request'/>'/>
+						</div>
 					</form:form>
 				</c:when>
 				<c:otherwise>
@@ -48,6 +51,11 @@
 			<pre style="font-size: small;">${atomicServiceInvocationResult}</pre>
 		</div>
 	</c:if>
-	
-	<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
+	<div class="coin-menu-bottom">
+		<ul>
+			<li>
+				<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
+			</li>
+		</ul>
+	</div>
 </div>

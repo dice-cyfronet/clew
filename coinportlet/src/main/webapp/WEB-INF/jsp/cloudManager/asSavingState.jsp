@@ -2,10 +2,16 @@
 
 <portlet:resourceURL var="asSavingStatusLink" id="asSavingStatus"/>
 
-<div class="coin-content">
+<div class="coin-content coin-content-no-tabs">
 	<p>Please wait patiently while the new Atomic Service is being saved. The current state of the process is the following:
-	<span id="asSavingState" class="coin-as-status">saving</span></p>
-	<a href='<portlet:renderURL/>' id="mainPage" style="visibility: hidden;">Go back to the main page</a>
+	<span id="asSavingState" style="font-weight: bold; color: #db7024;">saving</span></p>
+	<div class="coin-menu-bottom">
+		<ul>
+			<li>
+				<a href='<portlet:renderURL/>' id="mainPage" style="visibility: hidden;">Go back to the main page</a>
+			</li>
+		</ul>
+	</div>
 	<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	    	window.updateAsSavingStatus = function(statusLink) {

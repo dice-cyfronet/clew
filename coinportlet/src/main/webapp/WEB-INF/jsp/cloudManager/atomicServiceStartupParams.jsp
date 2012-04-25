@@ -7,17 +7,31 @@
 	</p>
 	<c:forEach var='atomicService' items='${atomicServices}'>
 		<div class="coin-panel">
-			<div class="coin-left-column">
-				<span class="coin-header">${atomicService.name}</span><br/>
-				<span class="coin-description">${atomicService.description}</span>
-			</div>
+			<span class="coin-header">${atomicService.name}</span>
+			<span class="coin-description">
+				<c:choose>
+					<c:when test="${atomicService.description == null or atomicService.description == ''}">
+						<i>no description</i>
+					</c:when>
+					<c:otherwise>
+						${atomicService.description}
+					</c:otherwise>
+				</c:choose>
+			</span>
 			<span class="coin-actions">
-				<portlet:actionURL var="startAs">
-					<portlet:param name="action" value="startAtomicService"/>
-					<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-					<portlet:param name="workflowType" value="${workflowType}"/>
-				</portlet:actionURL>
-				<a class="coin-link" href="${startAs}"><spring:message code="cloud.manager.portlet.start.atomic.service"/></a>
+				<c:choose>
+					<c:when test="${atomicService.active}">
+						<portlet:actionURL var="startAs">
+							<portlet:param name="action" value="startAtomicService"/>
+							<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+							<portlet:param name="workflowType" value="${workflowType}"/>
+						</portlet:actionURL>
+						<a class="coin-link" href="${startAs}">Start</a>
+					</c:when>
+					<c:otherwise>
+						Not active
+					</c:otherwise>
+				</c:choose>
 			</span>
 		</div>
 	</c:forEach>

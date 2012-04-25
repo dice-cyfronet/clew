@@ -4,7 +4,7 @@
     <portlet:param name="action" value="uploadFile"/>
 </portlet:actionURL>
 
-<div class="coin-content">
+<div class="coin-content coin-content-no-tabs">
 	<span class="coin-top-dir">LOBCDER file upload</span>
 	<form class="coin-form" method="post" action="${uploadFile}" enctype="multipart/form-data">
 		<div class="coin-form-input">
@@ -15,7 +15,7 @@
 	    	<input type="submit" value="Upload"/>
 	    </div>
 	</form>
-	<div class="menu-bottom">
+	<div class="coin-menu-bottom">
 		<ul>
 			<li>
 				<a class="coin-link" href="<portlet:renderURL/>">
