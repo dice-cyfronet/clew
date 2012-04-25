@@ -41,9 +41,9 @@ public class CloudFacadeTest {
 	public static void main(String[] args) throws Exception {
 		initCloudFacde();
 
-		//printAtomicServices();
+		printAtomicServices();
 		//addAtomicService("cyfronet-nova-vm-208", "SecHelloWorld");
-		addInitialConfiguration("SecHelloWorld", "secHelloWorldInitConf");
+		//addInitialConfiguration("SecHelloWorld", "secHelloWorldInitConf");
 	}
 
 	static void printAtomicServices() {
@@ -94,6 +94,6 @@ public class CloudFacadeTest {
 				new String[] { "cf-test.xml", });
 		BeanFactory factory = (BeanFactory) appContext;
 
-		cf = factory.getBean("cf-client", CloudFacade.class);
+		cf = factory.getBean("cf-client-local", CloudFacade.class);
 	}
 }

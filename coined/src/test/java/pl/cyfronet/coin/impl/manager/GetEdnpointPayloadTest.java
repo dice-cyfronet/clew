@@ -36,7 +36,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetEdnpointPayloadTest extends AbstractManagerWithAirTest {
+public class GetEdnpointPayloadTest extends AbstractCloudManagerTest {
 
 	private int servicePort = 80;
 	private String existingInvocationPath = "/my/path";

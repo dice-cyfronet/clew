@@ -19,17 +19,14 @@ package pl.cyfronet.coin.impl.manager;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Ignore;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.manager.atmosphere.ManagerResponseTestImpl;
 import pl.cyfronet.coin.impl.manager.matcher.AddRequiredAppliancesRequestMatcher;
@@ -37,7 +34,6 @@ import pl.cyfronet.dyrealla.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.allocation.impl.ManagerResponseImpl;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -48,13 +44,6 @@ public class AtomicServiceInstanceCloudManagerTest extends
 	@Test
 	public void shouldStartNewAtomicService() throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
-		manager.setAtmosphere(atmosphere);
-
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		final String atomicServiceId = "asId";
 		final String name = "asIdName";
 		final String contextId = "contextId";
@@ -67,7 +56,7 @@ public class AtomicServiceInstanceCloudManagerTest extends
 				contextId, true, atomicServiceId);
 
 		// when
-		mockGetWorkflow(air, contextId, username);
+		mockGetWorkflow();
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
 
@@ -86,17 +75,9 @@ public class AtomicServiceInstanceCloudManagerTest extends
 	@Test(expectedExceptions = WorkflowNotFoundException.class)
 	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotBelongToTheUser()
 			throws Exception {
-		// given
-		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
-		String contextId = "contextId";
-
 		// when
-		mockGetWorkflow(air, contextId, "otherUser");
-		manager.startAtomicService("1", "name", contextId, "user");
+		mockGetWorkflow();
+		manager.startAtomicService("1", "name", contextId, "otherUser");
 
 		// then
 	}
@@ -105,10 +86,6 @@ public class AtomicServiceInstanceCloudManagerTest extends
 	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotExist()
 			throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		String contextId = "contextId";
 
 		// when
@@ -117,30 +94,27 @@ public class AtomicServiceInstanceCloudManagerTest extends
 
 		// then
 	}
-	
-	//FIXME
+
+	// FIXME
 	@Test(enabled = false)
-	public void shouldCreateExceptionWhileAtmosphereActionFailed() throws Exception {
+	public void shouldCreateExceptionWhileAtmosphereActionFailed()
+			throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
-		manager.setAtmosphere(atmosphere);
-		
 		AddRequiredAppliancesRequestImpl request = new AddRequiredAppliancesRequestImpl();
-		
+
 		ManagerResponse response = new ManagerResponseImpl();
 		response.setOperationStatus(OperationStatus.FAILED);
-		
+
 		// when
 		when(atmosphere.addRequiredAppliances(request)).thenReturn(response);
-		
+
 		try {
 			manager.startAtomicService("asId", "name", "contextId", "username");
 			fail();
-		}  catch(CloudFacadeException e) {
+		} catch (CloudFacadeException e) {
 			e.getMessage();
 		}
-		
+
 		// then
 
 	}

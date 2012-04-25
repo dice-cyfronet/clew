@@ -32,14 +32,14 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetEndpointsMetadataTest extends AbstractManagerWithAirTest {
+public class GetEndpointsMetadataTest extends AbstractCloudManagerTest {
 
-	private List<Endpoint> metadatas;
+	private List<Endpoint> endpoints;
 
 	@Test
 	public void shouldGetEndpointsMetadata() throws Exception {
 		givenAirContentWithApplianceTypes();
-		whenGettingEndpointsMetadata();
+		whenGettingEndpoints();
 		thanHave3Endpoints();
 	}
 
@@ -47,7 +47,7 @@ public class GetEndpointsMetadataTest extends AbstractManagerWithAirTest {
 	public void shouldGetEmptyEndpointsMetadataListWhenApplianceTypesWithoutEndpoints()
 			throws Exception {
 		givenAriContentWithoutEndpoints();
-		whenGettingEndpointsMetadata();
+		whenGettingEndpoints();
 		thanHave0Endpoints();
 	}
 
@@ -55,34 +55,8 @@ public class GetEndpointsMetadataTest extends AbstractManagerWithAirTest {
 	public void shouldGetEmptyEndpointMetadataListWhenNoApplianceTypes()
 			throws Exception {
 		givenAirContentWithoutApplianceTypes();
-		whenGettingEndpointsMetadata();
+		whenGettingEndpoints();
 		thanHave0Endpoints();
-	}
-
-	private void thanHave0Endpoints() {
-		assertEquals(metadatas.size(), 0);
-	}
-
-	private void thanHave3Endpoints() {
-		assertEquals(metadatas.size(), 3);
-		compareEndpointMetadata(metadatas.get(0), "endpoint1");
-		compareEndpointMetadata(metadatas.get(1), "endpoint2");
-		compareEndpointMetadata(metadatas.get(2), "endpoint3");
-	}
-
-	/**
-	 * @param metadata
-	 * @param string
-	 */
-	private void compareEndpointMetadata(Endpoint metadata, String endpointName) {
-		assertEquals(metadata.getDescription(), getDescription(endpointName));
-		assertEquals(metadata.getInvocationPath(),
-				getInvocationPath(endpointName));
-		assertEquals(metadata.getPort(), 80);
-	}
-
-	private void whenGettingEndpointsMetadata() {
-		metadatas = manager.getEndpoints();
 	}
 
 	private void givenAirContentWithApplianceTypes() {
@@ -121,6 +95,28 @@ public class GetEndpointsMetadataTest extends AbstractManagerWithAirTest {
 				Collections.<ApplianceType> emptyList());
 	}
 
+	private void whenGettingEndpoints() {
+		endpoints = manager.getEndpoints();
+	}
+	
+	private void thanHave0Endpoints() {
+		assertEquals(endpoints.size(), 0);
+	}
+
+	private void thanHave3Endpoints() {
+		assertEquals(endpoints.size(), 3);
+		compareEndpointMetadata(endpoints.get(0), "endpoint1");
+		compareEndpointMetadata(endpoints.get(1), "endpoint2");
+		compareEndpointMetadata(endpoints.get(2), "endpoint3");
+	}
+	
+	private void compareEndpointMetadata(Endpoint metadata, String endpointName) {
+		assertEquals(metadata.getDescription(), getDescription(endpointName));
+		assertEquals(metadata.getInvocationPath(),
+				getInvocationPath(endpointName));
+		assertEquals(metadata.getPort(), 80);
+	}
+	
 	private ATEndpoint getEndpoint(String endpointName, int port) {
 		ATEndpoint endpoint = new ATEndpoint();
 		endpoint.setDescription(getDescription(endpointName));

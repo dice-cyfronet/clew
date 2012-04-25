@@ -69,4 +69,14 @@ public class Endpoint {
 	public void setType(EndpointType type) {
 		this.type = type;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Endpoint [description=" + description + ", descriptor="
+				+ descriptor + ", invocationPath=" + invocationPath + ", port="
+				+ port + ", serviceName=" + serviceName + ", type=" + type
+				+ "]";
+	}
 }

@@ -117,7 +117,7 @@ public interface CloudManager {
 	 *             workflow with defined context id belongs to other user.
 	 */
 	void stopWorkflow(String contextId, String username)
-			throws WorkflowNotFoundException;
+			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
 	 * Get user workflows.
@@ -151,7 +151,7 @@ public interface CloudManager {
 	 */
 	String addInitialConfiguration(String atomicServiceId,
 			InitialConfiguration initialConfiguration)
-			throws AtomicServiceInstanceNotFoundException,
+			throws AtomicServiceNotFoundException,
 			InitialConfigurationAlreadyExistException, CloudFacadeException;
 
 	String getEndpointPayload(String atomicServiceId, int servicePort,

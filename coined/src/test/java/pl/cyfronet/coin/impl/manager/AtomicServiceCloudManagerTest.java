@@ -19,7 +19,6 @@ package pl.cyfronet.coin.impl.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,10 +33,8 @@ import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.manager.matcher.AddAtomicServiceMatcher;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -47,10 +44,6 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shoutGetAtomicServicesList() {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		ApplianceType type1 = new ApplianceType();
 		type1.setName("type1");
 		type1.setDescription("type1 description");
@@ -112,10 +105,6 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldTrowExceptionWhenASIsNotFound() throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		ApplianceType type1 = new ApplianceType();
 		type1.setName("type1");
 
@@ -140,14 +129,7 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 	public void shouldCreateAtomicServiceWithoutEndpoints() throws Exception {
 		// given
 		String cloudSite = "cyfronet-nova";
-
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
 		manager.setDefaultSiteId(cloudSite);
-
-		manager.setAir(air);
-		manager.setAtmosphere(atmosphere);
 
 		String asiId = "23";
 		String asId = "1";
@@ -182,10 +164,6 @@ public class AtomicServiceCloudManagerTest extends AbstractCloudManagerTest {
 	public void shouldCreateAtomicServiceWithEndpoints() throws Exception {
 		// given
 		String cloudSite = "cyfronet-nova";
-
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		DyReAllaManagerService atmosphere = mock(DyReAllaManagerService.class);
 		manager.setDefaultSiteId(cloudSite);
 
 		manager.setAir(air);

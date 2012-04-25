@@ -32,6 +32,8 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
@@ -75,7 +77,7 @@ public interface WorkflowManagement {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Path("/start")
 	String startWorkflow(WorkflowStartRequest workflow)
-			throws WorkflowStartException;
+			throws WorkflowStartException, CloudFacadeException;
 
 	/**
 	 * Stop workflow. It will stop all atomic services executed for the
@@ -84,7 +86,8 @@ public interface WorkflowManagement {
 	 */
 	@DELETE
 	@Path("/{workflowId}")
-	void stopWorkflow(@PathParam("workflowId") String workflowId);
+	void stopWorkflow(@PathParam("workflowId") String workflowId)
+			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
 	 * Add atomic service for started workflow.
@@ -94,7 +97,9 @@ public interface WorkflowManagement {
 	@PUT
 	@Path("/{workflowId}/as/{asConfigId}/{name}")
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asConfigId, @PathParam("name") String name);
+			@PathParam("asConfigId") String asConfigId,
+			@PathParam("name") String name) throws WorkflowNotFoundException,
+			CloudFacadeException;
 
 	/**
 	 * Remove atomic service from running workflow.
@@ -105,7 +110,8 @@ public interface WorkflowManagement {
 	@Path("/{workflowId}/as/{asConfigId}")
 	void removeAtomicServiceFromWorkflow(
 			@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asConfigId);
+			@PathParam("asConfigId") String asConfigId)
+			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
 	 * Get full information about workflow.
@@ -116,7 +122,8 @@ public interface WorkflowManagement {
 	@GET
 	@Path("/{workflowId}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	Workflow getWorkflow(@PathParam("workflowId") String workflowId);
+	Workflow getWorkflow(@PathParam("workflowId") String workflowId)
+			throws WorkflowNotFoundException;
 
 	/**
 	 * Adds redirection to the Atomic Service Instance. This method will throws

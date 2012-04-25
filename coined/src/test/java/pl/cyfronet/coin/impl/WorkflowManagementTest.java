@@ -14,27 +14,27 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.manager;
+package pl.cyfronet.coin.impl;
 
-import static org.mockito.Mockito.mock;
-
-import org.testng.annotations.BeforeMethod;
-
-import pl.cyfronet.coin.impl.air.client.AirClient;
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public abstract class AbstractManagerWithAirTest {
+@ContextConfiguration( locations={"classpath:WorkflowManagementTest.xml"} )
+public class WorkflowManagementTest extends AbstractTestNGSpringContextTests {
 
-	protected CloudManagerImpl manager;
-	protected AirClient air;
-
-	@BeforeMethod
-	protected void setUp() {
-		manager = new CloudManagerImpl();
-		air = mock(AirClient.class);
-		manager.setAir(air);
+	@Autowired
+	LoggingInInterceptor interceptor;
+	
+	@Test
+	public void should() throws Exception {
+		Assert.assertNotNull(interceptor);
 	}
 }

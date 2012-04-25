@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +35,6 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
@@ -48,10 +46,6 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldGetNonExistingWorkflow() throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		String contextId = "nonExisting";
 		String username = "username";
 
@@ -72,10 +66,6 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldGetWorkflowNotBelongingToUser() throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		String contextId = "existing";
 		String username = "username";
 
@@ -100,10 +90,6 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldGetUserWorkflow() throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		String contextId = "id";
 		String username = "user";
 
@@ -148,10 +134,6 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldGetUserDevelopmentWorkflow() throws Exception {
 		// given
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
-
 		String contextId = "id";
 		String username = "user";
 
@@ -196,16 +178,12 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldGetWorkflowInDevelopmentMode() throws Exception {
 		// given
-
 		Properties credentialProp = new Properties();
 		credentialProp.put("type1.username", "vm1Username");
 		credentialProp.put("type1.password", "vm1Password");
 		credentialProp.put("type2.username", "vm2Username");
 		credentialProp.put("type2.password", "vm2Password");
 
-		CloudManagerImpl manager = new CloudManagerImpl();
-		AirClient air = mock(AirClient.class);
-		manager.setAir(air);
 		manager.setCredentialProperties(credentialProp);
 
 		String contextId = "id";

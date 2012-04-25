@@ -16,17 +16,25 @@
 
 package pl.cyfronet.coin.api.exception;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.xml.ws.WebFault;
+
 /**
  * Thrown when <strong>user</strong> workflow is not found. It means that
  * workflow with defined context id can (but not have to) exist but it doesn't
  * belongs to this user.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class WorkflowNotFoundException extends Exception {
+@WebFault
+public class WorkflowNotFoundException extends WebApplicationException {
 
 	/**
 	 * Serial version UID
 	 */
 	private static final long serialVersionUID = 6823966272806907966L;
 
+	public WorkflowNotFoundException() {
+		super(Response.Status.NOT_FOUND);
+	}
 }

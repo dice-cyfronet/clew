@@ -16,17 +16,20 @@
 
 package pl.cyfronet.coin.impl.manager;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import javax.ws.rs.core.Response;
-
-import static org.testng.Assert.*;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
-import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
@@ -99,7 +102,7 @@ public class AddInitialConfigurationCloudManagerTest {
 			manager.addInitialConfiguration(atomicServiceId,
 					initialConfiguration);
 			fail();
-		} catch (AtomicServiceInstanceNotFoundException e) {
+		} catch (AtomicServiceNotFoundException e) {
 			//ok
 		}
 

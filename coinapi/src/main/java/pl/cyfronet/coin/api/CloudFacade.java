@@ -72,6 +72,17 @@ public interface CloudFacade {
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
 
+	/**
+	 * Create new initial configuration for atomic service. The initial
+	 * configuration will be injected into new created VM while booting up.
+	 * @param atomicServiceId For this atomic service new initial configuration
+	 *            will be added.
+	 * @param initialConfiguration Initial configuration name and payload
+	 * @return Initial configuration id.
+	 * @throws AtomicServiceNotFoundException
+	 * @throws CloudFacadeException
+	 * @throws InitialConfigurationAlreadyExistException
+	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Path("/{atomicServiceId}/configuration")
@@ -79,8 +90,7 @@ public interface CloudFacade {
 			@PathParam("atomicServiceId") String atomicServiceId,
 			InitialConfiguration initialConfiguration)
 			throws AtomicServiceNotFoundException,
-			AtomicServiceInstanceNotFoundException, CloudFacadeException,
-			InitialConfigurationAlreadyExistException;
+			InitialConfigurationAlreadyExistException, CloudFacadeException;
 
 	/**
 	 * Get initial configurations for given atomic service (a.k.a. appliance
@@ -100,16 +110,16 @@ public interface CloudFacade {
 	String getServicesSet();
 
 	@GET
-	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}/get_as_id")
+	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath : .+}/get_as_id")
 	String getAtomicServiceId(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			@PathParam("servicePort") int servicePort,
-			@PathParam("invocationPath") String invocationPath)			
+			@PathParam("invocationPath") String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;
-	
+
 	@GET
-	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}")
+	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath : .+}")
 	String getEndpointDescriptor(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			@PathParam("servicePort") int servicePort,

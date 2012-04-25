@@ -16,21 +16,29 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:cxf="http://cxf.apache.org/core"
 	xsi:schemaLocation="
-  http://www.springframework.org/schema/beans
-  http://www.springframework.org/schema/beans/spring-beans.xsd
-  http://www.springframework.org/schema/osgi
-  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-
-    <bean id="documentationService" class="pl.cyfronet.coin.impl.DocumentationServiceImpl" />
+  		http://www.springframework.org/schema/beans
+  		http://www.springframework.org/schema/beans/spring-beans.xsd
+  		http://cxf.apache.org/core 
+  		http://cxf.apache.org/schemas/core.xsd">
     
-	<bean id="cloudManager" class="pl.cyfronet.coin.impl.manager.CloudManagerImpl">
-		<property name="atmosphere" ref="atmosphere" />  
-		<property name="air" ref="air-client" />
-		<property name="defaultPriority" value="40" />
-		<property name="defaultSiteId" value="cyfronet-nova" />
-		<property name="credentialProperties" ref="as-sec" />
-	</bean>
+	<import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
 	
-	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService" />
+	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+	<!--
+     logging
+     -->
+	<cxf:bus>
+		<cxf:inInterceptors>
+			<ref bean="logInbound" />
+		</cxf:inInterceptors>
+		<cxf:outInterceptors>
+			<ref bean="logOutbound" />
+		</cxf:outInterceptors>
+		<cxf:inFaultInterceptors>
+			<ref bean="logOutbound" />
+		</cxf:inFaultInterceptors>
+	</cxf:bus>
 </beans>									   

@@ -70,7 +70,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.debug("Get atomic services");
-		return manager.getAtomicServices();
+		List<AtomicService> ases = manager.getAtomicServices(); 
+		return ases;
 	}
 
 	/*
@@ -115,7 +116,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	public String addInitialConfiguration(String atomicServiceId,
 			InitialConfiguration initialConfiguration)
 			throws AtomicServiceNotFoundException,
-			AtomicServiceInstanceNotFoundException, CloudFacadeException,
+			AtomicServiceNotFoundException, CloudFacadeException,
 			InitialConfigurationAlreadyExistException {
 
 		logger.debug("Creating new atomic service from {}, metadata: {}",
@@ -167,7 +168,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	}
 
 	private String getDecodedInvocationPath(String path) {
-		return path.replaceAll("/", "%2f");
+		return path.replaceAll("^/+", "");
 	}
 
 	@Override

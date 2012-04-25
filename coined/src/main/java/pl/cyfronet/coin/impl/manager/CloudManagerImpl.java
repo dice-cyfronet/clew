@@ -56,6 +56,8 @@ import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.ApplianceNotFoundException;
 import pl.cyfronet.dyrealla.DyReAllaException;
+import pl.cyfronet.dyrealla.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.allocation.impl.ApplianceIdentityImpl;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
@@ -129,7 +131,7 @@ public class CloudManagerImpl implements CloudManager {
 
 		return atomicService;
 	}
-	
+
 	/**
 	 * @param endpoints
 	 * @return
@@ -294,8 +296,13 @@ public class CloudManagerImpl implements CloudManager {
 				workflow.getDescription(), priority, workflow.getType());
 		List<String> ids = workflow.getAsConfigIds();
 
-		registerVms(workflowId, ids, null, priority);
-
+		try {
+			registerVms(workflowId, ids, null, priority);
+		} catch (CloudFacadeException e) {
+			stopWorkflow(workflowId, username);
+			throw new WorkflowStartException();
+		}
+			
 		return workflowId;
 	}
 
@@ -306,15 +313,23 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	@Override
 	public void stopWorkflow(String contextId, String username)
-			throws WorkflowNotFoundException {
+			throws WorkflowNotFoundException, CloudFacadeException {
 		logger.debug("stopping workflow {}", contextId);
 		checkIfWorkflowBelongsToUser(contextId, username);
-		try {
-			atmosphere.removeRequiredAppliances(contextId);
-		} catch (Exception e) {
-			logger.error("error in atmosphere");
-		}
+		ManagerResponse response = atmosphere
+				.removeRequiredAppliances(contextId);
+		parseResponseAndThrowExceptionsWhenNeeded(response);
 		air.stopWorkflow(contextId);
+	}
+
+	/**
+	 * 
+	 */
+	private void parseResponseAndThrowExceptionsWhenNeeded(
+			ManagerResponse response) throws CloudFacadeException {
+		if (response.getOperationStatus() == OperationStatus.FAILED) {
+			throw new CloudFacadeException(response.getErrors().toString());
+		}
 	}
 
 	@Override
@@ -455,7 +470,7 @@ public class CloudManagerImpl implements CloudManager {
 	@Override
 	public String addInitialConfiguration(String atomicServiceId,
 			InitialConfiguration initialConfiguration)
-			throws AtomicServiceInstanceNotFoundException,
+			throws AtomicServiceNotFoundException,
 			InitialConfigurationAlreadyExistException, CloudFacadeException {
 		try {
 			String addedConfigurationId = air.addInitialConfiguration(
@@ -466,7 +481,7 @@ public class CloudManagerImpl implements CloudManager {
 		} catch (ServerWebApplicationException e) {
 			if (e.getMessage() != null) {
 				if (e.getMessage().contains("not found in AIR")) {
-					throw new AtomicServiceInstanceNotFoundException();
+					throw new AtomicServiceNotFoundException();
 				} else if (e.getMessage().contains("duplicated configuration")) {
 					throw new InitialConfigurationAlreadyExistException();
 				}
@@ -511,7 +526,8 @@ public class CloudManagerImpl implements CloudManager {
 					endpointPort, servicePort, endpointInvocationPath,
 					invocationPath });
 			if (endpointPort == servicePort
-					&& endpointInvocationPath.equals(invocationPath)) {
+					&& endpointPathEquals(endpointInvocationPath,
+							invocationPath)) {
 				return endpoint;
 			}
 		}
@@ -519,6 +535,18 @@ public class CloudManagerImpl implements CloudManager {
 		logger.debug("Endpoint {}:{}/{} not found", new Object[] {
 				atomicServiceId, servicePort, invocationPath });
 		throw new EndpointNotFoundException();
+	}
+
+	private boolean endpointPathEquals(String endpointPath,
+			String invocationPath) {
+		String endpointPathWithouldSlashAtTheBeginning = removeSlashesFromTheBeginning(endpointPath);
+		String invocationPathWithouldSlashAtTheBeginning = removeSlashesFromTheBeginning(invocationPath);
+		return endpointPathWithouldSlashAtTheBeginning
+				.equalsIgnoreCase(invocationPathWithouldSlashAtTheBeginning);
+	}
+
+	private String removeSlashesFromTheBeginning(String str) {
+		return str.replaceAll("^/+", "");
 	}
 
 	private List<ApplianceType> getApplianceTypes() {
@@ -554,7 +582,7 @@ public class CloudManagerImpl implements CloudManager {
 	 * @param priority Workflow priority.
 	 */
 	private void registerVms(String contextId, List<String> configIds,
-			List<String> names, Integer priority) {
+			List<String> names, Integer priority) throws CloudFacadeException {
 		if (configIds != null && configIds.size() > 0) {
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
@@ -567,7 +595,9 @@ public class CloudManagerImpl implements CloudManager {
 			request.setApplianceIdentities(getApplianceIdentities(configIds,
 					names));
 
-			atmosphere.addRequiredAppliances(request);
+			ManagerResponse response = atmosphere
+					.addRequiredAppliances(request);
+			parseResponseAndThrowExceptionsWhenNeeded(response);
 		}
 	}
 

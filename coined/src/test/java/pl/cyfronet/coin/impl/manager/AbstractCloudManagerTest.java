@@ -18,6 +18,7 @@ package pl.cyfronet.coin.impl.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import org.testng.annotations.BeforeMethod;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
@@ -35,12 +37,29 @@ import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public abstract class AbstractCloudManagerTest {
 
+	protected CloudManagerImpl manager = new CloudManagerImpl();
+	protected AirClient air;
+	protected DyReAllaManagerService atmosphere;
+	
+	protected final String contextId = "contextId";
+	protected final String username = "user";
+	
+	@BeforeMethod
+	protected void setUp() {
+		air = mock(AirClient.class);
+		manager.setAir(air);
+		
+		atmosphere = mock(DyReAllaManagerService.class);
+		manager.setAtmosphere(atmosphere);
+	}
+	
 	protected ApplianceType getApplianceType(String name) {
 		ApplianceType at = new ApplianceType();
 		at.setName(name);
@@ -106,8 +125,7 @@ public abstract class AbstractCloudManagerTest {
 	 * @param air
 	 * @param username
 	 */
-	protected void mockGetWorkflow(AirClient air, String contextId,
-			String username) {
+	protected void mockGetWorkflow() {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 		when(air.getWorkflow(contextId)).thenReturn(wd);

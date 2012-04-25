@@ -8,9 +8,6 @@
 	the specific language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-	
-	xmlns:cxf="http://cxf.apache.org/core"
-	
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -19,41 +16,10 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs 
        http://cxf.apache.org/schemas/jaxrs.xsd
-       
-       http://cxf.apache.org/core 
-  		http://cxf.apache.org/schemas/core.xsd
-       
        ">
 
-	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
-	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
-
-	<!--
-     logging
-     -->
-	<cxf:bus>
-		<cxf:inInterceptors>
-			<ref bean="logInbound" />
-		</cxf:inInterceptors>
-		<cxf:outInterceptors>
-			<ref bean="logOutbound" />
-		</cxf:outInterceptors>
-		<cxf:inFaultInterceptors>
-			<ref bean="logOutbound" />
-		</cxf:inFaultInterceptors>
-	</cxf:bus>
-
-	<jaxrs:client id="cf-client-local" address="http://localhost:8088/as"			    
+	<jaxrs:client id="asManagementClient" address="http://localhost:8088/as"			    
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
-		inheritHeaders="true">
-		<jaxrs:providers>
-			<ref bean="client-jsonProvider" />
-		</jaxrs:providers>		
-	</jaxrs:client>
-
-	<jaxrs:client id="cf-client" address="http://vph.cyfronet.pl/cloudfacade/as"				   
-		serviceClass="pl.cyfronet.coin.api.CloudFacade"
-		username="test" password="OGEyOTQ0OTlmZDA2YTc1MDNhNTkyYjE1MGUzNjUxOTI0ZjhjMzA1N2RoYXJlemxhayFkZXZlbG9wZXIhZGhhcmV6bGFrLERhbmllbCBIYXJlemxhaywsLCw="
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="client-jsonProvider" />
@@ -65,6 +31,4 @@
 		<property name="dropRootElement" value="true" />
 		<property name="supportUnwrapped" value="true" />
 	</bean>
-
-
 </beans>
