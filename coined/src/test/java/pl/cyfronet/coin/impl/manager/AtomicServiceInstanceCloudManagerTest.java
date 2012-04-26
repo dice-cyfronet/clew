@@ -116,6 +116,6 @@ public class AtomicServiceInstanceCloudManagerTest extends
 		}
 
 		// then
-
+		verify(atmosphere, times(1)).addRequiredAppliances(request);
 	}
 }
