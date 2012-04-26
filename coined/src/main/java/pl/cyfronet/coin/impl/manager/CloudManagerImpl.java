@@ -299,7 +299,11 @@ public class CloudManagerImpl implements CloudManager {
 		try {
 			registerVms(workflowId, ids, null, priority);
 		} catch (CloudFacadeException e) {
-			stopWorkflow(workflowId, username);
+			try {
+				stopWorkflow(workflowId, username);
+			} catch(Exception e2) {
+				
+			}
 			throw new WorkflowStartException();
 		}
 			
@@ -328,8 +332,21 @@ public class CloudManagerImpl implements CloudManager {
 	private void parseResponseAndThrowExceptionsWhenNeeded(
 			ManagerResponse response) throws CloudFacadeException {
 		if (response.getOperationStatus() == OperationStatus.FAILED) {
-			throw new CloudFacadeException(response.getErrors().toString());
+			String errorMessage = getErrorMessage(response);
+			throw new CloudFacadeException(errorMessage);
 		}
+	}
+
+	/**
+	 * @param response
+	 * @return
+	 */
+	private String getErrorMessage(ManagerResponse response) {
+		if(response.getErrors() != null) {
+			return response.getErrors().toString();
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -639,7 +656,7 @@ public class CloudManagerImpl implements CloudManager {
 			if (detail != null && detail.getVph_username().equals(username)) {
 				return detail;
 			} else {
-				// workflow is found, but it does not depend to selected user.
+				// workflow is not found or it depends to other user.
 				throw new WorkflowNotFoundException();
 			}
 		} catch (ServerWebApplicationException e) {
