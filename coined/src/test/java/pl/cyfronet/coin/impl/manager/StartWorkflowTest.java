@@ -59,10 +59,11 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 		whenStartWorkflow();
 		thenWorkflowRegistered();
 	}
-	
+
 	@Test
 	public void shouldStartWorkflowWithAtomicService() throws Exception {
-		givenWorkflowStartRequestWithAsIds("id1", "id2");
+		givenWorkflowStartRequestWithAsIds(OperationStatus.SUCCESSFUL, "id1",
+				"id2");
 		whenStartWorkflow();
 		thenWorkflowRegisteredAndRequiredAsesStarted();
 	}
@@ -70,17 +71,18 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 	@Test
 	public void shouldNotStartWorkflowWithAsWhenAtmosphereOperationFailed()
 			throws Exception {
-		// given
-
-		// when
-
-		// then
-
+		givenWorkflowStartRequestWithAsIds(OperationStatus.FAILED, "id1", "id2");
+		try {
+			whenStartWorkflow();
+			fail();
+		} catch (WorkflowStartException e) {
+			thanWorkflowNotRegisteredAndErrorReturned(e);
+		}
 	}
 
 	@Test
 	public void shouldStartWorkflowForNewUser() throws Exception {
-		givenPortalWorkflowStartRequestForNewUser();		
+		givenPortalWorkflowStartRequestForNewUser();
 		whenStartWorkflow();
 		thenPortalWorkflowRegistered();
 	}
@@ -91,11 +93,21 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 				{ WorkflowType.portal } };
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test(dataProvider = "workflowType")
 	public void shouldNotAllowStart2PortalOrDevelopmentWorkflows(
 			WorkflowType type) throws Exception {
-		// given
+		givenWorkflowStartRequestAndUserHasRunningWorkflowOfType(type);
+
+		try {
+			whenStartWorkflow();
+			fail();
+		} catch (WorkflowStartException e) {
+			thanCannotStartTwoWorkflowsOfType(e, type);
+		}
+	}
+
+	private void givenWorkflowStartRequestAndUserHasRunningWorkflowOfType(
+			WorkflowType type) {
 		givenWorkflowStartRequest();
 		startRequest.setType(type);
 
@@ -107,28 +119,18 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 		w2.setWorkflow_type(type);
 		w2.setState(Status.running);
 
-		// when
-		when(air.getUserWorkflows(username)).thenReturn(Arrays.asList(w1),
-				Arrays.asList(w1, w2));
-
-		manager.startWorkflow(startRequest, username);
-		try {
-			manager.startWorkflow(startRequest, username);
-			fail();
-		} catch (WorkflowStartException e) {
-			assertEquals(String.format("Cannot start two %s workflows", type),
-					e.getMessage());
-		}
+		when(air.getUserWorkflows(username)).thenReturn(Arrays.asList(w1, w2));
 	}
 
-	private void givenWorkflowStartRequestWithAsIds(String... ids) {
+	private void givenWorkflowStartRequestWithAsIds(
+			OperationStatus resultOperationStatus, String... ids) {
 		givenWorkflowStartRequest();
 		startRequest.setAsConfigIds(Arrays.asList(ids));
-		mockeAtmosphereAddAppliancesSuccess();
+		mockAtmosphereAddAppliancesWithResponse(resultOperationStatus);
 	}
 
 	private void givenWorkflowStartRequest() {
-		workflowType = WorkflowType.workflow;		
+		workflowType = WorkflowType.workflow;
 		createWorkflowStartRequest();
 		mockAirStartMethod();
 	}
@@ -137,11 +139,11 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 		workflowType = WorkflowType.portal;
 		createWorkflowStartRequest();
 		mockAirStartMethod();
-		
+
 		when(air.getUserWorkflows(username)).thenThrow(
 				new WebApplicationException(400));
 	}
-	
+
 	private void createWorkflowStartRequest() {
 		startRequest = new WorkflowStartRequest();
 
@@ -150,17 +152,18 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 		startRequest.setPriority(priority);
 		startRequest.setType(workflowType);
 	}
-	
+
 	private void mockAirStartMethod() {
 		when(
 				air.startWorkflow(name, username, description, priority,
 						workflowType)).thenReturn(contextId);
 	}
 
-	private void mockeAtmosphereAddAppliancesSuccess() {
+	private void mockAtmosphereAddAppliancesWithResponse(
+			OperationStatus returnStatus) {
 		AddRequiredAppliancesRequestMatcher matcher = getAddAppliancesMather();
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
-				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
+				new ManagerResponseTestImpl(returnStatus));
 	}
 
 	private AddRequiredAppliancesRequestMatcher getAddAppliancesMather() {
@@ -172,27 +175,45 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 		createdContextId = manager.startWorkflow(startRequest, username);
 	}
 
+	private void thanWorkflowNotRegisteredAndErrorReturned(
+			WorkflowStartException e) {
+		verify(air, times(1)).startWorkflow(name, username, description,
+				priority, workflowType);
+		verify(atmosphere, times(1)).addRequiredAppliances(
+				argThat(getAddAppliancesMather()));
+		verify(air, times(1)).getWorkflow(any(String.class));
+	}
+
 	private void thenWorkflowRegisteredAndRequiredAsesStarted() {
 		checkWorkflowRegisteredInAir(workflowType);
 		verify(atmosphere, times(1)).addRequiredAppliances(
 				argThat(getAddAppliancesMather()));
 	}
-	
+
 	private void thenPortalWorkflowRegistered() {
 		checkWorkflowRegisteredInAir(workflowType);
-		
-		verify(air, times(1)).getUserWorkflows(username);		
+
+		verify(air, times(1)).getUserWorkflows(username);
 		verify(atmosphere, times(0)).addRequiredAppliances(
 				any(AddRequiredAppliancesRequest.class));
 	}
-	
+
 	private void thenWorkflowRegistered() {
 		checkWorkflowRegisteredInAir(workflowType);
-		
+
 		verify(atmosphere, times(0)).addRequiredAppliances(
 				any(AddRequiredAppliancesRequest.class));
 	}
-	
+
+	private void thanCannotStartTwoWorkflowsOfType(WorkflowStartException e,
+			WorkflowType type) {
+		assertEquals(String.format("Cannot start two %s workflows", type),
+				e.getMessage());
+		verify(air, times(1)).getUserWorkflows(username);
+		verify(air, times(0)).startWorkflow(name, username, description,
+				priority, workflowType);
+	}
+
 	private void checkWorkflowRegisteredInAir(WorkflowType workflowType) {
 		verify(air, times(1)).startWorkflow(name, username, description,
 				priority, workflowType);
