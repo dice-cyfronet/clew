@@ -71,7 +71,7 @@ public class DataManagerPortlet {
 					ResourceURL url = response.createResourceURL();
 					url.setResourceID("getFile");
 					url.setParameter("fileName", file.getName());
-					files.add(file.getName() + "|" + url.toString() + "|" + file.length() / 1024 + " B");
+					files.add(file.getName() + "|" + url.toString() + "|" + file.length() / 1024 + " kB");
 				}
 			}
 			
