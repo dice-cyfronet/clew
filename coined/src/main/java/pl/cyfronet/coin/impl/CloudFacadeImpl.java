@@ -36,6 +36,7 @@ import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 import pl.cyfronet.coin.impl.utils.FileUtils;
+import pl.cyfronet.coin.impl.utils.UrlUtils;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
@@ -164,7 +165,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		String descriptorUrl = String.format("%s/as/%s/endpoint/%s/%s",
 				new Object[] { coinBaseUrl, atomicServiceId, m.getPort(),
 						getDecodedInvocationPath(m.getInvocationPath()) });
-		return descriptorUrl;
+		return UrlUtils.convertToURLEscapingIllegalCharacters(descriptorUrl);
 	}
 
 	private String getDecodedInvocationPath(String path) {
