@@ -501,6 +501,43 @@ public class CloudManagerPortlet {
 		}
 	}
 	
+	@ResourceMapping("workflows")
+	public void getWorkflows(PortletRequest request, ResourceResponse response) {
+		List<String> workflowIds = getWorkflowIds(WorkflowType.workflow, request);
+		StringBuilder builder = new StringBuilder();
+		
+		if(workflowIds.size() > 0) {
+			for(String workflowId : workflowIds) {
+				Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances =
+						getAtomicServiceInstances(workflowId, request);
+				builder.append(workflowId);
+				
+				for(AtomicService atomicService : atomicServiceInstances.keySet()) {
+					if(atomicServiceInstances.get(atomicService) != null &&
+							atomicServiceInstances.get(atomicService).size() > 0) {
+						builder.append(";").append(atomicService.getName());
+						
+						for(AtomicServiceInstance asi : atomicServiceInstances.get(atomicService)) {
+							builder.append(":").append(asi.getId()).append(":").append(asi.getStatus());
+						}
+					}
+				}
+				
+				builder.append("|");
+			}
+			
+			builder.deleteCharAt(builder.length() - 1);
+		} else {
+			builder.append("");
+		}
+		
+		try {
+			response.getWriter().write(builder.toString());
+		} catch (IOException e) {
+			log.warn("Could not write to http response writer during workflow information retireval", e);
+		}
+	}
+	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_AS_SAVING_STATE)
 	public String doViewAsSavingState(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			Model model) {
@@ -508,6 +545,34 @@ public class CloudManagerPortlet {
 		model.addAttribute(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
 		
 		return "cloudManager/asSavingState";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=startWorkflowInstance")
+	public void doActionStartWorkflowInstance(PortletRequest request) {
+		String workflowId = null;
+		WorkflowStartRequest wsr = new WorkflowStartRequest();
+		wsr.setName(WorkflowType.workflow.name() + " workflow");
+		wsr.setType(WorkflowType.workflow);
+		
+		try {
+			workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
+		} catch (WorkflowStartException e) {
+			log.warn("Error while starting workflow", e);
+		}
+		
+		List<InitialConfiguration> initialconfigurations =
+				clientFactory.getCloudFacade(request).getInitialConfigurations("SecHelloWorld");
+		
+		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
+				initialconfigurations.get(0).getId() != null) {
+			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
+					workflowId, initialconfigurations.get(0).getId());
+			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
+					initialconfigurations.get(0).getId(), "Ask user about it?");
+		} else {
+			//TODO - inform the user about the problem
+			log.warn("Configuration problem occurred during starting atomic service with id SecHelloWorld");
+		}
 	}
 	
 	@ResourceMapping("asSavingStatus")

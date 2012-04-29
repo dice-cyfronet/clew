@@ -31,16 +31,14 @@
 	</c:choose>
 		<a class="coin-link" href="${genericInvoker}"><spring:message code="cloud.manager.portlet.menu.generic.invoker.label"/></a>
 	</li>
-	<!--
-	<li>
-		<c:choose>
-			<c:when test="${view == 'workflows'}">
-				<spring:message code="cloud.manager.portlet.menu.workflows.label"/>
-			</c:when>
-			<c:otherwise>
-				<a class="coin-link" href="${workflows}"><spring:message code="cloud.manager.portlet.menu.workflows.label"/></a>
-			</c:otherwise>
-		</c:choose>
+	<c:choose>
+		<c:when test="${view == 'workflows'}">
+			<li class="coin-selected-tab">
+		</c:when>
+		<c:otherwise>
+			<li>
+		</c:otherwise>
+	</c:choose>
+		<a class="coin-link" href="${workflows}"><spring:message code="cloud.manager.portlet.menu.workflows.label"/></a>
 	</li>
-	-->
 </ul>
