@@ -51,7 +51,7 @@ import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
-import pl.cyfronet.coin.impl.air.client.Specs;
+import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.ApplianceNotFoundException;
@@ -92,6 +92,8 @@ public class CloudManagerImpl implements CloudManager {
 	private String defaultSiteId;
 
 	private Properties credentialProperties;
+
+	private String headNodeIp;
 
 	/*
 	 * (non-Javadoc)
@@ -184,11 +186,11 @@ public class CloudManagerImpl implements CloudManager {
 			String contextId, String username)
 			throws AtomicServiceNotFoundException, CloudFacadeException,
 			WorkflowNotFoundException {
-		checkIfWorkflowBelongsToUser(contextId, username);
+		WorkflowDetail workflow = getUserWorkflow(contextId, username);
 		logger.debug("Add atomic service [{} {}] into workflow [{}]",
 				new Object[] { name, atomicServiceId, contextId });
 		registerVms(contextId, Arrays.asList(atomicServiceId),
-				Arrays.asList(name), defaultPriority);
+				Arrays.asList(name), defaultPriority, workflow.getWorkflow_type());
 
 		// TODO information from Atmosphere about atomis service instance id
 		// needed!
@@ -297,16 +299,16 @@ public class CloudManagerImpl implements CloudManager {
 		List<String> ids = workflow.getAsConfigIds();
 
 		try {
-			registerVms(workflowId, ids, null, priority);
+			registerVms(workflowId, ids, null, priority, type);
 		} catch (CloudFacadeException e) {
 			try {
 				stopWorkflow(workflowId, username);
-			} catch(Exception e2) {
-				
+			} catch (Exception e2) {
+
 			}
 			throw new WorkflowStartException();
 		}
-			
+
 		return workflowId;
 	}
 
@@ -322,7 +324,9 @@ public class CloudManagerImpl implements CloudManager {
 		checkIfWorkflowBelongsToUser(contextId, username);
 		ManagerResponse response = atmosphere
 				.removeRequiredAppliances(contextId);
-		parseResponseAndThrowExceptionsWhenNeeded(response);
+
+		// FIXME waiting for atmo improvement
+		// parseResponseAndThrowExceptionsWhenNeeded(response);
 		air.stopWorkflow(contextId);
 	}
 
@@ -342,10 +346,10 @@ public class CloudManagerImpl implements CloudManager {
 	 * @return
 	 */
 	private String getErrorMessage(ManagerResponse response) {
-		if(response.getErrors() != null) {
+		if (response.getErrors() != null) {
 			return response.getErrors().toString();
 		}
-		
+
 		return null;
 	}
 
@@ -376,7 +380,6 @@ public class CloudManagerImpl implements CloudManager {
 				instance.setName(vm.getName());
 				instance.setMessage(""); // TODO
 
-				// FIXME temporary
 				addRedirections(instance, vm);
 
 				if (detail.getWorkflow_type() == WorkflowType.development) {
@@ -397,22 +400,20 @@ public class CloudManagerImpl implements CloudManager {
 	 * @param vm
 	 */
 	private void addRedirections(AtomicServiceInstance instance, Vms vm) {
+		List<Redirection> redirections = new ArrayList<Redirection>();
+		if (vm.getInternal_port_mappings() != null) {
+			for (PortMapping portMapping : vm.getInternal_port_mappings()) {
+				Redirection redirection = new Redirection();
+				redirection.setHost(headNodeIp);
+				redirection.setFromPort(portMapping.getHeadnode_port());
+				redirection.setToPort(portMapping.getVm_port());
+				redirection.setHttp(false);
+				redirection.setName("ssh");
 
-		Specs specs = vm.getSpecs();
-		if (specs != null) {
-			List<String> ips = specs.getIp();
-			if (ips != null && ips.size() > 0) {
-				String ip = ips.get(0);
-				Redirection ssh = new Redirection();
-				ssh.setHost(ip);
-				ssh.setFromPort(22);
-				ssh.setToPort(22);
-				ssh.setHttp(false);
-				ssh.setName("ssh");
-				instance.setRedirections(Arrays.asList(ssh));
+				redirections.add(redirection);
 			}
 		}
-
+		instance.setRedirections(redirections);
 	}
 
 	/**
@@ -599,7 +600,8 @@ public class CloudManagerImpl implements CloudManager {
 	 * @param priority Workflow priority.
 	 */
 	private void registerVms(String contextId, List<String> configIds,
-			List<String> names, Integer priority) throws CloudFacadeException {
+			List<String> names, Integer priority, WorkflowType workflowType)
+			throws CloudFacadeException {
 		if (configIds != null && configIds.size() > 0) {
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
@@ -611,6 +613,8 @@ public class CloudManagerImpl implements CloudManager {
 			request.setCorrelationId(contextId);
 			request.setApplianceIdentities(getApplianceIdentities(configIds,
 					names));
+			//FIXME
+			//request.setRunMode()
 
 			ManagerResponse response = atmosphere
 					.addRequiredAppliances(request);
@@ -717,5 +721,12 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	public void setCredentialProperties(Properties credentialProperties) {
 		this.credentialProperties = credentialProperties;
+	}
+
+	/**
+	 * @param headNodeIp the headNodeIp to set
+	 */
+	public void setHeadNodeIp(String headNodeIp) {
+		this.headNodeIp = headNodeIp;
 	}
 }

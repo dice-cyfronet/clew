@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
+import java.util.List;
+
 import pl.cyfronet.coin.api.beans.Status;
 
 /**
@@ -38,7 +40,7 @@ public class Vms {
 	
 	private Status state;
 	
-	private String internal_port_mappings;
+	private List<PortMapping> internal_port_mappings;
 	
 	/**
 	 * @return the name
@@ -141,14 +143,15 @@ public class Vms {
 	/**
 	 * @return the internal_port_mappings
 	 */
-	public String getInternal_port_mappings() {
+	public List<PortMapping> getInternal_port_mappings() {
 		return internal_port_mappings;
 	}
 
 	/**
 	 * @param internal_port_mappings the internal_port_mappings to set
 	 */
-	public void setInternal_port_mappings(String internal_port_mappings) {
+	public void setInternal_port_mappings(
+			List<PortMapping> internal_port_mappings) {
 		this.internal_port_mappings = internal_port_mappings;
 	}
 

@@ -91,10 +91,12 @@ public class AirTest {
 		// }
 		
 		//System.out.println(air.getWorkflow("4f8eafde86648824da00b15b"));
-		List<ApplianceType> types = air.getApplianceTypes();
+//		List<ApplianceType> types = air.getApplianceTypes();
+//		
+//		for (ApplianceType applianceType : types) {
+//			System.out.println(applianceType);
+//		}
 		
-		for (ApplianceType applianceType : types) {
-			System.out.println(applianceType);
-		}
+		System.out.println(air.getWorkflow("4f9d0b538664884a64000635"));
 	}
 }

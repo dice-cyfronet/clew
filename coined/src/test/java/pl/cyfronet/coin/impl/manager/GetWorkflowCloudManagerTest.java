@@ -25,16 +25,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Credential;
+import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
@@ -132,7 +135,7 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 	}
 
 	@Test
-	public void shouldGetUserDevelopmentWorkflow() throws Exception {
+	public void shouldGetUserWorkflowInWorkflowMode() throws Exception {
 		// given
 		String contextId = "id";
 		String username = "user";
@@ -185,7 +188,8 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 		credentialProp.put("type2.password", "vm2Password");
 
 		manager.setCredentialProperties(credentialProp);
-
+		manager.setHeadNodeIp("headnode");
+		
 		String contextId = "id";
 		String username = "user";
 
@@ -196,12 +200,21 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 		wd.setName(workflowName);
 		wd.setWorkflow_type(WorkflowType.development);
 
+		PortMapping sshMapping = new PortMapping();
+		sshMapping.setVm_port(22);
+		sshMapping.setHeadnode_port(222);
+		
+		PortMapping vncMapping = new PortMapping();
+		vncMapping.setVm_port(5900);
+		vncMapping.setHeadnode_port(55900);
+		
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");
 		vm1.setName("vm1");
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
-
+		vm1.setInternal_port_mappings(Arrays.asList(sshMapping, vncMapping));
+		
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
 		vm2.setName("vm2");
@@ -223,13 +236,23 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 				"vm1Username", "vm1Password");
 		equals(workflow.getAtomicServiceInstances().get(1).getCredential(),
 				"vm2Username", "vm2Password");
+		
+		List<Redirection> vm1PortMapping = workflow.getAtomicServiceInstances().get(0).getRedirections();
+		List<Redirection> vm2PortMapping = workflow.getAtomicServiceInstances().get(1).getRedirections();
+		
+		assertNotNull(vm1PortMapping);
+		assertEquals(22, vm1PortMapping.get(0).getToPort().intValue());
+		assertEquals(222, vm1PortMapping.get(0).getFromPort().intValue());
+		assertEquals("headnode", vm1PortMapping.get(0).getHost());
+		
+		assertEquals(5900, vm1PortMapping.get(1).getToPort().intValue());
+		assertEquals(55900, vm1PortMapping.get(1).getFromPort().intValue());
+		assertEquals("headnode", vm1PortMapping.get(1).getHost());
+		
+		assertEquals(0, vm2PortMapping.size());
 	}
+	
 
-	/**
-	 * @param cred1
-	 * @param string
-	 * @param string2
-	 */
 	private void equals(Credential credential, String username, String password) {
 		assertNotNull(credential);
 		assertEquals(username, credential.getUsername());

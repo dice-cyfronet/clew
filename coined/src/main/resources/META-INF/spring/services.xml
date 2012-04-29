@@ -29,5 +29,6 @@
 
 		<property name="defaultPriority" value="${default.workflow.priority}" />
 		<property name="defaultSiteId" value="${default.cloud.site.id}" />
+		<property name="headNodeIp" value="${redirection.headnode.ip}" />
 	</bean>
 </beans>									   

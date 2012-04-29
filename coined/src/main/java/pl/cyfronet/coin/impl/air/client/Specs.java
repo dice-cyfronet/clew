@@ -35,7 +35,7 @@ public class Specs {
 	private String id;
 	
 	private Integer disk;
-
+	
 	/**
 	 * @return the memory
 	 */
@@ -128,6 +128,4 @@ public class Specs {
 		return "Specs [memory=" + memory + ", mac=" + mac + ", ip=" + ip
 				+ ", cpu=" + cpu + ", id=" + id + ", disk=" + disk + "]";
 	}
-	
-	
 }
