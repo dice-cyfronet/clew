@@ -30,7 +30,11 @@
 	</portlet:resourceURL>
 	<script type="text/javascript">
 	    jQuery(document).ready(function() {
-	    	window.updateStatus = function(statusLink, elementId) {
+	    	if(window.updates == null) {
+	    		window.updates = {};
+	    	}
+	    	
+	    	window.updates['${statusId}'] = function(statusLink, elementId) {
 	    		var timeoutSet = false;
 	    		jQuery.get(statusLink, function(status) {
 	    			if(jQuery('#' + elementId).text() != status) {
@@ -66,7 +70,7 @@
 	    	    						return false;
 	    	    					});
 	    							jQuery('#${accessMethodsId}').css('visibility', 'visible');
-	    							setTimeout("updateStatus('${statusLink}', '${statusId}')", 2000);
+	    							setTimeout("updates['${statusId}']('${statusLink}', '${statusId}')", 2000);
 	    						}
 	    					});
 	    					timeoutSet = true;
@@ -80,14 +84,14 @@
 							jQuery('#${accessMethodsId}').css('visibility', 'hidden');
 	    				}
 	    			}
+	    			
+	    			if(!timeoutSet) {
+		    			setTimeout("updates['${statusId}']('${statusLink}', '${statusId}')", 2000);
+		    		}
 	    		});
-	    		
-	    		if(!timeoutSet) {
-	    			setTimeout("updateStatus('${statusLink}', '${statusId}')", 2000);
-	    		}
 	    	};
 	    	
-	    	updateStatus('${statusLink}', '${statusId}');
+	    	updates['${statusId}']('${statusLink}', '${statusId}');
 	    });
 	</script>
 </c:forEach>

@@ -19,17 +19,43 @@
 				</c:choose>
 			</span>
 			<span class="coin-actions">
+				<portlet:actionURL var="startAs">
+					<portlet:param name="action" value="startAtomicService"/>
+					<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+					<portlet:param name="workflowType" value="${workflowType}"/>
+				</portlet:actionURL>
 				<c:choose>
 					<c:when test="${atomicService.active}">
-						<portlet:actionURL var="startAs">
-							<portlet:param name="action" value="startAtomicService"/>
-							<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-							<portlet:param name="workflowType" value="${workflowType}"/>
-						</portlet:actionURL>
 						<a class="coin-link" href="${startAs}">Start</a>
 					</c:when>
 					<c:otherwise>
-						Not active
+						<c:set var="inactiveAtomicServiceLink">inactiveAS-link-${atomicService.atomicServiceId}</c:set>
+						<c:set var="inactiveAtomicServiceLabel">inactiveAS-label-${atomicService.atomicServiceId}</c:set>
+						<a id="${inactiveAtomicServiceLink}" class="coin-link" href="${startAs}" style="visibility: hidden;">Start</a>
+						<span id="${inactiveAtomicServiceLabel}">Not active</span>
+						<portlet:resourceURL var="checkAsStatus" id="asSavingStatus">
+							<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+						</portlet:resourceURL>
+						<script type="text/javascript">
+	    					jQuery(document).ready(function() {
+	    						if(window.updates == null) {
+	    							window.updates = {};
+	    						}
+	    						
+	    						window.updates['${inactiveAtomicServiceLink}'] = function() {
+	    							jQuery.get('${checkAsStatus}', function(status) {
+	    								if(status === 'done') {
+	    									jQuery('#${inactiveAtomicServiceLabel}').text('');
+	    									jQuery('#${inactiveAtomicServiceLink}').css('visibility', 'visible');
+	    								} else {
+	    									setTimeout("updates['${inactiveAtomicServiceLink}']()", 2000);
+	    								}
+	    							});
+	    						};
+	    						
+	    						updates['${inactiveAtomicServiceLink}']();
+	    					});
+	    				</script>
 					</c:otherwise>
 				</c:choose>
 			</span>

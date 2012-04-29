@@ -581,7 +581,6 @@ public class CloudManagerPortlet {
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		
 		for(AtomicService as : atomicServices) {
-			log.trace("AS id: [{}]", as.getAtomicServiceId() == null ? "null": as.getAtomicServiceId());
 			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
 				try {
 					if(as.isActive()) {

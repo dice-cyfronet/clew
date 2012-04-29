@@ -27,7 +27,11 @@
 	</portlet:resourceURL>
 	<script type="text/javascript">
 	    jQuery(document).ready(function() {
-	    	window.updateStatus = function(statusLink, elementId) {
+	    	if(window.updates == null) {
+	    		window.updates = {};
+	    	}
+	    	
+	    	window.updates['${statusId}'] = function(statusLink, elementId) {
 	    		jQuery.get(statusLink, function(status) {
 	    			if(jQuery('#' + elementId).text() != status) {
 	    				jQuery('#' + elementId).text(status);
@@ -44,12 +48,12 @@
 				    		}
 			    		}
 		    		}
+	    			
+	    			setTimeout("updates['${statusId}']('${statusLink}', '${statusId}')", 2000);
 	    		});
-	    		
-	    		setTimeout("updateStatus('${statusLink}', '${statusId}')", 2000);
 	    	};
 	    	
-	    	updateStatus('${statusLink}', '${statusId}');
+	    	updates['${statusId}']('${statusLink}', '${statusId}');
 	    });
 	</script>
 </c:forEach>
