@@ -8,7 +8,7 @@
 	<div class="coin-menu-bottom">
 		<ul>
 			<li>
-				<a href='<portlet:renderURL/>' id="mainPage" style="visibility: hidden;">Go back to the main page</a>
+				<a class="coin-link" href='<portlet:renderURL/>' id="mainPage" style="visibility: hidden;">Go back to the main page</a>
 			</li>
 		</ul>
 	</div>
@@ -24,7 +24,7 @@
 	    			
 	    			if(status != 'done') {
 	    				jQuery('#asSavingState').animate({
-	    					opacity: 0
+	    					opacity: 0.5
 	    				}, 2000, function() {
 	    					//on animation completed
 	    				});

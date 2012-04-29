@@ -22,7 +22,7 @@
 			    			var fileName = file.split('|')[0];
 			    			var url = file.split('|')[1];
 			    			var size = file.split('|')[2];
-			    			files += '<li><a href="' + url + '">' + fileName + '</a><span class="coin-file-size">' + size + '</span></li>';
+			    			files += '<li><a href="' + url + '" class="coin-link">' + fileName + '</a><span class="coin-file-size">' + size + '</span></li>';
 			    		}
 			    		
 			    		files += '</ul>';
@@ -31,7 +31,7 @@
 		    		}
 		    		
 		    		jQuery('#files').html(files);
-		    		//setTimeout("updateFiles()", 2000);
+		    		setTimeout("updateFiles()", 2000);
 		    		
 		    		//the size of the page might have changed
 		    		//so lets notify the parent window about the change

@@ -13,7 +13,8 @@
 				<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
 				<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 			</portlet:renderURL>
-			<a class="coin-link" href="${invokeAtomicService}"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a>
+			<c:set var="invokeId">invokeId-${atomicServiceInstance.id}</c:set>
+			<a id="${invokeId}" class="coin-link" href="${invokeAtomicService}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a>
 		</c:if>
 	</span>
 	<c:if test="${not status.last}">
@@ -31,6 +32,18 @@
 	    			if(jQuery('#' + elementId).text() != status) {
 	    				jQuery('#' + elementId).text(status);
 	    			}
+	    			
+	    			if(jQuery("#${invokeId}")) {
+			    		if(status === 'running') {
+			    			if(jQuery('#${invokeId}').css('visibility') === 'hidden') {
+				    			jQuery('#${invokeId}').css('visibility', 'visible');
+				    		}
+			    		} else {
+			    			if(jQuery('#${invokeId}').css('visibility') === 'visible') {
+				    			jQuery('#${invokeId}').css('visibility', 'hidden');
+				    		}
+			    		}
+		    		}
 	    		});
 	    		
 	    		setTimeout("updateStatus('${statusLink}', '${statusId}')", 2000);

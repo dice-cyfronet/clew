@@ -43,6 +43,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
@@ -418,7 +419,7 @@ public class CloudManagerPortlet {
 		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
 		boolean statusRetrieved = false;
 		
-		if(workflow != null) {
+		if(workflow != null && workflow.getAtomicServiceInstances() != null) {
 			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
 				if(asi.getId() != null && asi.getId().equals(instanceId)) {
 					try {
@@ -436,6 +437,61 @@ public class CloudManagerPortlet {
 		
 		if(!statusRetrieved) {
 			log.warn("Could not retrieve status for workflow [{}] and atomic service [{}]. Returning empty status.", workflowId, atomicServiceId);
+			
+			try {
+				response.getWriter().write("");
+			} catch (IOException e) {
+				log.warn("Could not write instance status to the http writer", e);
+			}
+		}
+	}
+	
+	@ResourceMapping("accessMethods")
+	public void getAccessMethods(@RequestParam(PARAM_WORKFLOW_ID) String workflowId,
+			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String instanceId,
+			PortletRequest request, ResourceResponse response) {
+		log.trace("Processing atomic service instance access methods request for workflow [{}] and instance [{}]",
+				new String[] {workflowId, instanceId});
+		
+		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
+		boolean accessMethodsRetrieved = false;
+		
+		if(workflow != null && workflow.getAtomicServiceInstances() != null) {
+			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
+				if(asi.getId() != null && asi.getId().equals(instanceId)) {
+					try {
+						if(asi.getRedirections() != null && asi.getRedirections().size() > 0) {
+							StringBuilder builder = new StringBuilder();
+							
+							for(Redirection redirection : asi.getRedirections()) {
+								if(redirection.getName() != null && redirection.getName().equals("ssh")) {
+									builder.append(redirection.getName()).append(":")
+											.append(redirection.getHost()).append(":")
+											.append(redirection.getFromPort());
+									
+									if(asi.getCredential() != null) {
+										builder.append(":").append(asi.getCredential().getUsername()).append(":")
+												.append(asi.getCredential().getPassword());
+									}
+											
+								}
+							}
+							
+							response.getWriter().write(builder.toString());
+							accessMethodsRetrieved = true;
+						}
+					} catch (IOException e) {
+						log.warn("Could not write instance status to the http writer", e);
+					}
+
+					break;
+				}
+			}
+		}
+		
+		if(!accessMethodsRetrieved) {
+			log.warn("Could not retrieve access methods for workflow [{}] and atomic service instance [{}]. " +
+					"Returning empty status.", workflowId, instanceId);
 			
 			try {
 				response.getWriter().write("");
