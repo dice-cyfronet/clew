@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,6 +74,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_AS_INVOCATION_POSSIBLE = "atomicServiceInvokable";
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
 	static final String MODEL_BEAN_INVOCATION_PATH = "invocationPath";
+	static final String MODEL_BEAN_WEBAPP_ENDPOINTS = "webappEndpoints";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -343,6 +343,18 @@ public class CloudManagerPortlet {
 			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
 			model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, atomicService);
 			
+			List<Endpoint> webAppEndpoints = new ArrayList<Endpoint>();
+			
+			if(atomicService.getEndpoints() != null) {
+				for(Endpoint endpoint : atomicService.getEndpoints()) {
+					if(endpoint.getType() == EndpointType.WEBAPP) {
+						webAppEndpoints.add(endpoint);
+					}
+				}
+			}
+			
+			model.addAttribute(MODEL_BEAN_WEBAPP_ENDPOINTS, webAppEndpoints);
+			
 			if(atomicService.getEndpoints() != null && atomicService.getEndpoints().size() > 0 &&
 					atomicService.getEndpoints().get(0).getType() == EndpointType.REST) {
 				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
@@ -382,7 +394,8 @@ public class CloudManagerPortlet {
 			}
 		} else {
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
-			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, messages.getMessage("cloud.manager.portlet.no.atomic.service.found", null, null));
+			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE,
+					messages.getMessage("cloud.manager.portlet.no.atomic.service.found", null, null));
 		}
 		
 		if(invocationResult != null) {

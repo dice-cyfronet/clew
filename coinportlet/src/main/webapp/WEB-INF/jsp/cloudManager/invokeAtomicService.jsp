@@ -10,6 +10,12 @@
 			<div class="coin-error-panel">${negativeMessage}</div>
 		</c:when>
 		<c:otherwise>
+			<c:if test="${fn:length(webappEndpoints) > 0}">
+				<span>Web Application endpoints:</span><br/>
+				<c:forEach var="endpoint" items="${webappEndpoints}">
+					<a class="coin-link" href="${endpoint.invocationPath}">${endpoint.invocationPath}</a><br/>
+				</c:forEach>
+			</c:if>
 			<c:choose>
 				<c:when test="${atomicServiceInvokable}">
 					<c:if test="${invocationPath != null}">

@@ -71,7 +71,8 @@
 	    	    							closeText: '',
 	    	    							modal: false,
 	    	    							position: 'top',
-	    	    							autoOpen: false
+	    	    							autoOpen: false,
+	    	    							draggable: false
 	    	    						});
 	    	    						window.popup.dialog('open');
 	    	    						
