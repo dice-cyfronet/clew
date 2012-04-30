@@ -12,7 +12,7 @@
 		<c:otherwise>
 			<c:choose>
 				<c:when test="${atomicServiceInvokable}">
-					<c:if test=${invocationPath != null}>
+					<c:if test="${invocationPath != null}">
 						<div>
 							<span>Invocation URL template: <span style="font-family: monospace; font-size: larger;">${invocationPath}</span></span>
 						</div>
