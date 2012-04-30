@@ -12,6 +12,9 @@
 		<c:otherwise>
 			<c:choose>
 				<c:when test="${atomicServiceInvokable}">
+					<div>
+						<span>Invocation URL template: <span style="font-family: monospace; font-size: larger;">${invocationPath}</span></span>
+					</div>
 					<form:form class="coin-form" action='${invokeAtomicService}' modelAttribute='invokeAtomicServiceRequest'>
 						<form:hidden path="atomicServiceInstanceId"/>
 						<form:hidden path="workflowId"/>

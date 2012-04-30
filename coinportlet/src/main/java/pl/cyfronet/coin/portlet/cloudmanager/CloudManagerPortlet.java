@@ -73,6 +73,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_CURRENT_ATOMIC_SERVICE = "currentAtomicService";
 	static final String MODEL_BEAN_AS_INVOCATION_POSSIBLE = "atomicServiceInvokable";
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
+	static final String MODEL_BEAN_INVOCATION_PATH = "invocationPath";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -370,6 +371,7 @@ public class CloudManagerPortlet {
 					
 					model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
 					model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
+					model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr, false));
 				}
 			} else {
 				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
@@ -568,7 +570,7 @@ public class CloudManagerPortlet {
 			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
 					workflowId, initialconfigurations.get(0).getId());
 			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "Ask user about it?");
+					initialconfigurations.get(0).getId(), "vm");
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id SecHelloWorld");
@@ -616,9 +618,7 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId());
-		urlPath += request.getInvocationPath();
+		String urlPath = createInvocationPath(request, false);
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
@@ -649,6 +649,17 @@ public class CloudManagerPortlet {
 		//TODO
 		
 		return response.toString();
+	}
+
+	private String createInvocationPath(InvokeAtomicServiceRequest request, boolean onlyBaseUrl) {
+		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
+				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId());
+		
+		if(!onlyBaseUrl) {
+			urlPath += request.getInvocationPath();
+		}
+		
+		return urlPath;
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {
