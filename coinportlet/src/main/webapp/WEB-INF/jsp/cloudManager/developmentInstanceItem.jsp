@@ -49,19 +49,24 @@
 	    				if(jQuery('#${accessMethodsId}').css('visibility') === 'hidden') {
 	    					jQuery.get('${accessMethodsLink}', function(accessMethods) {
 	    						if(accessMethods !== '') {
-	    							var creds = accessMethods.split(':');
 	    							jQuery('#${accessMethodsId}').click(function() {
-	    								var html = '<b>' + creds[0] + ':</b><br/>' +
-		    								'<span style="padding-left: 10px;">Host: ' + creds[1] + '</span><br/>' +
-		    								'<span style="padding-left: 10px;">Port: ' + creds[2] + '</span><br/>';
-	    								
-		    							if(creds.length > 3) {
-	    									html += '<span style="padding-left: 10px;">Login: ' + creds[3] + '</span><br/>' +
-	    										'<span style="padding-left: 10px;">Password: ' + creds[4] + '</span><br/>';
-	    								}
-	    								
-	    								html += '<br/><a class="coin-link" href="#closeAccessInfoWindow" ' +
-	    										'onclick="window.popup.dialog(\'close\'); window.popup = null; return false;">Close</a>';
+	    								var methods = accessMethods.split('|');
+	    								var html = '';
+		    							
+	    								for(var i = 0; i < methods.length; i++) {
+			    							var creds = methods[i].split(':');
+		    								html = '<b>' + creds[0] + ':</b><br/>' +
+			    								'<span style="padding-left: 10px;">Host: ' + creds[1] + '</span><br/>' +
+			    								'<span style="padding-left: 10px;">Port: ' + creds[2] + '</span><br/>';
+		    								
+			    							if(creds.length > 3) {
+		    									html += '<span style="padding-left: 10px;">Login: ' + creds[3] + '</span><br/>' +
+		    										'<span style="padding-left: 10px;">Password: ' + creds[4] + '</span><br/>';
+		    								}
+		    							}
+		    							
+		    							html += '<br/><a class="coin-link" href="#closeAccessInfoWindow" ' +
+											'onclick="window.popup.dialog(\'close\'); window.popup = null; return false;">Close</a>';
 	    								
 	    								if(window.popup != null) {
 	    									window.popup.dialog('close');

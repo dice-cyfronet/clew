@@ -75,6 +75,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
 	static final String MODEL_BEAN_INVOCATION_PATH = "invocationPath";
 	static final String MODEL_BEAN_WEBAPP_ENDPOINTS = "webappEndpoints";
+	static final String MODEL_BEAN_INVOCATION_BASE = "invocationBase";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -341,57 +342,63 @@ public class CloudManagerPortlet {
 		if(atomicService != null) {
 			String workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
 			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
-			model.addAttribute(MODEL_BEAN_CURRENT_ATOMIC_SERVICE, atomicService);
+			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId));
 			
 			List<Endpoint> webAppEndpoints = new ArrayList<Endpoint>();
+//			List<Endpoint> restEndpoints = new ArrayList<Endpoint>();
 			
 			if(atomicService.getEndpoints() != null) {
 				for(Endpoint endpoint : atomicService.getEndpoints()) {
-					if(endpoint.getType() == EndpointType.WEBAPP) {
-						webAppEndpoints.add(endpoint);
+					switch(endpoint.getType()) {
+						case WEBAPP:
+							webAppEndpoints.add(endpoint);
+						break;
+						case REST:
+							model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
+									atomicService.getEndpoints().get(0).getServiceName()));
+							InvokeAtomicServiceRequest iasr = null;
+							
+							if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
+								iasr = new InvokeAtomicServiceRequest();
+								iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
+								iasr.setWorkflowId(workflowId);
+								iasr.setConfigurationId(configurationId);
+								iasr.setAtomicServiceId(atomicServiceId);
+								iasr.setFormFields(new ArrayList<FormField>());
+								
+								if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
+									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
+									Matcher matcher = pattern.matcher(atomicService.getEndpoints().get(0).getInvocationPath());
+									
+									while(matcher.find()) {
+										FormField formField = new FormField();
+										formField.setName(matcher.group(1));
+										formField.setValue("");
+										iasr.getFormFields().add(formField);
+									}
+									
+									iasr.setInvocationPath(atomicService.getEndpoints().get(0).getInvocationPath());
+								}
+								
+								log.trace("For REST invocation the following parameters were found: [{}]", iasr.getFormFields());
+								
+								model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
+								model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
+							} else {
+								iasr = (InvokeAtomicServiceRequest) model.asMap().get(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST);
+							}
+							
+							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
+									iasr.getConfigurationId()) + iasr.getInvocationPath());
+						break;
+						case WS:
+							log.warn("Endpoints of type {} are not supported on atomic service {}", EndpointType.WS, atomicServiceId);
+						break;
 					}
 				}
 			}
 			
 			model.addAttribute(MODEL_BEAN_WEBAPP_ENDPOINTS, webAppEndpoints);
-			
-			if(atomicService.getEndpoints() != null && atomicService.getEndpoints().size() > 0 &&
-					atomicService.getEndpoints().get(0).getType() == EndpointType.REST) {
-				model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
-						atomicService.getEndpoints().get(0).getServiceName()));
-				
-				if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
-					InvokeAtomicServiceRequest iasr = new InvokeAtomicServiceRequest();
-					iasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
-					iasr.setWorkflowId(workflowId);
-					iasr.setConfigurationId(configurationId);
-					iasr.setAtomicServiceId(atomicServiceId);
-					iasr.setFormFields(new ArrayList<FormField>());
-					
-					if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
-						Pattern pattern = Pattern.compile("\\{(.+?)\\}");
-						Matcher matcher = pattern.matcher(atomicService.getEndpoints().get(0).getInvocationPath());
-						
-						while(matcher.find()) {
-							FormField formField = new FormField();
-							formField.setName(matcher.group(1));
-							formField.setValue("");
-							iasr.getFormFields().add(formField);
-						}
-						
-						iasr.setInvocationPath(atomicService.getEndpoints().get(0).getInvocationPath());
-					}
-					
-					log.trace("For REST invocation the following parameters were found: [{}]", iasr.getFormFields());
-					
-					model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
-					model.addAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST, iasr);
-					model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr, false));
-				}
-			} else {
-				model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
-				model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE, "Endpoint definition not present or wrong service type");
-			}
 		} else {
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
 			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE,
@@ -399,7 +406,6 @@ public class CloudManagerPortlet {
 		}
 		
 		if(invocationResult != null) {
-			//TODO: in future do not use request parameter to pass AS invocation result
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
 			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
 			model.addAttribute(PARAM_INVOCATION_CODE, invocationCode);
@@ -489,19 +495,26 @@ public class CloudManagerPortlet {
 							StringBuilder builder = new StringBuilder();
 							
 							for(Redirection redirection : asi.getRedirections()) {
-								if(redirection.getName() != null && redirection.getName().equals("ssh")) {
+								if(redirection.getName() != null) {
 									builder.append(redirection.getName()).append(":")
 											.append(redirection.getHost()).append(":")
 											.append(redirection.getFromPort());
 									
-									if(asi.getCredential() != null) {
+									if(redirection.getName().equals("ssh") && asi.getCredential() != null) {
 										builder.append(":").append(asi.getCredential().getUsername()).append(":")
 												.append(asi.getCredential().getPassword());
 									}
 											
 								}
+								
+								builder.append("|");
 							}
 							
+							if(builder.length() > 0) {
+								builder.deleteCharAt(builder.length() - 1);
+							}
+							
+							log.trace("Returning the following redirection sequence: [{}]", builder.toString());
 							response.getWriter().write(builder.toString());
 							accessMethodsRetrieved = true;
 						}
@@ -641,7 +654,7 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		String urlPath = createInvocationPath(request, false);
+		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId()) + request.getInvocationPath();
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
@@ -674,13 +687,9 @@ public class CloudManagerPortlet {
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
 
-	private String createInvocationPath(InvokeAtomicServiceRequest request, boolean onlyBaseUrl) {
+	private String createInvocationPath(String workflowId, String configurationId) {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-				replace("{workflowId}", request.getWorkflowId()).replace("{configurationId}", request.getConfigurationId());
-		
-		if(!onlyBaseUrl) {
-			urlPath += request.getInvocationPath();
-		}
+				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId);
 		
 		return urlPath;
 	}
