@@ -24,5 +24,7 @@ public enum EndpointType {
 
 	WS,
 	
-	REST
+	REST,
+	
+	WEBAPP
 }

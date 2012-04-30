@@ -171,8 +171,13 @@ public class CloudManagerImpl implements CloudManager {
 	 * @return
 	 */
 	private EndpointType getEdnpointType(String endpoint_type) {
-		return "WS".equalsIgnoreCase(endpoint_type) ? EndpointType.WS
-				: EndpointType.REST;
+		if("WS".equalsIgnoreCase(endpoint_type)) {
+			return EndpointType.WS;
+		} else if("WEBAPP".equalsIgnoreCase(endpoint_type)) {
+			return EndpointType.WEBAPP;
+		} else {
+			return EndpointType.REST;
+		}
 	}
 
 	/*
