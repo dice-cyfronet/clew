@@ -57,15 +57,23 @@
 	    								
 		    							if(creds.length > 3) {
 	    									html += '<span style="padding-left: 10px;">Login: ' + creds[3] + '</span><br/>' +
-	    									'<span style="padding-left: 10px;">Password: ' + creds[4] + '</span><br/>';
+	    										'<span style="padding-left: 10px;">Password: ' + creds[4] + '</span><br/>';
 	    								}
 	    								
-	    								html += '<br/><span style="font-size: small;">(hit the Escape button to close this window)</span>';
-	    	    						jQuery('<div class="coin-content coin-content-no-tabs" style="padding: 10px;"></div>').html(html).dialog({
+	    								html += '<br/><a class="coin-link" href="#closeAccessInfoWindow" ' +
+	    										'onclick="window.popup.dialog(\'close\'); window.popup = null; return false;">Close</a>';
+	    								
+	    								if(window.popup != null) {
+	    									window.popup.dialog('close');
+	    								}
+	    								
+	    	    						window.popup = jQuery('<div class="coin-content coin-content-no-tabs" style="padding: 10px;"></div>').html(html).dialog({
 	    	    							closeText: '',
 	    	    							modal: false,
-	    	    							position: 'top'
+	    	    							position: 'top',
+	    	    							autoOpen: false
 	    	    						});
+	    	    						window.popup.dialog('open');
 	    	    						
 	    	    						return false;
 	    	    					});
