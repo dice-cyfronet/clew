@@ -62,7 +62,7 @@ public class AtomicServiceManagementTest extends
 
 	@DataProvider(name = "getAtomicServicesSizes")
 	protected Object[][] getAtomicServicesSizes() {
-		return new Object[][] { { 0 }, { 1 }, { 2 }, { 3 } };
+		return new Object[][] { { 0 }, { 1 }, { 2 }, { 3 }, { 4 } };
 	}
 
 	@Test(dataProvider = "getAtomicServicesSizes")
@@ -80,7 +80,7 @@ public class AtomicServiceManagementTest extends
 			as.setDescription("description " + i);
 			as.setHttp(true);
 			as.setEndpoints(getEndpoints(i));
-			
+
 			ases.add(as);
 		}
 
@@ -103,7 +103,14 @@ public class AtomicServiceManagementTest extends
 	}
 
 	private EndpointType getEndpointType(int i) {
-		return i % 2 == 0 ? EndpointType.WS : EndpointType.REST;
+		int nr = i % 3;
+		if (nr == 0) {
+			return EndpointType.WS;
+		} else if (nr == 0) {
+			return EndpointType.WEBAPP;
+		} else {
+			return EndpointType.REST;
+		}
 	}
 
 	private void whenGetAtomicServices() {
@@ -128,7 +135,7 @@ public class AtomicServiceManagementTest extends
 		assertFalse(atomicService.isShared());
 		assertFalse(atomicService.isVnc());
 
-		if(nr == 0) {
+		if (nr == 0) {
 			checkEndpointsListEmpty(atomicService.getEndpoints());
 		} else {
 			checkEndpoints(atomicService.getEndpoints(), nr);
@@ -136,7 +143,7 @@ public class AtomicServiceManagementTest extends
 	}
 
 	private void checkEndpointsListEmpty(List<Endpoint> endpoints) {
-		assertNull(endpoints);					
+		assertNull(endpoints);
 	}
 
 	private void checkEndpoints(List<Endpoint> endpoints, int size) {
