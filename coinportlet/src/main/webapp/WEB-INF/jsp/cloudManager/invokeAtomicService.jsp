@@ -50,10 +50,17 @@
 		</c:otherwise>
 	</c:choose>
 	<c:if test="${not empty atomicServiceInvocationResult}">
-		<div style="margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto;">
-			<spring:message code="cloud.manager.portlet.atomic.service.invocation.result.label"/>
+		<c:choose>
+			<c:when test="${atomicServiceInvocationCode != '200'}">
+				<div style="margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; padding: 10px; background-color: #efc09f;">
+			</c:when>
+			<c:otherwise>
+				<div style="margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; padding: 10px;">
+			</c:otherwise>
+		</c:choose>
+			<span>Response code: </span><br/><span style="font-weight: bold; padding: 10px; display: block;">${atomicServiceInvocationCode}</span>
 			<br/>
-			<pre style="font-size: small;">${atomicServiceInvocationResult}</pre>
+			<span>Response body: </span><br/><span style="font-weight: bold; padding: 10px; display: block;">${atomicServiceInvocationResult}</span>
 		</div>
 	</c:if>
 	<div class="coin-menu-bottom">

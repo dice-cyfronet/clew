@@ -3,6 +3,7 @@ package pl.cyfronet.coin.portlet.cloudmanager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_ATOMIC_SERVICE_ID = "atomicServiceId";
 	static final String PARAM_WORKFLOW_ID = "workflowId";
 	static final String PARAM_WORKFLOW_TYPE = "workflowType";
+	static final String PARAM_INVOCATION_CODE = "atomicServiceInvocationCode";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -322,7 +324,8 @@ public class CloudManagerPortlet {
 	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
 			@RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
-			String invocationResult, Model model, PortletRequest request) {
+			String invocationResult, @RequestParam(required = false, value = PARAM_INVOCATION_CODE)
+			String invocationCode, Model model, PortletRequest request) {
 		log.debug("Atomic service invocation request called for AS id [{}] and AS instance id [{}]", atomicServiceId, atomicServiceInstanceId);
 		
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
@@ -386,6 +389,7 @@ public class CloudManagerPortlet {
 			//TODO: in future do not use request parameter to pass AS invocation result
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, true);
 			model.addAttribute(PARAM_INVOCATION_RESULT, invocationResult);
+			model.addAttribute(PARAM_INVOCATION_CODE, invocationCode);
 		}
 		
 		return "cloudManager/invokeAtomicService";
@@ -395,17 +399,23 @@ public class CloudManagerPortlet {
 	public void doActionInvokeAtomicService(@ModelAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)
 			InvokeAtomicServiceRequest invokeAtomicServiceRequest, PortletRequest request, ActionResponse response) {
 		String result = null;
+		String resultCode = null;
 		log.info("Invoking service with the following request [{}]", invokeAtomicServiceRequest);
 		
 		try {
-			result = invokeAtomicService(request, invokeAtomicServiceRequest);
+			String responseValue = invokeAtomicService(request, invokeAtomicServiceRequest);
+			log.trace("AS invocation result is [{}]", responseValue);
+			resultCode = responseValue.substring(0, responseValue.indexOf(":"));
+			result = responseValue.substring(responseValue.indexOf(":") + 1);
 		} catch (Exception e) {
 			result = "Error occurred: " + e.getMessage();
+			resultCode = "none";
 		}
 		
 		response.setRenderParameter(PARAM_ACTION, ACTION_INVOKE_ATOMIC_SERVICE);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, invokeAtomicServiceRequest.getAtomicServiceId());
 		response.setRenderParameter(PARAM_INVOCATION_RESULT, HtmlUtils.htmlEscape(result));
+		response.setRenderParameter(PARAM_INVOCATION_CODE, resultCode);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID,
 				invokeAtomicServiceRequest.getAtomicServiceInstanceId());
 	}
@@ -627,8 +637,8 @@ public class CloudManagerPortlet {
 		log.debug("URL for service invocation is [{}]", urlPath);
 		
 		URL asUrl = new URL(urlPath);
-		URLConnection connection = asUrl.openConnection();
-		connection.setRequestProperty(clientFactory.HEADER_AUTHORIZATION, clientFactory.createBasicAuthHeader(portletRequest));
+		HttpURLConnection connection = (HttpURLConnection) asUrl.openConnection();
+		connection.setRequestProperty(ClientFactory.HEADER_AUTHORIZATION, clientFactory.createBasicAuthHeader(portletRequest));
 		connection.setDoOutput(true);
 		
 //		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
@@ -646,9 +656,9 @@ public class CloudManagerPortlet {
 //		out.close();
 		in.close();
 		
-		//TODO
+		int responseCode = connection.getResponseCode();
 		
-		return response.toString();
+		return String.valueOf(responseCode) + ":" + response.toString();
 	}
 
 	private String createInvocationPath(InvokeAtomicServiceRequest request, boolean onlyBaseUrl) {
