@@ -259,7 +259,7 @@ public class CloudManagerPortlet {
 	public String doViewSaveAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId, Model model) {
 		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
 			SaveAtomicServiceRequest sasr = new SaveAtomicServiceRequest();
-			sasr.setInvocationPort("80");
+			sasr.setInvocationPort("8443");
 			sasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
