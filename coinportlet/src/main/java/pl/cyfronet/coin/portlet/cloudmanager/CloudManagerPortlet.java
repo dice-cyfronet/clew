@@ -436,6 +436,7 @@ public class CloudManagerPortlet {
 			
 			result = responseValue.substring(responseValue.indexOf(":") + 1);
 		} catch (Exception e) {
+			log.warn("AS invocation error occurred!", e);
 			result = "Error occurred: " + e.getMessage();
 			resultCode = "none";
 		}
@@ -671,28 +672,38 @@ public class CloudManagerPortlet {
 		
 		log.debug("URL for service invocation is [{}]", urlPath);
 		
-		URL asUrl = new URL(urlPath);
-		HttpURLConnection connection = (HttpURLConnection) asUrl.openConnection();
-		connection.setRequestProperty(ClientFactory.HEADER_AUTHORIZATION, clientFactory.createBasicAuthHeader(portletRequest));
-		connection.setDoOutput(true);
-		
-//		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-//		out.write(request.getMessageBody());
-//		out.flush();
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		int responseCode = 0;
 		StringBuilder response = new StringBuilder();
-		String line = null;
+		HttpURLConnection connection = null;
 		
-		while((line = in.readLine()) != null) {
-			response.append(line).append("\n");
+		try {
+			URL asUrl = new URL(urlPath);
+			connection = (HttpURLConnection) asUrl.openConnection();
+			connection.setRequestProperty(ClientFactory.HEADER_AUTHORIZATION, clientFactory.createBasicAuthHeader(portletRequest));
+			connection.setDoOutput(true);
+			
+	//		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+	//		out.write(request.getMessageBody());
+	//		out.flush();
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String line = null;
+			
+			while((line = in.readLine()) != null) {
+				response.append(line).append("\n");
+			}
+			
+	//		out.close();
+			in.close();
+			
+			responseCode = connection.getResponseCode();
+			log.debug("Service invocation headear names and values: [{}]", connection.getHeaderFields());
+		} catch (IOException e) {
+			if(connection != null) {
+				responseCode = connection.getResponseCode();
+				response.append(connection.getResponseMessage());
+			}
 		}
-		
-//		out.close();
-		in.close();
-		
-		int responseCode = connection.getResponseCode();
-		log.debug("Service invocation headear names and values: [{}]", connection.getHeaderFields());
 		
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
