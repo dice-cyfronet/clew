@@ -49,7 +49,7 @@
 	</c:if>
 	<c:if test="${not empty atomicServiceInvocationResult}">
 		<c:choose>
-			<c:when test="${atomicServiceInvocationCode != '200'}">
+			<c:when test="${atomicServiceInvocationCode != '200 - OK'}">
 				<c:set var="style">margin-top: 20px; margin-bottom: 20px; margin-left: auto; margin-right: auto; padding: 10px; background-color: #efc09f;</c:set>
 			</c:when>
 			<c:otherwise>
