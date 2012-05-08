@@ -690,6 +690,7 @@ public class CloudManagerPortlet {
 		in.close();
 		
 		int responseCode = connection.getResponseCode();
+		log.debug("Service invocation headear names and values: [{}]", connection.getHeaderFields());
 		
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
