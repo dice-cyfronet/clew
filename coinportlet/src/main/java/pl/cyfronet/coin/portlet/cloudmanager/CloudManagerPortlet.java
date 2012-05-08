@@ -7,6 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -200,7 +202,7 @@ public class CloudManagerPortlet {
 			Model model, PortletRequest request) {
 		log.debug("Generating the atomic service startup parameters view for workflow type [{}]", workflowType);
 		
-		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
+		List<AtomicService> atomicServices = getSortedAtomicServices(request);
 		filterAtomicService(atomicServices, workflowType);
 		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES, atomicServices);
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
@@ -754,5 +756,16 @@ public class CloudManagerPortlet {
 		}
 		
 		return null;
+	}
+	
+	private List<AtomicService> getSortedAtomicServices(PortletRequest request) {
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
+		Collections.sort(atomicServices, new Comparator<AtomicService>() {
+			@Override
+			public int compare(AtomicService as1, AtomicService as2) {
+				return as1.getName().compareToIgnoreCase(as2.getName());
+			}
+		});
+		return atomicServices;
 	}
 }
