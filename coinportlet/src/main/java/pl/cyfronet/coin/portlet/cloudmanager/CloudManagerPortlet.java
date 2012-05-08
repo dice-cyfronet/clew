@@ -425,6 +425,13 @@ public class CloudManagerPortlet {
 			String responseValue = invokeAtomicService(request, invokeAtomicServiceRequest);
 			log.trace("AS invocation result is [{}]", responseValue);
 			resultCode = responseValue.substring(0, responseValue.indexOf(":"));
+			
+			if(resultCode.equals("401")) {
+				resultCode += " - Forbidden";
+			} else if(resultCode.equals("200")) {
+				resultCode += " - OK";
+			}
+			
 			result = responseValue.substring(responseValue.indexOf(":") + 1);
 		} catch (Exception e) {
 			result = "Error occurred: " + e.getMessage();
