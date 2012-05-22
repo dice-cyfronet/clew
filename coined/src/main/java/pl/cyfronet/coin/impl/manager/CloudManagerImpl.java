@@ -93,8 +93,6 @@ public class CloudManagerImpl implements CloudManager {
 
 	private Properties credentialProperties;
 
-	private String headNodeIp;
-
 	/*
 	 * (non-Javadoc)
 	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getAtomicServices()
@@ -409,9 +407,9 @@ public class CloudManagerImpl implements CloudManager {
 		if (vm.getInternal_port_mappings() != null) {
 			for (PortMapping portMapping : vm.getInternal_port_mappings()) {
 				Redirection redirection = new Redirection();
-				redirection.setHost(headNodeIp);
+				redirection.setHost(portMapping.getHeadnode_ip());
 				redirection.setFromPort(portMapping.getHeadnode_port());
-				redirection.setToPort(portMapping.getVm_port());
+				redirection.setToPort(portMapping.getVm_port());				
 				redirection.setHttp(false);
 				redirection.setName("ssh");
 
@@ -726,12 +724,5 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	public void setCredentialProperties(Properties credentialProperties) {
 		this.credentialProperties = credentialProperties;
-	}
-
-	/**
-	 * @param headNodeIp the headNodeIp to set
-	 */
-	public void setHeadNodeIp(String headNodeIp) {
-		this.headNodeIp = headNodeIp;
 	}
 }

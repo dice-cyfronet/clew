@@ -188,7 +188,6 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 		credentialProp.put("type2.password", "vm2Password");
 
 		manager.setCredentialProperties(credentialProp);
-		manager.setHeadNodeIp("headnode");
 		
 		String contextId = "id";
 		String username = "user";
@@ -203,10 +202,12 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 		PortMapping sshMapping = new PortMapping();
 		sshMapping.setVm_port(22);
 		sshMapping.setHeadnode_port(222);
+		sshMapping.setHeadnode_ip("headnodeIp");
 		
 		PortMapping vncMapping = new PortMapping();
 		vncMapping.setVm_port(5900);
 		vncMapping.setHeadnode_port(55900);
+		vncMapping.setHeadnode_ip("headnodeIp");
 		
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");
@@ -243,11 +244,11 @@ public class GetWorkflowCloudManagerTest extends AbstractCloudManagerTest {
 		assertNotNull(vm1PortMapping);
 		assertEquals(22, vm1PortMapping.get(0).getToPort().intValue());
 		assertEquals(222, vm1PortMapping.get(0).getFromPort().intValue());
-		assertEquals("headnode", vm1PortMapping.get(0).getHost());
+		assertEquals("headnodeIp", vm1PortMapping.get(0).getHost());
 		
 		assertEquals(5900, vm1PortMapping.get(1).getToPort().intValue());
 		assertEquals(55900, vm1PortMapping.get(1).getFromPort().intValue());
-		assertEquals("headnode", vm1PortMapping.get(1).getHost());
+		assertEquals("headnodeIp", vm1PortMapping.get(1).getHost());
 		
 		assertEquals(0, vm2PortMapping.size());
 	}
