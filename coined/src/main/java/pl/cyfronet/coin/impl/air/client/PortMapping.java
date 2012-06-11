@@ -28,6 +28,8 @@ public class PortMapping {
 
 	private String headnode_ip;
 
+	private String service_name;
+	
 	/**
 	 * @return the vm_port
 	 */
@@ -71,12 +73,27 @@ public class PortMapping {
 		this.headnode_ip = headnode_ip;
 	}
 
+	/**
+	 * @return the service_name
+	 */
+	public String getService_name() {
+		return service_name;
+	}
+
+	/**
+	 * @param service_name the service_name to set
+	 */
+	public void setService_name(String service_name) {
+		this.service_name = service_name;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "PortMapping [vm_port=" + vm_port + ", headnode_port="
-				+ headnode_port + ", headnode_ip=" + headnode_ip + "]";
+				+ headnode_port + ", headnode_ip=" + headnode_ip
+				+ ", service_name=" + service_name + "]";
 	}
 }

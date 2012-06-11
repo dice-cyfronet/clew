@@ -169,9 +169,9 @@ public class CloudManagerImpl implements CloudManager {
 	 * @return
 	 */
 	private EndpointType getEdnpointType(String endpoint_type) {
-		if("WS".equalsIgnoreCase(endpoint_type)) {
+		if ("WS".equalsIgnoreCase(endpoint_type)) {
 			return EndpointType.WS;
-		} else if("WEBAPP".equalsIgnoreCase(endpoint_type)) {
+		} else if ("WEBAPP".equalsIgnoreCase(endpoint_type)) {
 			return EndpointType.WEBAPP;
 		} else {
 			return EndpointType.REST;
@@ -193,7 +193,8 @@ public class CloudManagerImpl implements CloudManager {
 		logger.debug("Add atomic service [{} {}] into workflow [{}]",
 				new Object[] { name, atomicServiceId, contextId });
 		registerVms(contextId, Arrays.asList(atomicServiceId),
-				Arrays.asList(name), defaultPriority, workflow.getWorkflow_type());
+				Arrays.asList(name), defaultPriority,
+				workflow.getWorkflow_type());
 
 		// TODO information from Atmosphere about atomis service instance id
 		// needed!
@@ -409,9 +410,9 @@ public class CloudManagerImpl implements CloudManager {
 				Redirection redirection = new Redirection();
 				redirection.setHost(portMapping.getHeadnode_ip());
 				redirection.setFromPort(portMapping.getHeadnode_port());
-				redirection.setToPort(portMapping.getVm_port());				
+				redirection.setToPort(portMapping.getVm_port());
 				redirection.setHttp(false);
-				redirection.setName("ssh");
+				redirection.setName(portMapping.getService_name());
 
 				redirections.add(redirection);
 			}
@@ -616,8 +617,8 @@ public class CloudManagerImpl implements CloudManager {
 			request.setCorrelationId(contextId);
 			request.setApplianceIdentities(getApplianceIdentities(configIds,
 					names));
-			//FIXME
-			//request.setRunMode()
+			// FIXME
+			// request.setRunMode()
 
 			ManagerResponse response = atmosphere
 					.addRequiredAppliances(request);
