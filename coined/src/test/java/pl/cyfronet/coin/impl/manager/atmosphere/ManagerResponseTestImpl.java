@@ -16,6 +16,7 @@
 
 package pl.cyfronet.coin.impl.manager.atmosphere;
 
+import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.dyrealla.allocation.AllocationActionPerformed;
@@ -81,13 +82,7 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	public void setOperationStatus(OperationStatus arg0) {
 	}
 
-	/* (non-Javadoc)
-	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#getPerformedActions()
-	 */
-	public Map<String, AllocationActionPerformed> getPerformedActions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#addPerformedAction(pl.cyfronet.dyrealla.allocation.AllocationActionPerformed)
@@ -111,5 +106,14 @@ public class ManagerResponseTestImpl implements ManagerResponse {
 	public void setDuration(long duration) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see pl.cyfronet.dyrealla.allocation.ManagerResponse#getPerformedActions()
+	 */
+	@Override
+	public Map<String, List<AllocationActionPerformed>> getPerformedActions() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
