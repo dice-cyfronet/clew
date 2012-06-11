@@ -22,16 +22,16 @@
 
 	<groupId>pl.cyfronet</groupId>
 	<artifactId>coin</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>COIN - Cloud User Interfaces</name>
 	<url>http://maven.apache.org</url>
 
 	<scm>
-		<connection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/tags/coin-1.0.0</connection>
-		<developerConnection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/tags/coin-1.0.0</developerConnection>
-		<url>https://gforge.cyfronet.pl/svn/cloud-portal/coin/tags/coin-1.0.0</url>
+		<connection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</connection>
+		<developerConnection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</developerConnection>
+		<url>https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</url>
 	</scm>
 	
 	<build>
