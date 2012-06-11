@@ -55,7 +55,7 @@
 		    							
 	    								for(var i = 0; i < methods.length; i++) {
 			    							var creds = methods[i].split(':');
-		    								html = '<b>' + creds[0] + ':</b><br/>' +
+		    								html += '<b>' + creds[0] + ':</b><br/>' +
 			    								'<span style="padding-left: 10px;">Host: ' + creds[1] + '</span><br/>' +
 			    								'<span style="padding-left: 10px;">Port: ' + creds[2] + '</span><br/>';
 		    								
