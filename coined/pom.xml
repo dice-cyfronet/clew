@@ -14,7 +14,7 @@
 
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
-		<atmosphere.version>0.6.0-SNAPSHOT</atmosphere.version>
+		<atmosphere.version>0.6.0</atmosphere.version>
 		<springframework.version>3.0.6.RELEASE</springframework.version>
 	</properties>
 
