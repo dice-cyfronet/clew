@@ -110,6 +110,13 @@
 			<version>${cxf.version}</version>
 		</dependency>
 		
+		<!-- WebDAV client dependencies -->
+		<dependency>
+			<groupId>com.googlecode.sardine</groupId>
+			<artifactId>sardine</artifactId>
+			<version>146</version>
+		</dependency>
+		
 		<!-- Other dependencies -->
 		<dependency>
 			<groupId>commons-lang</groupId>
