@@ -12,7 +12,7 @@ import com.googlecode.sardine.SardineFactory;
 
 public class WebDavTest {
 	@Test
-	public void connect() throws HttpException, IOException {
+	public void connectAndList() throws HttpException, IOException {
 		Sardine sardine = SardineFactory.begin("login", "password");
 		List<DavResource> resources = sardine.getResources("http://yourdavserver.com/adirectory/");
 		
