@@ -16,10 +16,11 @@
 
 package pl.cyfronet.coin.impl;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
-import pl.cyfronet.coin.impl.manager.CloudManager;
+import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.ListAtomicServicesAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -53,7 +55,7 @@ public class AtomicServiceManagementTest extends
 		AbstractTestNGSpringContextTests {
 
 	@Autowired
-	private CloudManager cloudManager;
+	private ActionFactory actionFactory;
 
 	@Autowired
 	private CloudFacade asManagementClient;
@@ -84,7 +86,10 @@ public class AtomicServiceManagementTest extends
 			ases.add(as);
 		}
 
-		when(cloudManager.getAtomicServices()).thenReturn(ases);
+		ListAtomicServicesAction action = mock(ListAtomicServicesAction.class);
+		
+		when(action.execute()).thenReturn(ases);
+		when(actionFactory.createListAtomicServicesAction()).thenReturn(action);
 	}
 
 	private List<Endpoint> getEndpoints(int size) {

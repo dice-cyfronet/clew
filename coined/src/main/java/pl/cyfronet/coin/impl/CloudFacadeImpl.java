@@ -34,7 +34,13 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.impl.manager.CloudManager;
+import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
+import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.CreateAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.GetAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.GetEndpointPayloadAction;
+import pl.cyfronet.coin.impl.action.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 import pl.cyfronet.coin.impl.utils.UrlUtils;
 
@@ -51,68 +57,49 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	private static final Logger logger = LoggerFactory
 			.getLogger(CloudFacadeImpl.class);
 
-	/**
-	 * Cloud manager.
-	 */
-	private CloudManager manager;
+	private ActionFactory actionFactory;
 
 	private String coinBaseUrl;
 
 	private String serviceTemplatesTemplate = FileUtils
 			.getFileContent("services_set/serviceDescriptions.tpl");
-	
+
 	private String providerTemplate = FileUtils
 			.getFileContent("services_set/provider.tpl");
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.ws.CloudFacade#getAtomicServices()
-	 */
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.debug("Get atomic services");
-		List<AtomicService> ases = manager.getAtomicServices(); 
-		return ases;
+		ListAtomicServicesAction action = actionFactory
+				.createListAtomicServicesAction();
+
+		return action.execute();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.ws.CloudFacade#createAtomicService(java.lang.String,
-	 * pl.cyfronet.coin.api.beans.AtomicService)
-	 */
 	@Override
 	public String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
 		try {
-			return manager.createAtomicService(atomicServiceInstanceId,
-					atomicService, getUsername());
+			CreateAtomicServiceAction action = actionFactory
+					.createCreateAtomicServiceAction(atomicServiceInstanceId,
+							atomicService);
+			return action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.CloudFacade#getInitialConfigurations(java.lang.String
-	 * )
-	 */
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
 			String atomicServiceId) throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
-		return manager.getInitialConfigurations(atomicServiceId);
+		AirAction<List<InitialConfiguration>> action = actionFactory
+				.createGetInitialConfigurationsAction(atomicServiceId);
+		return action.execute();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.api.CloudFacade#addInitialConfiguration(java.lang.String
-	 * , pl.cyfronet.coin.api.beans.InitialConfiguration)
-	 */
 	@Override
 	public String addInitialConfiguration(String atomicServiceId,
 			InitialConfiguration initialConfiguration)
@@ -123,8 +110,11 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		logger.debug("Creating new atomic service from {}, metadata: {}",
 				atomicServiceId, initialConfiguration);
 
-		return manager.addInitialConfiguration(atomicServiceId,
-				initialConfiguration);
+		AddInitialConfigurationAction action = actionFactory
+				.createAddInitialConfiguration(atomicServiceId,
+						initialConfiguration);
+
+		return action.execute();
 	}
 
 	@Override
@@ -132,7 +122,10 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 		StringBuilder sb = new StringBuilder();
 
-		List<AtomicService> atomicServices = manager.getAtomicServices();
+		ListAtomicServicesAction action = actionFactory
+				.createListAtomicServicesAction();
+
+		List<AtomicService> atomicServices = action.execute();
 		for (AtomicService atomicService : atomicServices) {
 			writeAtomicServiceEndpointIntoServicesSet(sb, atomicService);
 		}
@@ -180,8 +173,11 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		logger.debug("Getting endpoint descriptor for {}:{}/{}", new Object[] {
 				atomicServiceId, servicePort, invocationPath });
 
-		String descriptor = manager.getEndpointPayload(atomicServiceId,
-				servicePort, invocationPath);
+		GetEndpointPayloadAction action = actionFactory
+				.createGetEndpointPayloadAction(atomicServiceId, servicePort,
+						invocationPath);
+
+		String descriptor = action.execute();
 
 		logger.debug("Descriptor value: {}", descriptor);
 
@@ -194,16 +190,14 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
 		// check if atomic service with given id is registered in Atmosphere.
-		AtomicService atomicService = manager.getAtomicService(atomicServiceId);
+		GetAtomicServiceAction action = actionFactory
+				.createGetAtomicServiceAction(atomicServiceId);
+		AtomicService atomicService = action.execute();
 		return atomicService.getAtomicServiceId();
 	}
 
-	/**
-	 * Set cloud manager.
-	 * @param manager Cloud manager implementation.
-	 */
-	public void setManager(CloudManager manager) {
-		this.manager = manager;
+	public void setActionFactory(ActionFactory actionFactory) {
+		this.actionFactory = actionFactory;
 	}
 
 	/**

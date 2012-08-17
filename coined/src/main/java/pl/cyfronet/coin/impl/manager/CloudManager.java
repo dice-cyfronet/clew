@@ -18,17 +18,12 @@ package pl.cyfronet.coin.impl.manager;
 
 import java.util.List;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
-import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
-import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
@@ -36,24 +31,6 @@ import pl.cyfronet.coin.api.exception.WorkflowStartException;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public interface CloudManager {
-
-	/**
-	 * Get list of all registered atomic services.
-	 * @return List of all registered atomic services.
-	 * @throws CloudFacadeException
-	 */
-	List<AtomicService> getAtomicServices();
-
-	/**
-	 * Get atomic service.
-	 * @param atomicServiceId Atomic service instance. Right now it is equals
-	 *            into atomic service name.
-	 * @return Atomic service
-	 * @throws AtomicServiceNotFoundException Thrown if atomic service with
-	 *             given id is not registered in atmosphere.
-	 */
-	AtomicService getAtomicService(String atomicServiceId)
-			throws AtomicServiceNotFoundException;
 
 	/**
 	 * Start atomic service in defined context. If the request is send into
@@ -77,22 +54,6 @@ public interface CloudManager {
 			String contextId, String username)
 			throws AtomicServiceNotFoundException, CloudFacadeException,
 			WorkflowNotFoundException;
-
-	/**
-	 * Create Atomic Service from running Atomic Service Instance.
-	 * @param atomicServiceInstanceId Atomic Service Instance id.
-	 * @param atomicService Information about new Atomic Service.
-	 * @param username User name.
-	 * @return New created atomic service id.
-	 * @throws AtomicServiceInstanceNotFoundException
-	 * @throws CloudFacadeException
-	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
-	 *             workflow with defined context id belongs to other user.
-	 */
-	String createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService, String username)
-			throws AtomicServiceInstanceNotFoundException,
-			CloudFacadeException, WorkflowNotFoundException;
 
 	/**
 	 * Start workflow. There can be many workflow type Workflows but only one
@@ -129,35 +90,12 @@ public interface CloudManager {
 	List<WorkflowBaseInfo> getWorkflows(String username);
 
 	/**
-	 * Get Atomic Service initial configurations.
-	 * @param atomicServiceId Atomic Service id.
-	 * @return List of Atomic Service configurations.
-	 */
-	List<InitialConfiguration> getInitialConfigurations(String atomicServiceId)
-			throws AtomicServiceNotFoundException;
-
-	/**
 	 * @param workflowId
 	 * @param username
 	 * @return
 	 */
 	Workflow getWorkflow(String workflowId, String username)
 			throws WorkflowNotFoundException;
-
-	/**
-	 * @param atomicServiceId
-	 * @param initialConfiguration
-	 * @return
-	 */
-	String addInitialConfiguration(String atomicServiceId,
-			InitialConfiguration initialConfiguration)
-			throws AtomicServiceNotFoundException,
-			InitialConfigurationAlreadyExistException, CloudFacadeException;
-
-	String getEndpointPayload(String atomicServiceId, int servicePort,
-			String invocationPath)
-			throws AtomicServiceInstanceNotFoundException,
-			EndpointNotFoundException;
 
 	List<Endpoint> getEndpoints();
 }

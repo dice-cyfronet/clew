@@ -208,7 +208,7 @@ public class StartWorkflowTest extends AbstractCloudManagerTest {
 	private void thanCannotStartTwoWorkflowsOfType(WorkflowStartException e,
 			WorkflowType type) {
 		assertEquals(String.format("Cannot start two %s workflows", type),
-				e.getMessage());
+				e.getResponse().getEntity());
 		verify(air, times(1)).getUserWorkflows(username);
 		verify(air, times(0)).startWorkflow(name, username, description,
 				priority, workflowType);

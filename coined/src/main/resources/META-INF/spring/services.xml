@@ -28,6 +28,10 @@
 		<property name="credentialProperties" ref="as-sec" />
 
 		<property name="defaultPriority" value="${default.workflow.priority}" />
+	</bean>
+	
+	<bean id="actionFactory" class="pl.cyfronet.coin.impl.action.ActionFactory">
+		<property name="air" ref="air-client" />
 		<property name="defaultSiteId" value="${default.cloud.site.id}" />
 	</bean>
 </beans>									   

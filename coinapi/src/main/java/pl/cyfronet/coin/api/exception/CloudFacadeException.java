@@ -37,4 +37,8 @@ public class CloudFacadeException extends WebApplicationException {
 		super(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
 				.entity(message).build());
 	}
+
+	public CloudFacadeException(Response.Status status) {
+		super(status);
+	}
 }

@@ -16,12 +16,15 @@
 
 package pl.cyfronet.coin.api.exception;
 
+import javax.xml.ws.WebFault;
+
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class WorkflowStartException extends Exception {
+@WebFault
+public class WorkflowStartException extends CloudFacadeException {
 
 	/**
 	 * Serial version UID

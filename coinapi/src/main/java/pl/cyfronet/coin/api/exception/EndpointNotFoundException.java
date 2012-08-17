@@ -16,7 +16,6 @@
 
 package pl.cyfronet.coin.api.exception;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.WebFault;
 
@@ -24,7 +23,7 @@ import javax.xml.ws.WebFault;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @WebFault
-public class EndpointNotFoundException extends WebApplicationException {
+public class EndpointNotFoundException extends CloudFacadeException {
 
 	private static final long serialVersionUID = 3805274312799326244L;
 

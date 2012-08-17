@@ -14,17 +14,17 @@
  * the License.
  */
 
-package pl.cyfronet.coin.api.exception;
+package pl.cyfronet.coin.impl.action;
 
-import javax.xml.ws.WebFault;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-@WebFault
-public class InitialConfigurationAlreadyExistException extends CloudFacadeException {
+public interface Action<T> {
 
-	private static final long serialVersionUID = 1174002385205938239L;
-
+	T execute() throws CloudFacadeException;
+	
+	void rollback();
 }

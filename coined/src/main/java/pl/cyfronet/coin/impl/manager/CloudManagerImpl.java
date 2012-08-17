@@ -27,35 +27,25 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.EndpointType;
-import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
-import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
-import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
-import pl.cyfronet.coin.impl.air.client.ATEndpoint;
-import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
+import pl.cyfronet.coin.impl.BeanConverter;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.ApplianceNotFoundException;
-import pl.cyfronet.dyrealla.DyReAllaException;
 import pl.cyfronet.dyrealla.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.allocation.impl.AddRequiredAppliancesRequestImpl;
@@ -89,94 +79,7 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	private Integer defaultPriority;
 
-	private String defaultSiteId;
-
 	private Properties credentialProperties;
-
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.manager.CloudManager#getAtomicServices()
-	 */
-	@Override
-	public List<AtomicService> getAtomicServices() {
-		List<ApplianceType> applianceTypes = getApplianceTypes();
-		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
-		for (ApplianceType applianceType : applianceTypes) {
-			AtomicService atomicService = getAtomicService(applianceType);
-			atomicServices.add(atomicService);
-		}
-		return atomicServices;
-	}
-
-	@Override
-	public AtomicService getAtomicService(String atomicServiceId)
-			throws AtomicServiceNotFoundException {
-		ApplianceType applianceType = getApplianceType(atomicServiceId);
-		return getAtomicService(applianceType);
-	}
-
-	private AtomicService getAtomicService(ApplianceType applianceType) {
-		AtomicService atomicService = new AtomicService();
-		atomicService.setAtomicServiceId(applianceType.getName());
-		atomicService.setDescription(applianceType.getDescription());
-		atomicService.setHttp(applianceType.isHttp()
-				&& applianceType.isIn_proxy());
-		atomicService.setName(applianceType.getName());
-		atomicService.setShared(applianceType.isShared());
-		atomicService.setScalable(applianceType.isScalable());
-		atomicService.setVnc(applianceType.isVnc());
-		atomicService.setPublished(applianceType.isPublished());
-		atomicService.setActive(applianceType.getTemplates_count() > 0);
-		atomicService.setEndpoints(getEndpoints(applianceType));
-
-		return atomicService;
-	}
-
-	/**
-	 * @param endpoints
-	 * @return
-	 */
-	private List<Endpoint> getEndpoints(ApplianceType applianceType) {
-		List<ATEndpoint> atEndpoints = applianceType.getEndpoints();
-		List<Endpoint> asEndpoints = new ArrayList<Endpoint>();
-		if (atEndpoints != null) {
-			for (ATEndpoint atEndpoint : atEndpoints) {
-				asEndpoints.add(getEndpoint(atEndpoint));
-			}
-		}
-
-		return asEndpoints;
-	}
-
-	/**
-	 * @param atEndpoint
-	 * @return
-	 */
-	private Endpoint getEndpoint(ATEndpoint atEndpoint) {
-		Endpoint asEndpoint = new Endpoint();
-		asEndpoint.setDescription(atEndpoint.getDescription());
-		asEndpoint.setDescriptor(atEndpoint.getDescriptor());
-		asEndpoint.setInvocationPath(atEndpoint.getInvocation_path());
-		asEndpoint.setPort(atEndpoint.getPort());
-		asEndpoint.setServiceName(atEndpoint.getService_name());
-		asEndpoint.setType(getEdnpointType(atEndpoint.getEndpoint_type()));
-
-		return asEndpoint;
-	}
-
-	/**
-	 * @param endpoint_type
-	 * @return
-	 */
-	private EndpointType getEdnpointType(String endpoint_type) {
-		if ("WS".equalsIgnoreCase(endpoint_type)) {
-			return EndpointType.WS;
-		} else if ("WEBAPP".equalsIgnoreCase(endpoint_type)) {
-			return EndpointType.WEBAPP;
-		} else {
-			return EndpointType.REST;
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -198,66 +101,6 @@ public class CloudManagerImpl implements CloudManager {
 
 		// TODO information from Atmosphere about atomis service instance id
 		// needed!
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#createAtomicService(java.lang
-	 * .String, pl.cyfronet.coin.api.beans.AtomicService)
-	 */
-	@Override
-	public String createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService, String username)
-			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		AddAtomicServiceRequest addASRequest = new AddAtomicServiceRequest();
-		addASRequest.setClient("rest");
-		addASRequest.setDescription(atomicService.getDescription());
-		addASRequest.setEndpoints(getAsEndpoints(atomicService.getEndpoints()));
-		addASRequest.setHttp(atomicService.isHttp());
-		addASRequest.setIn_proxy(atomicService.isInProxy());
-		addASRequest.setName(atomicService.getName());
-		addASRequest.setPublished(atomicService.isPublished());
-		addASRequest.setScalable(atomicService.isScalable());
-		addASRequest.setShared(atomicService.isShared());
-		addASRequest.setVnc(atomicService.isShared());
-
-		String atomicServiceId = air.addAtomicService(addASRequest);
-		try {
-			atmosphere.createTemplate(atomicServiceInstanceId,
-					atomicService.getName(), defaultSiteId, atomicServiceId);
-			return atomicService.getName();
-		} catch (ApplianceNotFoundException e) {
-			// TODO remove added atomic service type
-			throw new AtomicServiceInstanceNotFoundException();
-		} catch (DyReAllaException e) {
-			// TODO remove added atomic service type
-			throw new CloudFacadeException(e.getMessage());
-		}
-	}
-
-	/**
-	 * @param endpoints
-	 * @return
-	 */
-	private List<ATEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
-		if (endpoints != null) {
-			List<ATEndpoint> asEndpoints = new ArrayList<ATEndpoint>();
-			for (Endpoint endpoint : endpoints) {
-				ATEndpoint asEndpoint = new ATEndpoint();
-				asEndpoint.setDescription(endpoint.getDescription());
-				asEndpoint.setDescriptor(endpoint.getDescriptor());
-				asEndpoint.setInvocation_path(endpoint.getInvocationPath());
-				asEndpoint.setPort(endpoint.getPort());
-				asEndpoint.setService_name(endpoint.getServiceName());
-				asEndpoints.add(asEndpoint);
-				asEndpoint
-						.setEndpoint_type(endpoint.getType() == null ? EndpointType.REST
-								.toString() : endpoint.getType().toString());
-			}
-			return asEndpoints;
-		}
 		return null;
 	}
 
@@ -291,6 +134,9 @@ public class CloudManagerImpl implements CloudManager {
 				// 400 is thrown if user is not know by AIR. Most probably user
 				// is starting workflow for the first time.
 				if (e.getResponse().getStatus() != 400) {
+					if(e instanceof WorkflowStartException) {
+						throw e;
+					}
 					throw new WorkflowStartException(
 							"Unable to register new workflow in AIR");
 				}
@@ -438,32 +284,6 @@ public class CloudManagerImpl implements CloudManager {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#getInitialConfiguration(java
-	 * .lang.String)
-	 */
-	@Override
-	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) throws AtomicServiceNotFoundException {
-
-		ApplianceType type = getApplianceType(atomicServiceId);
-		List<ApplianceConfiguration> typeConfigurations = type
-				.getConfigurations();
-		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();
-		if (typeConfigurations != null) {
-			for (ApplianceConfiguration applianceConfiguration : typeConfigurations) {
-				InitialConfiguration configuration = new InitialConfiguration();
-				configuration.setId(applianceConfiguration.getId());
-				configuration.setName(applianceConfiguration.getConfig_name());
-				configurations.add(configuration);
-			}
-		}
-
-		return configurations;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
 	 * pl.cyfronet.coin.impl.manager.CloudManager#getWorkflows(java.lang.String)
 	 */
 	@Override
@@ -483,51 +303,13 @@ public class CloudManagerImpl implements CloudManager {
 		return workflows;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#addInitialConfiguration(java
-	 * .lang.String, pl.cyfronet.coin.api.beans.InitialConfiguration)
-	 */
-	@Override
-	public String addInitialConfiguration(String atomicServiceId,
-			InitialConfiguration initialConfiguration)
-			throws AtomicServiceNotFoundException,
-			InitialConfigurationAlreadyExistException, CloudFacadeException {
-		try {
-			String addedConfigurationId = air.addInitialConfiguration(
-					initialConfiguration.getName(), atomicServiceId,
-					initialConfiguration.getPayload());
-
-			return addedConfigurationId;
-		} catch (ServerWebApplicationException e) {
-			if (e.getMessage() != null) {
-				if (e.getMessage().contains("not found in AIR")) {
-					throw new AtomicServiceNotFoundException();
-				} else if (e.getMessage().contains("duplicated configuration")) {
-					throw new InitialConfigurationAlreadyExistException();
-				}
-			}
-			throw new CloudFacadeException(e.getMessage());
-		}
-	}
-
-	@Override
-	public String getEndpointPayload(String atomicServiceId, int servicePort,
-			String invocationPath) throws AtomicServiceNotFoundException,
-			EndpointNotFoundException {
-		ATEndpoint endpoint = getEndpoint(atomicServiceId, servicePort,
-				invocationPath);
-		String endpointId = endpoint.getId();
-		return air.getEndpointDescriptor(endpointId);
-	}
 
 	@Override
 	public List<Endpoint> getEndpoints() {
 		List<ApplianceType> types = getApplianceTypes();
 		List<Endpoint> allEndpoints = new ArrayList<Endpoint>();
 		for (ApplianceType type : types) {
-			List<Endpoint> typeEndpoints = getEndpoints(type);
+			List<Endpoint> typeEndpoints = BeanConverter.getEndpoints(type);
 			if (typeEndpoints != null) {
 				allEndpoints.addAll(typeEndpoints);
 			}
@@ -535,66 +317,8 @@ public class CloudManagerImpl implements CloudManager {
 		return allEndpoints;
 	}
 
-	private ATEndpoint getEndpoint(String atomicServiceId, int servicePort,
-			String invocationPath) throws AtomicServiceNotFoundException,
-			EndpointNotFoundException {
-
-		ApplianceType type = getApplianceType(atomicServiceId);
-
-		for (ATEndpoint endpoint : type.getEndpoints()) {
-			int endpointPort = endpoint.getPort();
-			String endpointInvocationPath = endpoint.getInvocation_path();
-			logger.debug("Comparing {}=={} and {}=={}", new Object[] {
-					endpointPort, servicePort, endpointInvocationPath,
-					invocationPath });
-			if (endpointPort == servicePort
-					&& endpointPathEquals(endpointInvocationPath,
-							invocationPath)) {
-				return endpoint;
-			}
-		}
-
-		logger.debug("Endpoint {}:{}/{} not found", new Object[] {
-				atomicServiceId, servicePort, invocationPath });
-		throw new EndpointNotFoundException();
-	}
-
-	private boolean endpointPathEquals(String endpointPath,
-			String invocationPath) {
-		String endpointPathWithouldSlashAtTheBeginning = removeSlashesFromTheBeginning(endpointPath);
-		String invocationPathWithouldSlashAtTheBeginning = removeSlashesFromTheBeginning(invocationPath);
-		return endpointPathWithouldSlashAtTheBeginning
-				.equalsIgnoreCase(invocationPathWithouldSlashAtTheBeginning);
-	}
-
-	private String removeSlashesFromTheBeginning(String str) {
-		return str.replaceAll("^/+", "");
-	}
-
 	private List<ApplianceType> getApplianceTypes() {
 		return air.getApplianceTypes();
-	}
-
-	/**
-	 * Get appliance type information.
-	 * @param applianceTypeName Appliance type name.
-	 * @return Appliance type information.
-	 * @throws AtomicServiceInstanceNotFoundException Thrown, when appliance
-	 *             type is not found in AIR.
-	 */
-	private ApplianceType getApplianceType(String applianceTypeName)
-			throws AtomicServiceNotFoundException {
-		List<ApplianceType> applianceTypes = getApplianceTypes();
-
-		for (ApplianceType applianceType : applianceTypes) {
-			String name = applianceType.getName();
-			if (name != null && name.equals(applianceTypeName)) {
-				return applianceType;
-			}
-		}
-
-		logger.debug("Atomic service {} not found", applianceTypeName);
-		throw new AtomicServiceNotFoundException();
 	}
 
 	/**
@@ -711,13 +435,6 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	public void setAir(AirClient air) {
 		this.air = air;
-	}
-
-	/**
-	 * @param defaultSiteId the defaultSiteId to set
-	 */
-	public void setDefaultSiteId(String defaultSiteId) {
-		this.defaultSiteId = defaultSiteId;
 	}
 
 	/**
