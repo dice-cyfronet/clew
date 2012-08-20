@@ -19,13 +19,10 @@ package pl.cyfronet.coin.impl.manager;
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
-import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -55,47 +52,6 @@ public interface CloudManager {
 			throws AtomicServiceNotFoundException, CloudFacadeException,
 			WorkflowNotFoundException;
 
-	/**
-	 * Start workflow. There can be many workflow type Workflows but only one
-	 * portal and development workflow.
-	 * @param workflow Workflow start request. It contains information about
-	 *            required Atomic Services.
-	 * @param username Workflow owner username.
-	 * @param username User name.
-	 * @return Workflow context id.
-	 * @throws WorkflowStartException Thrown when workflow cannot be started.
-	 *             E.g. user tries to start second development or portal
-	 *             workflow.
-	 */
-	String startWorkflow(WorkflowStartRequest workflow, String username)
-			throws WorkflowStartException;
-
-	/**
-	 * Stop workflow.
-	 * @param contextId Workflow context id.
-	 * @param username User name.
-	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
-	 *             workflow with defined context id belongs to other user.
-	 */
-	void stopWorkflow(String contextId, String username)
-			throws WorkflowNotFoundException, CloudFacadeException;
-
-	/**
-	 * Get user workflows.
-	 * @param username User name.
-	 * @return List of user workflows.
-	 * @throws WorkflowNotFoundException Thrown when workflow is not found or
-	 *             workflow with defined context id belongs to other user.
-	 */
-	List<WorkflowBaseInfo> getWorkflows(String username);
-
-	/**
-	 * @param workflowId
-	 * @param username
-	 * @return
-	 */
-	Workflow getWorkflow(String workflowId, String username)
-			throws WorkflowNotFoundException;
 
 	List<Endpoint> getEndpoints();
 }

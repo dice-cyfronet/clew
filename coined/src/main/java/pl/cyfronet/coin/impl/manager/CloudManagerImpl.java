@@ -19,32 +19,19 @@ package pl.cyfronet.coin.impl.manager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
-
-import javax.ws.rs.WebApplicationException;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.Redirection;
-import pl.cyfronet.coin.api.beans.Status;
-import pl.cyfronet.coin.api.beans.Workflow;
-import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
-import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.BeanConverter;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
-import pl.cyfronet.coin.impl.air.client.PortMapping;
-import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.allocation.OperationStatus;
@@ -79,8 +66,6 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	private Integer defaultPriority;
 
-	private Properties credentialProperties;
-
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -102,82 +87,6 @@ public class CloudManagerImpl implements CloudManager {
 		// TODO information from Atmosphere about atomis service instance id
 		// needed!
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#startWorkflow(pl.cyfronet.
-	 * coin.api.beans.Workflow, java.lang.String)
-	 */
-	@Override
-	public String startWorkflow(WorkflowStartRequest workflow, String username)
-			throws WorkflowStartException {
-		logger.debug("starting workflow {} for {} user", workflow, username);
-
-		Integer priority = workflow.getPriority();
-		if (priority == null) {
-			priority = defaultPriority;
-		}
-
-		WorkflowType type = workflow.getType();
-		if (type == WorkflowType.portal || type == WorkflowType.development) {
-			try {
-				List<WorkflowBaseInfo> workflows = getWorkflows(username);
-				for (WorkflowBaseInfo wInfo : workflows) {
-					if (wInfo.getType() == type) {
-						throw new WorkflowStartException(String.format(
-								"Cannot start two %s workflows", type));
-					}
-				}
-			} catch (WebApplicationException e) {
-				// 400 is thrown if user is not know by AIR. Most probably user
-				// is starting workflow for the first time.
-				if (e.getResponse().getStatus() != 400) {
-					if(e instanceof WorkflowStartException) {
-						throw e;
-					}
-					throw new WorkflowStartException(
-							"Unable to register new workflow in AIR");
-				}
-			}
-		}
-
-		// FIXME error handling
-		String workflowId = air.startWorkflow(workflow.getName(), username,
-				workflow.getDescription(), priority, workflow.getType());
-		List<String> ids = workflow.getAsConfigIds();
-
-		try {
-			registerVms(workflowId, ids, null, priority, type);
-		} catch (CloudFacadeException e) {
-			try {
-				stopWorkflow(workflowId, username);
-			} catch (Exception e2) {
-
-			}
-			throw new WorkflowStartException();
-		}
-
-		return workflowId;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#stopWorkflow(java.lang.String)
-	 */
-	@Override
-	public void stopWorkflow(String contextId, String username)
-			throws WorkflowNotFoundException, CloudFacadeException {
-		logger.debug("stopping workflow {}", contextId);
-		checkIfWorkflowBelongsToUser(contextId, username);
-		ManagerResponse response = atmosphere
-				.removeRequiredAppliances(contextId);
-
-		// FIXME waiting for atmo improvement
-		// parseResponseAndThrowExceptionsWhenNeeded(response);
-		air.stopWorkflow(contextId);
 	}
 
 	/**
@@ -202,107 +111,6 @@ public class CloudManagerImpl implements CloudManager {
 
 		return null;
 	}
-
-	@Override
-	public Workflow getWorkflow(String contextId, String username)
-			throws WorkflowNotFoundException {
-		WorkflowDetail detail = getUserWorkflow(contextId, username);
-
-		Workflow workflow = new Workflow();
-		workflow.setName(detail.getName());
-		workflow.setType(detail.getWorkflow_type());
-
-		List<Vms> vms = detail.getVms();
-		if (vms != null) {
-			List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
-			for (Vms vm : vms) {
-				if (vm.getVms_id() == null) {
-					// /AIR returns vms:[null] when workflow does not have VMs
-					// and it is parsed by CXF as Vms object with all properties
-					// set to null.
-					continue;
-				}
-
-				AtomicServiceInstance instance = new AtomicServiceInstance();
-				instance.setAtomicServiceId(vm.getAppliance_type());
-				instance.setId(vm.getVms_id());
-				instance.setStatus(vm.getState());
-				instance.setName(vm.getName());
-				instance.setMessage(""); // TODO
-
-				addRedirections(instance, vm);
-
-				if (detail.getWorkflow_type() == WorkflowType.development) {
-					instance.setCredential(getCredential(vm.getAppliance_type()));
-				}
-
-				instances.add(instance);
-
-			}
-			workflow.setAtomicServiceInstances(instances);
-		}
-
-		return workflow;
-	}
-
-	/**
-	 * @param instance
-	 * @param vm
-	 */
-	private void addRedirections(AtomicServiceInstance instance, Vms vm) {
-		List<Redirection> redirections = new ArrayList<Redirection>();
-		if (vm.getInternal_port_mappings() != null) {
-			for (PortMapping portMapping : vm.getInternal_port_mappings()) {
-				Redirection redirection = new Redirection();
-				redirection.setHost(portMapping.getHeadnode_ip());
-				redirection.setFromPort(portMapping.getHeadnode_port());
-				redirection.setToPort(portMapping.getVm_port());
-				redirection.setHttp(false);
-				redirection.setName(portMapping.getService_name());
-
-				redirections.add(redirection);
-			}
-		}
-		instance.setRedirections(redirections);
-	}
-
-	/**
-	 * @param vms_id
-	 * @return
-	 */
-	private Credential getCredential(String vms_id) {
-		Credential cred = new Credential();
-		if (credentialProperties != null) {
-			cred.setUsername(credentialProperties.getProperty(vms_id
-					+ ".username"));
-			cred.setPassword(credentialProperties.getProperty(vms_id
-					+ ".password"));
-		}
-		return cred;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * pl.cyfronet.coin.impl.manager.CloudManager#getWorkflows(java.lang.String)
-	 */
-	@Override
-	public List<WorkflowBaseInfo> getWorkflows(String username) {
-		List<WorkflowDetail> workflowDetails = air.getUserWorkflows(username);
-		List<WorkflowBaseInfo> workflows = new ArrayList<WorkflowBaseInfo>();
-		for (WorkflowDetail workflowDetail : workflowDetails) {
-			if (workflowDetail.getState() == Status.running) {
-				WorkflowBaseInfo info = new WorkflowBaseInfo();
-				info.setId(workflowDetail.getId());
-				info.setName(workflowDetail.getName());
-				info.setType(workflowDetail.getWorkflow_type());
-				workflows.add(info);
-			}
-		}
-
-		return workflows;
-	}
-
 
 	@Override
 	public List<Endpoint> getEndpoints() {
@@ -401,19 +209,6 @@ public class CloudManagerImpl implements CloudManager {
 	}
 
 	/**
-	 * Check if workflow identified by context id belongs to defined user. If
-	 * not than exception is throw.
-	 * @param contextId Workflow context id.
-	 * @param username Workflow owner username.
-	 * @throws WorkflowNotFoundException Thrown when workflow is not found or it
-	 *             does not belong to the user.
-	 */
-	private void checkIfWorkflowBelongsToUser(String contextId, String username)
-			throws WorkflowNotFoundException {
-		getUserWorkflow(contextId, username);
-	}
-
-	/**
 	 * Set atmosphere client.
 	 * @param atmosphere Atmosphere client.
 	 */
@@ -435,12 +230,5 @@ public class CloudManagerImpl implements CloudManager {
 	 */
 	public void setAir(AirClient air) {
 		this.air = air;
-	}
-
-	/**
-	 * @param credentialProperties
-	 */
-	public void setCredentialProperties(Properties credentialProperties) {
-		this.credentialProperties = credentialProperties;
 	}
 }

@@ -1,27 +1,9 @@
-/*
- * Copyright 2012 ACC CYFRONET AGH
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
-package pl.cyfronet.coin.impl.manager;
+package pl.cyfronet.coin.impl.action;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import javax.management.OperationsException;
 
 import org.testng.annotations.Test;
 
@@ -33,24 +15,35 @@ import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.allocation.impl.ManagerResponseImpl;
 
-/**
- * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- */
-public class StopWorkflowTest extends AbstractCloudManagerTest {
+public class StopWorkflowActionTest extends WorkflowActionTest {
 
 	@Test
 	public void shouldStopWorkflow() throws Exception {
-		// when
-		mockGetWorkflow();
-		mockStopWorkflowInAtmosphere();
-		manager.stopWorkflow(contextId, username);
+		givenAirStateWithWorkflowListAndMockedStopWorkflowAction();
+		whenStopWorkflow();
+		thenCheckWorkflowStopped();		
+	}	
 
-		// then
-		verify(air, times(1)).stopWorkflow(contextId);
-		verify(air, times(1)).getWorkflow(contextId);
-		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
+	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() {
+		mockGetWorkflow();
+		mockStopWorkflowInAtmosphere();		
 	}
 
+	private void whenStopWorkflow() {
+		stopWorkflow(contextId);
+	}
+	
+	private void stopWorkflow(String contextId) {
+		StopWorkflowAction action = actionFactory.createStopWorkflowAction(contextId, username);
+		action.execute();		
+	}
+	
+	private void thenCheckWorkflowStopped() {
+		verify(air, times(1)).stopWorkflow(contextId);
+		verify(air, times(1)).getWorkflow(contextId);
+		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);		
+	}
+	
 	private void mockStopWorkflowInAtmosphere() {
 		ManagerResponseImpl atmosphereManagerResponse = new ManagerResponseImpl();
 		atmosphereManagerResponse
@@ -68,7 +61,7 @@ public class StopWorkflowTest extends AbstractCloudManagerTest {
 		mockStopWorkflowInAtmosphereWithError(contextId);
 
 		try {
-			manager.stopWorkflow(contextId, username);
+			whenStopWorkflow();
 			fail();
 		} catch (CloudFacadeException e) {
 			// ok
@@ -87,7 +80,7 @@ public class StopWorkflowTest extends AbstractCloudManagerTest {
 		mockStopWorkflowInAtmosphereWithWarning(contextId);
 
 		// when
-		manager.stopWorkflow(contextId, username);
+		whenStopWorkflow();
 
 		// then
 		verify(air, times(1)).getWorkflow(contextId);
@@ -123,14 +116,13 @@ public class StopWorkflowTest extends AbstractCloudManagerTest {
 			throws Exception {
 		// given
 		String nonExistingContextId = "nonExisting";
-		String username = "existingUser";
 
 		// when
 		when(air.getWorkflow(nonExistingContextId)).thenThrow(
 				getAirException(404));
 		try {
 			// workflow does not exist
-			manager.stopWorkflow(nonExistingContextId, username);
+			whenStopNonExistingWorkflow();
 			fail();
 		} catch (WorkflowNotFoundException e) {
 			// shoud be thrown
@@ -140,32 +132,32 @@ public class StopWorkflowTest extends AbstractCloudManagerTest {
 		verify(air, times(1)).getWorkflow(nonExistingContextId);
 	}
 
+	private void whenStopNonExistingWorkflow() {
+		stopWorkflow("nonExisting");		
+	}
+
 	@Test
 	public void shouldThrowWorkfloNotFoundExceptionWhileStoppingNotOwnWorkflow()
 			throws Exception {
 		// given
-		String existingContextId = "id1";
-		String username = "existingUser";
-
 		WorkflowDetail w1 = new WorkflowDetail();
 		w1.setVph_username("myUser");
 		w1.setName("w1");
-		w1.setId("id1");
+		w1.setId(contextId);
 		w1.setState(Status.running);
 		w1.setWorkflow_type(WorkflowType.development);
 
 		// when
-		when(air.getWorkflow(existingContextId)).thenReturn(w1);
+		when(air.getWorkflow(contextId)).thenReturn(w1);
 
 		try {
-			// workflow belongs to othere user
-			manager.stopWorkflow(existingContextId, username);
+			whenStopWorkflow();
 			fail();
 		} catch (WorkflowNotFoundException e) {
 			// shoud be thrown
 		}
 
 		// then
-		verify(air, times(1)).getWorkflow(existingContextId);
+		verify(air, times(1)).getWorkflow(contextId);
 	}
 }

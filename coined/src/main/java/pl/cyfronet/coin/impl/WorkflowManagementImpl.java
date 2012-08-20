@@ -32,6 +32,11 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
+import pl.cyfronet.coin.impl.action.GetUserWorkflowsAction;
+import pl.cyfronet.coin.impl.action.StartWorkflowAction;
+import pl.cyfronet.coin.impl.action.StopWorkflowAction;
 import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
@@ -41,6 +46,8 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		WorkflowManagement {
 
 	// throw new WebApplicationException(403);
+
+	private ActionFactory actionFactory;
 
 	private CloudManager manager;
 
@@ -53,13 +60,17 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public String startWorkflow(WorkflowStartRequest workflow)
 			throws WorkflowStartException {
-		return manager.startWorkflow(workflow, getUsername());
+		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
+				workflow, getUsername());
+		return action.execute();
 	}
 
 	@Override
 	public void stopWorkflow(String workflowId) {
+		StopWorkflowAction action = actionFactory.createStopWorkflowAction(
+				workflowId, getUsername());
 		try {
-			manager.stopWorkflow(workflowId, getUsername());
+			action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
@@ -88,12 +99,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	 */
 	@Override
 	public UserWorkflows getWorkflows() {
-
 		String username = getUsername();
 		UserWorkflows wrapper = new UserWorkflows();
 		wrapper.setUsername(username);
+
+		GetUserWorkflowsAction action = actionFactory
+				.createGetUserWorkflowsAction(username);
 		try {
-			List<WorkflowBaseInfo> workflows = manager.getWorkflows(username);
+			List<WorkflowBaseInfo> workflows = action.execute();
 			wrapper.setWorkflows(workflows);
 		} catch (Exception e) {
 			wrapper.setWorkflows(new ArrayList<WorkflowBaseInfo>());
@@ -103,8 +116,10 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Override
 	public Workflow getWorkflow(String workflowId) {
+		GetUserWorkflowAction action = actionFactory
+				.createGetUserWorkflowAction(workflowId, getUsername());
 		try {
-			return manager.getWorkflow(workflowId, getUsername());
+			return action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
@@ -122,5 +137,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	 */
 	public void setManager(CloudManager manager) {
 		this.manager = manager;
+	}
+
+	public void setActionFactory(ActionFactory actionFactory) {
+		this.actionFactory = actionFactory;
 	}
 }

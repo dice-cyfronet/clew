@@ -17,9 +17,11 @@
 package pl.cyfronet.coin.impl.action;
 
 import java.util.List;
+import java.util.Properties;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
 
@@ -31,6 +33,8 @@ public class ActionFactory {
 	private AirClient air;
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
+	private Integer defaultPriority;
+	private Properties credentialProperties;
 
 	public ListAtomicServicesAction createListAtomicServicesAction() {
 		return new ListAtomicServicesAction(air);
@@ -53,17 +57,38 @@ public class ActionFactory {
 				initialConfiguration);
 	}
 
-	public GetEndpointPayloadAction createGetEndpointPayloadAction(String atomicServiceId,
-			int servicePort, String invocationPath) {
+	public GetEndpointPayloadAction createGetEndpointPayloadAction(
+			String atomicServiceId, int servicePort, String invocationPath) {
 		return new GetEndpointPayloadAction(air, atomicServiceId, servicePort,
 				invocationPath);
 	}
-	
+
 	public GetAtomicServiceAction createGetAtomicServiceAction(
 			String atomicServiceId) {
 		return new GetAtomicServiceAction(air, atomicServiceId);
 	}
-	
+
+	public GetUserWorkflowsAction createGetUserWorkflowsAction(String username) {
+		return new GetUserWorkflowsAction(air, username);
+	}
+
+	public StopWorkflowAction createStopWorkflowAction(String contextId,
+			String username) {
+		return new StopWorkflowAction(air, atmosphere, contextId, username);
+	}
+
+	public StartWorkflowAction createStartWorkflowAction(
+			WorkflowStartRequest startRequest, String username) {
+		return new StartWorkflowAction(air, atmosphere, defaultPriority,
+				username, startRequest);
+	}
+
+	public GetUserWorkflowAction createGetUserWorkflowAction(String workflowId,
+			String username) {
+		return new GetUserWorkflowAction(air, credentialProperties, workflowId,
+				username);		
+	}
+
 	public void setAir(AirClient air) {
 		this.air = air;
 	}
@@ -74,5 +99,9 @@ public class ActionFactory {
 
 	public void setDefaultSiteId(String defaultSiteId) {
 		this.defaultSiteId = defaultSiteId;
+	}
+
+	public void setCredentialProperties(Properties credentialProperties) {
+		this.credentialProperties = credentialProperties;
 	}
 }
