@@ -12,6 +12,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpException;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.googlecode.sardine.DavResource;
@@ -20,6 +21,7 @@ import com.googlecode.sardine.SardineFactory;
 
 public class WebDavTest {
 	@Test
+	@Ignore
 	public void connectAndList() throws HttpException, IOException, KeyManagementException, NoSuchAlgorithmException {
 		Sardine sardine = SardineFactory.begin("todo", "todo", createNaiveSslSocketFactory());
 //		List<DavResource> resources = sardine.getResources("https://149.156.10.138:8444/lobcder-1.1-SNAPSHOT");
