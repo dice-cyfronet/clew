@@ -58,6 +58,7 @@
 		<module>coinapi</module>
 		<module>coined</module>
 		<module>coinportlet</module>
+		<module>coinauth</module>
 	</modules>
 	
 	<dependencies>

@@ -25,6 +25,19 @@
 		</jaxrs:providers>
 	</jaxrs:client>
 
+	<jaxrs:client id="validatetkt-client" address="${mi.url}"		
+		serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
+		inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="validatetkt-jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:client>
+
+	<bean id="validatetkt-jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
+		<property name="serializeAsArray" value="true" />
+		<property name="dropRootElement" value="true" />
+		<property name="supportUnwrapped" value="true" />
+	</bean>
 
 	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
