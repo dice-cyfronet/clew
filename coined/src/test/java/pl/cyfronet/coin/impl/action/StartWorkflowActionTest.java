@@ -20,8 +20,8 @@ import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.coin.impl.manager.atmosphere.ManagerResponseTestImpl;
-import pl.cyfronet.coin.impl.manager.matcher.AddRequiredAppliancesRequestMatcher;
+import pl.cyfronet.coin.impl.mock.atmosphere.ManagerResponseTestImpl;
+import pl.cyfronet.coin.impl.mock.matcher.AddRequiredAppliancesRequestMatcher;
 import pl.cyfronet.dyrealla.allocation.AddRequiredAppliancesRequest;
 import pl.cyfronet.dyrealla.allocation.OperationStatus;
 

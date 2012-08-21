@@ -25,7 +25,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}	
 
 	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() {
-		mockGetWorkflow();
+		givenWorkflowStarted();
 		mockStopWorkflowInAtmosphere();		
 	}
 
@@ -57,7 +57,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	@Test(enabled=false)
 	public void shouldThrowCloudExceptionWhenAtmosphereFail() throws Exception {
 		// when
-		mockGetWorkflow();
+		givenWorkflowStarted();
 		mockStopWorkflowInAtmosphereWithError(contextId);
 
 		try {
@@ -76,7 +76,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	@Test(enabled=false)
 	public void shouldStopWorkflowWhenOnAtmosphereWarning() throws Exception {
 		// given
-		mockGetWorkflow();
+		givenWorkflowStarted();
 		mockStopWorkflowInAtmosphereWithWarning(contextId);
 
 		// when

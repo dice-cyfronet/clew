@@ -9,7 +9,7 @@ public class WorkflowActionTest extends ActionTest {
 	protected final String contextId = "contextId";
 	protected final String username = "user";
 	
-	protected void mockGetWorkflow() {
+	protected void givenWorkflowStarted() {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 		when(air.getWorkflow(contextId)).thenReturn(wd);		

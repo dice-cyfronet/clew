@@ -29,7 +29,7 @@
 	</jaxrs:server>
 
 	<bean name="workflow-management" class="pl.cyfronet.coin.impl.WorkflowManagementImpl">
-		<property name="manager" ref="cloudManager" />		
+		<property name="actionFactory" ref="actionFactory" />		
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 

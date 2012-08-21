@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
-import pl.cyfronet.coin.impl.manager.matcher.AddAtomicServiceMatcher;
+import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
 public class CreateAtomicServiceInAirActionTest extends ActionTest {
 

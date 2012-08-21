@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.impl.manager.matcher.AddAtomicServiceMatcher;
+import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

@@ -86,9 +86,16 @@ public class ActionFactory {
 	public GetUserWorkflowAction createGetUserWorkflowAction(String workflowId,
 			String username) {
 		return new GetUserWorkflowAction(air, credentialProperties, workflowId,
-				username);		
+				username);
 	}
 
+	public StartAtomicServiceAction createStartAtomicServiceAction(
+			String atomicServiceId, String asName, String contextId,
+			String username) {
+		return new StartAtomicServiceAction(air, atmosphere, username,
+				atomicServiceId, asName, contextId);
+	}
+	
 	public void setAir(AirClient air) {
 		this.air = air;
 	}

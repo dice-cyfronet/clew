@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.manager.atmosphere;
+package pl.cyfronet.coin.impl.mock.atmosphere;
 
 import java.util.List;
 import java.util.Map;

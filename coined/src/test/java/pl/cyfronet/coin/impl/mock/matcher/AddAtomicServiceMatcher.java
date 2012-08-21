@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.manager.matcher;
+package pl.cyfronet.coin.impl.mock.matcher;
 
 import java.util.List;
 

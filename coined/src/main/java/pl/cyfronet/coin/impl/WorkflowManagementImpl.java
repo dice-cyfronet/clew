@@ -35,9 +35,9 @@ import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowsAction;
+import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.StopWorkflowAction;
-import pl.cyfronet.coin.impl.manager.CloudManager;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -48,8 +48,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	// throw new WebApplicationException(403);
 
 	private ActionFactory actionFactory;
-
-	private CloudManager manager;
 
 	/**
 	 * Logger.
@@ -79,8 +77,11 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public void addAtomicServiceToWorkflow(String contextId, String asId,
 			String name) {
+		StartAtomicServiceAction action = actionFactory
+				.createStartAtomicServiceAction(asId, name, contextId,
+						getUsername());
 		try {
-			manager.startAtomicService(asId, name, contextId, getUsername());
+			action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
@@ -130,13 +131,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			Redirection redirectionInfo) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/**
-	 * @param manager the manager to set
-	 */
-	public void setManager(CloudManager manager) {
-		this.manager = manager;
 	}
 
 	public void setActionFactory(ActionFactory actionFactory) {
