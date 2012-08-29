@@ -11,6 +11,5 @@ public interface MasterInterfaceAuthClient {
 	@GET
 	@Path("/validatetkt/")
 	@Produces(MediaType.APPLICATION_JSON)
-	//@Consumes(MediaType.APPLICATION_JSON)
 	public UserDetails validate(@QueryParam("ticket") String ticket);
 }
