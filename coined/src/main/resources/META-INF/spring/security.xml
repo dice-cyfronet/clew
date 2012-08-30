@@ -16,12 +16,7 @@
 
 	<bean id="authenticationHandler"
 		class="pl.cyfronet.coin.impl.security.mi.MasterInterfaceAuthenticationHandler">
-		<property name="ipAddress" value="0.0.0.0" />
-		<property name="modAuthTkt">
-			<bean class="pl.cyfronet.coin.impl.security.mi.ModAuthTkt">
-				<property name="secret" value="${secret}" />
-			</bean>
-		</property>
+		<property name="authService" ref="authService" />
 	</bean>
 	
 	<bean id="authService" class="pl.cyfronet.coin.auth.AuthService">
