@@ -39,28 +39,34 @@ public class AuthService extends TimerTask {
 		}
 		return details;
 	}
-	
+
 	@Override
 	public void run() {
 		cleanCache();
 	}
-	
+
 	private void cleanCache() {
 		synchronized (cache) {
-			long current = System.currentTimeMillis();
 			for (Iterator<Map.Entry<String, UserDetails>> it = cache.entrySet()
 					.iterator(); it.hasNext();) {
 				Map.Entry<String, UserDetails> entry = it.next();
-				if (entry.getValue().getCreationTime() + cacheInterval < current) {
+				UserDetails details = entry.getValue();
+				if (shouldRemove(details)) {
 					it.remove();
 				}
 			}
 		}
 	}
-	
+
+	private boolean shouldRemove(UserDetails details) {
+		long current = System.currentTimeMillis();
+		return details == null
+				|| details.getCreationTime() + cacheInterval < current;
+	}
+
 	public void setAuthClient(MasterInterfaceAuthClient authClient) {
 		this.authClient = authClient;
-	}	
+	}
 
 	public void setCacheInterval(long cacheInterval) {
 		this.cacheInterval = cacheInterval;
