@@ -7,6 +7,11 @@
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>coinauth</artifactId>
+	<packaging>bundle</packaging>
+
+	<properties>
+		<bundle.symbolicName>coinauth</bundle.symbolicName>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -26,10 +31,49 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+		<build>
+		<defaultGoal>install</defaultGoal>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.5</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
+						<Import-Package>
+							META-INF.cxf,
+							META-INF.cxf.osgi,
+							org.apache.cxf.bus,
+							org.apache.cxf.bus.spring,
+							org.apache.cxf.transport.http,
+							org.apache.cxf.jaxrs.client,
+							javax.ws.rs.core,
+							*
+						</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
