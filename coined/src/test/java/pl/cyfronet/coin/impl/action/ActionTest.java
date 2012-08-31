@@ -22,6 +22,8 @@ public abstract class ActionTest {
 	
 	protected String cloudSiteId = "siteId";
 	
+	protected Integer defaultPriority = 40;
+	
 	@BeforeMethod
 	protected void setUp() {
 		air = mock(AirClient.class);
@@ -31,6 +33,7 @@ public abstract class ActionTest {
 		actionFactory.setAir(air);
 		actionFactory.setAtmosphere(atmosphere);
 		actionFactory.setDefaultSiteId(cloudSiteId);
+		actionFactory.setDefaultPriority(defaultPriority);
 		
 		Properties credentialProp = new Properties();
 		credentialProp.put("type1.username", "vm1Username");

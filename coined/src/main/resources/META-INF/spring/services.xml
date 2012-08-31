@@ -26,6 +26,7 @@
 		<property name="air" ref="air-client" />
 		<property name="atmosphere" ref="atmosphere" />
 		<property name="defaultSiteId" value="${default.cloud.site.id}" />
+		<property name="defaultPriority" value="${default.workflow.priority}" />
 		<property name="credentialProperties" ref="as-sec" />
 	</bean>
 </beans>									   

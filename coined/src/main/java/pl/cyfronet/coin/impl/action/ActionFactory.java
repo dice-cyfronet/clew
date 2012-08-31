@@ -34,6 +34,7 @@ public class ActionFactory {
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
 	private Integer defaultPriority;
+
 	private Properties credentialProperties;
 
 	public ListAtomicServicesAction createListAtomicServicesAction() {
@@ -93,7 +94,7 @@ public class ActionFactory {
 			String atomicServiceId, String asName, String contextId,
 			String username) {
 		return new StartAtomicServiceAction(air, atmosphere, username,
-				atomicServiceId, asName, contextId);
+				atomicServiceId, asName, contextId, defaultPriority);
 	}
 	
 	public void setAir(AirClient air) {
@@ -108,6 +109,10 @@ public class ActionFactory {
 		this.defaultSiteId = defaultSiteId;
 	}
 
+	public void setDefaultPriority(Integer defaultPriority) {
+		this.defaultPriority = defaultPriority;
+	}
+	
 	public void setCredentialProperties(Properties credentialProperties) {
 		this.credentialProperties = credentialProperties;
 	}

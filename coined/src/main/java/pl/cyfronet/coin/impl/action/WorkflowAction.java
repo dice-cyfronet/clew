@@ -45,7 +45,7 @@ public abstract class WorkflowAction<T> extends AirAction<T> {
 
 	protected void parseResponseAndThrowExceptionsWhenNeeded(
 			ManagerResponse response) throws CloudFacadeException {
-		if (response.getOperationStatus() == OperationStatus.FAILED) {
+		if (OperationStatus.FAILED == response.getOperationStatus()) {
 			String errorMessage = getErrorMessage(response);
 			throw new CloudFacadeException(errorMessage);
 		}

@@ -148,12 +148,14 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private AddRequiredAppliancesRequestMatcher getAddAppliancesMather() {
-		return new AddRequiredAppliancesRequestMatcher(contextId, startRequest
-				.getAsConfigIds().toArray(new String[0]));
+		return new AddRequiredAppliancesRequestMatcher(contextId,
+				defaultPriority, startRequest.getAsConfigIds().toArray(
+						new String[0]));
 	}
 
 	private void whenStartWorkflow() throws WorkflowStartException {
-		StartWorkflowAction action = actionFactory.createStartWorkflowAction(startRequest, username);		
+		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
+				startRequest, username);
 		createdContextId = action.execute();
 	}
 
@@ -189,8 +191,8 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 
 	private void thanCannotStartTwoWorkflowsOfType(WorkflowStartException e,
 			WorkflowType type) {
-		assertEquals(String.format("Cannot start two %s workflows", type),
-				e.getResponse().getEntity());
+		assertEquals(String.format("Cannot start two %s workflows", type), e
+				.getResponse().getEntity());
 		verify(air, times(1)).getUserWorkflows(username);
 		verify(air, times(0)).startWorkflow(name, username, description,
 				priority, workflowType);

@@ -40,7 +40,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		wd.setVph_username(username);
 
 		matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
-				atomicServiceId);
+				defaultPriority, atomicServiceId);
 		givenWorkflowStarted();
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
@@ -109,16 +109,15 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	public void shouldCreateExceptionWhileAtmosphereActionFailed()
 			throws Exception {
 		givenAtmosphereReturnsErrorWhileStartingAtomicService();
-		
 
 		try {
 			whenStartAtomicService();
-			 fail();
+			fail();
 		} catch (CloudFacadeException e) {
-			//OK
+			// OK
 		}
 
-		thenVerifyRequestSendToAtmosphere();		
+		thenVerifyRequestSendToAtmosphere();
 	}
 
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
@@ -127,10 +126,10 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		ManagerResponse response = new ManagerResponseImpl();
 		response.setOperationStatus(OperationStatus.FAILED);
 
-		when(atmosphere.addRequiredAppliances(request)).thenReturn(response);		
+		when(atmosphere.addRequiredAppliances(request)).thenReturn(response);
 	}
-	
+
 	private void thenVerifyRequestSendToAtmosphere() {
-		verify(atmosphere, times(1)).addRequiredAppliances(request);		
+		verify(atmosphere, times(1)).addRequiredAppliances(request);
 	}
 }

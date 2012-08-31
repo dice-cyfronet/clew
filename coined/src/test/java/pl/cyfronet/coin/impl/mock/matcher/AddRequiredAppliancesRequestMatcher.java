@@ -36,16 +36,20 @@ public class AddRequiredAppliancesRequestMatcher extends
 
 	private boolean checkName;
 
+	private Integer importanceLevel;
+
 	public AddRequiredAppliancesRequestMatcher(String contextId,
-			String... atomicServiceIds) {
-		this(contextId, false, atomicServiceIds);
+			Integer importanceLevel, String... atomicServiceIds) {
+		this(contextId, false, importanceLevel, atomicServiceIds);
 	}
 
 	public AddRequiredAppliancesRequestMatcher(String contextId,
-			boolean checkName, String... atomicServiceIds) {
+			boolean checkName, Integer importanceLevel,
+			String... atomicServiceIds) {
 		this.contextId = contextId;
 		this.atomicServiceIds = atomicServiceIds;
 		this.checkName = checkName;
+		this.importanceLevel = importanceLevel;
 	}
 
 	/*
@@ -56,6 +60,7 @@ public class AddRequiredAppliancesRequestMatcher extends
 	public boolean matches(Object arg0) {
 		AddRequiredAppliancesRequest request = (AddRequiredAppliancesRequest) arg0;
 		return request.getCorrelationId().equals(contextId)
+				&& importanceLevel.equals(request.getImportanceLevel())
 				&& equals(request.getApplianceIdentities(), atomicServiceIds);
 	}
 

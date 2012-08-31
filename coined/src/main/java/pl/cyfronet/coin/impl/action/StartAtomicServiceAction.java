@@ -36,11 +36,12 @@ public class StartAtomicServiceAction extends
 	 */
 	StartAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
 			String username, String atomicServiceId, String asName,
-			String contextId) {
+			String contextId, Integer priority) {
 		super(air, atmosphere, username);
 		this.atomicServiceId = atomicServiceId;
 		this.asName = asName;
 		this.contextId = contextId;
+		this.defaultPriority = priority;
 	}
 
 	/**
