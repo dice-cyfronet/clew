@@ -16,9 +16,6 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,68 +32,12 @@ public class AirTest {
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
-		ATEndpoint asE1 = new ATEndpoint();
-		asE1.setDescription("endpoint description");
-		asE1.setDescriptor("<wsdl/>");
-		asE1.setInvocation_path("/gimias");
-		asE1.setPort(9000);
-		asE1.setService_name("gimias");
-		asE1.setEndpoint_type("ws");
-		//asE1.setEndpoint_type("REST");
-		
-		ATEndpoint asE2 = new ATEndpoint();
-		asE2.setDescription("endpoint description 3");
-		asE2.setDescriptor("<wsdl 2/>");
-		asE2.setInvocation_path("/gimias2");
-		asE2.setPort(9001);
-		asE2.setService_name("gimias2");
-
-		AddAtomicServiceRequest request = new AddAtomicServiceRequest();
-		
-		request.setClient("rest");
-		request.setDescription("description");
-		request.setHttp(true);
-		request.setIn_proxy(true);
-		request.setName("yyyy");
-		request.setPublished(true);
-		request.setScalable(true);
-		request.setShared(true);
-		request.setVnc(true);
-		request.setEndpoints(Arrays.asList(asE1));
-
-		// System.out.println(air.getUserWorkflows("marek"));
-
-//		System.out.println(air.addAtomicService(request));
-
-		// System.out.println(air.getWorkflow("4f8c38d68664883031005412"));
-
-//		try {
-//			System.out.println(air.addInitialConfiguration("ArchLinuxTestConf",
-//					"euHeart Services", "<mk><init/></mk>"));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println(e.getClass());
-//		}
-
-		//System.out.println(air.getApplianceTypes());
-		
-		// try {
-		// List<ApplianceType> types = air.getApplianceTypes();
-		// for (ApplianceType applianceType : types) {
-		// System.out.println(applianceType.getName() + " " +
-		// applianceType.isHttp());
-		// }
-		// } catch (Exception e) {
-		// System.out.println(e.getClass());
-		// }
-		
-		//System.out.println(air.getWorkflow("4f8eafde86648824da00b15b"));
-//		List<ApplianceType> types = air.getApplianceTypes();
+//		air.uploadSecurityPolicy("test1", "roles=role_a", false);
 //		
-//		for (ApplianceType applianceType : types) {
-//			System.out.println(applianceType);
-//		}
+//		System.out.println("!!!!!!!!!!!!!!!!! lets try again");
+//		
+//		air.uploadSecurityPolicy("test1", "roles=role_a", false);
 		
-		System.out.println(air.getWorkflow("4f9d0b538664884a64000635"));
+		air.getSecurityPolicy("nonexisting");
 	}
 }

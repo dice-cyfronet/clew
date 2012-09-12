@@ -57,6 +57,12 @@
 					</key>
 					<value>applianceType</value>
 				</entry>
+				<entry>
+					<key>
+						<value>pl.cyfronet.coin.impl.air.client.SecurityPolicy</value>
+					</key>
+					<value>securityPolicy</value>
+				</entry>
 			</map>
 		</property>
 		<property name="arrayKeys">

@@ -96,7 +96,27 @@ public class ActionFactory {
 		return new StartAtomicServiceAction(air, atmosphere, username,
 				atomicServiceId, asName, contextId, defaultPriority);
 	}
-	
+
+	public GetSecurityPolicyAction createGetSecurityPolicyAction(
+			String policyName) {
+		return new GetSecurityPolicyAction(air, policyName);
+	}
+
+	public ListSecurityPoliciesAction createListSecurityPoliciesAction() {
+		return new ListSecurityPoliciesAction(air);
+	}
+
+	public UploadSecurityPolicyAction createUploadSecurityPolicyAction(
+			String policyName, String policyText, boolean overwrite) {
+		return new UploadSecurityPolicyAction(air, policyName, policyText,
+				overwrite);
+	}
+
+	public DeleteSecurityPolicyAction createDeleteSecurityPolicyAction(
+			String policyName) {
+		return new DeleteSecurityPolicyAction(air, policyName);
+	}
+
 	public void setAir(AirClient air) {
 		this.air = air;
 	}
@@ -112,7 +132,7 @@ public class ActionFactory {
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
 	}
-	
+
 	public void setCredentialProperties(Properties credentialProperties) {
 		this.credentialProperties = credentialProperties;
 	}

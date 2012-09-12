@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2011 ACC CYFRONET AGH Licensed under the Apache License, Version 
-	2.0 (the "License"); you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
-	Unless required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+<!-- Copyright 2011 ACC CYFRONET AGH Licensed under the Apache License, Version 2.0 (the "License"); 
+	you may not use this file except in compliance with the License. You may obtain a copy of the License 
+	at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, 
+	software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -21,12 +20,10 @@
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
-	<jaxrs:client id="air-client" address="http://vph.cyfronet.pl/air"
-		username="vphshare" password="airtraffic123"
-		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
-		inheritHeaders="true">
+	<jaxrs:client id="air-client" address="http://vph.cyfronet.pl/air" username="vphshare"
+		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>
-			<!-- <ref bean="jaxbProvider" />-->
+			<!-- <ref bean="jaxbProvider" /> -->
 			<ref bean="air-jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -37,10 +34,8 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
 
-	<jaxrs:client id="air-client-local" address="http://localhost:4567"
-		username="vphshare" password="airtraffic123"
-		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient"
-		inheritHeaders="true">
+	<jaxrs:client id="air-client-local" address="http://localhost:4567" username="vphshare"
+		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="air-jsonProvider" />
 		</jaxrs:providers>
@@ -51,16 +46,16 @@
 			<ref bean="logOutbound" />
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
-	
+
 	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />
 		<property name="supportUnwrapped" value="true" />
 		<property name="arrayKeys">
-		    <list>
-		        <value>endpoints</value>		        
-		    </list>
-		    
+			<list>
+				<value>endpoints</value>
+			</list>
+
 		</property>
 		<property name="collectionWrapperMap">
 			<map>
@@ -76,8 +71,14 @@
 					</key>
 					<value>applianceType</value>
 				</entry>
+				<entry>
+					<key>
+						<value>pl.cyfronet.coin.impl.air.client.SecurityPolicy</value>
+					</key>
+					<value>securityPolicy</value>
+				</entry>
 			</map>
 		</property>
 	</bean>
-	
+
 </beans>
