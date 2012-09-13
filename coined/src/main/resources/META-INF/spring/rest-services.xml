@@ -18,7 +18,7 @@
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />	
 
-	<jaxrs:server id="roles-management-rs" address="http://0.0.0.0:${port}/policy">
+	<jaxrs:server id="roles-management-rs" address="http://0.0.0.0:${port}/securitypolicy">
 		<jaxrs:serviceBeans>
 			<ref bean="roles-management" />
 		</jaxrs:serviceBeans>
