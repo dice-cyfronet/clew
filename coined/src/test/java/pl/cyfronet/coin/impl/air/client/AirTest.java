@@ -32,12 +32,14 @@ public class AirTest {
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
-//		air.uploadSecurityPolicy("test1", "roles=role_a", false);
-//		
-//		System.out.println("!!!!!!!!!!!!!!!!! lets try again");
-//		
-//		air.uploadSecurityPolicy("test1", "roles=role_a", false);
+		air.uploadSecurityPolicy("test2", "roles=role_abc", true);
 		
-		air.getSecurityPolicy("nonexisting");
+		System.out.println(air.getSecurityPolicy("test2"));
+		
+		System.out.println("!!!!!!!!!!!!!!!!! lets try again");
+		
+//		air.uploadSecurityPolicy("test2", "roles=role_a", false);
+		
+//		air.getSecurityPolicy("nonexisting");
 	}
 }

@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import pl.cyfronet.coin.api.exception.SecurityPolicyAlreadyExistException;
 import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
 
 @Path("/")
@@ -29,7 +30,7 @@ public interface SecurityPolicyService {
 	@Path("/{policyName}")
 	void updateSecurityPolicy(@PathParam("policyName") String policyName,
 			String policyContent, @QueryParam("overwrite") boolean overwrite)
-			throws SecurityPolicyNotFoundException;
+			throws SecurityPolicyAlreadyExistException;
 
 	@DELETE
 	@Path("/{policyName}")
