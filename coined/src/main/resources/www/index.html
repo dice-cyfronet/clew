@@ -22,6 +22,9 @@
 		$('#as-accordion').accordion({
 			autoHeight : false
 		});
+		$('#securitypolicy-accordion').accordion({
+			autoHeight : false
+		});
 	};
 	$(init);
 </script>
@@ -65,6 +68,7 @@ body {
 			<ul>
 				<li><a href="#workflow-accordion">Workflow</a></li>
 				<li><a href="#as-accordion">Atomic Service</a></li>
+				<li><a href="#securitypolicy-accordion">Security Policy</a></li>
 			</ul>
 			<div id="workflow-accordion">
 				<h3>
@@ -107,18 +111,28 @@ body {
 							<ul>
 								<li><strong>id</strong> - atomic service instance id</li>
 								<li><strong>name</strong> - atomic service instance name</li>
-								<li><strong>status</strong> - atomic service instance status (<i>running</i>, <i>paused</i>, <i>booting</i>, <i>stopping</i> or <i>stopped</i>)</li>
+								<li><strong>status</strong> - atomic service instance
+									status (<i>running</i>, <i>paused</i>, <i>booting</i>, <i>stopping</i>
+									or <i>stopped</i>)</li>
 								<li><strong>message</strong> - diagnostic message ()</li>
-								<li><strong>atomicServiceId</strong> - id of the atomic service used to create this instance</li>
-								<li><strong>credential</strong> - credential allowing to login into atomic service instance (not empty only in <i>development</i> workflow)</li>
+								<li><strong>atomicServiceId</strong> - id of the atomic
+									service used to create this instance</li>
+								<li><strong>credential</strong> - credential allowing to
+									login into atomic service instance (not empty only in <i>development</i>
+									workflow)</li>
 								<li><strong>redirections</strong> - list of redirections
 									created for this atomic service instance:
 									<ul>
 										<li><strong>name</strong> - redirection name</li>
-										<li><strong>http</strong> - if <i>true</i> than http traffic is redirected, TCP/UDP otherwise</li>
-										<li><strong>host</strong> - public entry point host for the redirection. Full redirection is <i>host:fromPort</i></li>
-										<li><strong>fromPort</strong> - public entry point port for the redirection. Full redirection is <i>host:fromPort</i></li>
-										<li><strong>toPort</strong> - port where traffic from public entry point will be forwarded in atomic service instance</li>
+										<li><strong>http</strong> - if <i>true</i> than http
+											traffic is redirected, TCP/UDP otherwise</li>
+										<li><strong>host</strong> - public entry point host for
+											the redirection. Full redirection is <i>host:fromPort</i></li>
+										<li><strong>fromPort</strong> - public entry point port
+											for the redirection. Full redirection is <i>host:fromPort</i></li>
+										<li><strong>toPort</strong> - port where traffic from
+											public entry point will be forwarded in atomic service
+											instance</li>
 									</ul></li>
 							</ul></li>
 					</ul>
@@ -274,8 +288,10 @@ body {
 								</li>
 								<li>(required) <strong>serviceName</strong> - service name
 								</li>
-								<li><strong>type</strong> - service type: REST or WS (REST by default)</li>
-								<li><strong>descriptor</strong> - service descriptor (e.g. WSDL, WADL)</li>
+								<li><strong>type</strong> - service type: REST or WS (REST
+									by default)</li>
+								<li><strong>descriptor</strong> - service descriptor (e.g.
+									WSDL, WADL)</li>
 								<li><strong>description</strong> - endpoint description</li>
 							</ul></li>
 					</ul>
@@ -317,7 +333,10 @@ body {
 					success and the <strong>400</strong> status code and problem
 					explanation when failed.
 				</div>
-				<h3><a href="#"><strong class="method">GET</strong> <strong>/as/services_set</strong> - Get atomic services set in the taverna format</a></h3>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/as/services_set</strong>
+						- Get atomic services set in the taverna format</a>
+				</h3>
 				<div>
 					<i>Currently only WS endpoints are returned</i>
 					<pre>
@@ -342,27 +361,104 @@ body {
 &lt;/serviceDescriptions&gt;  
 					</pre>
 				</div>
-				<h3><a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}</strong> - Get endpoint descriptor</a></h3>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}</strong>
+						- Get endpoint descriptor</a>
+				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>atomicServiceId</strong> - atomic service id</li>
-						<li>(required) <strong>servicePort</strong> - endpoint port</li>
-						<li>(required) <strong>invocationPath</strong> - encoded invocation path (/ should be changed into %2f)</li>
+						<li>(required) <strong>atomicServiceId</strong> - atomic
+							service id
+						</li>
+						<li>(required) <strong>servicePort</strong> - endpoint port
+						</li>
+						<li>(required) <strong>invocationPath</strong> - encoded
+							invocation path (/ should be changed into %2f)
+						</li>
 					</ul>
-					
-					The operation returns the <strong>200</strong> status code and descriptor value on
-					success and the <strong>400</strong> status code and problem
-					explanation when failed.
+
+					The operation returns the <strong>200</strong> status code and
+					descriptor value on success and the <strong>400</strong> status
+					code and problem explanation when failed.
 				</div>
-				<h3><a href="#"><strong class="method">GET</strong> <strong>/{descriptorPath}/get_as_id</strong> - Get atomic service id for given descriptor</a></h3>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/{descriptorPath}/get_as_id</strong>
+						- Get atomic service id for given descriptor</a>
+				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>descriptorPath</strong> - descriptor endpoint (see previous tab for details)</li>
+						<li>(required) <strong>descriptorPath</strong> - descriptor
+							endpoint (see previous tab for details)
+						</li>
 					</ul>
-					
-					The operation returns the <strong>200</strong> status code and descriptor value on
-					success and the <strong>400</strong> status code and problem
-					explanation when failed.
+
+					The operation returns the <strong>200</strong> status code and
+					descriptor value on success and the <strong>400</strong> status
+					code and problem explanation when failed.
+				</div>
+			</div>
+			<div id="securitypolicy-accordion">
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy</strong>
+						- lists stored security policies names</a>
+				</h3>
+				<div>
+					<p>The operation returns the 200 status code and the security
+						policies names on success.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy/{policyName}</strong>
+						- gets security policy content</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>policyName</strong> - security policy
+							name
+						</li>
+					</ul>
+
+					<p>The operation returns the 200 status code and the security
+						policy content on success. The 404 status code is returned when
+						security policy with given name does not exist.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/securitypolicy/{policyName}</strong>
+						- uploads or update security policy</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) path parameter <strong>policyName</strong> -
+							security policy name
+						</li>
+						<li>(required) query parameter <strong>overwrite</strong> -
+							if <b>true</b> than existing security policy will be updated,
+							otherwise if security policy exist than 409 code will be
+							returned.
+						</li>
+						<li>(required) <strong>request body</strong> - security
+							policy content
+						</li>
+					</ul>
+
+					<p>
+						The operation returns the 200 status code on success. The 409
+						status code is returned when user tries to update existing
+						security policy without query param <i>overwrite</i> set to <b>true</b>.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/securitypolicy/{policyName}</strong>
+						- removes security policy content</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>policyName</strong> - security policy name
+						</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. 
+						The 404 status code is returned when
+						security policy with given name does not exist.</p>
 				</div>
 			</div>
 		</div>
