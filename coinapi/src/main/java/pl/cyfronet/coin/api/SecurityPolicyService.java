@@ -34,6 +34,6 @@ public interface SecurityPolicyService {
 
 	@DELETE
 	@Path("/{policyName}")
-	void deleteSecurityPolicy(String policyName)
+	void deleteSecurityPolicy(@PathParam("policyName") String policyName)
 			throws SecurityPolicyNotFoundException;
 }
