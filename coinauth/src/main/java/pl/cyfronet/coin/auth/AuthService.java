@@ -27,26 +27,23 @@ public class AuthService extends TimerTask {
 
 	public UserDetails getUserDetails(String ticket) {
 		logger.debug("Getting user details for {}", ticket);
-		
-		UserDetails details = null;
-		if (cache.containsKey(ticket)) {
-			synchronized (cache) {
-				details = cache.get(ticket);
+			UserDetails details = cache.get(ticket);
+			if (cache.containsKey(ticket)) {
+				return details;
+			} else if (ticket != null && !"".equals(ticket)) {
+				try {
+					details = authClient.validate(ticket);
+					logger.debug("User details for {} - {}", ticket, details);
+				} catch (WebApplicationException e) {
+					// wrong user ticket or service is down in the feature
+					// distinguish between these two situations
+					logger.debug("unable to connect to master interface", e);
+				}
+				synchronized (cache) {
+					cache.put(ticket, details);
+				}
 			}
-		} else if (ticket != null && !"".equals(ticket)) {
-			try {
-				details = authClient.validate(ticket);
-				logger.debug("User details for {} - {}", ticket, details);
-			} catch (WebApplicationException e) {
-				// wrong user ticket or service is down in the feature
-				// distinguish between these two situations
-				logger.debug("unable to connect to master interface", e);
-			}
-			synchronized (cache) {
-				cache.put(ticket, details);
-			}
-		}
-		return details;
+			return details;
 	}
 
 	@Override
