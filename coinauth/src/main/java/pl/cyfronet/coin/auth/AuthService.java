@@ -33,7 +33,7 @@ public class AuthService extends TimerTask {
 			} else if (ticket != null && !"".equals(ticket)) {
 				try {
 					details = authClient.validate(ticket);
-					logger.debug("User details for {} - {}", ticket, details);
+					logger.debug("User details {}", details);
 				} catch (WebApplicationException e) {
 					// wrong user ticket or service is down in the feature
 					// distinguish between these two situations
