@@ -21,6 +21,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private String createdAsId;
 	private String asAirId = "as123";
 	private AddAtomicServiceMatcher matcher;
+	private CreateAtomicServiceInAirAction action;
 	
 	@Test
 	public void shouldCreateAtomicServiceRecord() throws Exception {
@@ -64,7 +65,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private void whenAddAtomicServiceToAir() {
 		matcher = new AddAtomicServiceMatcher(atomicService);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId );
-		CreateAtomicServiceInAirAction action = new CreateAtomicServiceInAirAction(
+		action = new CreateAtomicServiceInAirAction(
 				air, atomicService);
 		
 		createdAsId = action.execute();
@@ -90,5 +91,23 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		atomicService.setName(asName);
 		atomicService.setDescription(asDescription);
 		atomicService.setHttp(true);
+	}
+	
+	@Test
+	public void shouldRemoveAtomicServiceOnRollback() throws Exception {
+		givenAtomicServiceDefinitionWithoutEndpoints();
+		whenAddAtomicServiceToAirAndRollback();
+		thenAtomicServiceCreatedAndRemovedFromAir();
+
+	}	
+
+	private void whenAddAtomicServiceToAirAndRollback() {
+		whenAddAtomicServiceToAir();
+		action.rollback();
+	}
+	
+	private void thenAtomicServiceCreatedAndRemovedFromAir() {
+		thenCheckRequestSendToAir();
+		verify(air, times(1)).deleteAtomicService(createdAsId);
 	}
 }

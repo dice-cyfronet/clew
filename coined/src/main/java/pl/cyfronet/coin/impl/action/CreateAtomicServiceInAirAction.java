@@ -19,6 +19,9 @@ package pl.cyfronet.coin.impl.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
@@ -32,9 +35,12 @@ import pl.cyfronet.coin.impl.air.client.AirClient;
  */
 public class CreateAtomicServiceInAirAction implements Action<String> {
 
+	private static Logger logger = LoggerFactory.getLogger(CreateAtomicServiceInAirAction.class);
+	
 	private AirClient air;
 	private AtomicService atomicService;
-
+	private String createdAtomicServiceId;
+	
 	CreateAtomicServiceInAirAction(AirClient air, AtomicService atomicService) {
 		this.air = air;
 		this.atomicService = atomicService;
@@ -54,7 +60,9 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setShared(atomicService.isShared());
 		addASRequest.setVnc(atomicService.isShared());
 
-		return air.addAtomicService(addASRequest);
+		createdAtomicServiceId = air.addAtomicService(addASRequest);
+		
+		return createdAtomicServiceId;
 	}
 
 	private List<ATEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
@@ -80,6 +88,11 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 
 	@Override
 	public void rollback() {
-		// TODO rollback should be implemented in this situation
+		try {
+			air.deleteAtomicService(createdAtomicServiceId);
+		} catch (Exception e) {
+			// best effort
+			logger.warn("Unable to rollback", e);
+		}
 	}
 }

@@ -37,12 +37,13 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 	private AddAtomicServiceMatcher matcher;
 	private String asId = "asAirId";
 	private String createdAsId;
+	private CreateAtomicServiceAction action;
 
 	@Test
 	public void shouldCreateNewAtomicService() throws Exception {
 		givenAtomicServiceMetadata();
 		whenCreateNewAtomicService();
-		thenCheckIfAtomicServiceCreated();
+		thenAtomicServiceCreated();
 	}
 
 	private void givenAtomicServiceMetadata() {
@@ -62,15 +63,33 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		when(
 				atmosphere.createTemplate(instanceId, atomicService.getName(),
 						cloudSiteId, asId)).thenReturn("1");
-		CreateAtomicServiceAction action = actionFactory
+		action = actionFactory
 				.createCreateAtomicServiceAction(instanceId, atomicService);
 		createdAsId = action.execute();
 	}
 
-	private void thenCheckIfAtomicServiceCreated() throws Exception {
+	private void thenAtomicServiceCreated() throws Exception {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(instanceId,
 				atomicService.getName(), cloudSiteId, asId);
 		assertEquals(atomicService.getName(), createdAsId);
+	}
+	
+	@Test
+	public void shouldCreateAtomicServiceAndRollback() throws Exception {
+		givenAtomicServiceMetadata();
+		whenCreateNewAtomicServiceAndRollback();
+		thenAtomicServiceCreatedAndRemoved();
+	}
+
+	private void whenCreateNewAtomicServiceAndRollback() throws Exception {
+		whenCreateNewAtomicService();
+		action.rollback();
+	}
+
+	private void thenAtomicServiceCreatedAndRemoved() throws Exception {
+		thenAtomicServiceCreated();
+		
+		verify(air, times(1)).deleteAtomicService(asId);
 	}
 }

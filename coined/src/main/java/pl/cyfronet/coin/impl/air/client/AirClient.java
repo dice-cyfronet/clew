@@ -79,6 +79,10 @@ public interface AirClient {
 	@Consumes(MediaType.APPLICATION_JSON)
 	String addAtomicService(AddAtomicServiceRequest addAtomicService);
 
+	@DELETE
+	@Path("/appliance_type/{asName}")
+	void deleteAtomicService(@PathParam("asName") String asName);
+	
 	@POST
 	@Path("/upload_appliance_config")
 	String addInitialConfiguration(@FormParam("config_name") String configName,
@@ -106,5 +110,5 @@ public interface AirClient {
 	@GET
 	@Path("/list_security_policies")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<SecurityPolicy> getSecurityPolicies();
+	List<SecurityPolicy> getSecurityPolicies();	
 }
