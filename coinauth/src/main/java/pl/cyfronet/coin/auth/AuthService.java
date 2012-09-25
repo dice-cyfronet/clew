@@ -26,7 +26,6 @@ public class AuthService extends TimerTask {
 	}
 
 	public UserDetails getUserDetails(String ticket) {
-		logger.debug("Getting user details for {}", ticket);
 			UserDetails details = cache.get(ticket);
 			if (cache.containsKey(ticket)) {
 				return details;
