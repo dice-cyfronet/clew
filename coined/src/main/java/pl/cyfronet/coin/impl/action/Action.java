@@ -20,7 +20,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
+ * @param <T> Object returned by the action.
  */
 public interface Action<T> {
 
