@@ -12,8 +12,8 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.allocation.OperationStatus;
-import pl.cyfronet.dyrealla.allocation.impl.ManagerResponseImpl;
+import pl.cyfronet.dyrealla.core.allocation.OperationStatus;
+import pl.cyfronet.dyrealla.core.allocation.impl.ManagerResponseImpl;
 
 public class StopWorkflowActionTest extends WorkflowActionTest {
 

@@ -13,7 +13,7 @@
 
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
-		<atmosphere.version>0.6.0-SNAPSHOT</atmosphere.version>
+		<atmosphere.version>0.7.0-SNAPSHOT</atmosphere.version>
 		<springframework.version>3.0.6.RELEASE</springframework.version>
 		<jackson.version>[1.9.6,2.0.0)</jackson.version>
 	</properties>
@@ -58,11 +58,6 @@
 		<!-- Atmosphere -->
 		<dependency>
 			<artifactId>dyrealla-api</artifactId>
-			<groupId>pl.cyfronet.dyrealla</groupId>
-			<version>${atmosphere.version}</version>
-		</dependency>
-		<dependency>
-			<artifactId>dyrealla-commons</artifactId>
 			<groupId>pl.cyfronet.dyrealla</groupId>
 			<version>${atmosphere.version}</version>
 		</dependency>

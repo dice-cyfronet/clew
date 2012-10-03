@@ -4,9 +4,9 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.allocation.ManagerResponse;
-import pl.cyfronet.dyrealla.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.core.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.core.allocation.OperationStatus;
 
 public abstract class WorkflowAction<T> extends AirAction<T> {
 
