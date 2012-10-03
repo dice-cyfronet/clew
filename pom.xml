@@ -29,9 +29,9 @@
 	<url>http://maven.apache.org</url>
 
 	<scm>
-		<connection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</connection>
-		<developerConnection>scm:svn:https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</developerConnection>
-		<url>https://gforge.cyfronet.pl/svn/cloud-portal/coin/trunk</url>
+		<connection>scm:git:ssh://git@dev.cyfronet.pl/coin.git</connection>
+		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/coin.git</developerConnection>
+		<url>http://dev.cyfronet.pl/gitlab/coin</url>
 	</scm>
 	
 	<build>
