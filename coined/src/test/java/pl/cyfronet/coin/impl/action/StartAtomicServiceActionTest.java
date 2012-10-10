@@ -14,10 +14,10 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.mock.atmosphere.ManagerResponseTestImpl;
 import pl.cyfronet.coin.impl.mock.matcher.AddRequiredAppliancesRequestMatcher;
-import pl.cyfronet.dyrealla.core.allocation.ManagerResponse;
-import pl.cyfronet.dyrealla.core.allocation.OperationStatus;
-import pl.cyfronet.dyrealla.core.allocation.impl.AddRequiredAppliancesRequestImpl;
-import pl.cyfronet.dyrealla.core.allocation.impl.ManagerResponseImpl;
+import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
+import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
+import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
 
 public class StartAtomicServiceActionTest extends WorkflowActionTest {
 

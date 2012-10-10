@@ -21,9 +21,9 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.ApplianceNotFoundException;
-import pl.cyfronet.dyrealla.DyReAllaException;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.ApplianceNotFoundException;
+import pl.cyfronet.dyrealla.api.DyReAllaException;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

@@ -7,10 +7,10 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
-import pl.cyfronet.dyrealla.core.allocation.ManagerResponse;
-import pl.cyfronet.dyrealla.core.allocation.impl.AddRequiredAppliancesRequestImpl;
-import pl.cyfronet.dyrealla.core.allocation.impl.ApplianceIdentityImpl;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
+import pl.cyfronet.dyrealla.api.allocation.impl.ApplianceIdentityImpl;
 
 public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 

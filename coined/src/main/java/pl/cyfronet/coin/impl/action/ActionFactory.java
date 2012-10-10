@@ -23,7 +23,7 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

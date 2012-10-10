@@ -22,8 +22,8 @@ import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.mock.atmosphere.ManagerResponseTestImpl;
 import pl.cyfronet.coin.impl.mock.matcher.AddRequiredAppliancesRequestMatcher;
-import pl.cyfronet.dyrealla.core.allocation.AddRequiredAppliancesRequest;
-import pl.cyfronet.dyrealla.core.allocation.OperationStatus;
+import pl.cyfronet.dyrealla.api.allocation.AddRequiredAppliancesRequest;
+import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 
 public class StartWorkflowActionTest extends WorkflowActionTest {
 

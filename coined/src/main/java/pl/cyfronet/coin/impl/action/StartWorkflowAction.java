@@ -10,7 +10,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * Start workflow. There can be many workflow type Workflows but only one

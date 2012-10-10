@@ -19,9 +19,9 @@ package pl.cyfronet.coin.impl.mock.atmosphere;
 import java.util.List;
 import java.util.Map;
 
-import pl.cyfronet.dyrealla.core.allocation.AllocationActionPerformed;
-import pl.cyfronet.dyrealla.core.allocation.ManagerResponse;
-import pl.cyfronet.dyrealla.core.allocation.OperationStatus;
+import pl.cyfronet.dyrealla.api.allocation.AllocationActionPerformed;
+import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

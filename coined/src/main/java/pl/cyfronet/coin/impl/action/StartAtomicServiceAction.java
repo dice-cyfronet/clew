@@ -7,7 +7,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * Start atomic service in defined context. If the request is send into

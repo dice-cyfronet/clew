@@ -21,8 +21,8 @@ import java.util.List;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import pl.cyfronet.dyrealla.core.allocation.AddRequiredAppliancesRequest;
-import pl.cyfronet.dyrealla.core.allocation.ApplianceIdentity;
+import pl.cyfronet.dyrealla.api.allocation.AddRequiredAppliancesRequest;
+import pl.cyfronet.dyrealla.api.allocation.ApplianceIdentity;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

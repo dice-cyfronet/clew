@@ -10,7 +10,7 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.testng.annotations.BeforeMethod;
 
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.core.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 public abstract class ActionTest {
 
