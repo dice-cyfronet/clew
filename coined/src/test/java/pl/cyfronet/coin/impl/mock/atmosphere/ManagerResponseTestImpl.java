@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package pl.cyfronet.coin.impl.mock.atmosphere;
 
 import java.util.List;
@@ -25,7 +24,6 @@ import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class ManagerResponseTestImpl implements ManagerResponse {
 

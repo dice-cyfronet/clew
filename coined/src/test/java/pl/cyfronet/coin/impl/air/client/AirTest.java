@@ -13,13 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package pl.cyfronet.coin.impl.air.client;
 
 import java.util.List;
 
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

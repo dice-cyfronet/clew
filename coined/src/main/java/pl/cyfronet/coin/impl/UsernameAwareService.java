@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package pl.cyfronet.coin.impl;
 
 import javax.ws.rs.core.Context;

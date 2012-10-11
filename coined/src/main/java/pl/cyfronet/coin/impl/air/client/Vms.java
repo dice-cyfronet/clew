@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package pl.cyfronet.coin.impl.air.client;
 
 import java.util.List;
@@ -22,7 +21,6 @@ import pl.cyfronet.coin.api.beans.Status;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class Vms {
 

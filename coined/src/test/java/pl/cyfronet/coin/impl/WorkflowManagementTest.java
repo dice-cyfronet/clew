@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package pl.cyfronet.coin.impl;
 
 import org.apache.cxf.interceptor.LoggingInInterceptor;
@@ -25,7 +24,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 @ContextConfiguration( locations={"classpath:WorkflowManagementTest.xml"} )
 public class WorkflowManagementTest extends AbstractTestNGSpringContextTests {
