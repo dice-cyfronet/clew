@@ -22,6 +22,7 @@ import javax.xml.ws.WebFault;
 /**
  * The most generic cloud facade exception. It should be thrown when e.g.
  * connection with Air, Atmosphere, etc. fails.
+ * 
  * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
@@ -34,11 +35,14 @@ public class CloudFacadeException extends WebApplicationException {
 	}
 
 	public CloudFacadeException(String message) {
-		super(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-				.entity(message).build());
+		this(message, Response.Status.INTERNAL_SERVER_ERROR);
 	}
 
 	public CloudFacadeException(Response.Status status) {
 		super(status);
+	}
+
+	public CloudFacadeException(String message, Response.Status status) {
+		super(Response.status(status).entity(message).build());
 	}
 }
