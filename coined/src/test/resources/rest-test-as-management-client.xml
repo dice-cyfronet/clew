@@ -7,7 +7,9 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -16,19 +18,24 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs 
        http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/util 
+  	   http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
 	<jaxrs:client id="asManagementClient" address="http://localhost:8088/as"			    
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		inheritHeaders="true">
 		<jaxrs:providers>
-			<ref bean="client-jsonProvider" />
+			<ref bean="jsonProvider" />
 		</jaxrs:providers>		
 	</jaxrs:client>
-
-	<bean id="client-jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
-		<property name="serializeAsArray" value="true" />
-		<property name="dropRootElement" value="true" />
-		<property name="supportUnwrapped" value="true" />
-	</bean>
+	
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+	
+	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
+	
+	<bean id="jsonProvider-ignore-unknown" factory-bean="jsonProvider" factory-method="configure">
+        <constructor-arg  ref="failOnUnknown"/>
+        <constructor-arg  value="false"/>
+    </bean>
 </beans>

@@ -15,13 +15,13 @@
   		http://cxf.apache.org/jaxrs 
        	http://cxf.apache.org/schemas/jaxrs.xsd">
 
-	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.core.DyReAllaManagerService"
+	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.api.DyReAllaManagerService"
 		cardinality="0..1" />
 
 	<jaxrs:client id="air-client" address="${air.url}" username="${air.username}" password="${air.password}"
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>
-			<ref bean="air-jsonProvider" />
+			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:client>
 
@@ -29,10 +29,10 @@
 		serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
 		inheritHeaders="true">
 		<jaxrs:providers>
-			<ref bean="validatetkt-jsonProvider" />
+			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:client>
-
+<!-- 
 	<bean id="validatetkt-jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />
@@ -72,4 +72,5 @@
 			</list>
 		</property>
 	</bean>
+ -->	
 </beans>									   

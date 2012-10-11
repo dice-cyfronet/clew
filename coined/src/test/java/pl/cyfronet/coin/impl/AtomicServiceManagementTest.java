@@ -20,7 +20,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -148,7 +147,7 @@ public class AtomicServiceManagementTest extends
 	}
 
 	private void checkEndpointsListEmpty(List<Endpoint> endpoints) {
-		assertNull(endpoints);
+		assertEquals(endpoints.size(), 0);
 	}
 
 	private void checkEndpoints(List<Endpoint> endpoints, int size) {
@@ -162,7 +161,7 @@ public class AtomicServiceManagementTest extends
 		assertEquals(endpoint.getDescription(), "endpoint description " + nr);
 		assertEquals(endpoint.getDescriptor(), "descriptor " + nr);
 		assertEquals(endpoint.getInvocationPath(), "/path/" + nr);
-		assertEquals(endpoint.getPort(), 900 + nr);
+		assertEquals(endpoint.getPort(), new Integer(900 + nr));
 		assertEquals(endpoint.getServiceName(), "serviceName" + nr);
 		assertEquals(endpoint.getType(), getEndpointType(nr));
 	}

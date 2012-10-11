@@ -16,8 +16,14 @@
 
 package pl.cyfronet.coin.impl.air.client;
 
+import java.util.List;
+
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import pl.cyfronet.coin.impl.BeanConverter;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -31,15 +37,15 @@ public class AirTest {
 		BeanFactory factory = (BeanFactory) appContext;
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
+		JacksonJsonProvider provider = factory.getBean("jsonProvider", JacksonJsonProvider.class);
 
-		air.uploadSecurityPolicy("test2", "roles=role_abc", true);
+		//provider.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);		
 		
-		System.out.println(air.getSecurityPolicy("test2"));
-		
-		System.out.println("!!!!!!!!!!!!!!!!! lets try again");
-		
-//		air.uploadSecurityPolicy("test2", "roles=role_a", false);
-		
-//		air.getSecurityPolicy("nonexisting");
+		List<ApplianceType> types = air.getApplianceTypes();
+
+		for (ApplianceType applianceType : types) {
+			System.out.println(applianceType);
+			System.out.println(BeanConverter.getAtomicService(applianceType));
+		}
 	}
 }

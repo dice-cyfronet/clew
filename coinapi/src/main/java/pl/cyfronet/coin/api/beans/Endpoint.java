@@ -9,7 +9,7 @@ public class Endpoint {
 	
 	private String invocationPath;
 	
-	private int port;
+	private Integer port;
 	
 	private String serviceName;
 	
@@ -27,10 +27,10 @@ public class Endpoint {
 	public void setInvocationPath(String invocationPath) {
 		this.invocationPath = invocationPath;
 	}
-	public int getPort() {
+	public Integer getPort() {
 		return port;
 	}
-	public void setPort(int port) {
+	public void setPort(Integer port) {
 		this.port = port;
 	}
 	/**

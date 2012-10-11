@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>coin</artifactId>
-		<groupId>pl.cyfronet</groupId>
+		<groupId>pl.cyfronet.coin</groupId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	
@@ -13,9 +13,7 @@
 		<jetspeed.version>2.2.2</jetspeed.version>
 	</properties>
 
-	<groupId>pl.cyfronet</groupId>
 	<artifactId>coinportlet</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>COIN Portlets</name>
@@ -28,9 +26,8 @@
 	<dependencies>
 		<!-- Cloud Facade dependencies -->
 		<dependency>
-			<groupId>pl.cyfronet</groupId>
+			<groupId>pl.cyfronet.coin</groupId>
 			<artifactId>coinapi</artifactId>
-			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Portlet dependencies -->
@@ -85,12 +82,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.4</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
+			<version>${log4j.version}</version>
 		</dependency>
 		
 		<!-- CXF dependencies -->

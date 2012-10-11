@@ -15,12 +15,16 @@
  the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
   http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans.xsd
   http://www.springframework.org/schema/osgi
-  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd
+  http://www.springframework.org/schema/util 
+  http://www.springframework.org/schema/util/spring-util.xsd">
     
 	<bean id="actionFactory" class="pl.cyfronet.coin.impl.action.ActionFactory">
 		<property name="air" ref="air-client" />
@@ -29,4 +33,13 @@
 		<property name="defaultPriority" value="${default.workflow.priority}" />
 		<property name="credentialProperties" ref="as-sec" />
 	</bean>
+	
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+	
+	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
+	
+	<bean id="jsonProvider-ignore-unknown" factory-bean="jsonProvider" factory-method="configure">
+        <constructor-arg  ref="failOnUnknown"/>
+        <constructor-arg  value="false"/>
+    </bean>
 </beans>									   

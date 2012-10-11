@@ -48,7 +48,7 @@ public class CoinedAsserts {
 		assertEquals(type, asEndpoint.getType());
 		assertEquals(atEndpoint.getInvocation_path(),
 				asEndpoint.getInvocationPath());
-		assertEquals(atEndpoint.getPort().intValue(), asEndpoint.getPort());
+		assertEquals(atEndpoint.getPort(), asEndpoint.getPort());
 		assertEquals(atEndpoint.getService_name(), asEndpoint.getServiceName());
 	}
 }

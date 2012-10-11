@@ -7,6 +7,7 @@
 	and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -15,6 +16,8 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs 
        http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
@@ -24,7 +27,7 @@
 		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>
 			<!-- <ref bean="jaxbProvider" /> -->
-			<ref bean="air-jsonProvider" />
+			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
 			<ref bean="logInbound" />
@@ -34,6 +37,16 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
 
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+	
+	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
+	
+	<bean id="jsonProvider-ignore-unknown" factory-bean="jsonProvider" factory-method="configure">
+        <constructor-arg  ref="failOnUnknown"/>
+        <constructor-arg  value="false"/>
+    </bean>
+	
+<!-- 
 	<jaxrs:client id="air-client-local" address="http://localhost:4567" username="vphshare"
 		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>
@@ -46,7 +59,8 @@
 			<ref bean="logOutbound" />
 		</jaxrs:outInterceptors>
 	</jaxrs:client>
-
+-->
+<!-- 
 	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
 		<property name="serializeAsArray" value="true" />
 		<property name="dropRootElement" value="true" />
@@ -80,5 +94,5 @@
 			</map>
 		</property>
 	</bean>
-
+ -->
 </beans>
