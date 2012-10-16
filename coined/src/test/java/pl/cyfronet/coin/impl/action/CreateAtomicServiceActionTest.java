@@ -14,12 +14,11 @@
  * the License.
  */
 package pl.cyfronet.coin.impl.action;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
@@ -71,7 +70,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(instanceId,
 				atomicService.getName(), cloudSiteId, asId);
-		assertEquals(atomicService.getName(), createdAsId);
+		assertEquals(createdAsId, atomicService.getName());
 	}
 	
 	@Test

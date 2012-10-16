@@ -15,11 +15,11 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
 
@@ -91,7 +91,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
 	private void thenCheckRequestSendToAir() {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
-		assertEquals(asAirId, createdAsId);
+		assertEquals(createdAsId, asAirId);
 	}
 	
 	@Test

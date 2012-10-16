@@ -15,8 +15,8 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,12 +68,12 @@ public class GetUserWorkflowsActionTest extends WorkflowActionTest {
 	}
 
 	private void thanGetOnlyRunningWorkflows() {
-		assertEquals(2, infos.size());
-		assertEquals("id1", infos.get(0).getId());
-		assertEquals("w1", infos.get(0).getName());
-		assertEquals(WorkflowType.development, infos.get(0).getType());
-		assertEquals("id2", infos.get(1).getId());
-		assertEquals("w2", infos.get(1).getName());
-		assertEquals(WorkflowType.workflow, infos.get(1).getType());
+		assertEquals(infos.size(), 2);
+		assertEquals(infos.get(0).getId(), "id1");
+		assertEquals(infos.get(0).getName(), "w1");
+		assertEquals(infos.get(0).getType(), WorkflowType.development);
+		assertEquals(infos.get(1).getId(), "id2");
+		assertEquals(infos.get(1).getName(), "w2");
+		assertEquals(infos.get(1).getType(), WorkflowType.workflow);
 	}
 }

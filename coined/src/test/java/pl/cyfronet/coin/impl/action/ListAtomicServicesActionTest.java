@@ -15,10 +15,10 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 import static pl.cyfronet.coin.impl.CoinedAsserts.assertATAndAs;
 
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	}
 
 	private void thenValidateReturnedAtomicServices() {
-		assertEquals(2, asList.size());
+		assertEquals(asList.size(), 2);
 
 		AtomicService as1 = asList.get(0);
 		AtomicService as2 = asList.get(1);
@@ -130,7 +130,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	}
 	
 	private void thenCheckReturnedEmptyAtomicServicesList() {
-		assertEquals(0, asList.size());
+		assertEquals(asList.size(), 0);
 		thenCheckAirRequest();
 	}
 

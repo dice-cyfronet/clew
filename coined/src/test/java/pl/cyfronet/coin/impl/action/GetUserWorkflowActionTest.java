@@ -15,13 +15,13 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -228,29 +228,29 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 				.get(1).getRedirections();
 
 		assertNotNull(vm1PortMapping);
-		assertEquals(22, vm1PortMapping.get(0).getToPort().intValue());
-		assertEquals(222, vm1PortMapping.get(0).getFromPort().intValue());
-		assertEquals("headnodeIp", vm1PortMapping.get(0).getHost());
-		assertEquals("ssh", vm1PortMapping.get(0).getName());
+		assertEquals(vm1PortMapping.get(0).getToPort().intValue(), 22);
+		assertEquals(vm1PortMapping.get(0).getFromPort().intValue(), 222);
+		assertEquals(vm1PortMapping.get(0).getHost(), "headnodeIp");
+		assertEquals(vm1PortMapping.get(0).getName(), "ssh");
 
-		assertEquals(5900, vm1PortMapping.get(1).getToPort().intValue());
-		assertEquals(55900, vm1PortMapping.get(1).getFromPort().intValue());
-		assertEquals("headnodeIp", vm1PortMapping.get(1).getHost());
-		assertEquals("vnc", vm1PortMapping.get(1).getName());
+		assertEquals(vm1PortMapping.get(1).getToPort().intValue(), 5900);
+		assertEquals(vm1PortMapping.get(1).getFromPort().intValue(), 55900);
+		assertEquals(vm1PortMapping.get(1).getHost(), "headnodeIp");
+		assertEquals(vm1PortMapping.get(1).getName(), "vnc");
 
-		assertEquals(0, vm2PortMapping.size());		
+		assertEquals(vm2PortMapping.size(), 0);		
 	}
 
 	private void equals(Credential credential, String username, String password) {
 		assertNotNull(credential);
-		assertEquals(username, credential.getUsername());
-		assertEquals(password, credential.getPassword());
+		assertEquals(credential.getUsername(), username);
+		assertEquals(credential.getPassword(), password);
 	}
 
 	private void equals(Vms vm, AtomicServiceInstance asi) {
-		assertEquals(vm.getAppliance_type(), asi.getAtomicServiceId());
-		assertEquals(vm.getName(), asi.getName());
-		assertEquals(vm.getState(), asi.getStatus());
-		assertEquals(vm.getVms_id(), asi.getId());
+		assertEquals(asi.getAtomicServiceId(), vm.getAppliance_type());
+		assertEquals(asi.getName(), vm.getName());
+		assertEquals(asi.getStatus(), vm.getState());
+		assertEquals(asi.getId(), vm.getVms_id());
 	}
 }

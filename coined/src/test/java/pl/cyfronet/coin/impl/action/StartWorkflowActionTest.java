@@ -15,13 +15,13 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
@@ -209,8 +209,8 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 
 	private void thanCannotStartTwoWorkflowsOfType(WorkflowStartException e,
 			WorkflowType type) {
-		assertEquals(String.format("Cannot start two %s workflows", type), e
-				.getResponse().getEntity());
+		assertEquals(e.getResponse().getEntity(),
+				String.format("Cannot start two %s workflows", type));
 		verify(air, times(1)).getUserWorkflows(username);
 		verify(air, times(0)).startWorkflow(name, username, description,
 				priority, workflowType);
@@ -219,6 +219,6 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	private void checkWorkflowRegisteredInAir(WorkflowType workflowType) {
 		verify(air, times(1)).startWorkflow(name, username, description,
 				priority, workflowType);
-		assertEquals(contextId, createdContextId);
+		assertEquals(createdContextId, contextId);
 	}
 }
