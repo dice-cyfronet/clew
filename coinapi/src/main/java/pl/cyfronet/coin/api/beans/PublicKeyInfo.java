@@ -19,25 +19,35 @@ package pl.cyfronet.coin.api.beans;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class SSHKeyPair {
+public class PublicKeyInfo {
 
-	private String privateKey;
+	String keyName;
 	
-	private String publicKey;
+	String fingerprint;
 
-	public String getPrivateKey() {
-		return privateKey;
+	String id;
+	
+	public String getId() {
+		return id;
 	}
 
-	public void setPrivateKey(String privateKey) {
-		this.privateKey = privateKey;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getPublicKey() {
-		return publicKey;
+	public String getKeyName() {
+		return keyName;
 	}
 
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
+	public void setKeyName(String keyName) {
+		this.keyName = keyName;
+	}
+	
+	public String getFingerprint() {
+		return fingerprint;
+	}
+
+	public void setFingerprint(String fingerprint) {
+		this.fingerprint = fingerprint;
 	}
 }

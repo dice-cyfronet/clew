@@ -25,8 +25,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
-import pl.cyfronet.coin.api.beans.SSHKeyPair;
 import pl.cyfronet.coin.api.exception.SSHKeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.SSHKeyNotFoundException;
 
@@ -37,17 +37,16 @@ import pl.cyfronet.coin.api.exception.SSHKeyNotFoundException;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @Path("/")
-public interface SshKeyManagement {
+public interface KeyManagement {
 
 	@GET
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON })
-	List<String> list();
+	List<KeyInfo> list();
 
 	@POST
 	@Path("/add")
 	void add(@FormParam("keyName") String keyName,
-			@FormParam("publicKey") String publicKey,
 			@FormParam("privateKey") String privateKey)
 			throws SSHKeyAlreadyExistsException;
 
@@ -56,7 +55,6 @@ public interface SshKeyManagement {
 	void remove(@PathParam("keyName") String keyName) throws SSHKeyNotFoundException;
 
 	@GET
-	@Path("/{keyName}")
-	@Produces({ MediaType.APPLICATION_JSON })
-	SSHKeyPair get(@PathParam("keyName") String keyName) throws SSHKeyNotFoundException;
+	@Path("/{keyName}")	
+	String get(@PathParam("keyName") String keyName) throws SSHKeyNotFoundException;
 }
