@@ -96,6 +96,8 @@ public class ActionFactory {
 				atomicServiceId, asName, contextId, defaultPriority);
 	}
 
+	// policy files
+	
 	public GetSecurityPolicyAction createGetSecurityPolicyAction(
 			String policyName) {
 		return new GetSecurityPolicyAction(air, policyName);
@@ -116,6 +118,14 @@ public class ActionFactory {
 		return new DeleteSecurityPolicyAction(air, policyName);
 	}
 
+	// keys
+
+	public ListUserKeysAction getListUserKeysAction(String username) {
+		return new ListUserKeysAction(air, username);
+	}
+
+	// setters
+	
 	public void setAir(AirClient air) {
 		this.air = air;
 	}
