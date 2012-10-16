@@ -81,7 +81,7 @@ public interface AirClient {
 	@DELETE
 	@Path("/appliance_type/{asName}")
 	void deleteAtomicService(@PathParam("asName") String asName);
-	
+
 	@POST
 	@Path("/upload_appliance_config")
 	String addInitialConfiguration(@FormParam("config_name") String configName,
@@ -91,6 +91,8 @@ public interface AirClient {
 	@GET
 	@Path("/get_endpoint_descriptor/{endpointId}")
 	String getEndpointDescriptor(@PathParam("endpointId") String endpointId);
+
+	// security policies
 
 	@GET
 	@Path("/security_policy")
@@ -109,5 +111,30 @@ public interface AirClient {
 	@GET
 	@Path("/list_security_policies")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<SecurityPolicy> getSecurityPolicies();	
+	List<SecurityPolicy> getSecurityPolicies();
+
+	// keys
+
+	@GET
+	@Path("/user_key/get_user_keys/{vph_username}")
+	@Produces(MediaType.APPLICATION_JSON)
+	List<UserKeyInfo> getUserKeys(
+			@PathParam("vph_username") String vphUsername);
+
+	@GET
+	@Path("/user_key/get_public_key/{vph_username}/{key_id}")
+	String getPublicKey(@PathParam("vph_username") String vphUsername,
+			@PathParam("key_id") String keyId);
+
+	@DELETE
+	@Path("/user_key/{vph_username}/{key_id}")
+	void deletePublicKey(@PathParam("vph_username") String vphUsername,
+			@PathParam("key_id") String keyId);
+
+	@POST
+	@Path("/user_key/add")
+	void addKey(@FormParam("name") String keyName,
+			@FormParam("vph_username") String vphUsername,
+			@FormParam("public_key") String publicKey,
+			@FormParam("fingerprint") String fingerprint);
 }
