@@ -27,6 +27,6 @@ public class KeyAlreadyExistsException extends CloudFacadeException {
 
 	public KeyAlreadyExistsException(String keyName) {
 		super(String.format("%s already exisists", keyName),
-				Response.Status.FORBIDDEN);
+				Response.Status.CONFLICT);
 	}
 }
