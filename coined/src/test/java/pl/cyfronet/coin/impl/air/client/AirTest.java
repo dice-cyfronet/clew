@@ -15,13 +15,8 @@
  */
 package pl.cyfronet.coin.impl.air.client;
 
-import java.util.List;
-
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import pl.cyfronet.coin.impl.BeanConverter;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -35,15 +30,19 @@ public class AirTest {
 		BeanFactory factory = (BeanFactory) appContext;
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
-		JacksonJsonProvider provider = factory.getBean("jsonProvider", JacksonJsonProvider.class);
 
-		//provider.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);		
+		//air.addKey("mk_key", "marek", "publicKey", "fingerprint");
 		
-		List<ApplianceType> types = air.getApplianceTypes();
-
-		for (ApplianceType applianceType : types) {
-			System.out.println(applianceType);
-			System.out.println(BeanConverter.getAtomicService(applianceType));
+		System.out.println(air.getUserKeys("marek"));
+		
+		try {
+			System.out.println(air.getPublicKey("marek", "507e69e72a95243a9500000a"));
+		} catch (Exception e) {
+			System.out.println(e.getClass());
+			e.printStackTrace();
+			
 		}
+		//System.out.println(air.getPublicKey("wojtek", "507d38502a95243a95000002"));
+		//air.deletePublicKey("marek", "507d36da2a9524395000000b");
 	}
 }

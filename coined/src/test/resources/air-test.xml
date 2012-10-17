@@ -23,7 +23,7 @@
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
-	<jaxrs:client id="air-client" address="http://vph.cyfronet.pl/air" username="vphshare"
+	<jaxrs:client id="air-client" address="http://149.156.10.133/air" username="vphshare"
 		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>
 			<!-- <ref bean="jaxbProvider" /> -->
@@ -45,54 +45,4 @@
         <constructor-arg  ref="failOnUnknown"/>
         <constructor-arg  value="false"/>
     </bean>
-	
-<!-- 
-	<jaxrs:client id="air-client-local" address="http://localhost:4567" username="vphshare"
-		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
-		<jaxrs:providers>
-			<ref bean="air-jsonProvider" />
-		</jaxrs:providers>
-		<jaxrs:inInterceptors>
-			<ref bean="logInbound" />
-		</jaxrs:inInterceptors>
-		<jaxrs:outInterceptors>
-			<ref bean="logOutbound" />
-		</jaxrs:outInterceptors>
-	</jaxrs:client>
--->
-<!-- 
-	<bean id="air-jsonProvider" class="pl.cyfronet.coin.impl.provider.ListAwareJsonProvider">
-		<property name="serializeAsArray" value="true" />
-		<property name="dropRootElement" value="true" />
-		<property name="supportUnwrapped" value="true" />
-		<property name="arrayKeys">
-			<list>
-				<value>endpoints</value>
-			</list>
-
-		</property>
-		<property name="collectionWrapperMap">
-			<map>
-				<entry>
-					<key>
-						<value>pl.cyfronet.coin.impl.air.client.WorkflowDetail</value>
-					</key>
-					<value>workflowDetail</value>
-				</entry>
-				<entry>
-					<key>
-						<value>pl.cyfronet.coin.impl.air.client.ApplianceType</value>
-					</key>
-					<value>applianceType</value>
-				</entry>
-				<entry>
-					<key>
-						<value>pl.cyfronet.coin.impl.air.client.SecurityPolicy</value>
-					</key>
-					<value>securityPolicy</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
- -->
 </beans>
