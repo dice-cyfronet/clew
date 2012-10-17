@@ -97,7 +97,7 @@ public class ActionFactory {
 	}
 
 	// policy files
-	
+
 	public GetSecurityPolicyAction createGetSecurityPolicyAction(
 			String policyName) {
 		return new GetSecurityPolicyAction(air, policyName);
@@ -124,8 +124,13 @@ public class ActionFactory {
 		return new ListUserKeysAction(air, username);
 	}
 
+	public GetPublicKeyAction createGetPublicKeyAction(String vphUsername,
+			String keyId) {
+		return new GetPublicKeyAction(air, vphUsername, keyId);
+	}
+
 	// setters
-	
+
 	public void setAir(AirClient air) {
 		this.air = air;
 	}
