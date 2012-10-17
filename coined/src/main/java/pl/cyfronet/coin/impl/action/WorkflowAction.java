@@ -28,24 +28,11 @@ import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
  *
  * @param <T> Object returned by the action.
  */
-public abstract class WorkflowAction<T> extends AirAction<T> {
-
-	private DyReAllaManagerService atmosphere;
-	private String username;
+public abstract class WorkflowAction<T> extends AtmosphereAndAirAction<T> {
 
 	WorkflowAction(AirClient air, DyReAllaManagerService atmosphere,
 			String username) {
-		super(air);
-		this.atmosphere = atmosphere;
-		this.username = username;
-	}
-
-	protected DyReAllaManagerService getAtmosphere() {
-		return atmosphere;
-	}
-
-	protected String getUsername() {
-		return username;
+		super(air, atmosphere, username);
 	}
 
 	protected WorkflowDetail getUserWorkflow(String contextId, String username) {
