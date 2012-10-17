@@ -16,17 +16,18 @@
 package pl.cyfronet.coin.api.exception;
 
 import javax.ws.rs.core.Response;
+import javax.xml.ws.WebFault;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- * 
+ *
  */
-public class SSHKeyAlreadyExistsException extends CloudFacadeException {
+@WebFault
+public class KeyNotFoundException extends CloudFacadeException {
 
-	private static final long serialVersionUID = 8732254374809673496L;
+	private static final long serialVersionUID = -6053992644929639563L;
 
-	public SSHKeyAlreadyExistsException(String keyName) {
-		super(String.format("%s already exisists", keyName),
-				Response.Status.FORBIDDEN);
+	public KeyNotFoundException() {
+		super(Response.Status.NOT_FOUND);
 	}
 }

@@ -27,34 +27,59 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
-import pl.cyfronet.coin.api.exception.SSHKeyAlreadyExistsException;
-import pl.cyfronet.coin.api.exception.SSHKeyNotFoundException;
+import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
+import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 
 /**
  * Service for managing user keys. During development mode user can choose which
  * public key should be injected into VM root account.
- * 
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @Path("/")
 public interface KeyManagement {
 
+	/**
+	 * List basic information about all public keys belonging to the user which
+	 * invokes this service.
+	 * @return Basic information about keys registered for the user.
+	 */
 	@GET
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON })
 	List<KeyInfo> list();
 
+	/**
+	 * Add new public key.
+	 * @param keyName Unique key name.
+	 * @param publicKey Public key content.
+	 * @return Identifier of new added key entry.
+	 * @throws KeyAlreadyExistsException Thrown, when key with given name
+	 *             already exists.
+	 */
 	@POST
 	@Path("/add")
-	void add(@FormParam("keyName") String keyName,
-			@FormParam("privateKey") String privateKey)
-			throws SSHKeyAlreadyExistsException;
+	String add(@FormParam("keyName") String keyName,
+			@FormParam("publicKey") String publicKey)
+			throws KeyAlreadyExistsException;
 
+	/**
+	 * Remove public key belonging to the user which invokes this service.
+	 * @return Public key content.
+	 * @throws KeyNotFoundException Thrown, when key with given identifier is
+	 *             not found for the user which invokes the service.
+	 */
 	@DELETE
-	@Path("/{keyName}")
-	void remove(@PathParam("keyName") String keyName) throws SSHKeyNotFoundException;
+	@Path("/{keyId}")
+	void remove(@PathParam("keyId") String keyId) throws KeyNotFoundException;
 
+	/**
+	 * Get public key belonging to the user which invokes this service.
+	 * @param keyId Key identifier.
+	 * @return Public key content.
+	 * @throws KeyNotFoundException Thrown, when key with given identifier is
+	 *             not found for the user which invokes the service.
+	 */
 	@GET
-	@Path("/{keyName}")	
-	String get(@PathParam("keyName") String keyName) throws SSHKeyNotFoundException;
+	@Path("/{keyId}")
+	String get(@PathParam("keyId") String keyId) throws KeyNotFoundException;
 }
