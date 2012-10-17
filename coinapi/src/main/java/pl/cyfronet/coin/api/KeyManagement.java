@@ -70,7 +70,7 @@ public interface KeyManagement {
 	 */
 	@DELETE
 	@Path("/{keyId}")
-	void remove(@PathParam("keyId") String keyId) throws KeyNotFoundException;
+	void delete(@PathParam("keyId") String keyId) throws KeyNotFoundException;
 
 	/**
 	 * Get public key belonging to the user which invokes this service.
