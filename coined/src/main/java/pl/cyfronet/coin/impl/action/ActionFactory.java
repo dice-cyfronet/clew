@@ -129,6 +129,17 @@ public class ActionFactory {
 		return new GetPublicKeyAction(air, vphUsername, keyId);
 	}
 
+	public DeletePublicKeyAction createDeletePublicKeyAction(String username,
+			String keyId) {
+		return new DeletePublicKeyAction(air, atmosphere, username, keyId);
+	}
+
+	public AddPublicKeyAction createAddPublicKeyAction(String username,
+			String keyName, String publicKeyContent) {
+		return new AddPublicKeyAction(air, atmosphere, username, keyName,
+				publicKeyContent);
+	}
+
 	// setters
 
 	public void setAir(AirClient air) {

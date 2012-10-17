@@ -133,8 +133,8 @@ public interface AirClient {
 
 	@POST
 	@Path("/user_key/add")
-	void addKey(@FormParam("name") String keyName,
-			@FormParam("vph_username") String vphUsername,
+	String addKey(@FormParam("vph_username") String vphUsername,
+			@FormParam("name") String keyName,
 			@FormParam("public_key") String publicKey,
 			@FormParam("fingerprint") String fingerprint);
 }
