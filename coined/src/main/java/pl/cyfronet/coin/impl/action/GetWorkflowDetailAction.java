@@ -28,7 +28,7 @@ import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
  * 
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetWorkflowDetailAction extends AirAction<WorkflowDetail>{
+public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail>{
 
 	
 	private String contextId;
@@ -63,10 +63,4 @@ public class GetWorkflowDetailAction extends AirAction<WorkflowDetail>{
 			}
 		}
 	}
-
-	@Override
-	public void rollback() {
-		// readonly action, no rollback needed
-	}
-
 }

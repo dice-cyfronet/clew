@@ -29,7 +29,7 @@ import pl.cyfronet.coin.impl.air.client.UserKeyInfo;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class ListUserKeysAction extends AirAction<List<PublicKeyInfo>> {
+public class ListUserKeysAction extends ReadOnlyAirAction<List<PublicKeyInfo>> {
 
 	private String username;
 
@@ -68,10 +68,5 @@ public class ListUserKeysAction extends AirAction<List<PublicKeyInfo>> {
 		key.setFingerprint(userKey.getFingerprint());
 
 		return key;
-	}
-
-	@Override
-	public void rollback() {
-		// Readonly action - no rollback needed
 	}
 }
