@@ -25,8 +25,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
+import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 
@@ -46,7 +46,7 @@ public interface KeyManagement {
 	@GET
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON })
-	List<KeyInfo> list();
+	List<PublicKeyInfo> list();
 
 	/**
 	 * Add new public key.
