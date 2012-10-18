@@ -21,7 +21,6 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.coin.impl.air.client.UserKeyInfo;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
