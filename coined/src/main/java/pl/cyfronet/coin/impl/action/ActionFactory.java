@@ -120,7 +120,7 @@ public class ActionFactory {
 
 	// keys
 
-	public ListUserKeysAction getListUserKeysAction(String username) {
+	public ListUserKeysAction createListUserKeysAction(String username) {
 		return new ListUserKeysAction(air, username);
 	}
 

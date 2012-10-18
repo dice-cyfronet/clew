@@ -68,7 +68,7 @@ public class ListUserKeysActionTest extends ActionTest {
 
 	private void whenGetUserKeys() {
 		ListUserKeysAction action = actionFactory
-				.getListUserKeysAction(vphUsername);
+				.createListUserKeysAction(vphUsername);
 		keys = action.execute();
 	}
 
