@@ -18,21 +18,39 @@
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />	
 
+    <!-- security policies -->
+
 	<jaxrs:server id="roles-management-rs" address="http://0.0.0.0:${port}/securitypolicy">
 		<jaxrs:serviceBeans>
 			<ref bean="roles-management" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<ref bean="roles-managementProvider" />
+			<ref bean="jsonProvider" />
 		</jaxrs:providers>
-	</jaxrs:server>
-
-	<bean id="roles-managementProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-
+	</jaxrs:server>	
 
 	<bean name="roles-management" class="pl.cyfronet.coin.impl.SecurityPolicyServiceImpl">
 		<property name="actionFactory" ref="actionFactory" />
 	</bean>
+
+	
+	<!-- keys management -->
+	
+	<jaxrs:server id="keys-management-rs" address="http://0.0.0.0:${port}/key">
+		<jaxrs:serviceBeans>
+			<ref bean="keys-management" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>	
+
+	<bean name="keys-management" class="pl.cyfronet.coin.impl.KeyManagementImpl">
+		<property name="actionFactory" ref="actionFactory" />
+		<property name="authenticator" ref="authenticationHandler" />
+	</bean>
+
+	<!-- workflow management -->
 
 	<jaxrs:server id="workflow-management-rs" address="http://0.0.0.0:${port}/workflow">
 		<jaxrs:serviceBeans>
@@ -48,6 +66,9 @@
 		<property name="actionFactory" ref="actionFactory" />		
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
+
+
+    <!-- atomic services management -->
 
 	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}/as">
 		<jaxrs:serviceBeans>
@@ -65,6 +86,9 @@
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
+
+    <!-- documentation service -->
+
 	<jaxrs:server id="documentationRSEndpoint" address="http://0.0.0.0:${port}">
 		<jaxrs:serviceBeans>
 			<ref bean="documentationService" />
@@ -72,24 +96,4 @@
 	</jaxrs:server>
 
 	<bean id="documentationService" class="pl.cyfronet.coin.impl.DocumentationServiceImpl" />
-<!-- 
-	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
-		<property name="namespaceMap" ref="jsonNamespaceMap" />
-		<property name="serializeAsArray" value="true" />
-		<property name="dropRootElement" value="true" />
-		<property name="supportUnwrapped" value="true" />
-		<property name="wrapperMap">
-			<map>
-				<entry>
-					<key>
-						<value>pl.cyfronet.coin.api.beans.WorkflowStartRequest</value>
-					</key>
-					<value>workflowStartRequest</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
-
-	<util:map id="jsonNamespaceMap" map-class="java.util.Hashtable" />
--->	
 </beans>
