@@ -22,7 +22,7 @@
   	   http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
-	<jaxrs:client id="keyManagementClient" address="http://localhost:8088/key"		
+	<jaxrs:client id="keyManagementClient" address="http://localhost:${port}/key"		
 		username="User123" password="notimportant"	    
 		serviceClass="pl.cyfronet.coin.api.KeyManagement"
 		inheritHeaders="true">

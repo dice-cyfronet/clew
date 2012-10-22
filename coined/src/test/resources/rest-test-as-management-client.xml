@@ -22,7 +22,7 @@
   	   http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
-	<jaxrs:client id="asManagementClient" address="http://localhost:8088/as"			    
+	<jaxrs:client id="asManagementClient" address="http://localhost:${port}/as"			    
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		inheritHeaders="true">
 		<jaxrs:providers>

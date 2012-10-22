@@ -34,7 +34,6 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
-import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
 import pl.cyfronet.coin.impl.action.ListUserKeysAction;
@@ -46,7 +45,7 @@ import pl.cyfronet.coin.impl.utils.FileUtils;
  */
 //@formatter:off
 @ContextConfiguration( locations={
-		"classpath:rest-test-properties.xml",
+		"classpath:rest-test-properties-key.xml",
 		"classpath:rest-test-imports.xml",
 		"classpath:rest-test-mocks.xml",
 		"classpath:rest-test-key-management-client.xml",
