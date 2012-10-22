@@ -25,6 +25,9 @@
 		$('#securitypolicy-accordion').accordion({
 			autoHeight : false
 		});
+		$('#key-accordion').accordion({
+			autoHeight : false
+		});
 	};
 	$(init);
 </script>
@@ -69,6 +72,7 @@ body {
 				<li><a href="#workflow-accordion">Workflow</a></li>
 				<li><a href="#as-accordion">Atomic Service</a></li>
 				<li><a href="#securitypolicy-accordion">Security Policy</a></li>
+				<li><a href="#key-accordion">Public Key</a></li>
 			</ul>
 			<div id="workflow-accordion">
 				<h3>
@@ -459,6 +463,58 @@ body {
 					<p>The operation returns the 200 status code on success. 
 						The 404 status code is returned when
 						security policy with given name does not exist.</p>
+				</div>
+			</div>
+			<div id="key-accordion">
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/key/list</strong>
+						- lists user public keys</a>
+				</h3>
+				<div>
+					<p>The operation returns the 200 status code and the array of basic information about user keys.
+					The structure of the returned JSON includes table of following objects: 					  
+					</p>
+					<ul>
+					    <li>(required) <strong>keyName</strong> - key name</li>
+					    <li>(required) <strong>fingerprint</strong> - key fingerprint</li>
+					    <li>(required) <strong>id</strong> - key id</li>
+					  </ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/key</strong>
+						- add new user public key</a>
+				</h3>
+				<div>
+					<p>The structure of the request form parameters includes:</p>
+					<ul>
+						<li>(required, unique) <strong>keyName</strong> - new key name</li>
+						<li>(required) <strong>publicKey</strong> - public key payload</li>
+					</ul>
+				
+					<p>The operation returns the 200 status code and the new added key id on success. 
+					If key with given name is already registered than 409 (conflict) is returned.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/key/{keyId}</strong>
+						- get public key content</a>
+				</h3>
+				<div>
+				    <ul>
+				    	<li>(required) request parameter <strong>keyId</strong> - key id</li>
+				    </ul>
+					<p>The operation returns the 200 status code and the public key payload on 
+					success. When keys is not found for the user than 404 is returned.</p>
+				</div>				
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/key/{keyId}</strong>
+						- delete user public key</a>
+				</h3>
+				<div>
+					<ul>
+				    	<li>(required) request parameter <strong>keyId</strong> - key to be deleted id</li>
+				    </ul>
+					<p>The operation returns the 200 status code on success. 
+					   When keys is not found for the user than 404 is returned.</p>
 				</div>
 			</div>
 		</div>
