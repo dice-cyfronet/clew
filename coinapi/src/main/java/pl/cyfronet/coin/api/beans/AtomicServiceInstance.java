@@ -29,13 +29,21 @@ public class AtomicServiceInstance extends StatusBean {
 
 	private String atomicServiceId;
 
+	@Deprecated
 	private Credential credential;
 
 	private List<Redirection> redirections;
-	
+
+	private String configurationId;
+
+	private String instanceId;
+
+	private String publicKeyId;
+
 	/**
 	 * @return the credential
 	 */
+	@Deprecated
 	public Credential getCredential() {
 		return credential;
 	}
@@ -43,6 +51,7 @@ public class AtomicServiceInstance extends StatusBean {
 	/**
 	 * @param credential the credential to set
 	 */
+	@Deprecated
 	public void setCredential(Credential credential) {
 		this.credential = credential;
 	}
@@ -69,13 +78,54 @@ public class AtomicServiceInstance extends StatusBean {
 		this.redirections = redirections;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the configurationId
 	 */
+	public String getConfigurationId() {
+		return configurationId;
+	}
+
+	/**
+	 * @param configurationId the configurationId to set
+	 */
+	public void setConfigurationId(String configurationId) {
+		this.configurationId = configurationId;
+	}
+
+	/**
+	 * @return the instanceId
+	 */
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	/**
+	 * @param instanceId the instanceId to set
+	 */
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	/**
+	 * @return the publicKeyId
+	 */
+	public String getPublicKeyId() {
+		return publicKeyId;
+	}
+
+	/**
+	 * @param publicKeyId the publicKeyId to set
+	 */
+	public void setPublicKeyId(String publicKeyId) {
+		this.publicKeyId = publicKeyId;
+	}
+
 	@Override
 	public String toString() {
 		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
 				+ ", credential=" + credential + ", redirections="
-				+ redirections + "]";
+				+ redirections + ", configurationId=" + configurationId
+				+ ", instanceId=" + instanceId + ", publicKeyId=" + publicKeyId
+				+ "]";
 	}
 }

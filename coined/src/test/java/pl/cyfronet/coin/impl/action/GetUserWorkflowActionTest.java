@@ -114,7 +114,8 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		equals(airWorkflow.getVms().get(0), workflow
 				.getAtomicServiceInstances().get(0));
 		equals(airWorkflow.getVms().get(1), workflow
-				.getAtomicServiceInstances().get(1));
+				.getAtomicServiceInstances().get(1));		
+		
 		assertNull(workflow.getAtomicServiceInstances().get(0).getCredential());
 		assertNull(workflow.getAtomicServiceInstances().get(1).getCredential());
 	}
@@ -130,12 +131,14 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		vm1.setName("vm1");
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
+		vm1.setConf_id("initConf1");
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
 		vm2.setName("vm2");
 		vm2.setState(Status.running);
 		vm2.setVms_id("id2");
+		vm2.setConf_id("initConf2");
 
 		airWorkflow.setVms(Arrays.asList(vm1, vm2));
 
@@ -252,5 +255,6 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		assertEquals(asi.getName(), vm.getName());
 		assertEquals(asi.getStatus(), vm.getState());
 		assertEquals(asi.getId(), vm.getVms_id());
+		assertEquals(asi.getConfigurationId(), vm.getConf_id());		
 	}
 }
