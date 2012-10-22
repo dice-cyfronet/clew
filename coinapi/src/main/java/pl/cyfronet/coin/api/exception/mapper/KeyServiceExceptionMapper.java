@@ -13,25 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.api.exception;
+
+package pl.cyfronet.coin.api.exception.mapper;
 
 import javax.ws.rs.core.Response;
-import javax.xml.ws.WebFault;
+
+import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
+
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
+import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-@WebFault
-public class KeyAlreadyExistsException extends CloudFacadeException {
+public class KeyServiceExceptionMapper implements ResponseExceptionMapper<Throwable>{
 
-	private static final long serialVersionUID = 8732254374809673496L;
+	@Override
+	public Throwable fromResponse(Response r) {
+		switch (r.getStatus()) {
+		case 409:
+			return new KeyAlreadyExistsException();
+		case 404:
+			return new KeyNotFoundException();
+		default:
+			return new CloudFacadeException();
+		}
+	}
 
-	public KeyAlreadyExistsException() {
-		super(Response.Status.CONFLICT);
-	}
-	
-	public KeyAlreadyExistsException(String keyName) {
-		super(String.format("%s already exisists", keyName),
-				Response.Status.CONFLICT);
-	}
 }

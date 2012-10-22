@@ -19,8 +19,10 @@ package pl.cyfronet.coin.impl;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +36,13 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
+import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
+import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
+import pl.cyfronet.coin.impl.action.DeletePublicKeyAction;
+import pl.cyfronet.coin.impl.action.GetPublicKeyAction;
 import pl.cyfronet.coin.impl.action.ListUserKeysAction;
 import pl.cyfronet.coin.impl.security.mi.MasterInterfaceAuthenticationHandler;
 import pl.cyfronet.coin.impl.utils.FileUtils;
@@ -80,6 +87,10 @@ public class KeyManagementTest extends AbstractTestNGSpringContextTests {
 
 	private String addedKeyId;
 
+	private Action<? extends Object> currentAction;
+
+	private String receivedPublicKeyContent;
+
 	@BeforeMethod
 	protected void setUp() {
 		when(authenticationHandler.getUsername(eq(username), anyString()))
@@ -102,6 +113,8 @@ public class KeyManagementTest extends AbstractTestNGSpringContextTests {
 
 		when(actionFactory.createListUserKeysAction(username)).thenReturn(
 				action);
+
+		currentAction = action;
 	}
 
 	private PublicKeyInfo getKey(int nr) {
@@ -118,9 +131,14 @@ public class KeyManagementTest extends AbstractTestNGSpringContextTests {
 	}
 
 	private void thenReceived2Keys() {
+		thenActionExecuted();
 		assertEquals(receivedKeys.size(), 2);
 		assertKeyEquals(receivedKeys.get(0), key1);
 		assertKeyEquals(receivedKeys.get(1), key2);
+	}
+
+	private void thenActionExecuted() {
+		verify(currentAction, times(1)).execute();
 	}
 
 	private void assertKeyEquals(PublicKeyInfo actual, PublicKeyInfo expected) {
@@ -152,19 +170,120 @@ public class KeyManagementTest extends AbstractTestNGSpringContextTests {
 		assertEquals(addedKeyId, keyId);
 	}
 
-//	@Test(expectedExceptions = KeyAlreadyExistsException.class)
-//	public void shouldThrowExceptionWhileAddingKeyWithNotUniqueName()
-//			throws Exception {
-//		givenMockedAddNotUniqueKeyAction();
-//		whenAddNewKey();
-//	}
-//
-//	private void givenMockedAddNotUniqueKeyAction() {
-//		AddPublicKeyAction action = mock(AddPublicKeyAction.class);
-//		when(action.execute())
-//				.thenThrow(new KeyAlreadyExistsException(keyName));
-//		when(
-//				actionFactory.createAddPublicKeyAction(username, keyName,
-//						publicKeyContent)).thenReturn(action);
-//	}
+	@Test
+	public void shouldThrowExceptionWhileAddingKeyWithNotUniqueName()
+			throws Exception {
+		givenMockedAddNotUniqueKeyAction();
+		try {
+			whenAddNewKey();
+			fail();
+		} catch (KeyAlreadyExistsException e) {
+			// OK should be thrown
+		}
+		thenActionExecuted();
+	}
+
+	private void givenMockedAddNotUniqueKeyAction() {
+		AddPublicKeyAction action = mock(AddPublicKeyAction.class);
+		when(action.execute())
+				.thenThrow(new KeyAlreadyExistsException(keyName));
+		when(
+				actionFactory.createAddPublicKeyAction(username, keyName,
+						publicKeyContent)).thenReturn(action);
+		currentAction = action;
+	}
+
+	@Test
+	public void shouldDeleteKey() throws Exception {
+		givenMockedActionAbleToDeleteKey();
+		whenDeleteKey();
+		thenKeyDeleted();
+
+	}
+
+	private void givenMockedActionAbleToDeleteKey() {
+		DeletePublicKeyAction action = mock(DeletePublicKeyAction.class);
+		when(actionFactory.createDeletePublicKeyAction(username, keyId))
+				.thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenDeleteKey() {
+		keyManagement.delete(keyId);
+	}
+
+	private void thenKeyDeleted() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldThrow404WhenDeletingNonExistingOrNotOwnedKey()
+			throws Exception {
+		givenDeleteActionThrowingKeyNotFoundException();
+		try {
+			whenDeleteKey();
+			fail();
+		} catch (KeyNotFoundException e) {
+			// OK should be thrown.
+		}
+		thenActionExecuted();
+
+	}
+
+	private void givenDeleteActionThrowingKeyNotFoundException() {
+		DeletePublicKeyAction action = mock(DeletePublicKeyAction.class);
+		when(action.execute()).thenThrow(new KeyNotFoundException());
+
+		when(actionFactory.createDeletePublicKeyAction(username, keyId))
+				.thenReturn(action);
+
+		currentAction = action;
+	}
+
+	@Test
+	public void shouldGetKeyValue() throws Exception {
+		givenActionReturningUserKey();
+		whenGetPublicUserKey();
+		thenPublicKeyReceived();
+	}
+
+	private void givenActionReturningUserKey() {
+		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		when(action.execute()).thenReturn(publicKeyContent);
+
+		when(actionFactory.createGetPublicKeyAction(username, keyId))
+				.thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenGetPublicUserKey() {
+		receivedPublicKeyContent = keyManagement.get(keyId);
+	}
+
+	private void thenPublicKeyReceived() {
+		thenActionExecuted();
+		assertEquals(receivedPublicKeyContent, publicKeyContent);
+	}
+	
+	@Test
+	public void shouldThrow404WhenGettingNonExistingOrNotOwnedKey() throws Exception {
+		givenGetPublicKeyThrowingKeyNotFoundException();
+		try {
+			whenGetPublicUserKey();
+			fail();
+		} catch(KeyNotFoundException e) {
+			//OK should be thrown
+		}
+
+		thenActionExecuted();
+	}
+	
+	private void givenGetPublicKeyThrowingKeyNotFoundException() {
+		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		when(action.execute()).thenThrow(new KeyNotFoundException());
+
+		when(actionFactory.createGetPublicKeyAction(username, keyId))
+				.thenReturn(action);
+		currentAction = action;
+	}
 }
