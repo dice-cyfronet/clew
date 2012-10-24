@@ -19,10 +19,9 @@ package pl.cyfronet.coin.impl;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -38,8 +36,6 @@ import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
-import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
 import pl.cyfronet.coin.impl.action.DeletePublicKeyAction;
 import pl.cyfronet.coin.impl.action.GetPublicKeyAction;
@@ -59,10 +55,7 @@ import pl.cyfronet.coin.impl.utils.FileUtils;
 		"classpath:META-INF/spring/rest-services.xml"
 	} )
 //@formatter:on
-public class KeyManagementTest extends AbstractTestNGSpringContextTests {
-
-	@Autowired
-	private ActionFactory actionFactory;
+public class KeyManagementTest extends AbstractServiceTest {
 
 	@Autowired
 	@Qualifier("keyManagementClient")
@@ -86,8 +79,6 @@ public class KeyManagementTest extends AbstractTestNGSpringContextTests {
 	private String publicKeyContent = FileUtils.getFileContent("id_rsa.pub");
 
 	private String addedKeyId;
-
-	private Action<? extends Object> currentAction;
 
 	private String receivedPublicKeyContent;
 
@@ -135,10 +126,6 @@ public class KeyManagementTest extends AbstractTestNGSpringContextTests {
 		assertEquals(receivedKeys.size(), 2);
 		assertKeyEquals(receivedKeys.get(0), key1);
 		assertKeyEquals(receivedKeys.get(1), key2);
-	}
-
-	private void thenActionExecuted() {
-		verify(currentAction, times(1)).execute();
 	}
 
 	private void assertKeyEquals(PublicKeyInfo actual, PublicKeyInfo expected) {
