@@ -31,7 +31,9 @@ public class AtomicServiceNotFoundException extends CloudFacadeException {
 	 */
 	private static final long serialVersionUID = -2904469972572867044L;
 
+	public static final String ERROR_MESSAGE = "Atomic service not found";
+	
 	public AtomicServiceNotFoundException() {
-		super(Response.Status.NOT_FOUND);
+		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
 	}
 }

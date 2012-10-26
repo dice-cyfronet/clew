@@ -15,6 +15,7 @@
  */
 package pl.cyfronet.coin.api.exception;
 
+import javax.ws.rs.core.Response;
 import javax.xml.ws.WebFault;
 
 /**
@@ -25,5 +26,11 @@ import javax.xml.ws.WebFault;
 public class InitialConfigurationAlreadyExistException extends CloudFacadeException {
 
 	private static final long serialVersionUID = 1174002385205938239L;
+	
+	public static final String ERROR_MESSAGE = "Initial configuration not unique";
+	
+	public InitialConfigurationAlreadyExistException() {
+		super(ERROR_MESSAGE, Response.Status.CONFLICT);
+	}
 
 }

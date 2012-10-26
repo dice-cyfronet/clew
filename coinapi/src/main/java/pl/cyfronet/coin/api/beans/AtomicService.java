@@ -163,9 +163,6 @@ public class AtomicService {
 		this.active = active;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
@@ -176,15 +173,33 @@ public class AtomicService {
 				+ "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result
 				+ ((atomicServiceId == null) ? 0 : atomicServiceId.hashCode());
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result
+				+ ((endpoints == null) ? 0 : endpoints.hashCode());
+		result = prime * result + (http ? 1231 : 1237);
+		result = prime * result + (inProxy ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (published ? 1231 : 1237);
+		result = prime * result + (scalable ? 1231 : 1237);
+		result = prime * result + (shared ? 1231 : 1237);
+		result = prime * result + (vnc ? 1231 : 1237);
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -194,11 +209,42 @@ public class AtomicService {
 		if (getClass() != obj.getClass())
 			return false;
 		AtomicService other = (AtomicService) obj;
+		if (active != other.active)
+			return false;
 		if (atomicServiceId == null) {
 			if (other.atomicServiceId != null)
 				return false;
 		} else if (!atomicServiceId.equals(other.atomicServiceId))
 			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (endpoints == null) {
+			if (other.endpoints != null)
+				return false;
+		} else if (!endpoints.equals(other.endpoints))
+			return false;
+		if (http != other.http)
+			return false;
+		if (inProxy != other.inProxy)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (published != other.published)
+			return false;
+		if (scalable != other.scalable)
+			return false;
+		if (shared != other.shared)
+			return false;
+		if (vnc != other.vnc)
+			return false;
 		return true;
 	}
+
+	
 }
