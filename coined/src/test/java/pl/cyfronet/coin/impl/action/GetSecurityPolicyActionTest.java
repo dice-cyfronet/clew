@@ -46,7 +46,7 @@ public class GetSecurityPolicyActionTest extends ActionTest {
 	private void givenSecurityProxiesStoredInAir() {
 		when(air.getSecurityPolicy(policyName)).thenReturn(policyPayload);
 		when(air.getSecurityPolicy(nonExistingPolicyName)).thenThrow(
-				new SecurityPolicyNotFoundException());
+				getAirException(400));
 	}
 
 	private void whenGetExistingPolicyName() {

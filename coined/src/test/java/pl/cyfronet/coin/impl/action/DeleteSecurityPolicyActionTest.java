@@ -67,15 +67,14 @@ public class DeleteSecurityPolicyActionTest extends ActionTest {
 	}
 
 	private void givenAirWithoutSecurityPolicy() {
-		when(air.getSecurityPolicy(policyName)).thenThrow(
-				new SecurityPolicyNotFoundException());
+		when(air.getSecurityPolicy(policyName)).thenThrow(getAirException(400));
 	}
 
 	private void thenValidateIfAirWasAskedAboutSecurityPolicy() {
 		verify(air, times(1)).getSecurityPolicy(policyName);
 		verify(air, times(0)).deleteSecurityPolicy(policyName);
 	}
-	
+
 	@Test
 	public void shouldRollback() throws Exception {
 		givenAirDeleteAndUploadMockConfigured();
@@ -85,7 +84,7 @@ public class DeleteSecurityPolicyActionTest extends ActionTest {
 	}
 
 	private void givenAirDeleteAndUploadMockConfigured() {
- 		when(air.getSecurityPolicy(policyName)).thenReturn(policyText);
+		when(air.getSecurityPolicy(policyName)).thenReturn(policyText);
 	}
 
 	private void whenDeleteSecurityPolicyAndRollback() {
@@ -98,6 +97,7 @@ public class DeleteSecurityPolicyActionTest extends ActionTest {
 	private void thenDeleteActionIsRollbacked() {
 		verify(air, times(1)).getSecurityPolicy(policyName);
 		verify(air, times(1)).deleteSecurityPolicy(policyName);
-		verify(air, times(1)).uploadSecurityPolicy(policyName, policyText, false);
+		verify(air, times(1)).uploadSecurityPolicy(policyName, policyText,
+				false);
 	}
 }
