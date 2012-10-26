@@ -20,6 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
@@ -28,6 +29,7 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
+import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
 /**
@@ -40,7 +42,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private String asAirId = "as123";
 	private AddAtomicServiceMatcher matcher;
 	private CreateAtomicServiceInAirAction action;
-	
+
 	@Test
 	public void shouldCreateAtomicServiceRecord() throws Exception {
 		givenAtomicServiceDefinitionWithEndpoints();
@@ -49,6 +51,12 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	}
 
 	private void givenAtomicServiceDefinitionWithEndpoints() {
+		createAtomicService();
+		matcher = new AddAtomicServiceMatcher(atomicService);
+		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
+	}
+
+	private void createAtomicService() {
 		atomicService = new AtomicService();
 		atomicService.setAtomicServiceId("as");
 		atomicService.setName("as");
@@ -81,11 +89,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	}
 
 	private void whenAddAtomicServiceToAir() {
-		matcher = new AddAtomicServiceMatcher(atomicService);
-		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId );
-		action = new CreateAtomicServiceInAirAction(
-				air, atomicService);
-		
+		action = new CreateAtomicServiceInAirAction(air, atomicService);
 		createdAsId = action.execute();
 	}
 
@@ -93,14 +97,14 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		assertEquals(createdAsId, asAirId);
 	}
-	
+
 	@Test
 	public void shouldCreateAtomicServiceWithoutEndpoints() throws Exception {
 		givenAtomicServiceDefinitionWithoutEndpoints();
 		whenAddAtomicServiceToAir();
 		thenCheckRequestSendToAir();
 	}
-	
+
 	private void givenAtomicServiceDefinitionWithoutEndpoints() {
 		String asName = "name";
 		String asDescription = "description";
@@ -109,23 +113,48 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		atomicService.setName(asName);
 		atomicService.setDescription(asDescription);
 		atomicService.setHttp(true);
+
+		matcher = new AddAtomicServiceMatcher(atomicService);
+		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
 	}
-	
+
 	@Test
 	public void shouldRemoveAtomicServiceOnRollback() throws Exception {
 		givenAtomicServiceDefinitionWithoutEndpoints();
 		whenAddAtomicServiceToAirAndRollback();
 		thenAtomicServiceCreatedAndRemovedFromAir();
 
-	}	
+	}
 
 	private void whenAddAtomicServiceToAirAndRollback() {
 		whenAddAtomicServiceToAir();
 		action.rollback();
 	}
-	
+
 	private void thenAtomicServiceCreatedAndRemovedFromAir() {
 		thenCheckRequestSendToAir();
 		verify(air, times(1)).deleteAtomicService(createdAsId);
+	}
+
+	@Test
+	public void shouldThrowExceptionWhileAddingASWithNotUniqueName()
+			throws Exception {
+		givenAirWithAlreadyASRegistered();
+		try {
+			whenAddAtomicServiceToAir();
+			fail();
+		} catch (AtomicServiceAlreadyExistsException e) {
+			// OK - should be thrown
+		}
+
+		thenCheckRequestSendToAir();
+	}
+
+	private void givenAirWithAlreadyASRegistered() {
+		createAtomicService();
+
+		matcher = new AddAtomicServiceMatcher(atomicService);
+		when(air.addAtomicService(argThat(matcher))).thenThrow(
+				getAirException(302));
 	}
 }

@@ -18,12 +18,14 @@ package pl.cyfronet.coin.impl.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
+import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
@@ -34,12 +36,13 @@ import pl.cyfronet.coin.impl.air.client.AirClient;
  */
 public class CreateAtomicServiceInAirAction implements Action<String> {
 
-	private static Logger logger = LoggerFactory.getLogger(CreateAtomicServiceInAirAction.class);
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(CreateAtomicServiceInAirAction.class);
+
 	private AirClient air;
 	private AtomicService atomicService;
 	private String createdAtomicServiceId;
-	
+
 	CreateAtomicServiceInAirAction(AirClient air, AtomicService atomicService) {
 		this.air = air;
 		this.atomicService = atomicService;
@@ -59,9 +62,15 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setShared(atomicService.isShared());
 		addASRequest.setVnc(atomicService.isShared());
 
-		createdAtomicServiceId = air.addAtomicService(addASRequest);
-		
-		return createdAtomicServiceId;
+		try {
+			createdAtomicServiceId = air.addAtomicService(addASRequest);
+			return createdAtomicServiceId;
+		} catch (ServerWebApplicationException e) {
+			if (e.getStatus() == 302) {
+				throw new AtomicServiceAlreadyExistsException();
+			}
+			throw new CloudFacadeException(e.getMessage());
+		}
 	}
 
 	private List<ATEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
