@@ -29,6 +29,8 @@ public class PortMapping {
 
 	private String service_name;
 	
+	private boolean http;
+	
 	/**
 	 * @return the vm_port
 	 */
@@ -86,13 +88,24 @@ public class PortMapping {
 		this.service_name = service_name;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the http
 	 */
+	public boolean isHttp() {
+		return http;
+	}
+
+	/**
+	 * @param http the http to set
+	 */
+	public void setHttp(boolean http) {
+		this.http = http;
+	}
+
 	@Override
 	public String toString() {
 		return "PortMapping [vm_port=" + vm_port + ", headnode_port="
 				+ headnode_port + ", headnode_ip=" + headnode_ip
-				+ ", service_name=" + service_name + "]";
+				+ ", service_name=" + service_name + ", http=" + http + "]";
 	}
 }

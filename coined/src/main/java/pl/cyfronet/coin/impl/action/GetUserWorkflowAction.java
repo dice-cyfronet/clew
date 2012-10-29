@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Redirection;
@@ -102,7 +103,10 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 				redirection.setHost(portMapping.getHeadnode_ip());
 				redirection.setFromPort(portMapping.getHeadnode_port());
 				redirection.setToPort(portMapping.getVm_port());
-				redirection.setHttp(false);
+				// information about redirection is wrong represented in AiR it
+				// should be refactored .
+				redirection.setType(portMapping.isHttp() ? RedirectionType.HTTP
+						: RedirectionType.TCP);
 				redirection.setName(portMapping.getService_name());
 
 				redirections.add(redirection);

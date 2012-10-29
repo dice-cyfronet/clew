@@ -38,6 +38,7 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowsAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
@@ -135,8 +136,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public List<Redirection> getRedirections(String contextId, String asiId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		GetAsiRedirectionsAction action = actionFactory
+				.createGetAsiRedirectionsAction(contextId, asiId);
+		return action.execute();
 	}
 
 	@Override

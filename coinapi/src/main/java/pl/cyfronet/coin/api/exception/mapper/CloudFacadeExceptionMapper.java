@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 ACC CYFRONET AGH
+ * Copyright 2012 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,28 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.api.exception;
+
+package pl.cyfronet.coin.api.exception.mapper;
 
 import javax.ws.rs.core.Response;
-import javax.xml.ws.WebFault;
+
+import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
 
 /**
- * Exception which should be thrown when user tries to find atomic service
- * instance which is not instantiated on the cloud infrastructure.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-@WebFault
-public class AtomicServiceInstanceNotFoundException extends
-		CloudFacadeException {
+public abstract class CloudFacadeExceptionMapper implements
+		ResponseExceptionMapper<Throwable> {
 
-	/**
-	 * Serial version UID.
-	 */
-	private static final long serialVersionUID = 7028013118481656340L;
-
-	public static final String ERROR_MESSAGE = "Atomic service instance not found";
-
-	public AtomicServiceInstanceNotFoundException() {
-		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
+	protected String getMessage(Response r) {
+		if (r.getEntity() == null) {
+			return null;
+		} else {
+			return r.getEntity().toString();
+		}
 	}
 }

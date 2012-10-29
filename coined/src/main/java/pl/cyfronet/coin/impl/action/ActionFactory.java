@@ -140,6 +140,11 @@ public class ActionFactory {
 				publicKeyContent);
 	}
 
+	public GetAsiRedirectionsAction createGetAsiRedirectionsAction(
+			String contextId, String asiId) {
+		return new GetAsiRedirectionsAction(contextId, asiId, air);
+	}
+	
 	// setters
 
 	public void setAir(AirClient air) {

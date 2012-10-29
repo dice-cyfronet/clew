@@ -191,12 +191,14 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		sshMapping.setHeadnode_port(222);
 		sshMapping.setHeadnode_ip("headnodeIp");
 		sshMapping.setService_name("ssh");
-
+		sshMapping.setHttp(false);
+		
 		PortMapping vncMapping = new PortMapping();
 		vncMapping.setVm_port(5900);
 		vncMapping.setHeadnode_port(55900);
 		vncMapping.setHeadnode_ip("headnodeIp");
 		vncMapping.setService_name("vnc");
+		vncMapping.setHttp(false);
 
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");

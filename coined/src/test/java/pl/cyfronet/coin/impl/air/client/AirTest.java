@@ -31,18 +31,6 @@ public class AirTest {
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
-		//air.addKey("mk_key", "marek", "publicKey", "fingerprint");
-		
-		System.out.println(air.getUserKeys("marek"));
-		
-		try {
-			System.out.println(air.getPublicKey("marek", "507e69e72a95243a9500000a"));
-		} catch (Exception e) {
-			System.out.println(e.getClass());
-			e.printStackTrace();
-			
-		}
-		//System.out.println(air.getPublicKey("wojtek", "507d38502a95243a95000002"));
-		//air.deletePublicKey("marek", "507d36da2a9524395000000b");
+		System.out.println(air.getApplianceTypes());
 	}
 }

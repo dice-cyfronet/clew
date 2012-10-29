@@ -15,98 +15,81 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+import pl.cyfronet.coin.api.RedirectionType;
+
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class Redirection {
 
 	private String name;
-	
-	private boolean http;
-	
+
 	private Integer toPort;
-	
+
 	private Integer fromPort;
 
 	private String host;
-	
-	/**
-	 * @return the name
-	 */
+
+	private RedirectionType type;
+
+	private String postfix;
+
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the http
-	 */
-	public boolean isHttp() {
-		return http;
-	}
-
-	/**
-	 * @param http the http to set
-	 */
-	public void setHttp(boolean http) {
-		this.http = http;
-	}
-
-	/**
-	 * @return the port
-	 */
 	public Integer getToPort() {
 		return toPort;
 	}
 
-	/**
-	 * @param port the port to set
-	 */
 	public void setToPort(Integer port) {
 		this.toPort = port;
 	}
 
-	/**
-	 * @return the fromPort
-	 */
 	public Integer getFromPort() {
 		return fromPort;
 	}
 
-	/**
-	 * @param fromPort the fromPort to set
-	 */
 	public void setFromPort(Integer fromPort) {
 		this.fromPort = fromPort;
 	}
 
-	/**
-	 * @return the host
-	 */
 	public String getHost() {
 		return host;
 	}
 
-	/**
-	 * @param host the host to set
-	 */
 	public void setHost(String host) {
 		this.host = host;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public RedirectionType getType() {
+		return type;
+	}
+
+	public void setType(RedirectionType type) {
+		this.type = type;
+	}
+
+	public String getPostfix() {
+		return postfix;
+	}
+
+	public void setPostfix(String postfix) {
+		this.postfix = postfix;
+	}
+
+	public boolean isHttp() {
+		return type == RedirectionType.HTTP;
+	}
+
 	@Override
 	public String toString() {
-		return "Redirection [name=" + name + ", http=" + http + ", toPort="
-				+ toPort + ", fromPort=" + fromPort + ", host=" + host + "]";
+		return "Redirection [name=" + name + ", toPort=" + toPort
+				+ ", fromPort=" + fromPort + ", host=" + host + ", type="
+				+ type + ", postfix=" + postfix + "]";
 	}
 }
