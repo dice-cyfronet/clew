@@ -18,14 +18,8 @@ package pl.cyfronet.coin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
 import org.slf4j.Logger;
@@ -38,6 +32,7 @@ import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
@@ -137,7 +132,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public List<Redirection> getRedirections() {
+	public List<Redirection> getRedirections(String contextId, String asiId)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -145,14 +142,18 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public Redirection addRedirection(String contextId, String asiId,
 			String name, int port, RedirectionType type)
-			throws WorkflowNotInDevelopmentModeException {
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Redirection getRedirection(String contextId, String asiId,
-			String redirectionName) throws RedirectionNotFoundException {
+			String redirectionName) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			RedirectionNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -160,8 +161,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public Redirection updateRedirection(String contextId, String asiId,
 			String name, int port, RedirectionType type)
-			throws WorkflowNotInDevelopmentModeException,
-			RedirectionNotFoundException {
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -169,11 +171,12 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public void deleteRedirection(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId, @FormParam("name") String name)
-			throws WorkflowNotInDevelopmentModeException,
-			RedirectionNotFoundException {
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
 		// TODO Auto-generated method stub
 	}
-	
+
 	public void setActionFactory(ActionFactory actionFactory) {
 		this.actionFactory = actionFactory;
 	}
