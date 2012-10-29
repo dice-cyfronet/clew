@@ -18,18 +18,29 @@ package pl.cyfronet.coin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
@@ -126,12 +137,43 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public String addRedirection(String contextId, String asiId,
-			Redirection redirectionInfo) {
+	public List<Redirection> getRedirections() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public Redirection addRedirection(String contextId, String asiId,
+			String name, int port, RedirectionType type)
+			throws WorkflowNotInDevelopmentModeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Redirection getRedirection(String contextId, String asiId,
+			String redirectionName) throws RedirectionNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Redirection updateRedirection(String contextId, String asiId,
+			String name, int port, RedirectionType type)
+			throws WorkflowNotInDevelopmentModeException,
+			RedirectionNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId, @FormParam("name") String name)
+			throws WorkflowNotInDevelopmentModeException,
+			RedirectionNotFoundException {
+		// TODO Auto-generated method stub
+	}
+	
 	public void setActionFactory(ActionFactory actionFactory) {
 		this.actionFactory = actionFactory;
 	}

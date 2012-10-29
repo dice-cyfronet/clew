@@ -15,10 +15,13 @@
  */
 package pl.cyfronet.coin.api;
 
+import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -32,7 +35,9 @@ import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
@@ -124,21 +129,41 @@ public interface WorkflowManagement {
 	Workflow getWorkflow(@PathParam("workflowId") String workflowId)
 			throws WorkflowNotFoundException;
 
-	/**
-	 * Adds redirection to the Atomic Service Instance. This method will throws
-	 * Forbidden (403 HTTP code) if user will try to add redirection into atomic
-	 * service instance executed in other context than development.
-	 * @param contextId Atomic Service Instance execution context id (a.k.a.
-	 *            workflow)
-	 * @param asiId Atomic Service Instance id.
-	 * @param redirectionInfo Bean containing information about new required
-	 *            redirection.
-	 * @return Redirection URI (e.g. http://url.to.redirected.http.pl for HTTP,
-	 *         149.156.10.131:235334 for others).
-	 */
+	// redirections
+
+	@GET
+	@Path("/workflow/{contextId}/asi/{asiId}/redirection")
+	@Produces({ MediaType.APPLICATION_JSON })
+	List<Redirection> getRedirections();
+
 	@POST
-	@Path("/asi/{contextId}/{asiId}/redirection/add")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	String addRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId, Redirection redirectionInfo);
+	@Path("/workflow/{contextId}/asi/{asiId}/redirection")
+	@Produces({ MediaType.APPLICATION_JSON })
+	Redirection addRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId, @FormParam("name") String name,
+			@FormParam("port") int port, @FormParam("type") RedirectionType type)
+			throws WorkflowNotInDevelopmentModeException;
+
+	@GET
+	@Path("/workflow/{contextId}/asi/{asiId}/redirection/{name}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	Redirection getRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId,
+			@PathParam("name") String redirectionName)
+			throws RedirectionNotFoundException;
+
+	@PUT
+	@Path("/workflow/{contextId}/asi/{asiId}/redirection/{redirectionName}")
+	Redirection updateRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId, @FormParam("name") String name,
+			@FormParam("port") int port, @FormParam("type") RedirectionType type)
+			throws WorkflowNotInDevelopmentModeException,
+			RedirectionNotFoundException;
+
+	@DELETE
+	@Path("/workflow/{contextId}/asi/{asiId}/redirection/{name}")
+	void deleteRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId, @FormParam("name") String name)
+			throws WorkflowNotInDevelopmentModeException,
+			RedirectionNotFoundException;
 }
