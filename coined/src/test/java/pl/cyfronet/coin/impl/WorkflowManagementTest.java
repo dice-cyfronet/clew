@@ -43,7 +43,7 @@ import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
  */
 //@formatter:off
 @ContextConfiguration( locations={
-		"classpath:rest-test-properties-key.xml",
+		"classpath:rest-test-properties-workflow.xml",
 		"classpath:rest-test-imports.xml",
 		"classpath:rest-test-mocks.xml",
 		"classpath:rest-test-workflow-management-client.xml",
@@ -145,7 +145,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void should() throws Exception {
+	public void shouldThrowExceptionWhenAsiNotFound() throws Exception {
 		givenAsiNotFound();
 		try {
 			whenGetAsiRedirections();
