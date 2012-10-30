@@ -24,14 +24,17 @@ import javax.xml.ws.WebFault;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @WebFault
-public class AtomicServiceInstanceNotFoundException extends CloudFacadeException {
+public class AtomicServiceInstanceNotFoundException extends
+		CloudFacadeException {
 
 	/**
 	 * Serial version UID.
 	 */
 	private static final long serialVersionUID = 7028013118481656340L;
-	
+
+	public static final String ERROR_MESSAGE = "Atomic service instance not found";
+
 	public AtomicServiceInstanceNotFoundException() {
-		super(Response.Status.NOT_FOUND);
+		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
 	}
 }

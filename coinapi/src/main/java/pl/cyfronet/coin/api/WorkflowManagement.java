@@ -33,6 +33,8 @@ import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
@@ -110,7 +112,16 @@ public interface WorkflowManagement {
 	void removeAtomicServiceFromWorkflow(
 			@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asConfigId)
-			throws WorkflowNotFoundException, CloudFacadeException;
+			throws WorkflowNotFoundException,
+			WorkflowNotInProductionModeException, CloudFacadeException;
+
+	@DELETE
+	@Path("/{workflowId}/asi/{asInstanceId}")
+	void removeAtomicServiceInstanceFromWorkflow(
+			@PathParam("workflowId") String workflowId,
+			@PathParam("asInstanceId") String asInstanceId)
+			throws WorkflowNotFoundException,
+			WorkflowNotInDevelopmentModeException, CloudFacadeException;
 
 	/**
 	 * Get full information about workflow.

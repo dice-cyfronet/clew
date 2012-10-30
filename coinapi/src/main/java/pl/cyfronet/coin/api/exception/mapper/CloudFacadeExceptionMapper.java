@@ -13,28 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.api.exception;
+
+package pl.cyfronet.coin.api.exception.mapper;
 
 import javax.ws.rs.core.Response;
-import javax.xml.ws.WebFault;
+
+import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
 
 /**
- * Thrown when <strong>user</strong> workflow is not found. It means that
- * workflow with defined context id can (but not have to) exist but it doesn't
- * belongs to this user.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-@WebFault
-public class WorkflowNotFoundException extends CloudFacadeException {
+public abstract class CloudFacadeExceptionMapper implements
+		ResponseExceptionMapper<Throwable> {
 
-	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 6823966272806907966L;
-
-	public static final String ERROR_MESSAGE = "Workflow not found";
-
-	public WorkflowNotFoundException() {
-		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
+	protected String getMessage(Response r) {
+		if (r.getEntity() == null) {
+			return null;
+		} else {
+			return r.getEntity().toString();
+		}
 	}
 }

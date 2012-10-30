@@ -29,11 +29,15 @@ import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowsAction;
+import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
+import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.StopWorkflowAction;
@@ -87,10 +91,26 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public void removeAtomicServiceFromWorkflow(String workflowId, String asId) {
-		logger.debug("Remove atomic service [{}] from workflow [{}]", asId,
-				workflowId);
-		throw new WebApplicationException(501);
+	public void removeAtomicServiceFromWorkflow(String workflowId,
+			String asConfigId) {
+		logger.debug("Remove atomic service [{}] from workflow [{}]",
+				asConfigId, workflowId);
+		RemoveAtomicServiceFromWorkflowAction action = actionFactory
+				.createRemoveAtomicServiceFromWorkflowAction(workflowId,
+						asConfigId);
+		action.execute();
+	}
+
+	@Override
+	public void removeAtomicServiceInstanceFromWorkflow(String workflowId,
+			String asInstanceId) throws WorkflowNotFoundException,
+			WorkflowNotInDevelopmentModeException, CloudFacadeException {
+		logger.debug("Remove atomic service instance [{}] from workflow [{}]",
+				asInstanceId, workflowId);
+
+		RemoveASIFromWorkflowAction action = actionFactory
+				.createRemoveASIFromWorkflowAction(workflowId, asInstanceId);
+		action.execute();
 	}
 
 	/*

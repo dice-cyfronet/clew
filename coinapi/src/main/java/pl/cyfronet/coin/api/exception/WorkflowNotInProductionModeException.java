@@ -13,28 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package pl.cyfronet.coin.api.exception;
 
 import javax.ws.rs.core.Response;
 import javax.xml.ws.WebFault;
 
 /**
- * Thrown when <strong>user</strong> workflow is not found. It means that
- * workflow with defined context id can (but not have to) exist but it doesn't
- * belongs to this user.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @WebFault
-public class WorkflowNotFoundException extends CloudFacadeException {
+public class WorkflowNotInProductionModeException extends CloudFacadeException {
 
-	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 6823966272806907966L;
+	private static final long serialVersionUID = 3481363067032694143L;
 
-	public static final String ERROR_MESSAGE = "Workflow not found";
+	public static final String ERROR_MESSAGE = "Workflow not i production mode";
 
-	public WorkflowNotFoundException() {
-		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
+	public WorkflowNotInProductionModeException() {
+		super(ERROR_MESSAGE, Response.Status.FORBIDDEN);
 	}
 }
