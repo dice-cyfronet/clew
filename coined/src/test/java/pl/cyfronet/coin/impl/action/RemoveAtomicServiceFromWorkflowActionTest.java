@@ -16,7 +16,7 @@
 
 package pl.cyfronet.coin.impl.action;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,12 +35,12 @@ import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.mock.matcher.RemoveRequiredAppliancesRequestMatcher;
-import pl.cyfronet.dyrealla.api.allocation.RemoveRequiredAppliancesRequest;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class RemoveAtomicServiceFromWorkflowActionTest extends WorkflowActionTest {
+public class RemoveAtomicServiceFromWorkflowActionTest extends
+		RemoveWorkflowElementTest {
 
 	private String asConfId = "asConigId";
 
@@ -56,7 +56,7 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends WorkflowActionTes
 	public void shouldRemoveAS(WorkflowType workflowType) throws Exception {
 		givenWorkflowWithASAndRemoveASAction(workflowType);
 		whenRemoveASFromWorkflow();
-		thenASRemovedFromWorkflow();
+		thenWorkflowElementRemoved();
 	}
 
 	@DataProvider
@@ -95,11 +95,6 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends WorkflowActionTes
 		action.execute();
 	}
 
-	private void thenASRemovedFromWorkflow() {
-		verify(air, times(1)).getWorkflow(contextId);
-		verify(atmosphere, times(1)).removeRequiredAppliances(argThat(matcher));
-	}
-
 	@Test
 	public void shouldThrowExceptionWhenWorkflowNotFound() throws Exception {
 		givenAiRWithoutWorkflow();
@@ -111,16 +106,6 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends WorkflowActionTes
 		}
 
 		thenOnlyAirActionInvoked();
-	}
-
-	private void givenAiRWithoutWorkflow() {
-		mockGetNonExistingWorkflow(air, contextId);
-	}
-
-	private void thenOnlyAirActionInvoked() {
-		verify(air, times(1)).getWorkflow(contextId);
-		verify(atmosphere, times(0)).removeRequiredAppliances(
-				any(RemoveRequiredAppliancesRequest.class));
 	}
 
 	@Test
@@ -188,7 +173,18 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends WorkflowActionTes
 		Vms as1 = getVms("otherConfId");
 		Vms as2 = getVms("yetAnotherConfId");
 		wd.setVms(Arrays.asList(as1, as2));
-		
+
 		givenGetWorkflowAction(wd);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see pl.cyfronet.coin.impl.action.RemoveWorkflowElementTest#
+	 * verifyElementRemovedFromAtmosphere(int)
+	 */
+	@Override
+	protected void verifyElementRemovedFromAtmosphere(int times) {
+		verify(atmosphere, times(times)).removeRequiredAppliances(
+				argThat(matcher));
 	}
 }

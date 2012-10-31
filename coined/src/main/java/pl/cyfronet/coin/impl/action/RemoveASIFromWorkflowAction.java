@@ -16,15 +16,22 @@
 
 package pl.cyfronet.coin.impl.action;
 
+import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.Vms;
+import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
+
+	private String contextId;
+	private String asiId;
 
 	/**
 	 * @param air
@@ -32,20 +39,41 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 	 * @param username
 	 */
 	RemoveASIFromWorkflowAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username) {
+			DyReAllaManagerService atmosphere, String username,
+			String contextId, String asiId) {
 		super(air, atmosphere, username);
-		// TODO Auto-generated constructor stub
+		this.contextId = contextId;
+		this.asiId = asiId;
 	}
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		// TODO Auto-generated method stub
-		return null;
+		if (workflowInDevelopmentModeHasASI()) {
+			getAtmosphere().removeAppliance(asiId);
+		} else {
+			throw new AtomicServiceInstanceNotFoundException();
+		}
+		return Void.TYPE;
+	}
+
+	private boolean workflowInDevelopmentModeHasASI() {
+		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
+		if (wd.getWorkflow_type() == WorkflowType.development) {
+			if (wd.getVms() != null) {
+				for (Vms vm : wd.getVms()) {
+					if (vm.getVms_id().equals(asiId)) {
+						return true;
+					}
+				}
+			}
+		} else {
+			throw new WorkflowNotInDevelopmentModeException();
+		}
+		return false;
 	}
 
 	@Override
 	public void rollback() {
 		// TODO Auto-generated method stub
-		
 	}
 }

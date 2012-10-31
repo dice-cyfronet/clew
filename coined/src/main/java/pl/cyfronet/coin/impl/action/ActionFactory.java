@@ -148,7 +148,8 @@ public class ActionFactory {
 
 	public RemoveASIFromWorkflowAction createRemoveASIFromWorkflowAction(
 			String username, String contextId, String asiId) {
-		return null;
+		return new RemoveASIFromWorkflowAction(air, atmosphere, username,
+				contextId, asiId);
 	}
 
 	// setters
