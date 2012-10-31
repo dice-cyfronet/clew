@@ -93,11 +93,12 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public void removeAtomicServiceFromWorkflow(String workflowId,
 			String asConfigId) {
-		logger.debug("Remove atomic service [{}] from workflow [{}]",
-				asConfigId, workflowId);
+		String username = getUsername();
+		logger.debug("Remove atomic service [{}] from workflow [{}] for user {}",
+				new Object[] {asConfigId, workflowId, username}); 
 		RemoveAtomicServiceFromWorkflowAction action = actionFactory
-				.createRemoveAtomicServiceFromWorkflowAction(workflowId,
-						asConfigId);
+				.createRemoveAtomicServiceFromWorkflowAction(getUsername(),
+						workflowId, asConfigId);
 		action.execute();
 	}
 
@@ -105,11 +106,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public void removeAtomicServiceInstanceFromWorkflow(String workflowId,
 			String asInstanceId) throws WorkflowNotFoundException,
 			WorkflowNotInDevelopmentModeException, CloudFacadeException {
-		logger.debug("Remove atomic service instance [{}] from workflow [{}]",
-				asInstanceId, workflowId);
+		String username = getUsername();
+		logger.debug(
+				"Remove atomic service instance [{}] from workflow [{}] for user {}",
+				new Object[] { asInstanceId, workflowId, username });
 
 		RemoveASIFromWorkflowAction action = actionFactory
-				.createRemoveASIFromWorkflowAction(workflowId, asInstanceId);
+				.createRemoveASIFromWorkflowAction(username, workflowId,
+						asInstanceId);
 		action.execute();
 	}
 

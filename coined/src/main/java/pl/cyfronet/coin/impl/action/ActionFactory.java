@@ -141,12 +141,12 @@ public class ActionFactory {
 	}
 
 	public RemoveAtomicServiceFromWorkflowAction createRemoveAtomicServiceFromWorkflowAction(
-			String contextId, String asConfId) {
+			String username, String contextId, String asConfId) {
 		return null;
 	}
 
 	public RemoveASIFromWorkflowAction createRemoveASIFromWorkflowAction(
-			String contextId, String asiId) {
+			String username, String contextId, String asiId) {
 		return null;
 	}
 

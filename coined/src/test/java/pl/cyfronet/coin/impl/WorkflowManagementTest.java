@@ -53,6 +53,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private String contextId = "contextId";
 	private String asConfigId = "asConfId";
 	private String asiId = "asiId";
+	private String username = "User123";
 
 	@Test
 	public void shouldRemoveASFromWorkflow() throws Exception {
@@ -69,7 +70,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private void givenRemoveASAction(
 			RemoveAtomicServiceFromWorkflowAction action) {
 		when(
-				actionFactory.createRemoveAtomicServiceFromWorkflowAction(
+				actionFactory.createRemoveAtomicServiceFromWorkflowAction(username, 
 						contextId, asConfigId)).thenReturn(action);
 		currentAction = action;
 	}
@@ -154,7 +155,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASIAction(RemoveASIFromWorkflowAction action) {
-		when(actionFactory.createRemoveASIFromWorkflowAction(contextId, asiId))
+		when(actionFactory.createRemoveASIFromWorkflowAction(username, contextId, asiId))
 				.thenReturn(action);
 		currentAction = action;
 	}
