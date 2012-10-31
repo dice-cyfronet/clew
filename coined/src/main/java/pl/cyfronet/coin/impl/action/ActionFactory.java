@@ -142,7 +142,8 @@ public class ActionFactory {
 
 	public RemoveAtomicServiceFromWorkflowAction createRemoveAtomicServiceFromWorkflowAction(
 			String username, String contextId, String asConfId) {
-		return null;
+		return new RemoveAtomicServiceFromWorkflowAction(air, atmosphere,
+				username, contextId, asConfId);
 	}
 
 	public RemoveASIFromWorkflowAction createRemoveASIFromWorkflowAction(

@@ -16,43 +16,78 @@
 
 package pl.cyfronet.coin.impl.action;
 
+import java.util.Arrays;
+
+import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.Vms;
+import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.allocation.impl.RemoveRequiredAppliancesRequestImpl;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-public class RemoveAtomicServiceFromWorkflowAction extends WorkflowAction<Class<Void>>{
+public class RemoveAtomicServiceFromWorkflowAction extends
+		WorkflowAction<Class<Void>> {
 
-	/**
-	 * @param air
-	 * @param atmosphere
-	 * @param username
-	 */
+	private String contextId;
+	private String asConfigId;
+
 	RemoveAtomicServiceFromWorkflowAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username) {
+			DyReAllaManagerService atmosphere, String username,
+			String contextId, String asConfigId) {
 		super(air, atmosphere, username);
-		// TODO Auto-generated constructor stub
+		this.contextId = contextId;
+		this.asConfigId = asConfigId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see pl.cyfronet.coin.impl.action.Action#execute()
 	 */
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		// TODO Auto-generated method stub
-		return null;
+		if (workflowInProductionModeHasAS()) {
+			RemoveRequiredAppliancesRequestImpl request = new RemoveRequiredAppliancesRequestImpl();
+			request.setApplicationId(contextId);
+			request.setInitConfigIds(Arrays.asList(asConfigId));
+			getAtmosphere().removeRequiredAppliances(request);
+		} else {
+			throw new AtomicServiceNotFoundException();
+		}
+
+		return Void.TYPE;
 	}
 
-	/* (non-Javadoc)
+	private boolean workflowInProductionModeHasAS()
+			throws WorkflowNotInProductionModeException {
+		WorkflowDetail workflowDetails = getUserWorkflow(contextId,
+				getUsername());
+		if (workflowDetails.getWorkflow_type() == WorkflowType.development) {
+			throw new WorkflowNotInProductionModeException();
+		} else if (workflowDetails.getVms() != null) {
+			for (Vms vm : workflowDetails.getVms()) {
+				if (asConfigId.equals(vm.getConf_id())) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see pl.cyfronet.coin.impl.action.Action#rollback()
 	 */
 	@Override
 	public void rollback() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
