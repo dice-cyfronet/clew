@@ -40,11 +40,9 @@ import pl.cyfronet.dyrealla.api.allocation.RemoveRequiredAppliancesRequest;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class RemoveAtomicServiceFromWorkflowActionTest extends ActionTest {
+public class RemoveAtomicServiceFromWorkflowActionTest extends WorkflowActionTest {
 
-	private String contextId = "contextId";
 	private String asConfId = "asConigId";
-	private String username = "username";
 
 	private RemoveRequiredAppliancesRequestMatcher matcher;
 
@@ -116,7 +114,7 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends ActionTest {
 	}
 
 	private void givenAiRWithoutWorkflow() {
-		when(air.getWorkflow(contextId)).thenThrow(getAirException(404));
+		mockGetNonExistingWorkflow(air, contextId);
 	}
 
 	private void thenOnlyAirActionInvoked() {
