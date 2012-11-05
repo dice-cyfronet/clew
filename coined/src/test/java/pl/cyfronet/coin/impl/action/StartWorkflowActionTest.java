@@ -167,7 +167,7 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 
 	private AddRequiredAppliancesRequestMatcher getAddAppliancesMather() {
 		return new AddRequiredAppliancesRequestMatcher(contextId,
-				defaultPriority, startRequest.getAsConfigIds().toArray(
+				defaultPriority, username, startRequest.getAsConfigIds().toArray(
 						new String[0]));
 	}
 

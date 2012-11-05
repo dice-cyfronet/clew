@@ -58,7 +58,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		wd.setVph_username(username);
 
 		matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
-				defaultPriority, atomicServiceId);
+				defaultPriority, username, atomicServiceId);
 		givenWorkflowStarted();
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
