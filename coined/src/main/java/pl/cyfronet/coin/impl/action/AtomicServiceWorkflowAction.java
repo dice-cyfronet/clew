@@ -24,6 +24,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.api.allocation.RunMode;
 import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
 import pl.cyfronet.dyrealla.api.allocation.impl.ApplianceIdentityImpl;
 
@@ -59,13 +60,17 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 			request.setUsername(getUsername());
 			request.setApplianceIdentities(getApplianceIdentities(configIds,
 					names));
-			// FIXME
-			// request.setRunMode()
+			request.setRunMode(getRunMode(workflowType));
 
 			ManagerResponse response = getAtmosphere().addRequiredAppliances(
 					request);
 			parseResponseAndThrowExceptionsWhenNeeded(response);
 		}
+	}
+
+	private RunMode getRunMode(WorkflowType workflowType) {
+		return workflowType == WorkflowType.development ? RunMode.DEVELOPMENT
+				: RunMode.PRODUCTION;
 	}
 
 	private List<ApplianceIdentityImpl> getApplianceIdentities(

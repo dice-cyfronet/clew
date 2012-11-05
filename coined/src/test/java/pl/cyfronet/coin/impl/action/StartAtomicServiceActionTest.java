@@ -24,6 +24,7 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -56,9 +57,10 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted() {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
+		wd.setWorkflow_type(WorkflowType.portal);
 
 		matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
-				defaultPriority, username, atomicServiceId);
+				defaultPriority, username, WorkflowType.portal, atomicServiceId);
 		givenWorkflowStarted();
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
