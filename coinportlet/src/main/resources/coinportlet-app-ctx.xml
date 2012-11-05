@@ -68,7 +68,7 @@
     	<property name="workflowManagement" ref="wm-client"/>
     	<property name="cloudFacade" ref="cf-client"/>
     </bean>
-    <jaxrs:client id="wm-client" address="https://vph.cyfronet.pl/cloudfacade/workflow"
+    <jaxrs:client id="wm-client" address="${cloud.facade.wm.url}"
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
 		threadSafe="true"
 		inheritHeaders="true">
@@ -77,7 +77,7 @@
 			<ref bean="workflowServiceExceptionMapper" />
 		</jaxrs:providers>
 	</jaxrs:client>
-	<jaxrs:client id="cf-client" address="https://vph.cyfronet.pl/cloudfacade/as"
+	<jaxrs:client id="cf-client" address="${cloud.facade.cf.url}"
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		threadSafe="true"
 		inheritHeaders="true">
