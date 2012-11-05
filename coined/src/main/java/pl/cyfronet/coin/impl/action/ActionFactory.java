@@ -145,6 +145,18 @@ public class ActionFactory {
 		return new GetAsiRedirectionsAction(contextId, asiId, air);
 	}
 	
+	public RemoveAtomicServiceFromWorkflowAction createRemoveAtomicServiceFromWorkflowAction(
+			String username, String contextId, String asConfId) {
+		return new RemoveAtomicServiceFromWorkflowAction(air, atmosphere,
+				username, contextId, asConfId);
+	}
+
+	public RemoveASIFromWorkflowAction createRemoveASIFromWorkflowAction(
+			String username, String contextId, String asiId) {
+		return new RemoveASIFromWorkflowAction(air, atmosphere, username,
+				contextId, asiId);
+	}
+
 	// setters
 
 	public void setAir(AirClient air) {

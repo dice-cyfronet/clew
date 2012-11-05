@@ -19,8 +19,11 @@ package pl.cyfronet.coin.api.exception.mapper;
 import javax.ws.rs.core.Response;
 
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -31,12 +34,23 @@ public class WorkflowServiceExceptionMapper extends CloudFacadeExceptionMapper {
 	public Throwable fromResponse(Response r) {
 		String message = getMessage(r);
 		switch (r.getStatus()) {
-		case 404:
-			if (AtomicServiceInstanceNotFoundException.ERROR_MESSAGE
+		case 403:
+			if (WorkflowNotInDevelopmentModeException.ERROR_MESSAGE
 					.equals(message)) {
-				return new AtomicServiceInstanceNotFoundException();
-			} else {
+				throw new WorkflowNotInDevelopmentModeException();
+			} else if (WorkflowNotInProductionModeException.ERROR_MESSAGE
+					.equals(message)) {
+				throw new WorkflowNotInProductionModeException();
+			}
+		case 404:
+			if (WorkflowNotFoundException.ERROR_MESSAGE.equals(message)) {
 				return new WorkflowNotFoundException();
+			} else if (AtomicServiceNotFoundException.ERROR_MESSAGE
+					.equals(message)) {
+				throw new AtomicServiceNotFoundException();
+			} else if (AtomicServiceInstanceNotFoundException.ERROR_MESSAGE
+					.equals(message)) {
+				throw new AtomicServiceInstanceNotFoundException();
 			}
 		default:
 			return new CloudFacadeException();

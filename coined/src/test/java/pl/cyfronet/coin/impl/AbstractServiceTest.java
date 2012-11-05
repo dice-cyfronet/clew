@@ -18,24 +18,36 @@ package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.BeforeMethod;
 
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.security.mi.MasterInterfaceAuthenticationHandler;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-public abstract class AbstractServiceTest extends AbstractTestNGSpringContextTests {
+public abstract class AbstractServiceTest extends
+		AbstractTestNGSpringContextTests {
 
 	@Autowired
 	protected ActionFactory actionFactory;
-	
+
+	@Autowired
+	private MasterInterfaceAuthenticationHandler authenticationHandler;
+
 	protected Action<? extends Object> currentAction;
-	
+
+	@BeforeMethod
+	protected void setUp() {
+		when(authenticationHandler.getUsername("User123", "notimportant"))
+				.thenReturn("User123");
+	}
+
 	protected void thenActionExecuted() {
 		verify(currentAction, times(1)).execute();
 	}

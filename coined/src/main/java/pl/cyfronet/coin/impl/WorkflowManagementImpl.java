@@ -33,6 +33,7 @@ import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
@@ -41,6 +42,8 @@ import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowsAction;
+import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
+import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.StopWorkflowAction;
@@ -94,10 +97,30 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public void removeAtomicServiceFromWorkflow(String workflowId, String asId) {
-		logger.debug("Remove atomic service [{}] from workflow [{}]", asId,
-				workflowId);
-		throw new WebApplicationException(501);
+	public void removeAtomicServiceFromWorkflow(String workflowId,
+			String asConfigId) {
+		String username = getUsername();
+		logger.debug("Remove atomic service [{}] from workflow [{}] for user {}",
+				new Object[] {asConfigId, workflowId, username}); 
+		RemoveAtomicServiceFromWorkflowAction action = actionFactory
+				.createRemoveAtomicServiceFromWorkflowAction(getUsername(),
+						workflowId, asConfigId);
+		action.execute();
+	}
+
+	@Override
+	public void removeAtomicServiceInstanceFromWorkflow(String workflowId,
+			String asInstanceId) throws WorkflowNotFoundException,
+			WorkflowNotInDevelopmentModeException, CloudFacadeException {
+		String username = getUsername();
+		logger.debug(
+				"Remove atomic service instance [{}] from workflow [{}] for user {}",
+				new Object[] { asInstanceId, workflowId, username });
+
+		RemoveASIFromWorkflowAction action = actionFactory
+				.createRemoveASIFromWorkflowAction(username, workflowId,
+						asInstanceId);
+		action.execute();
 	}
 
 	/*

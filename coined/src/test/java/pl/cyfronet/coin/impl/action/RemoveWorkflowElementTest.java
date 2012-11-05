@@ -13,28 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.api.exception;
 
-import javax.ws.rs.core.Response;
-import javax.xml.ws.WebFault;
+package pl.cyfronet.coin.impl.action;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
- * Thrown when <strong>user</strong> workflow is not found. It means that
- * workflow with defined context id can (but not have to) exist but it doesn't
- * belongs to this user.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-@WebFault
-public class WorkflowNotFoundException extends CloudFacadeException {
+public abstract class RemoveWorkflowElementTest extends WorkflowActionTest {
 
-	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 6823966272806907966L;
-
-	public static final String ERROR_MESSAGE = "Workflow not found";
-
-	public WorkflowNotFoundException() {
-		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
+	protected void givenAiRWithoutWorkflow() {
+		mockGetNonExistingWorkflow(air, contextId);
 	}
+	
+	protected void thenWorkflowElementRemoved() {
+		verify(air, times(1)).getWorkflow(contextId);
+		verifyElementRemovedFromAtmosphere(1);
+	}
+	
+	protected void thenOnlyAirActionInvoked() {
+		verify(air, times(1)).getWorkflow(contextId);
+		verifyElementRemovedFromAtmosphere(0);
+	}
+	
+	protected abstract void verifyElementRemovedFromAtmosphere(int times);
 }
