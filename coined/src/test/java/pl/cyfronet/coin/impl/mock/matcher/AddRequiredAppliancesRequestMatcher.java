@@ -20,8 +20,10 @@ import java.util.List;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.dyrealla.api.allocation.AddRequiredAppliancesRequest;
 import pl.cyfronet.dyrealla.api.allocation.ApplianceIdentity;
+import pl.cyfronet.dyrealla.api.allocation.RunMode;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -37,17 +39,25 @@ public class AddRequiredAppliancesRequestMatcher extends
 
 	private Integer importanceLevel;
 
+	private String username;
+
+	private WorkflowType workflowType;
+
 	public AddRequiredAppliancesRequestMatcher(String contextId,
-			Integer importanceLevel, String... atomicServiceIds) {
-		this(contextId, false, importanceLevel, atomicServiceIds);
+			Integer importanceLevel, String username,
+			WorkflowType workflowType, String... atomicServiceIds) {
+		this(contextId, false, importanceLevel, username, workflowType,
+				atomicServiceIds);
 	}
 
 	public AddRequiredAppliancesRequestMatcher(String contextId,
-			boolean checkName, Integer importanceLevel,
-			String... atomicServiceIds) {
+			boolean checkName, Integer importanceLevel, String username,
+			WorkflowType workflowType, String... atomicServiceIds) {
 		this.contextId = contextId;
 		this.atomicServiceIds = atomicServiceIds;
 		this.checkName = checkName;
+		this.username = username;
+		this.workflowType = workflowType;
 		this.importanceLevel = importanceLevel;
 	}
 
@@ -59,8 +69,15 @@ public class AddRequiredAppliancesRequestMatcher extends
 	public boolean matches(Object arg0) {
 		AddRequiredAppliancesRequest request = (AddRequiredAppliancesRequest) arg0;
 		return request.getCorrelationId().equals(contextId)
+				&& username.equals(request.getUsername())
+				&& getRunMode() == request.getRunMode()
 				&& importanceLevel.equals(request.getImportanceLevel())
 				&& equals(request.getApplianceIdentities(), atomicServiceIds);
+	}
+
+	private RunMode getRunMode() {
+		return workflowType == WorkflowType.development ? RunMode.DEVELOPMENT
+				: RunMode.PRODUCTION;
 	}
 
 	private boolean equals(List<ApplianceIdentity> identites,

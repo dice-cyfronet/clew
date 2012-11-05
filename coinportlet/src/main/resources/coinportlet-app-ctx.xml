@@ -68,25 +68,24 @@
     	<property name="workflowManagement" ref="wm-client"/>
     	<property name="cloudFacade" ref="cf-client"/>
     </bean>
-    <jaxrs:client id="wm-client" address="https://vph.cyfronet.pl/cloudfacade/workflow"
+    <jaxrs:client id="wm-client" address="${cloud.facade.wm.url}"
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
 		threadSafe="true"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="workflowServiceExceptionMapper" />
 		</jaxrs:providers>
 	</jaxrs:client>
-	<jaxrs:client id="cf-client" address="https://vph.cyfronet.pl/cloudfacade/as"
+	<jaxrs:client id="cf-client" address="${cloud.facade.cf.url}"
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		threadSafe="true"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="workflowServiceExceptionMapper" />
 		</jaxrs:providers>
 	</jaxrs:client>
-	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
-		<property name="serializeAsArray" value="true" />
-		<property name="dropRootElement" value="true" />
-		<property name="supportUnwrapped" value="true" />
-	</bean>
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
 </beans>

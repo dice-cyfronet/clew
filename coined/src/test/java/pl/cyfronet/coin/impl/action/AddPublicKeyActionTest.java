@@ -105,7 +105,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 
 	private void thenKeyAddedAndRemovedFromAir() throws Exception {
 		thenValidateCFTriesToAddKeyToAir();
-		verify(atmosphere, times(1)).removeKeyPair(username, addedKeytId);
+		verify(atmosphere, times(1)).removeKeyPair(addedKeytId);
 		verify(air, times(1)).deletePublicKey(username, addedKeytId);
 	}
 }
