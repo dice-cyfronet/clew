@@ -13,8 +13,17 @@
 		</portlet:renderURL>
 		<c:set var="saveLinkId">saveLink-${atomicServiceInstance.id}</c:set>
 		<a id="${saveLinkId}" class="coin-link" href="${saveAtomicService}" style="visibility: hidden;">Save atomic service</a><br/>
+		
 		<c:set var="accessMethodsId">accessMethods-${atomicServiceInstance.id}</c:set>
 		<a class="coin-link" id="${accessMethodsId}" href="#showAccessInfo" style="visibility: hidden;">Show access info</a>
+		
+		<portlet:actionURL var="shutdownAtomicServiceInstance">
+			<portlet:param name="action" value="stopInstance"/>
+			<portlet:param name="workflowId" value="${workflowId}"/>
+			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
+		</portlet:actionURL>
+		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
+		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
 	</span>
 	<c:if test="${not status.last}">
 		<hr/>
@@ -42,6 +51,10 @@
 	    			}
 	    			
 	    			if(status === 'running') {
+	    				if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
+	    					jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
+	    				}
+	    				
 	    				if(jQuery('#${saveLinkId}').css('visibility') === 'hidden') {
 	    					jQuery('#${saveLinkId}').css('visibility', 'visible');
 	    				}

@@ -16,6 +16,13 @@
 			<c:set var="invokeId">invokeId-${atomicServiceInstance.id}</c:set>
 			<a id="${invokeId}" class="coin-link" href="${invokeAtomicService}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a>
 		</c:if>
+		<portlet:actionURL var="shutdownAtomicServiceInstance">
+			<portlet:param name="action" value="stopInstance"/>
+			<portlet:param name="workflowId" value="${workflowId}"/>
+			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
+		</portlet:actionURL>
+		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
+		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
 	</span>
 	<c:if test="${not status.last}">
 		<hr/>
@@ -42,9 +49,17 @@
 			    			if(jQuery('#${invokeId}').css('visibility') === 'hidden') {
 				    			jQuery('#${invokeId}').css('visibility', 'visible');
 				    		}
+			    			
+			    			if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
+				    			jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
+				    		}
 			    		} else {
 			    			if(jQuery('#${invokeId}').css('visibility') === 'visible') {
 				    			jQuery('#${invokeId}').css('visibility', 'hidden');
+				    		}
+			    			
+			    			if(jQuery('#${shutdownInstanceId}').css('visibility') === 'visible') {
+				    			jQuery('#${shutdownInstanceId}').css('visibility', 'hidden');
 				    		}
 			    		}
 		    		}
