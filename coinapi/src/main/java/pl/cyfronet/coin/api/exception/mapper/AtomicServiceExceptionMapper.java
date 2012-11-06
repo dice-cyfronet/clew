@@ -37,9 +37,10 @@ public class AtomicServiceExceptionMapper extends CloudFacadeExceptionMapper {
 	
 	@Override
 	public Throwable fromResponse(Response r) {
-		logger.info("Response to be mapped: {}", r);
 		String message = getMessage(r);
-		switch (r.getStatus()) {
+		int status = r.getStatus();
+		logger.info("Response to be mapped: {} -> {}", status, message);
+		switch (status) {
 		case 404:
 			if (AtomicServiceNotFoundException.ERROR_MESSAGE.equals(message)) {
 				return new AtomicServiceNotFoundException();

@@ -38,10 +38,10 @@ public class WorkflowServiceExceptionMapper extends CloudFacadeExceptionMapper {
 
 	@Override
 	public Throwable fromResponse(Response r) {
-		logger.info("Response to be mapped: {}", r);
-
 		String message = getMessage(r);
-		switch (r.getStatus()) {
+		int status = r.getStatus();
+		logger.info("Response to be mapped: {} -> {}", status, message);
+		switch (status) {
 		case 403:
 			if (WorkflowNotInDevelopmentModeException.ERROR_MESSAGE
 					.equals(message)) {

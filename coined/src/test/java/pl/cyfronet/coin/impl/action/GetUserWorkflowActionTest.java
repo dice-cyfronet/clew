@@ -49,7 +49,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 	private WorkflowDetail airWorkflow;
 
 	@Test
-	public void shouldGetNonExistingWorkflow() throws Exception {
+	public void shouldThrowExceptionWhenGetingNonExistingWorkflow() throws Exception {
 		givenAirContentWithInformationAboutNonExistingWorkflow();
 
 		try {
@@ -204,12 +204,14 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
 		vm1.setInternal_port_mappings(Arrays.asList(sshMapping, vncMapping));
+		vm1.setUser_key("userKey1");
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
 		vm2.setName("vm2");
 		vm2.setState(Status.running);
 		vm2.setVms_id("id2");
+		vm2.setUser_key("userKey2");
 
 		wd.setVms(Arrays.asList(vm1, vm2));
 		
@@ -225,6 +227,11 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		equals(workflow.getAtomicServiceInstances().get(1).getCredential(),
 				"vm2Username", "vm2Password");
 
+		assertEquals(workflow.getAtomicServiceInstances().get(0).getPublicKeyId(),
+				"userKey1");
+		assertEquals(workflow.getAtomicServiceInstances().get(1).getPublicKeyId(),
+				"userKey2");
+		
 		List<Redirection> vm1PortMapping = workflow.getAtomicServiceInstances()
 				.get(0).getRedirections();
 		List<Redirection> vm2PortMapping = workflow.getAtomicServiceInstances()
