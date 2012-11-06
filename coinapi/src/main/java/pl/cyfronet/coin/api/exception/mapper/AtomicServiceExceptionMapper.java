@@ -18,6 +18,9 @@ package pl.cyfronet.coin.api.exception.mapper;
 
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -29,8 +32,12 @@ import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
  */
 public class AtomicServiceExceptionMapper extends CloudFacadeExceptionMapper {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(AtomicServiceExceptionMapper.class);
+	
 	@Override
 	public Throwable fromResponse(Response r) {
+		logger.info("Response to be mapped: {}", r);
 		String message = getMessage(r);
 		switch (r.getStatus()) {
 		case 404:
