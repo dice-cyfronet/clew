@@ -96,6 +96,7 @@ public class CloudManagerPortlet {
 	static final String ACTION_DEVELOPMENT = "development";
 	static final String ACTION_STOP_WORKFLOW = "stopWorkflow";
 	static final String ACTION_AS_SAVING_STATE = "asSavingState";
+	static final String ACTION_STOP_INSTANCE = "stopInstance";
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -195,6 +196,14 @@ public class CloudManagerPortlet {
 				clientFactory.getWorkflowManagement(request).stopWorkflow(workflowId);
 			}
 		}
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_STOP_INSTANCE)
+	public void doActionStopAsInstance(@RequestParam("workflowId") String workflowId,
+			@RequestParam("atomicServiceInstanceId") String atomicServiceInstanceId,
+			PortletRequest request, ActionResponse response) {
+		log.info("Stopping AS instance with id [{}] from workflow with id [{}]", atomicServiceInstanceId, workflowId);
+		clientFactory.getWorkflowManagement(request).removeAtomicServiceInstanceFromWorkflow(workflowId, atomicServiceInstanceId);
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
