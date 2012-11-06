@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
+import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.WorkflowManagement;
 
 public class ClientFactory {
@@ -21,6 +22,7 @@ public class ClientFactory {
 	
 	private CloudFacade cloudFacade;
 	private WorkflowManagement workflowManagement;
+	private KeyManagement keyManagement;
 	
 	public void setCloudFacade(CloudFacade cloudFacade) {
 		this.cloudFacade = cloudFacade;
@@ -28,6 +30,10 @@ public class ClientFactory {
 
 	public void setWorkflowManagement(WorkflowManagement workflowManagement) {
 		this.workflowManagement = workflowManagement;
+	}
+	
+	public void setKeyManagement(KeyManagement keyManagement) {
+		this.keyManagement = keyManagement;
 	}
 
 	public CloudFacade getCloudFacade(PortletRequest request) {
@@ -76,5 +82,11 @@ public class ClientFactory {
 		Client client = WebClient.client(proxy);
 		client.reset();
 		client.header(HEADER_AUTHORIZATION, createBasicAuthHeader(request));
+	}
+
+	public KeyManagement getKeyManagement(PortletRequest request) {
+		attachBasicAuth(request, keyManagement);
+		
+		return keyManagement;
 	}
 }

@@ -17,9 +17,9 @@
 			<a id="${invokeId}" class="coin-link" href="${invokeAtomicService}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a>
 		</c:if>
 		<portlet:actionURL var="shutdownAtomicServiceInstance">
-			<portlet:param name="action" value="stopInstance"/>
+			<portlet:param name="action" value="stopInvokerInstance"/>
 			<portlet:param name="workflowId" value="${workflowId}"/>
-			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
+			<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
 		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>

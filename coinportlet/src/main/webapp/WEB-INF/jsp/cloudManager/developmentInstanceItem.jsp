@@ -18,7 +18,7 @@
 		<a class="coin-link" id="${accessMethodsId}" href="#showAccessInfo" style="visibility: hidden;">Show access info</a>
 		
 		<portlet:actionURL var="shutdownAtomicServiceInstance">
-			<portlet:param name="action" value="stopInstance"/>
+			<portlet:param name="action" value="stopDevInstance"/>
 			<portlet:param name="workflowId" value="${workflowId}"/>
 			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 		</portlet:actionURL>
