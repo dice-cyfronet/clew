@@ -29,6 +29,8 @@ public class ApplianceType {
 
 	private String name;
 	
+	private String author;
+	
 	private boolean vnc;
 	
 	private boolean in_proxy;
@@ -40,6 +42,8 @@ public class ApplianceType {
 	private boolean shared;
 	
 	private boolean http;
+	
+	private boolean development;
 	
 	private String description;
 	
@@ -203,16 +207,42 @@ public class ApplianceType {
 		this.endpoints = endpoints;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the author
 	 */
+	public String getAuthor() {
+		return author;
+	}
+
+	/**
+	 * @param author the author to set
+	 */
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	/**
+	 * @return the development
+	 */
+	public boolean isDevelopment() {
+		return development;
+	}
+
+	/**
+	 * @param development the development to set
+	 */
+	public void setDevelopment(boolean development) {
+		this.development = development;
+	}
+
 	@Override
 	public String toString() {
-		return "ApplianceType [name=" + name + ", vnc=" + vnc + ", in_proxy="
-				+ in_proxy + ", published=" + published + ", scalable="
-				+ scalable + ", shared=" + shared + ", http=" + http
-				+ ", description=" + description + ", templates_count="
-				+ templates_count + ", configurations=" + configurations
-				+ ", endpoints=" + endpoints + "]";
+		return "ApplianceType [name=" + name + ", author=" + author + ", vnc="
+				+ vnc + ", in_proxy=" + in_proxy + ", published=" + published
+				+ ", scalable=" + scalable + ", shared=" + shared + ", http="
+				+ http + ", development=" + development + ", description="
+				+ description + ", templates_count=" + templates_count
+				+ ", configurations=" + configurations + ", endpoints="
+				+ endpoints + "]";
 	}
 }
