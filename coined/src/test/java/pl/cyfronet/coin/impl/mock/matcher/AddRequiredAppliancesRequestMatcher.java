@@ -43,6 +43,8 @@ public class AddRequiredAppliancesRequestMatcher extends
 
 	private WorkflowType workflowType;
 
+	private String givenKeyId;
+
 	public AddRequiredAppliancesRequestMatcher(String contextId,
 			Integer importanceLevel, String username,
 			WorkflowType workflowType, String... atomicServiceIds) {
@@ -72,7 +74,21 @@ public class AddRequiredAppliancesRequestMatcher extends
 				&& username.equals(request.getUsername())
 				&& getRunMode() == request.getRunMode()
 				&& importanceLevel.equals(request.getImportanceLevel())
+				&& validKey(request.getKeyPairId())
 				&& equals(request.getApplianceIdentities(), atomicServiceIds);
+	}
+
+	/**
+	 * @param keyPairId
+	 * @return True if run mode is production and key is null or when
+	 *         development mode and key equals to given key.
+	 */
+	private boolean validKey(String keyPairId) {
+		if (getRunMode() == RunMode.PRODUCTION || givenKeyId == null) {
+			return keyPairId == null;
+		} else {
+			return givenKeyId.equals(keyPairId);
+		}
 	}
 
 	private RunMode getRunMode() {
@@ -108,6 +124,10 @@ public class AddRequiredAppliancesRequestMatcher extends
 	@Override
 	public void describeTo(Description arg0) {
 
+	}
+
+	public void setGivenKeyId(String givenKeyId) {
+		this.givenKeyId = givenKeyId;
 	}
 
 }

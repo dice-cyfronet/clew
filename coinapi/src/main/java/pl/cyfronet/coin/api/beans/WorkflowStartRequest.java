@@ -35,6 +35,8 @@ public class WorkflowStartRequest {
 
 	private List<String> asConfigIds;
 
+	private String keyId;
+	
 	/**
 	 * @return the name
 	 */
@@ -105,14 +107,24 @@ public class WorkflowStartRequest {
 		this.type = type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the keyName
 	 */
+	public String getKeyId() {
+		return keyId;
+	}
+
+	/**
+	 * @param keyName the keyName to set
+	 */
+	public void setKeyId(String keyName) {
+		this.keyId = keyName;
+	}
+
 	@Override
 	public String toString() {
-		return "Workflow [name=" + name + ", description=" + description
-				+ ", priority=" + priority + ", type=" + type
-				+ ", asConfigIds=" + asConfigIds + "]";
+		return "WorkflowStartRequest [name=" + name + ", description="
+				+ description + ", priority=" + priority + ", type=" + type
+				+ ", asConfigIds=" + asConfigIds + ", keyId=" + keyId + "]";
 	}
 }

@@ -91,9 +91,9 @@ public class ActionFactory {
 
 	public StartAtomicServiceAction createStartAtomicServiceAction(
 			String atomicServiceId, String asName, String contextId,
-			String username) {
+			String username, String keyName) {
 		return new StartAtomicServiceAction(air, atmosphere, username,
-				atomicServiceId, asName, contextId, defaultPriority);
+				atomicServiceId, asName, contextId, defaultPriority, keyName);
 	}
 
 	// policy files

@@ -46,8 +46,8 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 	 * @param priority Workflow priority.
 	 */
 	protected void registerVms(String contextId, List<String> configIds,
-			List<String> names, Integer priority, WorkflowType workflowType)
-			throws CloudFacadeException {
+			List<String> names, Integer priority, WorkflowType workflowType,
+			String keyId) throws CloudFacadeException {
 		if (configIds != null && configIds.size() > 0) {
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
@@ -60,11 +60,26 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 			request.setUsername(getUsername());
 			request.setApplianceIdentities(getApplianceIdentities(configIds,
 					names));
-			request.setRunMode(getRunMode(workflowType));
+			RunMode runMode = getRunMode(workflowType);
+			request.setRunMode(runMode);
+			request.setKeyPairName(getKeyPairId(runMode, keyId));
 
 			ManagerResponse response = getAtmosphere().addRequiredAppliances(
 					request);
 			parseResponseAndThrowExceptionsWhenNeeded(response);
+		}
+	}
+
+	/**
+	 * @param workflowType
+	 * @param keyId
+	 * @return If workflow is in development mode returns keyId null otherwise.
+	 */
+	private String getKeyPairId(RunMode runMode, String keyId) {
+		if (runMode == RunMode.DEVELOPMENT) {
+			return keyId;
+		} else {
+			return null;
 		}
 	}
 
