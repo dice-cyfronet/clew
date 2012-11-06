@@ -31,6 +31,8 @@ public class AddAtomicServiceRequest {
 	
 	private String description;
 	
+	private String author;
+
 	private boolean in_proxy;
 	
 	private boolean scalable;
@@ -42,6 +44,9 @@ public class AddAtomicServiceRequest {
 	private boolean http;
 	
 	private boolean vnc;
+	
+	private boolean development;
+	
 	
 	private List<ATEndpoint> endpoints;
 
@@ -183,5 +188,33 @@ public class AddAtomicServiceRequest {
 	 */
 	public void setEndpoints(List<ATEndpoint> endpoints) {
 		this.endpoints = endpoints;
+	}
+
+	/**
+	 * @return the author
+	 */
+	public String getAuthor() {
+		return author;
+	}
+
+	/**
+	 * @param author the author to set
+	 */
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	/**
+	 * @return the development
+	 */
+	public boolean isDevelopment() {
+		return development;
+	}
+
+	/**
+	 * @param development the development to set
+	 */
+	public void setDevelopment(boolean development) {
+		this.development = development;
 	}
 }
