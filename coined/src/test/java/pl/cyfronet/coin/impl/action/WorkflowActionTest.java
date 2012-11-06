@@ -26,11 +26,15 @@ public class WorkflowActionTest extends ActionTest {
 
 	protected final String contextId = "contextId";
 	protected final String username = "user";
-	
+
 	protected void givenWorkflowStarted() {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
-		when(air.getWorkflow(contextId)).thenReturn(wd);		
+		givenWorkflowStarted(wd);
+	}
+
+	protected void givenWorkflowStarted(WorkflowDetail wd) {
+		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
 
 	protected void mockGetNonExistingWorkflow(AirClient air, String contextId) {

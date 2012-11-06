@@ -24,6 +24,7 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -43,38 +44,41 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private String name = "asIdName";
 
 	private String id;
+	private String keyId = "myKey";
 	private AddRequiredAppliancesRequestMatcher matcher;
 	private AddRequiredAppliancesRequestImpl request;
 
 	@Test
-	public void shouldStartNewAtomicService() throws Exception {
-		givenAtomicServiceRequestAndWorkflowAlreadyStarted();
+	public void shouldStartWithoutKeyWhenProductionWorkflow() throws Exception {
+		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal);
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
 	}
 
-	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted() {
+	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType workflowType) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
+		wd.setWorkflow_type(workflowType);
 
 		matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
-				defaultPriority, atomicServiceId);
-		givenWorkflowStarted();
+				defaultPriority, username, workflowType, atomicServiceId);
+		matcher.setGivenKeyId(keyId);
+		givenWorkflowStarted(wd);
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
 	}
 
 	private void whenStartAtomicService() {
-		whenStartAtomicService(username);
+		whenStartAtomicService(username, keyId);
 	}
 
-	private void whenStartAtomicService(String username) {
+	private void whenStartAtomicService(String username, String keyId) {
 		StartAtomicServiceAction action = actionFactory
 				.createStartAtomicServiceAction(atomicServiceId, name,
-						contextId, username);
+						contextId, username, keyId);
 		id = action.execute();
 	}
-
+	
 	private void thenCheckIfAtomicServiceWasStarted() {
 		verify(atmosphere, times(1)).addRequiredAppliances(argThat(matcher));
 
@@ -84,6 +88,13 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		assertNull(id);
 	}
 
+	@Test
+	public void shouldStartASWithKeyWhenDevelopmentWorkflow() throws Exception {
+		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development);
+		whenStartAtomicService();
+		thenCheckIfAtomicServiceWasStarted();
+	}
+	
 	@Test
 	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotBelongToTheUser()
 			throws Exception {
@@ -98,7 +109,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void whenNotWorkflowOwnerTriesToStartASForThisWorkflow() {
-		whenStartAtomicService("otherUser");
+		whenStartAtomicService("otherUser", null);
 	}
 
 	@Test
@@ -121,7 +132,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void givenNoWorkflowStartedForTheUser() {
 		mockGetNonExistingWorkflow(air, contextId);
 	}
-
+	
 	// FIXME
 	@Test(enabled = false)
 	public void shouldCreateExceptionWhileAtmosphereActionFailed()

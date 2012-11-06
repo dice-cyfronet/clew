@@ -56,7 +56,7 @@ public class DeletePublicKeyActionTest extends ActionTest {
 
 	private void thenValidateAirDeleteRequest() throws Exception {
 		verify(air, times(1)).deletePublicKey(vphUsername, keyId);
-		verify(atmosphere, times(1)).removeKeyPair(vphUsername, keyId);
+		verify(atmosphere, times(1)).removeKeyPair(keyId);
 	}
 
 	@Test
