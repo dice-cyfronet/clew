@@ -283,18 +283,12 @@ public class CloudManagerPortlet {
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
 				initialconfigurations.get(0).getId() != null) {
-			String key = null;
-			
-			if(userKeyId != null) {
-				key = clientFactory.getKeyManagement(request).get(userKeyId);
-			}
-			
 			log.info("Starting atomic service instance for workflow [{}], configuration [{}]" +
 					" and user key with id [{}]",
 					new String[] {workflowId, initialconfigurations.get(0).getId(), userKeyId});
 			
 			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "Ask user about it?", key);
+					initialconfigurations.get(0).getId(), "Ask user about it?", userKeyId);
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
@@ -555,10 +549,21 @@ public class CloudManagerPortlet {
 									builder.append(redirection.getName()).append(":")
 											.append(redirection.getHost()).append(":")
 											.append(redirection.getFromPort());
-									
-									if(redirection.getName().equals("ssh") && asi.getCredential() != null) {
-										builder.append(":").append(asi.getCredential().getUsername()).append(":")
-												.append(asi.getCredential().getPassword());
+
+									if(redirection.getName().equals("ssh") && asi.getPublicKeyId() != null) {
+										List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
+										String keyName = null;
+										
+										for(PublicKeyInfo pki : keys) {
+											if(pki.getId().equals(asi.getPublicKeyId())) {
+												keyName = pki.getKeyName();
+												break;
+											}
+										}
+										
+										if(keyName != null) {
+											builder.append(":").append(keyName);
+										}
 									}
 											
 								}
