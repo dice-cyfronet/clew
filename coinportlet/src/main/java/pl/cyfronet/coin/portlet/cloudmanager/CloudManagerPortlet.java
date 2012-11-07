@@ -667,7 +667,7 @@ public class CloudManagerPortlet {
 			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
 					workflowId, initialconfigurations.get(0).getId());
 			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "vm");
+					initialconfigurations.get(0).getId(), "vm", null);
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id SecHelloWorld");

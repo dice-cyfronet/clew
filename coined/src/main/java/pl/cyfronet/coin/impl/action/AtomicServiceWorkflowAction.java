@@ -51,8 +51,8 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 		if (configIds != null && configIds.size() > 0) {
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
-					"Registering required atomic services in atmosphere {}",
-					Arrays.toString(ids));
+					"Registering required atomic services in atmosphere {} with key {}",
+					Arrays.toString(ids), keyId);
 
 			AddRequiredAppliancesRequestImpl request = new AddRequiredAppliancesRequestImpl();
 			request.setImportanceLevel(priority);
