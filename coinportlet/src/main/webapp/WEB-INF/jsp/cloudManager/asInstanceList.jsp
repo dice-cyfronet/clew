@@ -16,13 +16,17 @@
 				</span>
 			</c:when>
 			<c:otherwise>
-				<span class="coin-header">${atomicService.name}</span>
+				<div style="width: 30%;">
+					<span class="coin-header">${atomicService.name}</span>
+				</div>
 			</c:otherwise>
 		</c:choose>
 		<c:set var="atomicServiceInstances" value="${entry.value}"/>
 		<c:choose>
 			<c:when test="${view == 'development'}">
-				<%@ include file="developmentInstanceItem.jsp" %>
+				<div style="width: 70%;">
+					<%@ include file="developmentInstanceItem.jsp" %>
+				</div>
 			</c:when>
 			<c:when test="${view == 'genericInvoker'}">
 				<%@ include file="genericInvokerInstanceItem.jsp" %>

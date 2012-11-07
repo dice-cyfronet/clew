@@ -25,7 +25,17 @@
 						</portlet:actionURL>
 						<a class="coin-link" href='${getUserKey}'><spring:message code='cloud.manager.portlet.download.user.key.label'/></a>
 						<br/>
-						<a class="coin-link" href='${removeUserKey}'><spring:message code='cloud.manager.portlet.remove.user.key.label'/></a>
+						<c:set var="removeConfirmation">removeKey-${userKey.id}</c:set>
+						<a id="${removeConfirmation}" class="coin-link" href='${removeUserKey}'><spring:message code='cloud.manager.portlet.remove.user.key.label'/></a>
+						<script type="text/javascript">
+							jQuery(document).ready(function() {
+								jQuery('#${removeConfirmation}').click(function() {
+									if(!confirm("<spring:message code='cloud.manager.portlet.remove.key.confirmation.label'/>")) {
+										return false;
+									}
+								});
+	    					});
+						</script>
 					</span>
 				</div>
 			</c:forEach>

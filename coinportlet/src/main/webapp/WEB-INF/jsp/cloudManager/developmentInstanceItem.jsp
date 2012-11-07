@@ -26,7 +26,7 @@
 		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
 	</span>
 	<c:if test="${not status.last}">
-		<hr/>
+		<hr style="margin-left: 20px; margin-right: 20px;"/>
 	</c:if>
 	<portlet:resourceURL var="statusLink" id="instanceStatus">
 		<portlet:param name="workflowId" value="${workflowId}"/>

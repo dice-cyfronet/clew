@@ -1,8 +1,6 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -109,6 +107,7 @@ public class CloudManagerPortlet {
 	static final String ACTION_USER_KEYS = "userKeys";
 	static final String ACTION_UPLOAD_KEY = "uploadKey";
 	static final String ACTION_REMOVE_KEY = "removeUserKey";
+	static final String ACTION_PICK_USER_KEY = "pickUserKey";
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -255,9 +254,9 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public void doActionStartAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID)
-			String atomicServiceId, PortletRequest request,
-			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
-			ActionResponse response) {
+			String atomicServiceId, @RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
+			@RequestParam(required = false, value = PARAM_USER_KEY_ID) String userKeyId,
+			PortletRequest request, ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
 		List<String> workflowIds = getWorkflowIds(workflowType, request);
@@ -284,10 +283,18 @@ public class CloudManagerPortlet {
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
 				initialconfigurations.get(0).getId() != null) {
-			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
-					workflowId, initialconfigurations.get(0).getId());
+			String key = null;
+			
+			if(userKeyId != null) {
+				key = clientFactory.getKeyManagement(request).get(userKeyId);
+			}
+			
+			log.info("Starting atomic service instance for workflow [{}], configuration [{}]" +
+					" and user key with id [{}]",
+					new String[] {workflowId, initialconfigurations.get(0).getId(), userKeyId});
+			
 			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "Ask user about it?");
+					initialconfigurations.get(0).getId(), "Ask user about it?", key);
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
@@ -715,7 +722,7 @@ public class CloudManagerPortlet {
 				if(pki.getKeyName().equals(uploadKeyRequest.getKeyName())) {
 					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyName",
 							"Key name is already taken"));
-					response.setRenderParameter(PARAM_ACTION, ACTION_UPLOAD_KEY);
+					response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
 					break;
 				}
 			}
@@ -723,6 +730,7 @@ public class CloudManagerPortlet {
 			if(!errors.hasErrors()) {
 				clientFactory.getKeyManagement(request).add(uploadKeyRequest.getKeyName(), uploadKeyRequest.getKeyBody());
 				response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+				model.addAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST, new UploadKeyRequest());
 			}
 		}
 	}
@@ -753,6 +761,36 @@ public class CloudManagerPortlet {
 		} else {
 			log.warn("User key with id [{}] does not exist", keyId);
 		}
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_PICK_USER_KEY)
+	public String doViewPickUserKey(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType, Model model, PortletRequest request) {
+		model.addAttribute(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
+		
+		List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
+		Map<String, String> keyMap = new HashMap<String, String>();
+		
+		for(PublicKeyInfo keyInfo : keys) {
+			keyMap.put(keyInfo.getId(), keyInfo.getKeyName());
+		}
+		
+		model.addAttribute(MODEL_BEAN_USER_KEYS, keyMap);
+		
+		if(!model.containsAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST)) {
+			StartAtomicServiceRequest startRequest = new StartAtomicServiceRequest();
+			startRequest.setAtomicServiceId(atomicServiceId);
+			startRequest.setWorkflowType(workflowType);
+			
+			if(keyMap.size() > 0) {
+				startRequest.setUserKeyId(keyMap.keySet().iterator().next());
+			}
+			
+			model.addAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST, startRequest);
+		}
+		
+		return "cloudManager/pickUserKey";
 	}
 	
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
