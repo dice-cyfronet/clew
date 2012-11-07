@@ -646,34 +646,6 @@ public class CloudManagerPortlet {
 		return "cloudManager/asSavingState";
 	}
 	
-	@RequestMapping(params = PARAM_ACTION + "=startWorkflowInstance")
-	public void doActionStartWorkflowInstance(PortletRequest request) {
-		String workflowId = null;
-		WorkflowStartRequest wsr = new WorkflowStartRequest();
-		wsr.setName(WorkflowType.workflow.name() + " workflow");
-		wsr.setType(WorkflowType.workflow);
-		
-		try {
-			workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
-		} catch (WorkflowStartException e) {
-			log.warn("Error while starting workflow", e);
-		}
-		
-		List<InitialConfiguration> initialconfigurations =
-				clientFactory.getCloudFacade(request).getInitialConfigurations("SecHelloWorld");
-		
-		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
-				initialconfigurations.get(0).getId() != null) {
-			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
-					workflowId, initialconfigurations.get(0).getId());
-			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "vm", null);
-		} else {
-			//TODO - inform the user about the problem
-			log.warn("Configuration problem occurred during starting atomic service with id SecHelloWorld");
-		}
-	}
-	
 	@ResourceMapping("asSavingStatus")
 	public void checkAsStatus(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			PortletRequest request, ResourceResponse response) {

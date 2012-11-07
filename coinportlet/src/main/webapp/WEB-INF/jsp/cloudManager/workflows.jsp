@@ -5,18 +5,6 @@
 	<div id="workflowsPanel" style="padding: 20px;">
 		Loading workflow information. Please wait ...
 	</div>
-	<!-- 
-	<div class="coin-menu-bottom">
-		<ul>
-			<li>
-				<portlet:actionURL var="startWorkflowInstance">
-					<portlet:param name="action" value="startWorkflowInstance"/>
-				</portlet:actionURL>
-				<a class="coin-link" href="${startWorkflowInstance}">Start workflow instance</a>
-			</li>
-		</ul>
-	</div>
-	-->
 	<portlet:resourceURL var="workflowsLink" id="workflows">
 		<portlet:param name="workflowId" value="${workflowId}"/>
 		<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
