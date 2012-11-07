@@ -64,6 +64,8 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 			request.setRunMode(runMode);
 			request.setKeyPairName(getKeyPairId(runMode, keyId));
 
+			logger.debug("Request sent do atmosphere: {}", request);
+			
 			ManagerResponse response = getAtmosphere().addRequiredAppliances(
 					request);
 			parseResponseAndThrowExceptionsWhenNeeded(response);
