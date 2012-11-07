@@ -72,8 +72,8 @@ public class StartAtomicServiceAction extends
 	@Override
 	public String execute() throws CloudFacadeException {
 		WorkflowDetail workflow = getUserWorkflow(contextId, getUsername());
-		logger.debug("Add atomic service [{} {}] into workflow [{}]",
-				new Object[] { asName, atomicServiceId, contextId });
+		logger.debug("Add atomic service [{} {}] into workflow [{}] with key {}",
+				new Object[] { asName, atomicServiceId, contextId, keyName });
 		registerVms(contextId, Arrays.asList(atomicServiceId),
 				Arrays.asList(asName), defaultPriority,
 				workflow.getWorkflow_type(), keyName);
@@ -87,5 +87,4 @@ public class StartAtomicServiceAction extends
 	public void rollback() {
 		// TODO Auto-generated method stub
 	}
-
 }

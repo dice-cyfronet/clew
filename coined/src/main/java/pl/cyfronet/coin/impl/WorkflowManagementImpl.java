@@ -79,14 +79,11 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Override
 	public void addAtomicServiceToWorkflow(String contextId, String asId,
-			String name) {
-		addAtomicServiceToWorkflow(contextId, asId, name, null);
-	}
-
-	@Override
-	public void addAtomicServiceToWorkflow(String contextId, String asId,
 			String name, String key) throws WorkflowNotFoundException,
 			CloudFacadeException {
+		logger.debug(
+				"Adding atomic service {} to worklow {} with given name {} and key {}",
+				new Object[] { asId, contextId, name, key });
 		StartAtomicServiceAction action = actionFactory
 				.createStartAtomicServiceAction(asId, name, contextId,
 						getUsername(), key);

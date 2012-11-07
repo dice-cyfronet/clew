@@ -19,13 +19,13 @@ import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.Redirection;
@@ -92,32 +92,19 @@ public interface WorkflowManagement {
 			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
-	 * Add atomic service for started workflow.
-	 * @param workflowId Workflow id.
-	 * @param asId Atomic service configuration id.
-	 * @param name ASI Name.
-	 */
-	@PUT
-	@Path("/{workflowId}/as/{asConfigId}/{name}")
-	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asConfigId,
-			@PathParam("name") String name) throws WorkflowNotFoundException,
-			CloudFacadeException;
-
-	/**
 	 * Add atomic service for started workflow. For new create AS selected key
 	 * will be injected, but only when workflow is in development mode.
 	 * @param workflowId Workflow id.
 	 * @param asId Atomic service configuration id.
 	 * @param name ASI Name.
-	 * @param key Key which will be injected into new started ASI (but only when
+	 * @param key Key (id) which will be injected into new started ASI (but only when
 	 *            workflow is in development mode).
 	 */
 	@PUT
 	@Path("/{workflowId}/as/{asConfigId}/{name}")
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asConfigId,
-			@PathParam("name") String name, @FormParam("key") String key)
+			@PathParam("name") String name, @QueryParam("key") String key)
 			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
