@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.portlet.ResourceResponse;
 import javax.portlet.ResourceURL;
 
@@ -105,6 +106,7 @@ public class DataManagerPortlet {
 			response.addProperty("Content-Disposition", "Attachment;Filename=\"" + fileName + "\"");
 			response.addProperty("Pragma", "public");
 			response.addProperty("Cache-Control", "must-revalidate");
+			response.addProperty("Content-Type", new MimetypesFileTypeMap().getContentType(fileName));
 			response.setContentLength((int) file.length());
 			
 			try {
