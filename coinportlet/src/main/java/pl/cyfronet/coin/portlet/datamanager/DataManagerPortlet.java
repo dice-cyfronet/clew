@@ -99,15 +99,16 @@ public class DataManagerPortlet {
 	@ResourceMapping("getFile")
 	public void getFile(@RequestParam("fileName") String fileName, ResourceResponse response) {
 		String path = fileLocation + "/" + fileName;
-		log.debug("Serving file [{}]", path);
+		String contentType = new MimetypesFileTypeMap().getContentType(fileName);
+		log.debug("Serving file [{}] with content type [{}]", path, contentType);
 		File file = new File(path);
 		
 		if(file.exists() && file.isFile()) {
 			response.addProperty("Content-Disposition", "Attachment;Filename=\"" + fileName + "\"");
 			response.addProperty("Pragma", "public");
 			response.addProperty("Cache-Control", "must-revalidate");
-			response.addProperty("Content-Type", new MimetypesFileTypeMap().getContentType(fileName));
 			response.setContentLength((int) file.length());
+			response.setContentType(contentType);
 			
 			try {
 				FileCopyUtils.copy(new FileInputStream(file), response.getPortletOutputStream());
