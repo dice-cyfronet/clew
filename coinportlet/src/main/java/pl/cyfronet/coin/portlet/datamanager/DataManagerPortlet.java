@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.portlet.ResourceResponse;
 import javax.portlet.ResourceURL;
 
@@ -98,7 +99,8 @@ public class DataManagerPortlet {
 	@ResourceMapping("getFile")
 	public void getFile(@RequestParam("fileName") String fileName, ResourceResponse response) {
 		String path = fileLocation + "/" + fileName;
-		log.debug("Serving file [{}]", path);
+		String contentType = new MimetypesFileTypeMap().getContentType(fileName);
+		log.debug("Serving file [{}] with content type [{}]", path, contentType);
 		File file = new File(path);
 		
 		if(file.exists() && file.isFile()) {
@@ -106,6 +108,7 @@ public class DataManagerPortlet {
 			response.addProperty("Pragma", "public");
 			response.addProperty("Cache-Control", "must-revalidate");
 			response.setContentLength((int) file.length());
+			response.setContentType(contentType);
 			
 			try {
 				FileCopyUtils.copy(new FileInputStream(file), response.getPortletOutputStream());

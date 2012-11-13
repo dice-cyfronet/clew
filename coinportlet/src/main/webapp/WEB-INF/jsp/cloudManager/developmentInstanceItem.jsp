@@ -73,8 +73,7 @@
 			    								'<span style="padding-left: 10px;">Port: ' + creds[2] + '</span><br/>';
 		    								
 			    							if(creds.length > 3) {
-		    									html += '<span style="padding-left: 10px;">Login: ' + creds[3] + '</span><br/>' +
-		    										'<span style="padding-left: 10px;">Password: ' + creds[4] + '</span><br/>';
+		    									html += '<span style="padding-left: 10px;">Key: ' + creds[3] + '</span><br/>';
 		    								}
 		    							}
 		    							
