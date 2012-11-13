@@ -69,6 +69,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 			if (e.getStatus() == 302) {
 				throw new AtomicServiceAlreadyExistsException();
 			}
+			logger.warn("Error received from AiR", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}

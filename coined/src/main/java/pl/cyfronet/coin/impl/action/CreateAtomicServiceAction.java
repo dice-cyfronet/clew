@@ -15,6 +15,9 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -28,6 +31,9 @@ import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class CreateAtomicServiceAction implements Action<String> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(CreateAtomicServiceAction.class);
 
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
@@ -68,6 +74,9 @@ public class CreateAtomicServiceAction implements Action<String> {
 	 */
 	public String execute() throws AtomicServiceInstanceNotFoundException,
 			CloudFacadeException {
+		logger.debug("Creating {} from {} on {}", new Object[] { atomicService,
+				asInstanceId, defaultSiteId });
+		
 		String atomicServiceId = addASToAirAction.execute();
 		try {
 			// templateId =
@@ -76,9 +85,11 @@ public class CreateAtomicServiceAction implements Action<String> {
 			return atomicService.getName();
 		} catch (ApplianceNotFoundException e) {
 			addASToAirAction.rollback();
+			logger.debug("Error while creating AS - ASI {} not found", asInstanceId);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
 			addASToAirAction.rollback();
+			logger.debug("Error while creating AS - atmosphere exception", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}
