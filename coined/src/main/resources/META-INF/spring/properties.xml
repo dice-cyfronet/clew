@@ -21,7 +21,7 @@
 
 		<prop key="mi.url"></prop>
 
-		<prop key="default.cloud.site.id">cyfronet-nova</prop>
+		<prop key="default.cloud.site.id">cyfronet-folsom</prop>
 		<prop key="default.workflow.priority">40</prop>
 
 		<prop key="secret"></prop>
