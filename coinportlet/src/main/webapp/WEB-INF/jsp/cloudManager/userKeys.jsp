@@ -64,6 +64,9 @@
 			<input type='submit' value='<spring:message code='cloud.manager.portlet.upload.key.submit.request'/>'/>
 		</div>
 	</form:form>
+	<div style="font-size: small;">
+		<spring:message code="cloud.manager.portlet.key.generation.info"/>
+	</div>
 	<div class="coin-menu-bottom">
 		<ul>
 			<li>
