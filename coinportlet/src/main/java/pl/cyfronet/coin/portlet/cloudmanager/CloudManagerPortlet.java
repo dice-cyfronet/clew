@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -27,6 +28,7 @@ import javax.portlet.ResourceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
@@ -108,6 +110,9 @@ public class CloudManagerPortlet {
 	static final String ACTION_UPLOAD_KEY = "uploadKey";
 	static final String ACTION_REMOVE_KEY = "removeUserKey";
 	static final String ACTION_PICK_USER_KEY = "pickUserKey";
+	
+	@Value("${cloud.host.name}")
+	private String cloudHost;
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -384,7 +389,8 @@ public class CloudManagerPortlet {
 		if(atomicService != null) {
 			String workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
 			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
-			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId));
+			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId,
+					atomicService.getEndpoints().get(0).getServiceName()));
 			
 			List<Endpoint> webAppEndpoints = new ArrayList<Endpoint>();
 //			List<Endpoint> restEndpoints = new ArrayList<Endpoint>();
@@ -397,7 +403,7 @@ public class CloudManagerPortlet {
 						break;
 						case REST:
 							model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
-									atomicService.getEndpoints().get(0).getServiceName()));
+									atomicService.getEndpoints().get(0).getInvocationPath()));
 							InvokeAtomicServiceRequest iasr = null;
 							
 							if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
@@ -407,6 +413,7 @@ public class CloudManagerPortlet {
 								iasr.setConfigurationId(configurationId);
 								iasr.setAtomicServiceId(atomicServiceId);
 								iasr.setFormFields(new ArrayList<FormField>());
+								iasr.setServiceId(atomicService.getEndpoints().get(0).getServiceName());
 								
 								if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
 									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
@@ -431,7 +438,8 @@ public class CloudManagerPortlet {
 							}
 							
 							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
-									iasr.getConfigurationId()) + iasr.getInvocationPath());
+									iasr.getConfigurationId(), atomicService.getEndpoints().get(0).getServiceName()) +
+									iasr.getInvocationPath());
 						break;
 						case WS:
 							log.warn("Endpoints of type {} are not supported on atomic service {}", EndpointType.WS, atomicServiceId);
@@ -783,7 +791,8 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId()) + request.getInvocationPath();
+		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId(),
+				request.getServiceId()) + request.getInvocationPath();
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
@@ -827,9 +836,11 @@ public class CloudManagerPortlet {
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
 
-	private String createInvocationPath(String workflowId, String configurationId) {
+	private String createInvocationPath(String workflowId, String configurationId, String serviceName) {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId);
+				replace("{host}", cloudHost).
+				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId).
+				replace("{serviceName}", serviceName);
 		
 		return urlPath.trim();
 	}
