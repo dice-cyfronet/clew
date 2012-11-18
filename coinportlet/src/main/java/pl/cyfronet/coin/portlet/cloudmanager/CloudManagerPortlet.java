@@ -840,7 +840,7 @@ public class CloudManagerPortlet {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
 				replace("{host}", cloudHost).
 				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId).
-				replace("{serviceName}", serviceName);
+				replace("{serviceName}", serviceName.trim());
 		
 		return urlPath.trim();
 	}
