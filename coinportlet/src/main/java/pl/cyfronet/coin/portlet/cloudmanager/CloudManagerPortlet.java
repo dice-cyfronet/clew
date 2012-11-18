@@ -831,7 +831,7 @@ public class CloudManagerPortlet {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
 				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId);
 		
-		return urlPath;
+		return urlPath.trim();
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {
