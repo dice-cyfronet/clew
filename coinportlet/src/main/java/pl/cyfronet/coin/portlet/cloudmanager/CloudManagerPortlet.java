@@ -439,7 +439,7 @@ public class CloudManagerPortlet {
 							
 							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
 									iasr.getConfigurationId(), atomicService.getEndpoints().get(0).getServiceName()) +
-									iasr.getInvocationPath());
+									iasr.getInvocationPath().trim());
 						break;
 						case WS:
 							log.warn("Endpoints of type {} are not supported on atomic service {}", EndpointType.WS, atomicServiceId);
@@ -792,7 +792,7 @@ public class CloudManagerPortlet {
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
 		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId(),
-				request.getServiceId()) + request.getInvocationPath();
+				request.getServiceId()) + request.getInvocationPath().trim();
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
