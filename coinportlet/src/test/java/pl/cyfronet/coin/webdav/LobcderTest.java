@@ -42,7 +42,7 @@ public class LobcderTest {
 		List<DavResource> resources = sardine.getResources(webDavUrl);
 		
 		for (DavResource res : resources) {
-		     System.out.println(res);
+		     log.info(res.toString());
 		}
 	}
 	
