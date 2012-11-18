@@ -23,6 +23,8 @@
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
 		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
+	</span>
+	<script type="text/javascript">
 		jQuery(document).ready(function() {
 			jQuery('#${shutdownInstanceId}').click(function() {
 				if(!confirm("<spring:message code='cloud.manager.portlet.stop.as.confirmation.label'/>")) {
@@ -30,7 +32,7 @@
 				}
 			});
 		});
-	</span>
+	</script>
 	<c:if test="${not status.last}">
 		<hr/>
 	</c:if>

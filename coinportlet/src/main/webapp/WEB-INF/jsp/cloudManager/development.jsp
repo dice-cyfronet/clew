@@ -28,14 +28,16 @@
 						<portlet:param name="workflowType" value="development"/>
 					</portlet:actionURL>
 					<a id="stopDevWorkflow" class="coin-link" href="${stopAtomicServices}"><spring:message code="cloud.manager.portlet.stop.portal.workflow.label"/></a>
+				</li>
+				<script type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery('#stopDevWorkflow').click(function() {
 							if(!confirm("<spring:message code='cloud.manager.portlet.stop.dev.workflow.confirmation.label'/>")) {
 								return false;
 							}
 						});
-   					});
-				</li>
+					});
+				</script>
 			</c:if>
 			<li>
 				<portlet:renderURL var="manageUserKeys">
