@@ -14,7 +14,7 @@
 				<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 			</portlet:renderURL>
 			<c:set var="invokeId">invokeId-${atomicServiceInstance.id}</c:set>
-			<a id="${invokeId}" class="coin-link" href="${invokeAtomicService}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a>
+			<a id="${invokeId}" class="coin-link" href="${invokeAtomicService}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a><br/>
 		</c:if>
 		<portlet:actionURL var="shutdownAtomicServiceInstance">
 			<portlet:param name="action" value="stopInvokerInstance"/>
@@ -24,6 +24,15 @@
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
 		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
 	</span>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			jQuery('#${shutdownInstanceId}').click(function() {
+				if(!confirm("<spring:message code='cloud.manager.portlet.stop.as.confirmation.label'/>")) {
+					return false;
+				}
+			});
+		});
+	</script>
 	<c:if test="${not status.last}">
 		<hr/>
 	</c:if>
