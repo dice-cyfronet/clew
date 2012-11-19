@@ -16,7 +16,6 @@
 package pl.cyfronet.coin.impl.action;
 
 import java.util.List;
-import java.util.Properties;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -33,8 +32,6 @@ public class ActionFactory {
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
 	private Integer defaultPriority;
-
-	private Properties credentialProperties;
 
 	public ListAtomicServicesAction createListAtomicServicesAction() {
 		return new ListAtomicServicesAction(air);
@@ -85,8 +82,7 @@ public class ActionFactory {
 
 	public GetUserWorkflowAction createGetUserWorkflowAction(String workflowId,
 			String username) {
-		return new GetUserWorkflowAction(air, credentialProperties, workflowId,
-				username);
+		return new GetUserWorkflowAction(air, workflowId, username);
 	}
 
 	public StartAtomicServiceAction createStartAtomicServiceAction(
@@ -168,9 +164,5 @@ public class ActionFactory {
 
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
-	}
-
-	public void setCredentialProperties(Properties credentialProperties) {
-		this.credentialProperties = credentialProperties;
 	}
 }

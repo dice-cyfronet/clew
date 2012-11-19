@@ -31,7 +31,6 @@
 		<property name="atmosphere" ref="atmosphere" />
 		<property name="defaultSiteId" value="${default.cloud.site.id}" />
 		<property name="defaultPriority" value="${default.workflow.priority}" />
-		<property name="credentialProperties" ref="as-sec" />
 	</bean>
 	
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
