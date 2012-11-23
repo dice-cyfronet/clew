@@ -60,8 +60,9 @@ public class AddPublicKeyActionTest extends ActionTest {
 	}
 
 	private void givenMockedAirAbleToAddUserKey() {
-		when(air.addKey(username, keyName, publicKeyContent.trim(), fingerprint))
-				.thenReturn(keyId);
+		when(
+				air.addKey(username, keyName, publicKeyContent.trim(),
+						fingerprint)).thenReturn(keyId);
 	}
 
 	private void whenUserAddsNewKey() {
@@ -76,8 +77,8 @@ public class AddPublicKeyActionTest extends ActionTest {
 	}
 
 	private void thenValidateCFTriesToAddKeyToAir() {
-		verify(air, times(1)).addKey(username, keyName, publicKeyContent.trim(),
-				fingerprint);
+		verify(air, times(1)).addKey(username, keyName,
+				publicKeyContent.trim(), fingerprint);
 	}
 
 	@Test
@@ -95,10 +96,11 @@ public class AddPublicKeyActionTest extends ActionTest {
 	}
 
 	private void givenAirThrown409WhenAddingKeyWithExistingName() {
-		when(air.addKey(username, keyName, publicKeyContent.trim(), fingerprint))
-				.thenThrow(
-						new ServerWebApplicationException(
-								new ResponseBuilderImpl().status(409).build()));
+		when(
+				air.addKey(username, keyName, publicKeyContent.trim(),
+						fingerprint)).thenThrow(
+				new ServerWebApplicationException(new ResponseBuilderImpl()
+						.status(409).build()));
 	}
 
 	@Test
@@ -128,7 +130,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 			fail("Key does not start with 'ssh-rsa' or 'ssh-dss' but no exception was thrown");
 		} catch (WrongKeyFormatException e) {
 			assertEquals(
-					e.getResponse().getEntity(),
+					e.getMessage(),
 					"Key is invalid. It must begin with 'ssh-rsa' or 'ssh-dss'. Check that you're copying the public half of the key");
 		}
 		thenNoActionOnAirInvoked();
@@ -150,8 +152,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 			whenUserAddsNewKey();
 			fail();
 		} catch (WrongKeyFormatException e) {
-			assertEquals(
-					e.getResponse().getEntity(),
+			assertEquals(e.getMessage(),
 					"Key is invalid. Ensure you've copied the file correctly");
 		}
 		thenNoActionOnAirInvoked();

@@ -283,7 +283,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 			whenGetPublicUserKey();
 			fail();
 		} catch (WrongKeyFormatException e) {
-			assertEquals(e.getResponse().getEntity(), "error message");
+			assertEquals(e.getMessage(), "error message");
 		}
 
 		thenActionExecuted();
