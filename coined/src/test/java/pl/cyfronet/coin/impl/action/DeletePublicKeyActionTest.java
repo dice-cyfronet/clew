@@ -84,14 +84,14 @@ public class DeletePublicKeyActionTest extends ActionTest {
 	}
 
 	private void givenMockedAirActionsForDeleteAndRollback() {
-		when(air.getPublicKey(vphUsername, keyId)).thenReturn(publicKeyContent);
+		when(air.getPublicKey(vphUsername, keyId)).thenReturn(publicKeyContent.trim());
 
 		UserKeyInfo info = new UserKeyInfo();
 		info.set_id(keyId);
 		info.setName(keyName);
 		when(air.getUserKeys(vphUsername)).thenReturn(Arrays.asList(info));
 
-		when(air.addKey(vphUsername, keyName, publicKeyContent, fingerprint))
+		when(air.addKey(vphUsername, keyName, publicKeyContent.trim(), fingerprint))
 				.thenReturn("newId");
 	}
 
@@ -105,7 +105,7 @@ public class DeletePublicKeyActionTest extends ActionTest {
 		thenValidateAirDeleteRequest();
 
 		// rollback
-		verify(air, times(1)).addKey(vphUsername, keyName, publicKeyContent,
+		verify(air, times(1)).addKey(vphUsername, keyName, publicKeyContent.trim(),
 				fingerprint);
 	}
 
