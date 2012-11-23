@@ -18,6 +18,8 @@ package pl.cyfronet.coin.impl.utils;
 
 import java.security.MessageDigest;
 
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
+
 /**
  * Based on Jsch code (http://www.jcraft.com/jsch).
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -48,6 +50,29 @@ public class PublicKeyUtils {
 			return sb.toString();
 		} catch (Exception e) {
 			return "???";
+		}
+	}
+
+	public static void validate(String publicKeyContent) {
+		validateKeyBeginning(publicKeyContent);
+		String contentWithoutDuplicatedSpaces = publicKeyContent.replaceAll("\\s+", " ");
+		String[] parts = contentWithoutDuplicatedSpaces.split(" ");
+		if(parts.length > 2) {
+			String key = parts[1];
+			// http://stackoverflow.com/questions/2494450/ssh-rsa-public-key-validation-using-a-regular-expression
+			if(key.startsWith("AAAAB3NzaC1yc2EA") || key.startsWith("AAAAB3NzaC1kc3MA")) {
+				return;
+			}
+		}
+		throw new WrongKeyFormatException(
+			"Key is invalid. Ensure you've copied the file correctly");
+	}
+
+	private static void validateKeyBeginning(String publicKeyContent) {
+		if (!(publicKeyContent.startsWith("ssh-rsa") || publicKeyContent
+				.startsWith("ssh-dss"))) {
+			throw new WrongKeyFormatException(
+					"Key is invalid. It must begin with 'ssh-rsa' or 'ssh-dss'. Check that you're copying the public half of the key");
 		}
 	}
 

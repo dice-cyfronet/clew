@@ -18,14 +18,16 @@ package pl.cyfronet.coin.impl.action;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 
 /**
@@ -36,11 +38,19 @@ public class AddPublicKeyActionTest extends ActionTest {
 	private String keyId = "12353df";
 	private String username = "username";
 	private String keyName = "myNewKey";
-	private String publicKeyContent = FileUtils.getFileContent("id_rsa.pub");
-	private String fingerprint = "01:5b:10:bc:40:78:38:d1:d0:2a:5a:e6:6a:ab:87:59";
+	private String publicKeyContent;
+	private String fingerprint;
 
 	private String addedKeytId;
 	private AddPublicKeyAction action;
+
+	@BeforeMethod
+	protected void setUp() {
+		super.setUp();
+
+		publicKeyContent = FileUtils.getFileContent("id_rsa.pub");
+		fingerprint = "01:5b:10:bc:40:78:38:d1:d0:2a:5a:e6:6a:ab:87:59";
+	}
 
 	@Test
 	public void shouldAddNewPublicKey() throws Exception {
@@ -50,7 +60,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 	}
 
 	private void givenMockedAirAbleToAddUserKey() {
-		when(air.addKey(username, keyName, publicKeyContent, fingerprint))
+		when(air.addKey(username, keyName, publicKeyContent.trim(), fingerprint))
 				.thenReturn(keyId);
 	}
 
@@ -66,7 +76,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 	}
 
 	private void thenValidateCFTriesToAddKeyToAir() {
-		verify(air, times(1)).addKey(username, keyName, publicKeyContent,
+		verify(air, times(1)).addKey(username, keyName, publicKeyContent.trim(),
 				fingerprint);
 	}
 
@@ -85,7 +95,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 	}
 
 	private void givenAirThrown409WhenAddingKeyWithExistingName() {
-		when(air.addKey(username, keyName, publicKeyContent, fingerprint))
+		when(air.addKey(username, keyName, publicKeyContent.trim(), fingerprint))
 				.thenThrow(
 						new ServerWebApplicationException(
 								new ResponseBuilderImpl().status(409).build()));
@@ -107,5 +117,47 @@ public class AddPublicKeyActionTest extends ActionTest {
 		thenValidateCFTriesToAddKeyToAir();
 		verify(atmosphere, times(1)).removeKeyPair(addedKeytId);
 		verify(air, times(1)).deletePublicKey(username, addedKeytId);
+	}
+
+	@Test
+	public void shouldThrownExceptionWhileKeyHasWrongBeginning()
+			throws Exception {
+		givenWrongKeyBeggining();
+		try {
+			whenUserAddsNewKey();
+			fail("Key does not start with 'ssh-rsa' or 'ssh-dss' but no exception was thrown");
+		} catch (WrongKeyFormatException e) {
+			assertEquals(
+					e.getResponse().getEntity(),
+					"Key is invalid. It must begin with 'ssh-rsa' or 'ssh-dss'. Check that you're copying the public half of the key");
+		}
+		thenNoActionOnAirInvoked();
+	}
+
+	private void givenWrongKeyBeggining() {
+		publicKeyContent = "wrong header";
+	}
+
+	private void thenNoActionOnAirInvoked() {
+		verify(air, times(0)).addKey(anyString(), anyString(), anyString(),
+				anyString());
+	}
+
+	@Test
+	public void shouldThrowException() throws Exception {
+		givenWrongKeyWithCorrectBeginning();
+		try {
+			whenUserAddsNewKey();
+			fail();
+		} catch (WrongKeyFormatException e) {
+			assertEquals(
+					e.getResponse().getEntity(),
+					"Key is invalid. Ensure you've copied the file correctly");
+		}
+		thenNoActionOnAirInvoked();
+	}
+
+	private void givenWrongKeyWithCorrectBeginning() {
+		publicKeyContent = "  ssh-rsa wrongcontent";
 	}
 }

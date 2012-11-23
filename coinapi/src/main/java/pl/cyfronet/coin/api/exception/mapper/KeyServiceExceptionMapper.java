@@ -24,16 +24,16 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class KeyServiceExceptionMapper extends CloudFacadeExceptionMapper {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AtomicServiceExceptionMapper.class);
-	
+
 	@Override
 	public Throwable fromResponse(Response r) {
 		String message = getMessage(r);
@@ -44,6 +44,8 @@ public class KeyServiceExceptionMapper extends CloudFacadeExceptionMapper {
 			return new KeyAlreadyExistsException();
 		case 404:
 			return new KeyNotFoundException();
+		case 400:
+			return new WrongKeyFormatException(message);
 		default:
 			return new CloudFacadeException();
 		}
