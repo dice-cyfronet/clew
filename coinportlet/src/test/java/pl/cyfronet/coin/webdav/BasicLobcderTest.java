@@ -11,7 +11,9 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,6 +37,11 @@ public class BasicLobcderTest {
 	@Value("${lobcder.url}") private String webDavUrl;
 	
 	private Sardine sardine;
+	
+	@BeforeClass
+	public static void checkIntegrationTestFlag() {
+		Assume.assumeTrue(Boolean.getBoolean("integration.tests"));
+	}
 	
 	@Before
 	public void initialize() throws KeyManagementException, SardineException,
