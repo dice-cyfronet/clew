@@ -22,7 +22,7 @@
 			<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
+		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a>
 	</span>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {

@@ -23,7 +23,7 @@
 			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shutdown</a>
+		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a>
 	</span>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -84,6 +84,12 @@
 			    							if(creds.length > 3) {
 		    									html += '<span style="padding-left: 10px;">Key: ' + creds[3] + '</span><br/>';
 		    								}
+			    							
+			    							if(creds[0] == 'ssh') {
+			    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
+			    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
+			    										'monospace; white-space: nowrap;">ssh root@{host} -i {private_key_file}</span>)</span><br/>'
+			    							}
 		    							}
 		    							
 		    							html += '<br/><a class="coin-link" href="#closeAccessInfoWindow" ' +
