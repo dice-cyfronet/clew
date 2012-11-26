@@ -577,7 +577,6 @@ public class CloudManagerPortlet {
 											builder.append(":").append(keyName);
 										}
 									}
-											
 								}
 								
 								builder.append("|");
