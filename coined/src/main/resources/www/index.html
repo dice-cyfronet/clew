@@ -494,7 +494,8 @@ body {
 					</ul>
 				
 					<p>The operation returns the 200 status code and the new added key id on success. 
-					If key with given name is already registered than 409 (conflict) is returned.</p>
+					If key with given name is already registered than 409 (conflict) is returned, 
+					when keys is not correct 400 (bad request is returned)</p>
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/key/{keyId}</strong>
