@@ -7,8 +7,9 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	
+	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
@@ -18,22 +19,50 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs 
        http://cxf.apache.org/schemas/jaxrs.xsd
+       
+       http://cxf.apache.org/core 
+  	   http://cxf.apache.org/schemas/core.xsd
+       
        http://www.springframework.org/schema/util 
-  	   http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/util/spring-util.xsd       
        ">
 
-	<jaxrs:client id="asManagementClient" address="http://localhost:${port}/as"			    
-		serviceClass="pl.cyfronet.coin.api.CloudFacade"
-		username="User123" password="notimportant"
+	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+
+	<!--
+     logging
+     -->
+	<cxf:bus>
+		<cxf:inInterceptors>
+			<ref bean="logInbound" />
+		</cxf:inInterceptors>
+		<cxf:outInterceptors>
+			<ref bean="logOutbound" />
+		</cxf:outInterceptors>
+		<cxf:inFaultInterceptors>
+			<ref bean="logOutbound" />
+		</cxf:inFaultInterceptors>
+	</cxf:bus>
+
+	<jaxrs:client id="key-client-local" address="http://localhost:8088/key"			    
+		serviceClass="pl.cyfronet.coin.api.KeyManagement"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
-			<ref bean="atomicServiceExceptionMapper" />
 		</jaxrs:providers>		
 	</jaxrs:client>
-	
-	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
-	
+
+	<jaxrs:client id="key-client" address="http://149.156.10.133:9099/key"				   
+		serviceClass="pl.cyfronet.coin.api.KeyManagement"
+		username="test" password="changeme"
+		inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="keyServiceExceptionMapper" />
+		</jaxrs:providers>		
+	</jaxrs:client>
+
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
 	
 	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
@@ -42,4 +71,6 @@
         <constructor-arg  ref="failOnUnknown"/>
         <constructor-arg  value="false"/>
     </bean>
+
+	<bean id="keyServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.KeyServiceExceptionMapper" />
 </beans>

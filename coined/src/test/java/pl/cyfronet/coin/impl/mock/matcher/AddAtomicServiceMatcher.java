@@ -33,9 +33,11 @@ public class AddAtomicServiceMatcher extends
 		BaseMatcher<AddAtomicServiceRequest> {
 
 	private AtomicService as;
+	private String username;
 
-	public AddAtomicServiceMatcher(AtomicService as) {
+	public AddAtomicServiceMatcher(String username, AtomicService as) {
 		this.as = as;
+		this.username = username;
 	}
 
 	/*
@@ -45,7 +47,8 @@ public class AddAtomicServiceMatcher extends
 	@Override
 	public boolean matches(Object arg0) {
 		AddAtomicServiceRequest request = (AddAtomicServiceRequest) arg0;
-		return request.getName().equals(as.getName())
+		return 	request.getAuthor().equals(username)
+				&& request.getName().equals(as.getName())
 				&& request.getClient().equals("rest")
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())

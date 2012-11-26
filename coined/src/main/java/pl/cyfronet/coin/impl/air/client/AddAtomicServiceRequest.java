@@ -46,6 +46,12 @@ public class AddAtomicServiceRequest {
 	private List<ATEndpoint> endpoints;
 
 	/**
+	 * #1021
+	 * @since 1.1.0
+	 */
+	private String author;
+	
+	/**
 	 * @return the client
 	 */
 	public String getClient() {
@@ -183,5 +189,19 @@ public class AddAtomicServiceRequest {
 	 */
 	public void setEndpoints(List<ATEndpoint> endpoints) {
 		this.endpoints = endpoints;
+	}
+
+	/**
+	 * @return the author
+	 */
+	public String getAuthor() {
+		return author;
+	}
+
+	/**
+	 * @param author the author to set
+	 */
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 }

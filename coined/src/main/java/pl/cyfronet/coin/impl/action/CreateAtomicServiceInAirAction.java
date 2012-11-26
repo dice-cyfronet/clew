@@ -43,8 +43,16 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	private AtomicService atomicService;
 	private String createdAtomicServiceId;
 
-	CreateAtomicServiceInAirAction(AirClient air, AtomicService atomicService) {
+	/**
+	 * #1021
+	 * @since 1.1.0
+	 */
+	private String username;
+
+	CreateAtomicServiceInAirAction(AirClient air, String username,
+			AtomicService atomicService) {
 		this.air = air;
+		this.username = username;
 		this.atomicService = atomicService;
 	}
 
@@ -61,6 +69,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setScalable(atomicService.isScalable());
 		addASRequest.setShared(atomicService.isShared());
 		addASRequest.setVnc(atomicService.isShared());
+		addASRequest.setAuthor(username);
 
 		try {
 			createdAtomicServiceId = air.addAtomicService(addASRequest);

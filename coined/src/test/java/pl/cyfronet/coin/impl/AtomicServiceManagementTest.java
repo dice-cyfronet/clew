@@ -83,6 +83,12 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private String createdAsId;
 
+	/**
+	 * #1021
+	 * @since 1.1.0
+	 */
+	private String username = "User123";
+
 	@DataProvider(name = "getAtomicServicesSizes")
 	protected Object[][] getAtomicServicesSizes() {
 		return new Object[][] { { 0 }, { 1 }, { 2 }, { 3 }, { 4 } };
@@ -365,8 +371,8 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenReturn(atomicService.getName());
 
 		when(
-				actionFactory.createCreateAtomicServiceAction(asInstanceId,
-						atomicService)).thenReturn(action);
+				actionFactory.createCreateAtomicServiceAction(username,
+						asInstanceId, atomicService)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -403,13 +409,14 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 				new AtomicServiceInstanceNotFoundException());
 
 		when(
-				actionFactory.createCreateAtomicServiceAction(asInstanceId,
-						atomicService)).thenReturn(action);
+				actionFactory.createCreateAtomicServiceAction(username,
+						asInstanceId, atomicService)).thenReturn(action);
 		currentAction = action;
 	}
-	
+
 	@Test
-	public void shouldThrowExceptionWhileTryingToAddASWithNotUniqueName() throws Exception {
+	public void shouldThrowExceptionWhileTryingToAddASWithNotUniqueName()
+			throws Exception {
 		givenActionWhichReceivesASNonUniqueException();
 		try {
 			whenAddNewAtomicService();
@@ -429,8 +436,8 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 				new AtomicServiceAlreadyExistsException());
 
 		when(
-				actionFactory.createCreateAtomicServiceAction(asInstanceId,
-						atomicService)).thenReturn(action);
-		currentAction = action;		
+				actionFactory.createCreateAtomicServiceAction(username,
+						asInstanceId, atomicService)).thenReturn(action);
+		currentAction = action;
 	}
 }

@@ -51,14 +51,14 @@ public class CreateAtomicServiceAction implements Action<String> {
 	 * @param atomicService Information about new Atomic Service.
 	 */
 	CreateAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
-			String defaultSiteId, String asInstanceId,
+			String username, String defaultSiteId, String asInstanceId,
 			AtomicService atomicService) {
 		this.atmosphere = atmosphere;
 		this.defaultSiteId = defaultSiteId;
 		this.asInstanceId = asInstanceId;
 		this.atomicService = atomicService;
 
-		addASToAirAction = new CreateAtomicServiceInAirAction(air,
+		addASToAirAction = new CreateAtomicServiceInAirAction(air, username,
 				atomicService);
 	}
 
@@ -76,7 +76,7 @@ public class CreateAtomicServiceAction implements Action<String> {
 			CloudFacadeException {
 		logger.debug("Creating {} from {} on {}", new Object[] { atomicService,
 				asInstanceId, defaultSiteId });
-		
+
 		String atomicServiceId = addASToAirAction.execute();
 		try {
 			// templateId =
@@ -85,7 +85,8 @@ public class CreateAtomicServiceAction implements Action<String> {
 			return atomicService.getName();
 		} catch (ApplianceNotFoundException e) {
 			addASToAirAction.rollback();
-			logger.debug("Error while creating AS - ASI {} not found", asInstanceId);
+			logger.debug("Error while creating AS - ASI {} not found",
+					asInstanceId);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
 			addASToAirAction.rollback();
