@@ -21,9 +21,9 @@
     <!-- Properties and messages beans -->
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
     	<property name="ignoreResourceNotFound" value="true"/>
-    	<property name="systemPropertiesMode" value="2"/> <!-- system properties will override the ones in the property files -->
         <property name="locations">
         	<list>
+        		<value>environmentProperties</value><!-- system properties will override the ones in the property files -->
         		<value>classpath:coinportlet-constants.properties</value>
         		<value>classpath:coinportlet-constants-override.properties</value>
         	</list>
