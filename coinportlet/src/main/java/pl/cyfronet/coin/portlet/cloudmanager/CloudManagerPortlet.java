@@ -719,14 +719,20 @@ public class CloudManagerPortlet {
 					IOUtils.copy(uploadKeyRequest.getKeyBody().getInputStream(), keyWriter);
 					clientFactory.getKeyManagement(request).add(uploadKeyRequest.getKeyName(), keyWriter.toString());
 				} catch (IOException e) {
+					log.warn("Could not copy public key contents for key with name [" +
+							uploadKeyRequest.getKeyName() + "]", e);
 					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
 							"Could not copy key contents"));
 				} catch (WrongKeyFormatException e) {
+					log.warn("Wrong key format for key with name [" +
+							uploadKeyRequest.getKeyName() + "]", e);
 					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
-							e.getMessage()));
+							"Format of the given key is invalid"));
 				} catch (KeyAlreadyExistsException e) {
+					log.warn("Key name [" +
+							uploadKeyRequest.getKeyName() + "] already exists", e);
 					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyName",
-							e.getMessage()));
+							"Given key name is already taken"));
 				}
 				
 				if(errors.hasErrors()) {
