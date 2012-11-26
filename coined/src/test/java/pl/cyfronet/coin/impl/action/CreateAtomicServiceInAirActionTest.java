@@ -42,7 +42,13 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private String asAirId = "as123";
 	private AddAtomicServiceMatcher matcher;
 	private CreateAtomicServiceInAirAction action;
-
+	
+	/**
+	 * #1021
+	 * @since 1.1.0
+	 */
+	private String username = "user123";
+	
 	@Test
 	public void shouldCreateAtomicServiceRecord() throws Exception {
 		givenAtomicServiceDefinitionWithEndpoints();
@@ -52,7 +58,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
 	private void givenAtomicServiceDefinitionWithEndpoints() {
 		createAtomicService();
-		matcher = new AddAtomicServiceMatcher(atomicService);
+		matcher = new AddAtomicServiceMatcher(username, atomicService);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
 	}
 
@@ -89,7 +95,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	}
 
 	private void whenAddAtomicServiceToAir() {
-		action = new CreateAtomicServiceInAirAction(air, atomicService);
+		action = new CreateAtomicServiceInAirAction(air, username, atomicService);
 		createdAsId = action.execute();
 	}
 
@@ -114,7 +120,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		atomicService.setDescription(asDescription);
 		atomicService.setHttp(true);
 
-		matcher = new AddAtomicServiceMatcher(atomicService);
+		matcher = new AddAtomicServiceMatcher(username, atomicService);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
 	}
 
@@ -153,7 +159,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private void givenAirWithAlreadyASRegistered() {
 		createAtomicService();
 
-		matcher = new AddAtomicServiceMatcher(atomicService);
+		matcher = new AddAtomicServiceMatcher(username, atomicService);
 		when(air.addAtomicService(argThat(matcher))).thenThrow(
 				getAirException(302));
 	}

@@ -24,6 +24,7 @@
 
 	<jaxrs:client id="asManagementClient" address="http://localhost:${port}/as"			    
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
+		username="User123" password="notimportant"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />

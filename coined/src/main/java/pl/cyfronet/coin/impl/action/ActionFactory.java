@@ -37,9 +37,9 @@ public class ActionFactory {
 		return new ListAtomicServicesAction(air);
 	}
 
-	public CreateAtomicServiceAction createCreateAtomicServiceAction(
+	public CreateAtomicServiceAction createCreateAtomicServiceAction(String username,
 			String asInstanceId, AtomicService atomicService) {
-		return new CreateAtomicServiceAction(air, atmosphere, defaultSiteId,
+		return new CreateAtomicServiceAction(air, atmosphere, username, defaultSiteId,
 				asInstanceId, atomicService);
 	}
 
