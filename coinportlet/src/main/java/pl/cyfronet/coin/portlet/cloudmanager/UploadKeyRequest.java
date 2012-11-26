@@ -1,12 +1,12 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UploadKeyRequest {
 	@NotEmpty
 	private String keyName;
-	@NotEmpty
-	private String keyBody;
+	private MultipartFile keyBody;
 	
 	public String getKeyName() {
 		return keyName;
@@ -15,10 +15,10 @@ public class UploadKeyRequest {
 		this.keyName = keyName;
 	}
 	
-	public String getKeyBody() {
+	public MultipartFile getKeyBody() {
 		return keyBody;
 	}
-	public void setKeyBody(String keyBody) {
+	public void setKeyBody(MultipartFile keyBody) {
 		this.keyBody = keyBody;
 	}
 	

@@ -45,7 +45,7 @@
 		</c:otherwise>
 	</c:choose>
 	<div><spring:message code="cloud.manager.portlet.remove.upload.key.label"/></div>
-	<form:form class="coin-form" action='${uploadKey}' modelAttribute='uploadKeyRequest'>
+	<form:form class="coin-form" action='${uploadKey}' modelAttribute='uploadKeyRequest' enctype="multipart/form-data">
 		<div class="coin-form-input">
 			<label for="keyName">
 				<spring:message code="cloud.manager.portlet.upload.key.name.label"/>
@@ -57,7 +57,7 @@
 			<label for="keyBody">
 				<spring:message code="cloud.manager.portlet.upload.key.body.label"/>
 			</label>
-			<form:textarea path="keyBody" cols="40" rows="10"/>
+			<form:input path="keyBody" type="file"/>
 			<form:errors path="keyBody" cssClass="coin-error-panel"/>
 		</div>
 		<div class="coin-form-submit">

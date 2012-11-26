@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +58,9 @@ import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
 
@@ -700,22 +704,37 @@ public class CloudManagerPortlet {
 		log.debug("Processing upload key request for key [{}]", uploadKeyRequest);
 		validator.validate(uploadKeyRequest, errors);
 		
+		if(uploadKeyRequest.getKeyBody() == null || uploadKeyRequest.getKeyBody().isEmpty()) {
+			errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
+					"The key file has to be chosen"));
+		}
+		
 		if(errors.hasErrors()) {
 			response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
 		} else {
-			for(PublicKeyInfo pki : clientFactory.getKeyManagement(request).list()) {
-				if(pki.getKeyName().equals(uploadKeyRequest.getKeyName())) {
-					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyName",
-							"Key name is already taken"));
-					response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
-					break;
-				}
-			}
-			
 			if(!errors.hasErrors()) {
-				clientFactory.getKeyManagement(request).add(uploadKeyRequest.getKeyName(), uploadKeyRequest.getKeyBody());
-				response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
-				model.addAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST, new UploadKeyRequest());
+				StringWriter keyWriter = new StringWriter();
+				
+				try {
+					IOUtils.copy(uploadKeyRequest.getKeyBody().getInputStream(), keyWriter);
+					clientFactory.getKeyManagement(request).add(uploadKeyRequest.getKeyName(), keyWriter.toString());
+				} catch (IOException e) {
+					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
+							"Could not copy key contents"));
+				} catch (WrongKeyFormatException e) {
+					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
+							e.getMessage()));
+				} catch (KeyAlreadyExistsException e) {
+					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyName",
+							e.getMessage()));
+				}
+				
+				if(errors.hasErrors()) {
+					response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+				} else {
+	 				response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+					model.addAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST, new UploadKeyRequest());
+				}
 			}
 		}
 	}
