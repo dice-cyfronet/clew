@@ -127,7 +127,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			assertEquals(redirection.getName(), "redirection" + i);
 			assertEquals(redirection.getType(),
 					i % 2 == 0 ? RedirectionType.HTTP : RedirectionType.TCP);
-			assertEquals(redirection.isHttp(), i % 2 == 0);
+			assertEquals(redirection.getType() == RedirectionType.HTTP, i % 2 == 0);
 
 		}
 	}

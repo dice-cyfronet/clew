@@ -82,10 +82,6 @@ public class Redirection {
 		this.postfix = postfix;
 	}
 
-	public boolean isHttp() {
-		return type == RedirectionType.HTTP;
-	}
-
 	@Override
 	public String toString() {
 		return "Redirection [name=" + name + ", toPort=" + toPort
