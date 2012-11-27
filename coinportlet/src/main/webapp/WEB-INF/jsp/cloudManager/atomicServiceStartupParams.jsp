@@ -19,14 +19,26 @@
 				</c:choose>
 			</span>
 			<span class="coin-actions">
-				<portlet:actionURL var="startAs">
-					<portlet:param name="action" value="startAtomicService"/>
-					<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-					<portlet:param name="workflowType" value="${workflowType}"/>
-				</portlet:actionURL>
 				<c:choose>
 					<c:when test="${atomicService.active}">
-						<a class="coin-link" href="${startAs}">Start</a>
+						<c:choose>
+							<c:when test="${workflowType == 'development'}">
+								<portlet:renderURL var="startDevAs">
+									<portlet:param name="action" value="pickUserKey"/>
+									<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+									<portlet:param name="workflowType" value="${workflowType}"/>
+								</portlet:renderURL>
+								<a class="coin-link" href="${startDevAs}">Start</a>
+							</c:when>
+							<c:otherwise>
+								<portlet:actionURL var="startAs">
+									<portlet:param name="action" value="startAtomicService"/>
+									<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+									<portlet:param name="workflowType" value="${workflowType}"/>
+								</portlet:actionURL>
+								<a class="coin-link" href="${startAs}">Start</a>
+							</c:otherwise>
+						</c:choose>
 					</c:when>
 					<c:otherwise>
 						<c:set var="inactiveAtomicServiceLink">inactiveAS-link-${atomicService.atomicServiceId}</c:set>

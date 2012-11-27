@@ -38,6 +38,8 @@ public class Vms {
 	
 	private Status state;
 	
+	private String user_key;
+	
 	private List<PortMapping> internal_port_mappings;
 	
 	/**
@@ -153,15 +155,26 @@ public class Vms {
 		this.internal_port_mappings = internal_port_mappings;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the user_key
 	 */
+	public String getUser_key() {
+		return user_key;
+	}
+
+	/**
+	 * @param user_key the user_key to set
+	 */
+	public void setUser_key(String user_key) {
+		this.user_key = user_key;
+	}
+
 	@Override
 	public String toString() {
 		return "Vms [name=" + name + ", specs=" + specs + ", conf_id="
 				+ conf_id + ", appliance_type=" + appliance_type
 				+ ", source_template=" + source_template + ", vms_id=" + vms_id
-				+ ", state=" + state + ", internal_port_mappings="
-				+ internal_port_mappings + "]";
+				+ ", state=" + state + ", user_key=" + user_key
+				+ ", internal_port_mappings=" + internal_port_mappings + "]";
 	}
 }

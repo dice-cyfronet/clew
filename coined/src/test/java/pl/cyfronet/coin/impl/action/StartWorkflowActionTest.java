@@ -51,26 +51,120 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	private WorkflowStartRequest startRequest;
 	private WorkflowType workflowType = WorkflowType.workflow;
 	private String createdContextId;
+	private String keyId = "myKey";
 
 	@Test
 	public void shouldStartEmptyWorkflow() throws Exception {
-		givenWorkflowStartRequest();
+		givenProductionWorkflowStartRequest();
 		whenStartWorkflow();
 		thenWorkflowRegistered();
 	}
 
+	private void givenProductionWorkflowStartRequest() {
+		workflowType = WorkflowType.workflow;
+		createWorkflowStartRequest();
+		mockAirStartMethod();
+	}
+
+	private void createWorkflowStartRequest() {
+		startRequest = new WorkflowStartRequest();
+
+		startRequest.setName(name);
+		startRequest.setDescription(description);
+		startRequest.setPriority(priority);
+		startRequest.setType(workflowType);
+		// always set key id and check if request sent to atmosphere is null in
+		// production mode and keyId in development mode.
+		startRequest.setKeyId(keyId);
+	}
+
+	private void mockAirStartMethod() {
+		when(
+				air.startWorkflow(name, username, description, priority,
+						workflowType)).thenReturn(contextId);
+	}
+
+	private void whenStartWorkflow() throws WorkflowStartException {
+		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
+				startRequest, username);
+		createdContextId = action.execute();
+	}
+
+	private void thenWorkflowRegistered() {
+		checkWorkflowRegisteredInAir(workflowType);
+
+		verify(atmosphere, times(0)).addRequiredAppliances(
+				any(AddRequiredAppliancesRequest.class));
+	}
+
+	private void checkWorkflowRegisteredInAir(WorkflowType workflowType) {
+		verify(air, times(1)).startWorkflow(name, username, description,
+				priority, workflowType);
+		assertEquals(createdContextId, contextId);
+	}
+
 	@Test
-	public void shouldStartWorkflowWithAtomicService() throws Exception {
-		givenWorkflowStartRequestWithAsIds(OperationStatus.SUCCESSFUL, "id1",
-				"id2");
+	public void shouldStartProductionWorkflowWithAtomicService()
+			throws Exception {
+		givenProductionWorkflowStartRequestWithAsIds(
+				OperationStatus.SUCCESSFUL, "id1", "id2");
 		whenStartWorkflow();
+		thenWorkflowRegisteredAndRequiredAsesStarted();
+	}
+
+	private void givenProductionWorkflowStartRequestWithAsIds(
+			OperationStatus resultOperationStatus, String... ids) {
+		givenProductionWorkflowStartRequest();
+		startRequest.setAsConfigIds(Arrays.asList(ids));
+		mockAtmosphereAddAppliancesWithResponse(resultOperationStatus);
+	}
+
+	private void mockAtmosphereAddAppliancesWithResponse(
+			OperationStatus returnStatus) {
+		AddRequiredAppliancesRequestMatcher matcher = getAddAppliancesMather();
+		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
+				new ManagerResponseTestImpl(returnStatus));
+	}
+
+	private void thenWorkflowRegisteredAndRequiredAsesStarted() {
+		checkWorkflowRegisteredInAir(workflowType);
+		verify(atmosphere, times(1)).addRequiredAppliances(
+				argThat(getAddAppliancesMather()));
+	}
+
+	private AddRequiredAppliancesRequestMatcher getAddAppliancesMather() {
+		AddRequiredAppliancesRequestMatcher matcher = new AddRequiredAppliancesRequestMatcher(
+				contextId, defaultPriority, username, workflowType,
+				startRequest.getAsConfigIds().toArray(new String[0]));
+		matcher.setGivenKeyId(keyId);
+		return matcher;
+	}
+
+	@Test
+	public void shouldStartDevelopmentWorkflowWithAtomicServices()
+			throws Exception {
+		givenDevelopmentWorkflowWith2ASes();
+		whenStartWorkflow();
+		thenWorkflowStartedAndKeyIdPassedToAtmosphere();
+	}
+
+	private void givenDevelopmentWorkflowWith2ASes() {
+		workflowType = WorkflowType.development;
+		createWorkflowStartRequest();
+		mockAirStartMethod();
+		startRequest.setAsConfigIds(Arrays.asList("id1", "id2"));
+		mockAtmosphereAddAppliancesWithResponse(OperationStatus.SUCCESSFUL);
+	}
+
+	private void thenWorkflowStartedAndKeyIdPassedToAtmosphere() {
 		thenWorkflowRegisteredAndRequiredAsesStarted();
 	}
 
 	@Test
 	public void shouldNotStartWorkflowWithAsWhenAtmosphereOperationFailed()
 			throws Exception {
-		givenWorkflowStartRequestWithAsIds(OperationStatus.FAILED, "id1", "id2");
+		givenProductionWorkflowStartRequestWithAsIds(OperationStatus.FAILED,
+				"id1", "id2");
 		try {
 			whenStartWorkflow();
 			fail();
@@ -79,11 +173,37 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 		}
 	}
 
+	private void thanWorkflowNotRegisteredAndErrorReturned(
+			WorkflowStartException e) {
+		verify(air, times(1)).startWorkflow(name, username, description,
+				priority, workflowType);
+		verify(atmosphere, times(1)).addRequiredAppliances(
+				argThat(getAddAppliancesMather()));
+		verify(air, times(1)).getWorkflow(any(String.class));
+	}
+
 	@Test
 	public void shouldStartWorkflowForNewUser() throws Exception {
 		givenPortalWorkflowStartRequestForNewUser();
 		whenStartWorkflow();
 		thenPortalWorkflowRegistered();
+	}
+
+	private void givenPortalWorkflowStartRequestForNewUser() {
+		workflowType = WorkflowType.portal;
+		createWorkflowStartRequest();
+		mockAirStartMethod();
+
+		when(air.getUserWorkflows(username)).thenThrow(
+				new WebApplicationException(400));
+	}
+
+	private void thenPortalWorkflowRegistered() {
+		checkWorkflowRegisteredInAir(workflowType);
+
+		verify(air, times(1)).getUserWorkflows(username);
+		verify(atmosphere, times(0)).addRequiredAppliances(
+				any(AddRequiredAppliancesRequest.class));
 	}
 
 	@DataProvider(name = "workflowType")
@@ -107,7 +227,7 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 
 	private void givenWorkflowStartRequestAndUserHasRunningWorkflowOfType(
 			WorkflowType type) {
-		givenWorkflowStartRequest();
+		givenProductionWorkflowStartRequest();
 		startRequest.setType(type);
 
 		WorkflowDetail w1 = new WorkflowDetail();
@@ -121,92 +241,6 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 		when(air.getUserWorkflows(username)).thenReturn(Arrays.asList(w1, w2));
 	}
 
-	private void givenWorkflowStartRequestWithAsIds(
-			OperationStatus resultOperationStatus, String... ids) {
-		givenWorkflowStartRequest();
-		startRequest.setAsConfigIds(Arrays.asList(ids));
-		mockAtmosphereAddAppliancesWithResponse(resultOperationStatus);
-	}
-
-	private void givenWorkflowStartRequest() {
-		workflowType = WorkflowType.workflow;
-		createWorkflowStartRequest();
-		mockAirStartMethod();
-	}
-
-	private void givenPortalWorkflowStartRequestForNewUser() {
-		workflowType = WorkflowType.portal;
-		createWorkflowStartRequest();
-		mockAirStartMethod();
-
-		when(air.getUserWorkflows(username)).thenThrow(
-				new WebApplicationException(400));
-	}
-
-	private void createWorkflowStartRequest() {
-		startRequest = new WorkflowStartRequest();
-
-		startRequest.setName(name);
-		startRequest.setDescription(description);
-		startRequest.setPriority(priority);
-		startRequest.setType(workflowType);
-	}
-
-	private void mockAirStartMethod() {
-		when(
-				air.startWorkflow(name, username, description, priority,
-						workflowType)).thenReturn(contextId);
-	}
-
-	private void mockAtmosphereAddAppliancesWithResponse(
-			OperationStatus returnStatus) {
-		AddRequiredAppliancesRequestMatcher matcher = getAddAppliancesMather();
-		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
-				new ManagerResponseTestImpl(returnStatus));
-	}
-
-	private AddRequiredAppliancesRequestMatcher getAddAppliancesMather() {
-		return new AddRequiredAppliancesRequestMatcher(contextId,
-				defaultPriority, username, WorkflowType.workflow, startRequest
-						.getAsConfigIds().toArray(new String[0]));
-	}
-
-	private void whenStartWorkflow() throws WorkflowStartException {
-		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
-				startRequest, username);
-		createdContextId = action.execute();
-	}
-
-	private void thanWorkflowNotRegisteredAndErrorReturned(
-			WorkflowStartException e) {
-		verify(air, times(1)).startWorkflow(name, username, description,
-				priority, workflowType);
-		verify(atmosphere, times(1)).addRequiredAppliances(
-				argThat(getAddAppliancesMather()));
-		verify(air, times(1)).getWorkflow(any(String.class));
-	}
-
-	private void thenWorkflowRegisteredAndRequiredAsesStarted() {
-		checkWorkflowRegisteredInAir(workflowType);
-		verify(atmosphere, times(1)).addRequiredAppliances(
-				argThat(getAddAppliancesMather()));
-	}
-
-	private void thenPortalWorkflowRegistered() {
-		checkWorkflowRegisteredInAir(workflowType);
-
-		verify(air, times(1)).getUserWorkflows(username);
-		verify(atmosphere, times(0)).addRequiredAppliances(
-				any(AddRequiredAppliancesRequest.class));
-	}
-
-	private void thenWorkflowRegistered() {
-		checkWorkflowRegisteredInAir(workflowType);
-
-		verify(atmosphere, times(0)).addRequiredAppliances(
-				any(AddRequiredAppliancesRequest.class));
-	}
-
 	private void thanCannotStartTwoWorkflowsOfType(WorkflowStartException e,
 			WorkflowType type) {
 		assertEquals(e.getResponse().getEntity(),
@@ -214,11 +248,5 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 		verify(air, times(1)).getUserWorkflows(username);
 		verify(air, times(0)).startWorkflow(name, username, description,
 				priority, workflowType);
-	}
-
-	private void checkWorkflowRegisteredInAir(WorkflowType workflowType) {
-		verify(air, times(1)).startWorkflow(name, username, description,
-				priority, workflowType);
-		assertEquals(createdContextId, contextId);
 	}
 }

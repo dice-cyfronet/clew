@@ -27,6 +27,7 @@
 			<form:hidden path="configurationId"/>
 			<form:hidden path="atomicServiceId"/>
 			<form:hidden path="invocationPath"/>
+			<form:hidden path="serviceId"/>
 			<div class="coin-form-input">
 				<label for="method">
 					<spring:message code="cloud.manager.portlet.submit.atomic.service.method.label"/>

@@ -18,25 +18,34 @@ package pl.cyfronet.coin.api.exception.mapper;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-public class KeyServiceExceptionMapper implements ResponseExceptionMapper<Throwable>{
+public class KeyServiceExceptionMapper extends CloudFacadeExceptionMapper {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(AtomicServiceExceptionMapper.class);
 
 	@Override
 	public Throwable fromResponse(Response r) {
-		switch (r.getStatus()) {
+		String message = getMessage(r);
+		int status = r.getStatus();
+		logger.info("Response to be mapped: {} -> {}", status, message);
+		switch (status) {
 		case 409:
 			return new KeyAlreadyExistsException();
 		case 404:
 			return new KeyNotFoundException();
+		case 400:
+			return new WrongKeyFormatException(message);
 		default:
 			return new CloudFacadeException();
 		}

@@ -17,14 +17,11 @@ package pl.cyfronet.coin.impl.action;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
-import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
@@ -38,14 +35,12 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 
 	private String contextId;
 	private String username;
-	private Properties credentialProperties;
 
-	GetUserWorkflowAction(AirClient air, Properties credentialProperties,
+	GetUserWorkflowAction(AirClient air,
 			String contextId, String username) {
 		super(air);
 		this.contextId = contextId;
 		this.username = username;
-		this.credentialProperties = credentialProperties;
 	}
 
 	@Override
@@ -74,12 +69,9 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 				instance.setName(vm.getName());
 				instance.setConfigurationId(vm.getConf_id());
 				instance.setMessage(""); // TODO
+				instance.setPublicKeyId(vm.getUser_key());
 
 				addRedirections(instance, vm);
-
-				if (detail.getWorkflow_type() == WorkflowType.development) {
-					instance.setCredential(getCredential(vm.getAppliance_type()));
-				}
 
 				instances.add(instance);
 
@@ -113,16 +105,5 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 			}
 		}
 		instance.setRedirections(redirections);
-	}
-
-	private Credential getCredential(String vms_id) {
-		Credential cred = new Credential();
-		if (credentialProperties != null) {
-			cred.setUsername(credentialProperties.getProperty(vms_id
-					+ ".username"));
-			cred.setPassword(credentialProperties.getProperty(vms_id
-					+ ".password"));
-		}
-		return cred;
 	}
 }

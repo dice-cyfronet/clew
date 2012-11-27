@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 
 /**
  * Service for managing user keys. During development mode user can choose which
@@ -55,12 +56,14 @@ public interface KeyManagement {
 	 * @return Identifier of new added key entry.
 	 * @throws KeyAlreadyExistsException Thrown, when key with given name
 	 *             already exists.
+	 * @throws WrongKeyFormatException Thrown, when key has wrong format.
+	 *             Currently only ssh-rsa and ssh-dss are supported.
 	 */
 	@POST
 	@Path("/add")
 	String add(@FormParam("keyName") String keyName,
 			@FormParam("publicKey") String publicKey)
-			throws KeyAlreadyExistsException;
+			throws KeyAlreadyExistsException, WrongKeyFormatException;
 
 	/**
 	 * Remove public key belonging to the user which invokes this service.

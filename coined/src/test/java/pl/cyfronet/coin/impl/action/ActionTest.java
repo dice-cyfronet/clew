@@ -17,8 +17,6 @@ package pl.cyfronet.coin.impl.action;
 
 import static org.mockito.Mockito.mock;
 
-import java.util.Properties;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
@@ -52,14 +50,6 @@ public abstract class ActionTest {
 		actionFactory.setAtmosphere(atmosphere);
 		actionFactory.setDefaultSiteId(cloudSiteId);
 		actionFactory.setDefaultPriority(defaultPriority);
-		
-		Properties credentialProp = new Properties();
-		credentialProp.put("type1.username", "vm1Username");
-		credentialProp.put("type1.password", "vm1Password");
-		credentialProp.put("type2.username", "vm2Username");
-		credentialProp.put("type2.password", "vm2Password");
-		
-		actionFactory.setCredentialProperties(credentialProp);
 	}
 	
 	protected ServerWebApplicationException getAirException(int status) {

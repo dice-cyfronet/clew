@@ -29,7 +29,6 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
-import pl.cyfronet.coin.api.beans.Credential;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -49,7 +48,8 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 	private WorkflowDetail airWorkflow;
 
 	@Test
-	public void shouldGetNonExistingWorkflow() throws Exception {
+	public void shouldThrowExceptionWhenGetingNonExistingWorkflow()
+			throws Exception {
 		givenAirContentWithInformationAboutNonExistingWorkflow();
 
 		try {
@@ -114,10 +114,10 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		equals(airWorkflow.getVms().get(0), workflow
 				.getAtomicServiceInstances().get(0));
 		equals(airWorkflow.getVms().get(1), workflow
-				.getAtomicServiceInstances().get(1));		
-		
-		assertNull(workflow.getAtomicServiceInstances().get(0).getCredential());
-		assertNull(workflow.getAtomicServiceInstances().get(1).getCredential());
+				.getAtomicServiceInstances().get(1));
+
+		assertNull(workflow.getAtomicServiceInstances().get(0).getPublicKeyId());
+		assertNull(workflow.getAtomicServiceInstances().get(1).getPublicKeyId());
 	}
 
 	private void givenWorkflowWith2Vms() {
@@ -162,8 +162,8 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 				.getAtomicServiceInstances().get(0));
 		equals(airWorkflow.getVms().get(1), workflow
 				.getAtomicServiceInstances().get(1));
-		assertNull(workflow.getAtomicServiceInstances().get(0).getCredential());
-		assertNull(workflow.getAtomicServiceInstances().get(1).getCredential());
+		assertNull(workflow.getAtomicServiceInstances().get(0).getPublicKeyId());
+		assertNull(workflow.getAtomicServiceInstances().get(1).getPublicKeyId());
 	}
 
 	private void givenWorkflowInWorkflowMode() {
@@ -175,7 +175,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 	public void shouldGetWorkflowInDevelopmentMode() throws Exception {
 		givenWorkflowWith2VmsAnd2Redirections();
 		whenGetWorkflow();
-		thenCheckWorkflowCredentialsAndRedirections();		
+		thenCheckWorkflowCredentialsAndRedirections();
 	}
 
 	private void givenWorkflowWith2VmsAnd2Redirections() {
@@ -206,26 +206,29 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
 		vm1.setInternal_port_mappings(Arrays.asList(sshMapping, vncMapping));
+		vm1.setUser_key("userKey1");
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
 		vm2.setName("vm2");
 		vm2.setState(Status.running);
 		vm2.setVms_id("id2");
+		vm2.setUser_key("userKey2");
 
 		wd.setVms(Arrays.asList(vm1, vm2));
-		
+
 		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
-	
+
 	private void thenCheckWorkflowCredentialsAndRedirections() {
 		assertNotNull(workflow);
 		assertNotNull(workflow.getAtomicServiceInstances());
 		assertEquals(workflow.getAtomicServiceInstances().size(), 2);
-		equals(workflow.getAtomicServiceInstances().get(0).getCredential(),
-				"vm1Username", "vm1Password");
-		equals(workflow.getAtomicServiceInstances().get(1).getCredential(),
-				"vm2Username", "vm2Password");
+
+		assertEquals(workflow.getAtomicServiceInstances().get(0)
+				.getPublicKeyId(), "userKey1");
+		assertEquals(workflow.getAtomicServiceInstances().get(1)
+				.getPublicKeyId(), "userKey2");
 
 		List<Redirection> vm1PortMapping = workflow.getAtomicServiceInstances()
 				.get(0).getRedirections();
@@ -243,13 +246,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		assertEquals(vm1PortMapping.get(1).getHost(), "headnodeIp");
 		assertEquals(vm1PortMapping.get(1).getName(), "vnc");
 
-		assertEquals(vm2PortMapping.size(), 0);		
-	}
-
-	private void equals(Credential credential, String username, String password) {
-		assertNotNull(credential);
-		assertEquals(credential.getUsername(), username);
-		assertEquals(credential.getPassword(), password);
+		assertEquals(vm2PortMapping.size(), 0);
 	}
 
 	private void equals(Vms vm, AtomicServiceInstance asi) {
@@ -257,6 +254,6 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		assertEquals(asi.getName(), vm.getName());
 		assertEquals(asi.getStatus(), vm.getState());
 		assertEquals(asi.getId(), vm.getVms_id());
-		assertEquals(asi.getConfigurationId(), vm.getConf_id());		
+		assertEquals(asi.getConfigurationId(), vm.getConf_id());
 	}
 }

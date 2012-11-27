@@ -42,6 +42,7 @@ import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
+import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -71,6 +72,10 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private String asiId = "asiId";
 	
 	private String username = "User123";
+	
+	private String atomicServiceId ="as";
+	private String asName ="asName";
+	private String keyName ="myKey";
 	
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
@@ -334,5 +339,30 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenRemovingASIInProductionMode() {
 		givenRemoveASIError(new WorkflowNotInDevelopmentModeException());
+	}
+
+	@Test
+	public void shouldAddAtomicServiceWithKey() throws Exception {
+		givenMocketAddAtomicServiceToWorkflowAction();
+		whenAddAtomicServiceWithKeyToWorkflow();
+		thenAtomicServiceWithKeyAdded();
+	}
+
+	private void givenMocketAddAtomicServiceToWorkflowAction() {
+		StartAtomicServiceAction action = mock(StartAtomicServiceAction.class);
+		when(
+				actionFactory.createStartAtomicServiceAction(atomicServiceId,
+						asName, contextId, username, keyName)).thenReturn(
+				action);
+		currentAction = action;
+	}
+
+	private void whenAddAtomicServiceWithKeyToWorkflow() {
+		workflowManagement.addAtomicServiceToWorkflow(contextId,
+				atomicServiceId, asName, keyName);
+	}
+
+	private void thenAtomicServiceWithKeyAdded() {
+		thenActionExecuted();
 	}
 }

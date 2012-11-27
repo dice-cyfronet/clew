@@ -38,11 +38,12 @@ public class AddPublicKeyAction extends AtmosphereAndAirAction<String> {
 			String username, String keyName, String publicKeyContent) {
 		super(air, atmosphere, username);
 		this.keyName = keyName;
-		this.publicKeyContent = publicKeyContent;
+		this.publicKeyContent = publicKeyContent.trim();
 	}
 
 	@Override
 	public String execute() throws CloudFacadeException {
+		PublicKeyUtils.validate(publicKeyContent);
 		try {
 			addedKeyId = getAir().addKey(getUsername(), keyName,
 					publicKeyContent,

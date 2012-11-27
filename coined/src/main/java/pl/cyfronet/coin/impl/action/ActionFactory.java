@@ -16,7 +16,6 @@
 package pl.cyfronet.coin.impl.action;
 
 import java.util.List;
-import java.util.Properties;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -34,15 +33,13 @@ public class ActionFactory {
 	private String defaultSiteId;
 	private Integer defaultPriority;
 
-	private Properties credentialProperties;
-
 	public ListAtomicServicesAction createListAtomicServicesAction() {
 		return new ListAtomicServicesAction(air);
 	}
 
-	public CreateAtomicServiceAction createCreateAtomicServiceAction(
+	public CreateAtomicServiceAction createCreateAtomicServiceAction(String username,
 			String asInstanceId, AtomicService atomicService) {
-		return new CreateAtomicServiceAction(air, atmosphere, defaultSiteId,
+		return new CreateAtomicServiceAction(air, atmosphere, username, defaultSiteId,
 				asInstanceId, atomicService);
 	}
 
@@ -85,15 +82,14 @@ public class ActionFactory {
 
 	public GetUserWorkflowAction createGetUserWorkflowAction(String workflowId,
 			String username) {
-		return new GetUserWorkflowAction(air, credentialProperties, workflowId,
-				username);
+		return new GetUserWorkflowAction(air, workflowId, username);
 	}
 
 	public StartAtomicServiceAction createStartAtomicServiceAction(
 			String atomicServiceId, String asName, String contextId,
-			String username) {
+			String username, String keyName) {
 		return new StartAtomicServiceAction(air, atmosphere, username,
-				atomicServiceId, asName, contextId, defaultPriority);
+				atomicServiceId, asName, contextId, defaultPriority, keyName);
 	}
 
 	// policy files
@@ -173,9 +169,5 @@ public class ActionFactory {
 
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
-	}
-
-	public void setCredentialProperties(Properties credentialProperties) {
-		this.credentialProperties = credentialProperties;
 	}
 }
