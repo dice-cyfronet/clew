@@ -40,10 +40,11 @@ public class StartAtomicServiceAction extends
 	private String asName;
 	private String contextId;
 	private Integer defaultPriority;
+	private String keyName;
 
 	/**
 	 * @param air Air client.
-	 * @param atmosphere  Atmosphere client.
+	 * @param atmosphere Atmosphere client.
 	 * @param atomicServiceId Atomic Service id.
 	 * @param name New instance name.
 	 * @param contextId Context id.
@@ -51,12 +52,13 @@ public class StartAtomicServiceAction extends
 	 */
 	StartAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
 			String username, String atomicServiceId, String asName,
-			String contextId, Integer priority) {
+			String contextId, Integer priority, String keyName) {
 		super(air, atmosphere, username);
 		this.atomicServiceId = atomicServiceId;
 		this.asName = asName;
 		this.contextId = contextId;
 		this.defaultPriority = priority;
+		this.keyName = keyName;
 	}
 
 	/**
@@ -70,11 +72,11 @@ public class StartAtomicServiceAction extends
 	@Override
 	public String execute() throws CloudFacadeException {
 		WorkflowDetail workflow = getUserWorkflow(contextId, getUsername());
-		logger.debug("Add atomic service [{} {}] into workflow [{}]",
-				new Object[] { asName, atomicServiceId, contextId });
+		logger.debug("Add atomic service [{} {}] into workflow [{}] with key {}",
+				new Object[] { asName, atomicServiceId, contextId, keyName });
 		registerVms(contextId, Arrays.asList(atomicServiceId),
 				Arrays.asList(asName), defaultPriority,
-				workflow.getWorkflow_type());
+				workflow.getWorkflow_type(), keyName);
 
 		// TODO information from Atmosphere about atomis service instance id
 		// needed!
@@ -85,5 +87,4 @@ public class StartAtomicServiceAction extends
 	public void rollback() {
 		// TODO Auto-generated method stub
 	}
-
 }

@@ -37,6 +37,12 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 	private String createdAsId;
 	private CreateAtomicServiceAction action;
 
+	/**
+	 * #1021
+	 * @since 1.1.0
+	 */
+	private String username = "user123";
+	
 	@Test
 	public void shouldCreateNewAtomicService() throws Exception {
 		givenAtomicServiceMetadata();
@@ -56,13 +62,13 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 
 	private void whenCreateNewAtomicService() throws Exception {
 
-		matcher = new AddAtomicServiceMatcher(atomicService);
+		matcher = new AddAtomicServiceMatcher(username, atomicService);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asId);
 		when(
 				atmosphere.createTemplate(instanceId, atomicService.getName(),
 						cloudSiteId, asId)).thenReturn("1");
 		action = actionFactory
-				.createCreateAtomicServiceAction(instanceId, atomicService);
+				.createCreateAtomicServiceAction(username, instanceId, atomicService);
 		createdAsId = action.execute();
 	}
 

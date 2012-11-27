@@ -97,10 +97,10 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 		// FIXME error handling
 		contextId = getAir().startWorkflow(workflow.getName(), getUsername(),
 				workflow.getDescription(), priority, workflow.getType());
-		List<String> ids = workflow.getAsConfigIds();
-
+		List<String> ids = workflow.getAsConfigIds();		
+		
 		try {
-			registerVms(contextId, ids, null, priority, type);
+			registerVms(contextId, ids, null, priority, type, workflow.getKeyId());
 		} catch (CloudFacadeException e) {
 			rollback();
 			throw new WorkflowStartException();

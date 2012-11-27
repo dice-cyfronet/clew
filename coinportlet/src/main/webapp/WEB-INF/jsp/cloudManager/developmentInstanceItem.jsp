@@ -13,11 +13,29 @@
 		</portlet:renderURL>
 		<c:set var="saveLinkId">saveLink-${atomicServiceInstance.id}</c:set>
 		<a id="${saveLinkId}" class="coin-link" href="${saveAtomicService}" style="visibility: hidden;">Save atomic service</a><br/>
+		
 		<c:set var="accessMethodsId">accessMethods-${atomicServiceInstance.id}</c:set>
 		<a class="coin-link" id="${accessMethodsId}" href="#showAccessInfo" style="visibility: hidden;">Show access info</a>
+		
+		<portlet:actionURL var="shutdownAtomicServiceInstance">
+			<portlet:param name="action" value="stopDevInstance"/>
+			<portlet:param name="workflowId" value="${workflowId}"/>
+			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
+		</portlet:actionURL>
+		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
+		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a>
 	</span>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			jQuery('#${shutdownInstanceId}').click(function() {
+				if(!confirm("<spring:message code='cloud.manager.portlet.stop.instance.confirmation.label'/>")) {
+					return false;
+				}
+			});
+		});
+	</script>
 	<c:if test="${not status.last}">
-		<hr/>
+		<hr style="margin-left: 20px; margin-right: 20px;"/>
 	</c:if>
 	<portlet:resourceURL var="statusLink" id="instanceStatus">
 		<portlet:param name="workflowId" value="${workflowId}"/>
@@ -42,6 +60,10 @@
 	    			}
 	    			
 	    			if(status === 'running') {
+	    				if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
+	    					jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
+	    				}
+	    				
 	    				if(jQuery('#${saveLinkId}').css('visibility') === 'hidden') {
 	    					jQuery('#${saveLinkId}').css('visibility', 'visible');
 	    				}
@@ -60,9 +82,14 @@
 			    								'<span style="padding-left: 10px;">Port: ' + creds[2] + '</span><br/>';
 		    								
 			    							if(creds.length > 3) {
-		    									html += '<span style="padding-left: 10px;">Login: ' + creds[3] + '</span><br/>' +
-		    										'<span style="padding-left: 10px;">Password: ' + creds[4] + '</span><br/>';
+		    									html += '<span style="padding-left: 10px;">Key: ' + creds[3] + '</span><br/>';
 		    								}
+			    							
+			    							if(creds[0] == 'ssh') {
+			    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
+			    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
+			    										'monospace; white-space: nowrap;">ssh root@{host} -i {private_key_file}</span>)</span><br/>'
+			    							}
 		    							}
 		    							
 		    							html += '<br/><a class="coin-link" href="#closeAccessInfoWindow" ' +

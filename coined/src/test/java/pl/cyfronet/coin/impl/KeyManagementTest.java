@@ -36,6 +36,7 @@ import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
 import pl.cyfronet.coin.impl.action.DeletePublicKeyAction;
 import pl.cyfronet.coin.impl.action.GetPublicKeyAction;
@@ -251,23 +252,47 @@ public class KeyManagementTest extends AbstractServiceTest {
 		thenActionExecuted();
 		assertEquals(receivedPublicKeyContent, publicKeyContent);
 	}
-	
+
 	@Test
-	public void shouldThrow404WhenGettingNonExistingOrNotOwnedKey() throws Exception {
+	public void shouldThrow404WhenGettingNonExistingOrNotOwnedKey()
+			throws Exception {
 		givenGetPublicKeyThrowingKeyNotFoundException();
 		try {
 			whenGetPublicUserKey();
 			fail();
-		} catch(KeyNotFoundException e) {
-			//OK should be thrown
+		} catch (KeyNotFoundException e) {
+			// OK should be thrown
 		}
 
 		thenActionExecuted();
 	}
-	
+
 	private void givenGetPublicKeyThrowingKeyNotFoundException() {
 		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
 		when(action.execute()).thenThrow(new KeyNotFoundException());
+
+		when(actionFactory.createGetPublicKeyAction(username, keyId))
+				.thenReturn(action);
+		currentAction = action;
+	}
+
+	@Test
+	public void shouldThrown400WhenKeyHasWrongFormat() throws Exception {
+		givenKeyInWrongFormat();
+		try {
+			whenGetPublicUserKey();
+			fail();
+		} catch (WrongKeyFormatException e) {
+			assertEquals(e.getMessage(), "error message");
+		}
+
+		thenActionExecuted();
+	}
+
+	private void givenKeyInWrongFormat() {
+		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		when(action.execute()).thenThrow(
+				new WrongKeyFormatException("error message"));
 
 		when(actionFactory.createGetPublicKeyAction(username, keyId))
 				.thenReturn(action);

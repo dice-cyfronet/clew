@@ -117,6 +117,7 @@
 			<groupId>com.googlecode.sardine</groupId>
 			<artifactId>sardine</artifactId>
 			<version>146</version>
+			<scope>test</scope>
 		</dependency>
 		
 		<!-- Other dependencies -->

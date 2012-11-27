@@ -29,9 +29,6 @@ public class AtomicServiceInstance extends StatusBean {
 
 	private String atomicServiceId;
 
-	@Deprecated
-	private Credential credential;
-
 	private List<Redirection> redirections;
 
 	private String configurationId;
@@ -39,22 +36,6 @@ public class AtomicServiceInstance extends StatusBean {
 	private String instanceId;
 
 	private String publicKeyId;
-
-	/**
-	 * @return the credential
-	 */
-	@Deprecated
-	public Credential getCredential() {
-		return credential;
-	}
-
-	/**
-	 * @param credential the credential to set
-	 */
-	@Deprecated
-	public void setCredential(Credential credential) {
-		this.credential = credential;
-	}
 
 	public String getAtomicServiceId() {
 		return atomicServiceId;
@@ -120,12 +101,14 @@ public class AtomicServiceInstance extends StatusBean {
 		this.publicKeyId = publicKeyId;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
-				+ ", credential=" + credential + ", redirections="
-				+ redirections + ", configurationId=" + configurationId
-				+ ", instanceId=" + instanceId + ", publicKeyId=" + publicKeyId
-				+ "]";
+				+ ", redirections=" + redirections + ", configurationId="
+				+ configurationId + ", instanceId=" + instanceId
+				+ ", publicKeyId=" + publicKeyId + "]";
 	}
 }

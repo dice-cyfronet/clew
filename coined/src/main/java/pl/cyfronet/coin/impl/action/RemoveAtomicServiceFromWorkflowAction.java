@@ -18,6 +18,9 @@ package pl.cyfronet.coin.impl.action;
 
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -33,6 +36,9 @@ import pl.cyfronet.dyrealla.api.allocation.impl.RemoveRequiredAppliancesRequestI
  */
 public class RemoveAtomicServiceFromWorkflowAction extends
 		WorkflowAction<Class<Void>> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(RemoveAtomicServiceFromWorkflowAction.class);
 
 	private String contextId;
 	private String asConfigId;
@@ -52,11 +58,21 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		if (workflowInProductionModeHasAS()) {
+			logger.debug("Removing {} AS from {} context", asConfigId,
+					contextId);
+
 			RemoveRequiredAppliancesRequestImpl request = new RemoveRequiredAppliancesRequestImpl();
 			request.setApplicationId(contextId);
 			request.setInitConfigIds(Arrays.asList(asConfigId));
-			getAtmosphere().removeRequiredAppliances(request);
+			try {
+				getAtmosphere().removeRequiredAppliances(request);
+			} catch (Exception e) {
+				logger.error("Unexpected error was thrown from Atmosphere", e);
+				throw new CloudFacadeException(
+						"Exception was thrown by Atmosphere, plese contact administrator");
+			}
 		} else {
+			logger.warn("Trying to remove AS from workflow in development mode");
 			throw new AtomicServiceNotFoundException();
 		}
 

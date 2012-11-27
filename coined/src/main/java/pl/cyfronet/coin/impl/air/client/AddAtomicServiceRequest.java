@@ -30,8 +30,6 @@ public class AddAtomicServiceRequest {
 	private String name;
 	
 	private String description;
-	
-	private String author;
 
 	private boolean in_proxy;
 	
@@ -50,6 +48,12 @@ public class AddAtomicServiceRequest {
 	
 	private List<ATEndpoint> endpoints;
 
+	/**
+	 * #1021
+	 * @since 1.1.0
+	 */
+	private String author;
+	
 	/**
 	 * @return the client
 	 */

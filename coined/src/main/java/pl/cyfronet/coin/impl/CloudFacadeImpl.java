@@ -82,8 +82,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
 		try {
 			CreateAtomicServiceAction action = actionFactory
-					.createCreateAtomicServiceAction(atomicServiceInstanceId,
-							atomicService);
+					.createCreateAtomicServiceAction(getUsername(),
+							atomicServiceInstanceId, atomicService);
 			return action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);

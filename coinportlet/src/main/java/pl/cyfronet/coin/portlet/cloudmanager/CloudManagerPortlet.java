@@ -3,6 +3,8 @@ package pl.cyfronet.coin.portlet.cloudmanager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,19 +19,23 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
@@ -45,13 +51,16 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
 
@@ -78,6 +87,8 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_INVOCATION_PATH = "invocationPath";
 	static final String MODEL_BEAN_WEBAPP_ENDPOINTS = "webappEndpoints";
 	static final String MODEL_BEAN_INVOCATION_BASE = "invocationBase";
+	static final String MODEL_BEAN_USER_KEYS = "userKeyList";
+	static final String MODEL_BEAN_UPLOAD_KEY_REQUEST = "uploadKeyRequest";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -87,6 +98,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_WORKFLOW_ID = "workflowId";
 	static final String PARAM_WORKFLOW_TYPE = "workflowType";
 	static final String PARAM_INVOCATION_CODE = "atomicServiceInvocationCode";
+	static final String PARAM_USER_KEY_ID = "userKeyId";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -96,6 +108,15 @@ public class CloudManagerPortlet {
 	static final String ACTION_DEVELOPMENT = "development";
 	static final String ACTION_STOP_WORKFLOW = "stopWorkflow";
 	static final String ACTION_AS_SAVING_STATE = "asSavingState";
+	static final String ACTION_STOP_DEV_INSTANCE = "stopDevInstance";
+	static final String ACTION_STOP_INVOKER_INSTANCE = "stopInvokerInstance";
+	static final String ACTION_USER_KEYS = "userKeys";
+	static final String ACTION_UPLOAD_KEY = "uploadKey";
+	static final String ACTION_REMOVE_KEY = "removeUserKey";
+	static final String ACTION_PICK_USER_KEY = "pickUserKey";
+	
+	@Value("${cloud.host.name}")
+	private String cloudHost;
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -196,6 +217,32 @@ public class CloudManagerPortlet {
 			}
 		}
 	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_STOP_DEV_INSTANCE)
+	public void doActionStopAsDevelopmentInstance(@RequestParam("workflowId") String workflowId,
+			@RequestParam("atomicServiceInstanceId") String atomicServiceInstanceId,
+			PortletRequest request, ActionResponse response) {
+		log.info("Stopping AS instance with id [{}] from workflow with id [{}]", atomicServiceInstanceId, workflowId);
+		clientFactory.getWorkflowManagement(request).removeAtomicServiceInstanceFromWorkflow(workflowId, atomicServiceInstanceId);
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_STOP_INVOKER_INSTANCE)
+	public void doActionStopAsInvokerInstance(@RequestParam("workflowId") String workflowId,
+			@RequestParam("atomicServiceId") String atomicServiceId,
+			PortletRequest request, ActionResponse response) {
+		List<InitialConfiguration> initialConfigurations =
+				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId);
+		
+		if(initialConfigurations != null && initialConfigurations.size() > 0) {
+			String initialConfiguration = initialConfigurations.get(0).getId();
+			log.info("Stopping AS instances for AS with id [{}] and initial configuration [{}] from workflow with id [{}]",
+					new String[] {atomicServiceId, initialConfiguration, workflowId});
+			clientFactory.getWorkflowManagement(request).removeAtomicServiceFromWorkflow(workflowId, initialConfiguration);
+		} else {
+			log.warn("Could not find initial configuration id to stop AS instances for id [{}] and workflow id [{}]",
+					atomicServiceId, workflowId);
+		}
+	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public String doViewStartAtomicService(@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
@@ -216,9 +263,9 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public void doActionStartAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID)
-			String atomicServiceId, PortletRequest request,
-			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
-			ActionResponse response) {
+			String atomicServiceId, @RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
+			@RequestParam(required = false, value = PARAM_USER_KEY_ID) String userKeyId,
+			PortletRequest request, ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
 		List<String> workflowIds = getWorkflowIds(workflowType, request);
@@ -245,10 +292,12 @@ public class CloudManagerPortlet {
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
 				initialconfigurations.get(0).getId() != null) {
-			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
-					workflowId, initialconfigurations.get(0).getId());
+			log.info("Starting atomic service instance for workflow [{}], configuration [{}]" +
+					" and user key with id [{}]",
+					new String[] {workflowId, initialconfigurations.get(0).getId(), userKeyId});
+			
 			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "Ask user about it?");
+					initialconfigurations.get(0).getId(), "Ask user about it?", userKeyId);
 		} else {
 			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
@@ -344,7 +393,8 @@ public class CloudManagerPortlet {
 		if(atomicService != null) {
 			String workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
 			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
-			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId));
+			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId,
+					atomicService.getEndpoints().get(0).getServiceName()));
 			
 			List<Endpoint> webAppEndpoints = new ArrayList<Endpoint>();
 //			List<Endpoint> restEndpoints = new ArrayList<Endpoint>();
@@ -357,7 +407,7 @@ public class CloudManagerPortlet {
 						break;
 						case REST:
 							model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
-									atomicService.getEndpoints().get(0).getServiceName()));
+									atomicService.getEndpoints().get(0).getInvocationPath()));
 							InvokeAtomicServiceRequest iasr = null;
 							
 							if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
@@ -367,6 +417,7 @@ public class CloudManagerPortlet {
 								iasr.setConfigurationId(configurationId);
 								iasr.setAtomicServiceId(atomicServiceId);
 								iasr.setFormFields(new ArrayList<FormField>());
+								iasr.setServiceId(atomicService.getEndpoints().get(0).getServiceName());
 								
 								if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
 									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
@@ -391,7 +442,8 @@ public class CloudManagerPortlet {
 							}
 							
 							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
-									iasr.getConfigurationId()) + iasr.getInvocationPath());
+									iasr.getConfigurationId(), atomicService.getEndpoints().get(0).getServiceName()) +
+									iasr.getInvocationPath().trim());
 						break;
 						case WS:
 							log.warn("Endpoints of type {} are not supported on atomic service {}", EndpointType.WS, atomicServiceId);
@@ -509,12 +561,22 @@ public class CloudManagerPortlet {
 									builder.append(redirection.getName()).append(":")
 											.append(redirection.getHost()).append(":")
 											.append(redirection.getFromPort());
-									
-									if(redirection.getName().equals("ssh") && asi.getCredential() != null) {
-										builder.append(":").append(asi.getCredential().getUsername()).append(":")
-												.append(asi.getCredential().getPassword());
+
+									if(redirection.getName().equals("ssh") && asi.getPublicKeyId() != null) {
+										List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
+										String keyName = null;
+										
+										for(PublicKeyInfo pki : keys) {
+											if(pki.getId().equals(asi.getPublicKeyId())) {
+												keyName = pki.getKeyName();
+												break;
+											}
+										}
+										
+										if(keyName != null) {
+											builder.append(":").append(keyName);
+										}
 									}
-											
 								}
 								
 								builder.append("|");
@@ -595,34 +657,6 @@ public class CloudManagerPortlet {
 		return "cloudManager/asSavingState";
 	}
 	
-	@RequestMapping(params = PARAM_ACTION + "=startWorkflowInstance")
-	public void doActionStartWorkflowInstance(PortletRequest request) {
-		String workflowId = null;
-		WorkflowStartRequest wsr = new WorkflowStartRequest();
-		wsr.setName(WorkflowType.workflow.name() + " workflow");
-		wsr.setType(WorkflowType.workflow);
-		
-		try {
-			workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
-		} catch (WorkflowStartException e) {
-			log.warn("Error while starting workflow", e);
-		}
-		
-		List<InitialConfiguration> initialconfigurations =
-				clientFactory.getCloudFacade(request).getInitialConfigurations("SecHelloWorld");
-		
-		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
-				initialconfigurations.get(0).getId() != null) {
-			log.info("Starting atomic service instance for workflow [{}] and configuration [{}]",
-					workflowId, initialconfigurations.get(0).getId());
-			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "vm");
-		} else {
-			//TODO - inform the user about the problem
-			log.warn("Configuration problem occurred during starting atomic service with id SecHelloWorld");
-		}
-	}
-	
 	@ResourceMapping("asSavingStatus")
 	public void checkAsStatus(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			PortletRequest request, ResourceResponse response) {
@@ -651,6 +685,123 @@ public class CloudManagerPortlet {
 		}
 	}
 	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_USER_KEYS)
+	public String doViewListUserKeys(PortletRequest portletRequest, Model model) {
+		List<PublicKeyInfo> keys = clientFactory.getKeyManagement(portletRequest).list();
+		model.addAttribute(MODEL_BEAN_USER_KEYS, keys);
+		
+		if(!model.containsAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST)) {
+			model.addAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST, new UploadKeyRequest());
+		}
+		
+		return "cloudManager/userKeys";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_UPLOAD_KEY)
+	public void doActionUploadKey(@ModelAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST) UploadKeyRequest uploadKeyRequest,
+			BindingResult errors, Model model, PortletRequest request, ActionResponse response) {
+		log.debug("Processing upload key request for key [{}]", uploadKeyRequest);
+		validator.validate(uploadKeyRequest, errors);
+		
+		if(uploadKeyRequest.getKeyBody() == null || uploadKeyRequest.getKeyBody().isEmpty()) {
+			errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
+					"The key file has to be chosen"));
+		}
+		
+		if(errors.hasErrors()) {
+			response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+		} else {
+			if(!errors.hasErrors()) {
+				StringWriter keyWriter = new StringWriter();
+				
+				try {
+					IOUtils.copy(uploadKeyRequest.getKeyBody().getInputStream(), keyWriter);
+					clientFactory.getKeyManagement(request).add(uploadKeyRequest.getKeyName(), keyWriter.toString());
+				} catch (IOException e) {
+					log.warn("Could not copy public key contents for key with name [" +
+							uploadKeyRequest.getKeyName() + "]", e);
+					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
+							"Could not copy key contents"));
+				} catch (WrongKeyFormatException e) {
+					log.warn("Wrong key format for key with name [" +
+							uploadKeyRequest.getKeyName() + "]", e);
+					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyBody",
+							"Format of the given key is invalid"));
+				} catch (KeyAlreadyExistsException e) {
+					log.warn("Key name [" +
+							uploadKeyRequest.getKeyName() + "] already exists", e);
+					errors.addError(new FieldError(MODEL_BEAN_UPLOAD_KEY_REQUEST, "keyName",
+							"Given key name is already taken"));
+				}
+				
+				if(errors.hasErrors()) {
+					response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+				} else {
+	 				response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+					model.addAttribute(MODEL_BEAN_UPLOAD_KEY_REQUEST, new UploadKeyRequest());
+				}
+			}
+		}
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_REMOVE_KEY)
+	public void doActionRemoveKey(@RequestParam(PARAM_USER_KEY_ID) String keyId,
+			PortletRequest request, ActionResponse response) {
+		log.debug("Removing user key for id [{}]", keyId);
+		clientFactory.getKeyManagement(request).delete(keyId);
+		response.setRenderParameter(PARAM_ACTION, ACTION_USER_KEYS);
+	}
+	
+	@ResourceMapping("getUserKey")
+	public void getUserKey(@RequestParam("keyId") String keyId, PortletRequest request, ResourceResponse response) {
+		String keyBody = clientFactory.getKeyManagement(request).get(keyId);
+		
+		if(keyBody != null) {
+			response.addProperty("Content-Disposition", "Attachment;Filename=\"key.txt\"");
+			response.addProperty("Pragma", "public");
+			response.addProperty("Cache-Control", "must-revalidate");
+			response.setContentLength(keyBody.length());
+			
+			try {
+				FileCopyUtils.copy(new StringReader(keyBody), response.getWriter());
+			} catch (Exception e) {
+				log.warn("Could not serve user key for id  [{}]", keyId);
+			}
+		} else {
+			log.warn("User key with id [{}] does not exist", keyId);
+		}
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_PICK_USER_KEY)
+	public String doViewPickUserKey(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType, Model model, PortletRequest request) {
+		model.addAttribute(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
+		
+		List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
+		Map<String, String> keyMap = new HashMap<String, String>();
+		
+		for(PublicKeyInfo keyInfo : keys) {
+			keyMap.put(keyInfo.getId(), keyInfo.getKeyName());
+		}
+		
+		model.addAttribute(MODEL_BEAN_USER_KEYS, keyMap);
+		
+		if(!model.containsAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST)) {
+			StartAtomicServiceRequest startRequest = new StartAtomicServiceRequest();
+			startRequest.setAtomicServiceId(atomicServiceId);
+			startRequest.setWorkflowType(workflowType);
+			
+			if(keyMap.size() > 0) {
+				startRequest.setUserKeyId(keyMap.keySet().iterator().next());
+			}
+			
+			model.addAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST, startRequest);
+		}
+		
+		return "cloudManager/pickUserKey";
+	}
+	
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
 		if(workflowType != WorkflowType.development) {
 			for(Iterator<AtomicService> i = atomicServices.iterator(); i.hasNext();) {
@@ -664,7 +815,8 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId()) + request.getInvocationPath();
+		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId(),
+				request.getServiceId()) + request.getInvocationPath().trim();
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
@@ -708,11 +860,13 @@ public class CloudManagerPortlet {
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
 
-	private String createInvocationPath(String workflowId, String configurationId) {
+	private String createInvocationPath(String workflowId, String configurationId, String serviceName) {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId);
+				replace("{host}", cloudHost).
+				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId).
+				replace("{serviceName}", serviceName.trim());
 		
-		return urlPath;
+		return urlPath.trim();
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {

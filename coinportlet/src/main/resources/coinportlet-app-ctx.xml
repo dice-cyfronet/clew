@@ -23,6 +23,7 @@
     	<property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
         	<list>
+        		<value>environmentProperties</value><!-- system properties will override the ones in the property files -->
         		<value>classpath:coinportlet-constants.properties</value>
         		<value>classpath:coinportlet-constants-override.properties</value>
         	</list>
@@ -67,25 +68,37 @@
     <bean class="pl.cyfronet.coin.portlet.util.ClientFactory">
     	<property name="workflowManagement" ref="wm-client"/>
     	<property name="cloudFacade" ref="cf-client"/>
+    	<property name="keyManagement" ref="km-client"/>
     </bean>
     <jaxrs:client id="wm-client" address="${cloud.facade.wm.url}"
-		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
-		threadSafe="true"
-		inheritHeaders="true">
+			serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
+			threadSafe="true"
+			inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
 			<ref bean="workflowServiceExceptionMapper" />
 		</jaxrs:providers>
 	</jaxrs:client>
 	<jaxrs:client id="cf-client" address="${cloud.facade.cf.url}"
-		serviceClass="pl.cyfronet.coin.api.CloudFacade"
-		threadSafe="true"
-		inheritHeaders="true">
+			serviceClass="pl.cyfronet.coin.api.CloudFacade"
+			threadSafe="true"
+			inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
-			<ref bean="workflowServiceExceptionMapper" />
+			<ref bean="atomicServiceExceptionMapper" />
 		</jaxrs:providers>
 	</jaxrs:client>
+	<jaxrs:client id="km-client" address="${cloud.facade.km.url}"
+			serviceClass="pl.cyfronet.coin.api.KeyManagement"
+			threadSafe="true"
+			inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="keyServiceExceptionMapper" />
+		</jaxrs:providers>		
+	</jaxrs:client>
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
 	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
+	<bean id="keyServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.KeyServiceExceptionMapper" />
 </beans>
