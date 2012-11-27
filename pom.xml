@@ -9,7 +9,7 @@
 
 	<groupId>pl.cyfronet.coin</groupId>
 	<artifactId>coin</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>COIN - Cloud User Interfaces</name>
