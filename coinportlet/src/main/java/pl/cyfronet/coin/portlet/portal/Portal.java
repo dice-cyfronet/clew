@@ -9,7 +9,6 @@ import javax.portlet.RenderRequest;
 import org.apache.jetspeed.CommonPortletServices;
 import org.apache.jetspeed.administration.PortalAdministration;
 import org.apache.jetspeed.administration.RegistrationException;
-import org.apache.jetspeed.security.GroupManager;
 import org.apache.jetspeed.security.PasswordCredential;
 import org.apache.jetspeed.security.Role;
 import org.apache.jetspeed.security.RoleManager;
@@ -17,9 +16,12 @@ import org.apache.jetspeed.security.SecurityAttribute;
 import org.apache.jetspeed.security.SecurityException;
 import org.apache.jetspeed.security.User;
 import org.apache.jetspeed.security.UserManager;
-import org.apache.jetspeed.userinfo.UserInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import pl.cyfronet.coin.auth.MasterInterfaceAuthClient;
+import pl.cyfronet.coin.auth.UserDetails;
 
 public class Portal {
 	private static final Logger log = LoggerFactory.getLogger(Portal.class);
@@ -47,7 +49,7 @@ public class Portal {
 		return request.getUserPrincipal().getName();
 	}
 
-	public void updateUser(String userName, String token, PortletRequest request) {
+	public void updateUser(String userName, String token, List<String> roles, PortletRequest request) {
 		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
 				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
 		PortalAdministration portalAdministration = (PortalAdministration) request.getPortletSession().getPortletContext().
@@ -66,15 +68,16 @@ public class Portal {
 			PasswordCredential pc = userManager.getPasswordCredential(user);
 			pc.setPassword(token, false);
 			userManager.storePasswordCredential(pc);
-			
-			//TODO: remove this role hack in the future
-			//<<<
-			if(!roleManager.roleExists(DEVELOPER_ROLE)) {
-				roleManager.addRole(DEVELOPER_ROLE);
+
+			if(roles != null) {
+				for(String role : roles) {
+					if(!roleManager.roleExists(role)) {
+						roleManager.addRole(role);
+					}
+					
+					roleManager.addRoleToUser(userName, role);
+				}
 			}
-			
-			roleManager.addRoleToUser(userName, DEVELOPER_ROLE);
-			//>>>
 			
 			//setting the token as one of the user's attributes
 			SecurityAttribute tokenAttribute = user.getSecurityAttributes().getAttribute("token", true);

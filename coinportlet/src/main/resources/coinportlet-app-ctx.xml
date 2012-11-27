@@ -101,4 +101,18 @@
 	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
 	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
 	<bean id="keyServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.KeyServiceExceptionMapper" />
+	
+	<!-- Token service beans -->
+	<jaxrs:client id="validatetkt-client" address="http://progress.physiomespace.com"		
+			serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
+			inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="validatetkt-jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:client>
+	<bean id="validatetkt-jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
+		<property name="serializeAsArray" value="true" />
+		<property name="dropRootElement" value="true" />
+		<property name="supportUnwrapped" value="true" />
+	</bean>
 </beans>

@@ -29,6 +29,10 @@
 			<groupId>pl.cyfronet.coin</groupId>
 			<artifactId>coinapi</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>pl.cyfronet.coin</groupId>
+			<artifactId>coinauth</artifactId>
+		</dependency>
 
 		<!-- Portlet dependencies -->
 		<dependency>
