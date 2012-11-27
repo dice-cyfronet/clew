@@ -3,7 +3,7 @@
 <portlet:resourceURL var="asSavingStatusLink" id="asSavingStatus"/>
 
 <div class="coin-content coin-content-no-tabs">
-	<p>Please wait patiently while the new Atomic Service is being saved. The current state of the process is the following:
+	<p><spring:message code="cloud.manager.portlet.saving.as.in.progress.message"/>
 	<span id="asSavingState" style="font-weight: bold; color: #db7024;">saving</span></p>
 	<div class="coin-menu-bottom">
 		<ul>
