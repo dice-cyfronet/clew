@@ -103,7 +103,7 @@
 	<bean id="keyServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.KeyServiceExceptionMapper" />
 	
 	<!-- Token service beans -->
-	<jaxrs:client id="validatetkt-client" address="http://progress.physiomespace.com"		
+	<jaxrs:client id="validatetkt-client" address="${ticket.validation.service.url.base}"		
 			serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
 			inheritHeaders="true">
 		<jaxrs:providers>
