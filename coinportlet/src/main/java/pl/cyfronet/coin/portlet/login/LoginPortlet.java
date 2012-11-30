@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import pl.cyfronet.coin.auth.MasterInterfaceAuthClient;
+import pl.cyfronet.coin.auth.UserDetails;
 import pl.cyfronet.coin.portlet.portal.Portal;
 
 @Controller
@@ -34,7 +36,9 @@ public class LoginPortlet {
 	@Value("${login.portlet.destination.parameter.name}") private String destinationParameterName;
 	
 	@Resource(name = "pageMapping") Map<String, String> pageMapping;
+	
 	@Autowired Portal portal;
+	@Autowired MasterInterfaceAuthClient ticketService;
 	
 	@RequestMapping
 	public String login(Model model, PortletRequest request) {
@@ -45,8 +49,13 @@ public class LoginPortlet {
 				new String[] {user, token, destination});
 		
 		if(user != null && token != null && destination != null) {
-			//TODO: add token validation
-			portal.updateUser(user, token, request);
+			UserDetails userDetails = ticketService.validate(token);
+			
+			if(userDetails == null) {
+				throw new IllegalArgumentException("User token [" + token + "] is not valid");
+			}
+			
+			portal.updateUser(user, token, userDetails.getRole(), request);
 			model.addAttribute(MODEL_BEAN_USER_LOGIN, user);
 			model.addAttribute(MODEL_BEAN_USER_TOKEN, token);
 			model.addAttribute(MODEL_BEAN_USER_DESTINATION, pageMapping.get(destination));

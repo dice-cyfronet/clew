@@ -101,4 +101,13 @@
 	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
 	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
 	<bean id="keyServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.KeyServiceExceptionMapper" />
+	
+	<!-- Token service beans -->
+	<jaxrs:client id="validatetkt-client" address="${ticket.validation.service.url.base}"		
+			serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
+			inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:client>
 </beans>
