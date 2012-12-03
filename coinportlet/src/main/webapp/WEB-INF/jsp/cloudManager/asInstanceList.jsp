@@ -22,18 +22,18 @@
 			</c:choose>
 		</div>
 		<c:set var="atomicServiceInstances" value="${entry.value}"/>
-		<c:choose>
-			<c:when test="${view == 'development'}">
-				<div style="width: 70%; float: left;">
+		<div style="width: 70%; float: left;">
+			<c:choose>
+				<c:when test="${view == 'development'}">
 					<%@ include file="developmentInstanceItem.jsp" %>
-				</div>
-			</c:when>
-			<c:when test="${view == 'genericInvoker'}">
-				<%@ include file="genericInvokerInstanceItem.jsp" %>
-			</c:when>
-			<c:otherwise>
-				Unknown view mode!
-			</c:otherwise>
-		</c:choose>
+				</c:when>
+				<c:when test="${view == 'genericInvoker'}">
+					<%@ include file="genericInvokerInstanceItem.jsp" %>
+				</c:when>
+				<c:otherwise>
+					Unknown view mode!
+				</c:otherwise>
+			</c:choose>
+		</div>
 	</div>
 </c:forEach>
