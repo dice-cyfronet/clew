@@ -8,10 +8,40 @@
 	<c:if test="${negativeMessage != null}">
 		<div class="coin-error-panel">${negativeMessage}</div>
 	</c:if>
+	<c:if test="${asiRedirections != null and fn:length(asiRedirections) > 0}">
+		<span style="font-style: italic; margin-top: 10px; display: block;"><spring:message code="cloud.manager.portlet.invocation.redirections.label"/></span>
+		<c:forEach var="red" items="${asiRedirections}">
+			<span style="margin-left: 20px;"><spring:message code="cloud.manager.portlet.invocation.redirection.host" arguments="${red.name},${red.host}"/></span><br/>
+			<span style="margin-left: 20px;"><spring:message code="cloud.manager.portlet.invocation.redirection.port" arguments="${red.name},${red.fromPort}"/></span><br/>
+		</c:forEach>
+	</c:if>
 	<c:if test="${fn:length(webappEndpoints) > 0}">
 		<span>Web Application endpoints:</span><br/><br/>
 		<c:forEach var="endpoint" items="${webappEndpoints}">
-			<a class="coin-link" target="_blank" href="${invocationBase}${endpoint.invocationPath}">${invocationBase}${endpoint.invocationPath}</a><br/>
+			<a class="coin-link" target="_blank" href="${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}">${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}</a><br/>
+		</c:forEach>
+	</c:if>
+	<c:if test="${fn:length(wsEndpoints) > 0}">
+		<span style="font-style: italic; margin-top: 10px; display: block;"><spring:message code="cloud.manager.portlet.ws.endpoint.list.label"/></span>
+		<c:forEach var="ws" items="${wsEndpoints}">
+			<span style="margin-left: 20px;">URL: <span style="font-family: monospace; font-size: smaller;">${invocationBase}${ws.serviceName}${ws.invocationPath}</span></span><br/>
+			<div style="margin-left: 20px;" id="accordion">
+				<h5 style="color: #37b2d1; cursor: pointer; margin-top: 0px; margin-bottom: 0px;">Show/Hide descriptor</h5>
+				<div style="font-family: monospace; font-size: smaller;">
+					<c:if test="${ws.descriptor == null}">
+						No descriptor available
+					</c:if>
+					${ws.descriptor}
+				</div>
+			</div>
+			<script type="text/javascript">
+				jQuery(document).ready(function() {
+					jQuery('#accordion').accordion({
+			            collapsible: true,
+			            active: false
+					});
+				});
+			</script>
 		</c:forEach>
 	</c:if>
 	<c:if test="${atomicServiceInvokable}">

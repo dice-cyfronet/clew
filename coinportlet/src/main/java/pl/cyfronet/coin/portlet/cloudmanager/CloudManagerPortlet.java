@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -89,6 +88,8 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_INVOCATION_BASE = "invocationBase";
 	static final String MODEL_BEAN_USER_KEYS = "userKeyList";
 	static final String MODEL_BEAN_UPLOAD_KEY_REQUEST = "uploadKeyRequest";
+	static final String MODEL_BEAN_ASI_REDIRECTIONS = "asiRedirections";
+	static final String MODEL_BEAN_WS_ENDPOINTS = "wsEndpoints";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -393,11 +394,10 @@ public class CloudManagerPortlet {
 		if(atomicService != null) {
 			String workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
 			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
-			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId,
-					atomicService.getEndpoints().get(0).getServiceName()));
+			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId));
 			
-			List<Endpoint> webAppEndpoints = new ArrayList<Endpoint>();
-//			List<Endpoint> restEndpoints = new ArrayList<Endpoint>();
+			List<Endpoint> webAppEndpoints = new ArrayList<>();
+			List<Endpoint> wsEndpoints = new ArrayList<>();
 			
 			if(atomicService.getEndpoints() != null) {
 				for(Endpoint endpoint : atomicService.getEndpoints()) {
@@ -407,7 +407,7 @@ public class CloudManagerPortlet {
 						break;
 						case REST:
 							model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
-									atomicService.getEndpoints().get(0).getInvocationPath()));
+									endpoint.getInvocationPath()));
 							InvokeAtomicServiceRequest iasr = null;
 							
 							if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
@@ -417,11 +417,11 @@ public class CloudManagerPortlet {
 								iasr.setConfigurationId(configurationId);
 								iasr.setAtomicServiceId(atomicServiceId);
 								iasr.setFormFields(new ArrayList<FormField>());
-								iasr.setServiceId(atomicService.getEndpoints().get(0).getServiceName());
+								iasr.setServiceId(endpoint.getServiceName());
 								
-								if(atomicService.getEndpoints().get(0).getInvocationPath() != null) {
+								if(endpoint.getInvocationPath() != null) {
 									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
-									Matcher matcher = pattern.matcher(atomicService.getEndpoints().get(0).getInvocationPath());
+									Matcher matcher = pattern.matcher(endpoint.getInvocationPath());
 									
 									while(matcher.find()) {
 										FormField formField = new FormField();
@@ -430,7 +430,7 @@ public class CloudManagerPortlet {
 										iasr.getFormFields().add(formField);
 									}
 									
-									iasr.setInvocationPath(atomicService.getEndpoints().get(0).getInvocationPath());
+									iasr.setInvocationPath(endpoint.getInvocationPath());
 								}
 								
 								log.trace("For REST invocation the following parameters were found: [{}]", iasr.getFormFields());
@@ -442,17 +442,39 @@ public class CloudManagerPortlet {
 							}
 							
 							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
-									iasr.getConfigurationId(), atomicService.getEndpoints().get(0).getServiceName()) +
+									iasr.getConfigurationId()) + endpoint.getServiceName() +
 									iasr.getInvocationPath().trim());
 						break;
 						case WS:
-							log.warn("Endpoints of type {} are not supported on atomic service {}", EndpointType.WS, atomicServiceId);
+							wsEndpoints.add(endpoint);
 						break;
 					}
 				}
 			}
 			
 			model.addAttribute(MODEL_BEAN_WEBAPP_ENDPOINTS, webAppEndpoints);
+			model.addAttribute(MODEL_BEAN_WS_ENDPOINTS, wsEndpoints);
+			
+			//attaching redirection information
+			Workflow wf = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
+			
+			if(wf != null && wf.getAtomicServiceInstances() != null) {
+				for(AtomicServiceInstance asi : wf.getAtomicServiceInstances()) {
+					if(asi.getId() != null && asi.getId().equals(atomicServiceInstanceId)) {
+						List<Redirection> nonSshRedirections = new ArrayList<>();
+						
+						for(Redirection red : asi.getRedirections()) {
+							if(!red.getName().equals("ssh")) {
+								nonSshRedirections.add(red);
+							}
+						}
+						
+						model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, nonSshRedirections);
+						
+						break;
+					}
+				}
+			}
 		} else {
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
 			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE,
@@ -815,8 +837,8 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId(),
-				request.getServiceId()) + request.getInvocationPath().trim();
+		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId()) +
+				request.getServiceId() + request.getInvocationPath().trim();
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
@@ -860,11 +882,10 @@ public class CloudManagerPortlet {
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
 
-	private String createInvocationPath(String workflowId, String configurationId, String serviceName) {
+	private String createInvocationPath(String workflowId, String configurationId) {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
 				replace("{host}", cloudHost).
-				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId).
-				replace("{serviceName}", serviceName.trim());
+				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId);
 		
 		return urlPath.trim();
 	}
