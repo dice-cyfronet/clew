@@ -69,7 +69,7 @@ public class GetAtomicServiceTest extends ActionTest {
 
 		ATEndpoint type2AsEndpoint = new ATEndpoint();
 		type2AsEndpoint.setDescription("description");
-		type2AsEndpoint.setDescriptor("GET POST /hello/{name}");
+		type2AsEndpoint.setDescriptor(null);
 		type2AsEndpoint.setId("www");
 		type2AsEndpoint.setInvocation_path("path");
 		type2AsEndpoint.setPort(9090);
@@ -87,7 +87,7 @@ public class GetAtomicServiceTest extends ActionTest {
 	}
 
 	private void thenCheckReceivedAtomicService() {
-		assertATAndAs(asType, atomicService);
+		assertATAndAs(asType, atomicService, null, null);
 		thenCheckAirRequest();
 	}
 

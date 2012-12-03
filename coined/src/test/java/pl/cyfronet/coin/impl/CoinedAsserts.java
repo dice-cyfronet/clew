@@ -15,8 +15,8 @@
  */
 package pl.cyfronet.coin.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class CoinedAsserts {
 
-	public static void assertATAndAs(ApplianceType at, AtomicService as) {
+	public static void assertATAndAs(ApplianceType at, AtomicService as, String... endpointsPayload) {
 		assertEquals(at.getName(), as.getName());
 		assertEquals(at.getDescription(), as.getDescription());
 		assertEquals(at.isHttp(), as.isHttp());
@@ -51,15 +51,15 @@ public class CoinedAsserts {
 			assertEquals(atSize, asEndpoints.size());
 
 			for (int i = 0; i < atSize; i++) {
-				assertAtAndAsEndpoint(atEndpoints.get(i), asEndpoints.get(i));
+				assertAtAndAsEndpoint(endpointsPayload[i], atEndpoints.get(i), asEndpoints.get(i));
 			}
 		}
 	}
 
-	private static void assertAtAndAsEndpoint(ATEndpoint atEndpoint,
+	private static void assertAtAndAsEndpoint(String descriptor, ATEndpoint atEndpoint,
 			Endpoint asEndpoint) {
-		assertEquals(atEndpoint.getDescription(), asEndpoint.getDescription());
-		assertEquals(atEndpoint.getDescriptor(), asEndpoint.getDescriptor());
+		assertEquals(asEndpoint.getDescription(), atEndpoint.getDescription());
+		assertEquals(asEndpoint.getDescriptor(), descriptor);
 		EndpointType type = "WS"
 				.equalsIgnoreCase(atEndpoint.getEndpoint_type()) ? EndpointType.WS
 				: EndpointType.REST;
