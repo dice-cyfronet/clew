@@ -27,18 +27,28 @@
 			<span style="margin-left: 20px;">URL: <span style="font-family: monospace; font-size: smaller;">${invocationBase}${ws.serviceName}${ws.invocationPath}</span></span><br/>
 			<div style="margin-left: 20px;" id="accordion">
 				<h5 style="color: #37b2d1; cursor: pointer; margin-top: 0px; margin-bottom: 0px;">Show/Hide descriptor</h5>
-				<div style="font-family: monospace; font-size: smaller;">
+				<div style="font-family: monospace; font-size: smaller; overflow: auto;">
 					<c:if test="${ws.descriptor == null}">
 						No descriptor available
 					</c:if>
-					${ws.descriptor}
+					<pre>
+${fn:escapeXml(ws.descriptor)}
+					</pre>
 				</div>
 			</div>
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery('#accordion').accordion({
 			            collapsible: true,
-			            active: false
+			            active: false,
+			            change: function(event, ui) {
+			            	//in case the size of the page changes...
+		    				pm({
+				        		target: parent,
+				        		type: 'resizeEvent',
+				        		data: {size: (document.body.scrollHeight)}
+				        	});
+			            }
 					});
 				});
 			</script>

@@ -472,15 +472,7 @@ public class CloudManagerPortlet {
 			if(wf != null && wf.getAtomicServiceInstances() != null) {
 				for(AtomicServiceInstance asi : wf.getAtomicServiceInstances()) {
 					if(asi.getId() != null && asi.getId().equals(atomicServiceInstanceId)) {
-						List<Redirection> nonSshRedirections = new ArrayList<>();
-						
-						for(Redirection red : asi.getRedirections()) {
-							if(!red.getName().equals("ssh")) {
-								nonSshRedirections.add(red);
-							}
-						}
-						
-						model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, nonSshRedirections);
+						model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, asi.getRedirections());
 						
 						break;
 					}
