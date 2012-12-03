@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
@@ -61,4 +62,13 @@ public abstract class AirAction<T> implements Action<T> {
 		logger.debug("Atomic service {} not found", applianceTypeName);
 		throw new AtomicServiceNotFoundException();
 	}
+	
+	protected void loadEndpointDescriptors(ApplianceType applianceType) {
+		if(applianceType.getEndpoints() != null) {
+			for (ATEndpoint endpoint : applianceType.getEndpoints()) {
+				endpoint.setDescriptor(air.getEndpointDescriptor(endpoint.getId()));
+			}
+		}
+	}
+
 }

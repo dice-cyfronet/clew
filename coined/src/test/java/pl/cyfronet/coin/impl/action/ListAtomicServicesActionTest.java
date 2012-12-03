@@ -15,6 +15,7 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,17 +62,15 @@ public class ListAtomicServicesActionTest extends ActionTest {
 
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
-		type1AsEndpoint.setDescriptor(null);
 		type1AsEndpoint.setEndpoint_type("ws");
-		type1AsEndpoint.setId("123asd");
+		type1AsEndpoint.setId("1");
 		type1AsEndpoint.setInvocation_path("invocation/path");
 		type1AsEndpoint.setPort(9090);
 		type1AsEndpoint.setService_name("gimias");
 
 		ATEndpoint type2AsEndpoint = new ATEndpoint();
 		type2AsEndpoint.setDescription("description");
-		type2AsEndpoint.setDescriptor("GET POST /hello/{name}");
-		type2AsEndpoint.setId("www");
+		type2AsEndpoint.setId("2");
 		type2AsEndpoint.setInvocation_path("path");
 		type2AsEndpoint.setPort(9090);
 		type2AsEndpoint.setService_name("gimias");
@@ -91,6 +90,10 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type2.setTemplates_count(2);
 
 		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2));
+		
+		//descriptor payload
+		when(air.getEndpointDescriptor("1")).thenReturn(null);
+		when(air.getEndpointDescriptor("2")).thenReturn("GET POST /hello/{name}");
 	}
 
 	private void whenGetAtomicServices() {
@@ -107,12 +110,17 @@ public class ListAtomicServicesActionTest extends ActionTest {
 
 		verify(air, times(1)).getApplianceTypes();
 
-		assertATAndAs(type1, as1);
+		assertATAndAs(type1, as1, null, "GET POST /hello/{name}");
 		assertATAndAs(type2, as2);
 		
-		thenCheckAirRequest();
+		thenCheckAirRequestWithEndpoints();
 	}
 
+	private void thenCheckAirRequestWithEndpoints() {
+		thenCheckAirRequest();
+		verify(air, times(2)).getEndpointDescriptor(anyString());
+	}
+	
 	private void thenCheckAirRequest() {
 		verify(air, times(1)).getApplianceTypes();
 	}

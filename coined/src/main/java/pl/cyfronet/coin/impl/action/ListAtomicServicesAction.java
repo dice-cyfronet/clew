@@ -44,12 +44,13 @@ public class ListAtomicServicesAction extends AirAction<List<AtomicService>> {
 		List<ApplianceType> applianceTypes = getApplianceTypes();
 		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
 		for (ApplianceType applianceType : applianceTypes) {
+			loadEndpointDescriptors(applianceType);
 			AtomicService atomicService = getAtomicService(applianceType);
 			atomicServices.add(atomicService);
 		}
 		return atomicServices;
 	}
-
+	
 	@Override
 	public void rollback() {
 		// Read only operation, does not require rollback
