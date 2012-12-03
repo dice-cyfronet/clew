@@ -391,9 +391,20 @@ public class CloudManagerPortlet {
 			}
 		}
 		
-		if(atomicService != null) {
-			String workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
-			String configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
+		String configurationId = null;
+		String workflowId = null;
+		
+		if(clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId) != null &&
+				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).size() > 0) {
+			configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
+		}
+		
+		if(getWorkflowIds(WorkflowType.portal, request) != null &&
+				getWorkflowIds(WorkflowType.portal, request).size() > 0) {
+			workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
+		}
+		
+		if(atomicService != null && configurationId != null && workflowId != null) {
 			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId));
 			
 			List<Endpoint> webAppEndpoints = new ArrayList<>();
