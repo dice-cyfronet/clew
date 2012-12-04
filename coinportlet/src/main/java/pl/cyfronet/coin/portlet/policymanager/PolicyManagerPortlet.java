@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import pl.cyfronet.coin.portlet.cloudmanager.UploadKeyRequest;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
 
 @Controller
@@ -34,6 +35,7 @@ public class PolicyManagerPortlet {
 	private static final String ACTION_DELETE_POLICY = "deletePolicy";
 	
 	@Autowired private ClientFactory clientFactory;
+	@Autowired private Validator validator;
 	
 	@RequestMapping
 	public String doViewListPolicies(Model model, PortletRequest request) {
@@ -58,11 +60,18 @@ public class PolicyManagerPortlet {
 	public void doActionUploadPolicy(@ModelAttribute(MODEL_BEAN_UPLOAD_POLICY) UploadPolicyRequest uploadPolicyRequest,
 			BindingResult errors, Model model, PortletRequest request, ActionResponse response) {
 		log.debug("Processing upload policy request for key [{}]", uploadPolicyRequest);
+		validator.validate(uploadPolicyRequest, errors);
+		
+		if(clientFactory.getSecurityPolicyService(request).getPoliciesNames().
+				contains(uploadPolicyRequest.getPolicyName())) {
+			errors.addError(new FieldError(MODEL_BEAN_UPLOAD_POLICY, "policyName", "Given policy name is already taken"));
+		}
 		
 		if(!errors.hasErrors()) {
 			clientFactory.getSecurityPolicyService(request).
 					updateSecurityPolicy(uploadPolicyRequest.getPolicyName(),
 							uploadPolicyRequest.getPolicyBody(), false);
+			model.addAttribute(MODEL_BEAN_UPLOAD_POLICY, new UploadPolicyRequest());
 		}
 	}
 	
