@@ -437,7 +437,8 @@ public class CloudManagerPortlet {
 								if(redirects != null) {
 									for(Redirection redirect : redirects) {
 										if(redirect.getName().equalsIgnoreCase("ssh")) {
-											model.addAttribute("additionalQuery", "?nxport=" + redirect.getFromPort());
+											model.addAttribute("additionalQuery", "?nxport=" + redirect.getFromPort() +
+													"&nxhost=" + redirect.getHost());
 											
 											break;
 										}
