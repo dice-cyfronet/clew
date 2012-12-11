@@ -417,6 +417,33 @@ public class CloudManagerPortlet {
 					switch(endpoint.getType()) {
 						case WEBAPP:
 							webAppEndpoints.add(endpoint);
+							
+							System.out.println("Endpoint service: " + endpoint.getServiceName());
+							//temporary fix to pass NoMachine port
+							if(endpoint.getServiceName().equals("/nx")) {
+								Workflow wf = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
+								List<Redirection> redirects = null;
+								
+								if(wf != null && wf.getAtomicServiceInstances() != null) {
+									for(AtomicServiceInstance asi : wf.getAtomicServiceInstances()) {
+										if(asi.getId() != null && asi.getId().equals(atomicServiceInstanceId)) {
+											redirects = asi.getRedirections();
+											
+											break;
+										}
+									}
+								}
+								
+								if(redirects != null) {
+									for(Redirection redirect : redirects) {
+										if(redirect.getName().equalsIgnoreCase("ssh")) {
+											model.addAttribute("additionalQuery", "?nxport=" + redirect.getFromPort());
+											
+											break;
+										}
+									}
+								}
+							}
 						break;
 						case REST:
 							model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(

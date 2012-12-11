@@ -18,7 +18,7 @@
 	<c:if test="${fn:length(webappEndpoints) > 0}">
 		<span>Web Application endpoints:</span><br/><br/>
 		<c:forEach var="endpoint" items="${webappEndpoints}">
-			<a class="coin-link" target="_blank" href="${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}">${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}</a><br/>
+			<a class="coin-link" target="_blank" href="${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}${additionalQuery}">${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}${additionalQuery}</a><br/>
 		</c:forEach>
 	</c:if>
 	<c:if test="${fn:length(wsEndpoints) > 0}">
