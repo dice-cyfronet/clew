@@ -412,6 +412,8 @@ public class CloudManagerPortlet {
 			
 			if(atomicService.getEndpoints() != null) {
 				for(Endpoint endpoint : atomicService.getEndpoints()) {
+					fixPaths(endpoint);
+					
 					switch(endpoint.getType()) {
 						case WEBAPP:
 							webAppEndpoints.add(endpoint);
@@ -454,7 +456,7 @@ public class CloudManagerPortlet {
 							
 							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
 									iasr.getConfigurationId()) + endpoint.getServiceName() +
-									iasr.getInvocationPath().trim());
+									iasr.getInvocationPath());
 						break;
 						case WS:
 							wsEndpoints.add(endpoint);
@@ -472,15 +474,7 @@ public class CloudManagerPortlet {
 			if(wf != null && wf.getAtomicServiceInstances() != null) {
 				for(AtomicServiceInstance asi : wf.getAtomicServiceInstances()) {
 					if(asi.getId() != null && asi.getId().equals(atomicServiceInstanceId)) {
-						List<Redirection> nonSshRedirections = new ArrayList<>();
-						
-						for(Redirection red : asi.getRedirections()) {
-							if(!red.getName().equals("ssh")) {
-								nonSshRedirections.add(red);
-							}
-						}
-						
-						model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, nonSshRedirections);
+						model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, asi.getRedirections());
 						
 						break;
 					}
@@ -500,7 +494,7 @@ public class CloudManagerPortlet {
 		
 		return "cloudManager/invokeAtomicService";
 	}
-	
+
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
 	public void doActionInvokeAtomicService(@ModelAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)
 			InvokeAtomicServiceRequest invokeAtomicServiceRequest, PortletRequest request, ActionResponse response) {
@@ -964,5 +958,31 @@ public class CloudManagerPortlet {
 			}
 		});
 		return atomicServices;
+	}
+	
+	private void fixPaths(Endpoint endpoint) {
+		if(endpoint.getServiceName() != null){
+			endpoint.setServiceName(endpoint.getServiceName().trim());
+			
+			if(!endpoint.getServiceName().startsWith("/")) {
+				endpoint.setServiceName("/" + endpoint.getServiceName());
+			}
+			
+			if(endpoint.getServiceName().endsWith("/")) {
+				endpoint.setServiceName(endpoint.getServiceName().substring(0, endpoint.getServiceName().length() - 1));
+			}
+		}
+		
+		if(endpoint.getInvocationPath() != null) {
+			endpoint.setInvocationPath(endpoint.getInvocationPath().trim());
+			
+			if(!endpoint.getInvocationPath().startsWith("/")) {
+				endpoint.setInvocationPath("/" + endpoint.getInvocationPath());
+			}
+			
+			if(endpoint.getInvocationPath().endsWith("/")) {
+				endpoint.setInvocationPath(endpoint.getInvocationPath().substring(0, endpoint.getInvocationPath().length() - 1));
+			}
+		}
 	}
 }
