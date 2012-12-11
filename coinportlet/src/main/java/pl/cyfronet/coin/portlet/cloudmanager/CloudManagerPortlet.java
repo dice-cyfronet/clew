@@ -417,8 +417,7 @@ public class CloudManagerPortlet {
 					switch(endpoint.getType()) {
 						case WEBAPP:
 							webAppEndpoints.add(endpoint);
-							
-							System.out.println("Endpoint service: " + endpoint.getServiceName());
+
 							//temporary fix to pass NoMachine port
 							if(endpoint.getServiceName().equals("/nx")) {
 								Workflow wf = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
