@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.activation.MimetypesFileTypeMap;
+import javax.portlet.ActionResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.ResourceResponse;
 import javax.portlet.ResourceURL;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,12 +56,14 @@ public class DataManagerPortlet {
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_UPLOAD_FILE)
-	public void doActionUploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws LobcderException, IOException {
+	public void doActionUploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path, ActionResponse response) throws LobcderException, IOException {
 		log.info("Uploading file [{}] to path [{}]", file.getName(), path);
 		
 		if(!file.isEmpty()) {
 			lobcderClient.put(path, file.getOriginalFilename(), file.getInputStream());
 		}
+		
+		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, path);
 	}
 	
 	@ResourceMapping("fileList")
@@ -86,7 +91,7 @@ public class DataManagerPortlet {
 			}
 
 			PortletURL url = response.createRenderURL();
-			url.setParameter("path", backValue);
+			url.setParameter(MODEL_BEAN_LOBCDER_PATH, backValue);
 			files.add(path + "..|" + url.toString() + "|");
 		}
 		
@@ -94,7 +99,8 @@ public class DataManagerPortlet {
 			if(!entry.isDirectory()) {
 				ResourceURL url = response.createResourceURL();
 				url.setResourceID("getFile");
-				url.setParameter("fileName", entry.getName());
+				url.setParameter("filePath", entry.getName());
+				url.setParameter("size", "" + entry.getBytes());
 				files.add(entry.getName() + "|" + url.toString() + "|" + entry.getBytes() / 1024 + " kB");
 			} else {
 				PortletURL url = response.createRenderURL();
@@ -119,27 +125,15 @@ public class DataManagerPortlet {
 	}
 
 	@ResourceMapping("getFile")
-	public void getFile(@RequestParam("fileName") String fileName, ResourceResponse response) {
-//		String path = fileLocation + "/" + fileName;
-//		String contentType = new MimetypesFileTypeMap().getContentType(fileName);
-//		log.debug("Serving file [{}] with content type [{}]", path, contentType);
-//		File file = new File(path);
-//		
-//		if(file.exists() && file.isFile()) {
-//			response.addProperty("Content-Disposition", "Attachment;Filename=\"" + fileName + "\"");
-//			response.addProperty("Pragma", "public");
-//			response.addProperty("Cache-Control", "must-revalidate");
-//			response.setContentLength((int) file.length());
-//			response.setContentType(contentType);
-//			
-//			try {
-//				FileCopyUtils.copy(new FileInputStream(file), response.getPortletOutputStream());
-//			} catch (Exception e) {
-//				log.warn("Could not serve file [{}]", path);
-//			}
-//		} else {
-//			log.warn("File [{}] does not exist", path);
-//		}
+	public void getFile(@RequestParam("filePath") String filePath,
+			@RequestParam("size") int size, ResourceResponse response) throws IOException, LobcderException {
+		String contentType = new MimetypesFileTypeMap().getContentType(filePath);
+		response.addProperty("Content-Disposition", "Attachment;Filename=\"" + filePath.substring(filePath.lastIndexOf("/") + 1) + "\"");
+		response.addProperty("Pragma", "public");
+		response.addProperty("Cache-Control", "must-revalidate");
+		response.setContentLength(size);
+		response.setContentType(contentType);
+		FileCopyUtils.copy(lobcderClient.get(filePath), response.getPortletOutputStream());
 	}
 	
 	private void sortLobcderEntries(List<LobcderEntry> entries) {

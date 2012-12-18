@@ -11,10 +11,10 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.jackrabbit.webdav.DavConstants;
@@ -24,6 +24,9 @@ import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.client.methods.DavMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropFindMethod;
 import org.apache.jackrabbit.webdav.client.methods.PutMethod;
+import org.apache.jackrabbit.webdav.property.DavProperty;
+import org.apache.jackrabbit.webdav.property.DavPropertyName;
+import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.slf4j.Logger;
 
 public class LobcderClient {
@@ -68,20 +71,26 @@ public class LobcderClient {
 		List<LobcderEntry> entries = new ArrayList<>();
 		
 		try {
-			DavMethod pFind = new PropFindMethod(createLobcderPath(path), DavConstants.PROPFIND_ALL_PROP, DavConstants.DEPTH_1);
+			DavPropertyNameSet properties = new DavPropertyNameSet();
+			properties.add(DavPropertyName.GETCONTENTLENGTH);
+			DavMethod pFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_1);
 			client.executeMethod(pFind);
 
 		    MultiStatus multiStatus = pFind.getResponseBodyAsMultiStatus();
 		    MultiStatusResponse[] responses = multiStatus.getResponses();
-		    MultiStatusResponse currResponse;
 
 		    for (int i = 0; i < responses.length; i++) {
-		        currResponse = responses[i];
-	        	String name = normalizeName(currResponse.getHref());
+		    	MultiStatusResponse response = responses[i];
+	        	String name = normalizeName(response.getHref());
 	        	
 	        	if (!name.equals(path)) {
 		            LobcderEntry entry = new LobcderEntry(name);
-		            entry.setDirectory(currResponse.getHref().endsWith("/"));
+		            entry.setDirectory(response.getHref().endsWith("/"));
+		            
+		            if(!entry.isDirectory()) {
+		            	entry.setBytes(Long.parseLong((String) response.getProperties(200).get(DavPropertyName.GETCONTENTLENGTH).getValue()));
+		            }
+		            
 		            entries.add(entry);
 	        	}
 		    } 
@@ -94,14 +103,28 @@ public class LobcderClient {
 		return entries;
 	}
 	
-	public void put(String path, String filename, InputStream inputStream) throws LobcderException {
-		PutMethod putMethod = new PutMethod(createLobcderPath(path) + filename);
+	public void put(String path, String fileName, InputStream inputStream) throws LobcderException {
+		PutMethod putMethod = new PutMethod(createLobcderPath(path) + fileName);
 		putMethod.setRequestEntity(new InputStreamRequestEntity(inputStream));
 		
 		try {
 			client.executeMethod(putMethod);
 		} catch (IOException e) {
-			String msg = "Could not upload file to LOBCDER for base URL [" + baseUrl + "], path [" + path + "] and file [" + filename + "]";
+			String msg = "Could not upload file to LOBCDER for base URL [" + baseUrl + "], path [" + path + "] and file [" + fileName + "]";
+			log.error(msg, e);
+			throw new LobcderException(msg, e);
+		}
+	}
+	
+	public InputStream get(String filePath) throws LobcderException {
+		GetMethod getMethod = new GetMethod(createLobcderPath(filePath));
+		
+		try {
+			client.executeMethod(getMethod);
+			
+			return getMethod.getResponseBodyAsStream();
+		} catch (IOException e) {
+			String msg = "Could not download file from LOBCDER for base URL [" + baseUrl + "] and file path [" + filePath + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
 		}
