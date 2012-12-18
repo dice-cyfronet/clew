@@ -1,31 +1,25 @@
 package pl.cyfronet.coin.webdav;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.googlecode.sardine.DavResource;
-import com.googlecode.sardine.Sardine;
-import com.googlecode.sardine.SardineFactory;
-import com.googlecode.sardine.util.SardineException;
+import pl.cyfronet.coin.portlet.lobcder.LobcderClient;
+import pl.cyfronet.coin.portlet.lobcder.LobcderEntry;
+import pl.cyfronet.coin.portlet.lobcder.LobcderException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/coinportlet-app-ctx.xml")
@@ -36,41 +30,57 @@ public class BasicLobcderTest {
 	@Value("${lobcder.password}") private String webDavPassword;
 	@Value("${lobcder.url}") private String webDavUrl;
 	
-	private Sardine sardine;
+	@Autowired private LobcderClient lobcder;
 	
 	@BeforeClass
 	public static void checkIntegrationTestFlag() {
 		Assume.assumeTrue(Boolean.getBoolean("integration.tests"));
 	}
 	
-	@Before
-	public void initialize() throws KeyManagementException, SardineException,
-			NoSuchAlgorithmException {
-		sardine = SardineFactory.begin(webDavUser, webDavPassword, createNaiveSslSocketFactory());
+	@Test
+	public void sortTest() {
+		List<LobcderEntry> entries = new ArrayList<>();
+		
+		LobcderEntry file = new LobcderEntry("file");
+		entries.add(file);
+		
+		LobcderEntry dir = new LobcderEntry("w");
+		dir.setDirectory(true);
+		entries.add(dir);
+		
+		LobcderEntry dir2 = new LobcderEntry("p");
+		dir2.setDirectory(true);
+		entries.add(dir2);
+		sortLobcderEntries(entries);
+		log.info("" + entries);
+		Assert.assertTrue(entries.get(0).getName().equals("p"));
+		Assert.assertTrue(entries.get(1).getName().equals("w"));
 	}
 	
 	@Test
-	public void connectAndList() throws SardineException {
+	public void connectAndList() throws LobcderException {
 		log.info("Connecting to LOBCDER service at {}", webDavUrl);
-		List<DavResource> resources = sardine.getResources(webDavUrl);
+		List<LobcderEntry> entries = lobcder.list("/");
 		
-		for (DavResource res : resources) {
-		     log.info(res.toString());
+		for(LobcderEntry entry : entries) {
+		     log.info(entry.toString());
 		}
 		
-		Assert.assertNotNull(resources);
+		Assert.assertNotNull(entries);
+		//the current directory should not be returned
+		Assert.assertTrue(!entries.contains(new LobcderEntry("/")));
 	}
 	
-	@Test
-	public void createDirectory() throws SardineException {
-		String directoryName = createLobcderDirectoryName(String.valueOf(System.currentTimeMillis()));
-		sardine.createDirectory(directoryName);
-		Assert.assertTrue(sardine.exists(directoryName));
-		
-		//let's clean up
-		sardine.delete(directoryName);
-		Assert.assertTrue(!sardine.exists(directoryName));
-	}
+//	@Test
+//	public void createDirectory() throws SardineException {
+//		String directoryName = createLobcderDirectoryName(String.valueOf(System.currentTimeMillis()));
+//		sardine.createDirectory(directoryName);
+//		Assert.assertTrue(sardine.exists(directoryName));
+//		
+//		//let's clean up
+//		sardine.delete(directoryName);
+//		Assert.assertTrue(!sardine.exists(directoryName));
+//	}
 	
 	private String createLobcderDirectoryName(String name) {
 		String baseUrl = webDavUrl;
@@ -79,26 +89,23 @@ public class BasicLobcderTest {
 			baseUrl += "/";
 		}
 		
-		return baseUrl + name;
+		return baseUrl + name + "/";
 	}
-
-	private SSLSocketFactory createNaiveSslSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
-		SSLContext sc = SSLContext.getInstance("SSL");
-		TrustManager[] trustAllCerts = new TrustManager[]{
-		    new X509TrustManager() {
-		        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-		            return null;
-		        }
-		        public void checkClientTrusted(
-		            java.security.cert.X509Certificate[] certs, String authType) {
-		        }
-		        public void checkServerTrusted(
-		            java.security.cert.X509Certificate[] certs, String authType) {
-		        }
-		    }
-		};
-		sc.init(null, trustAllCerts, new SecureRandom());
-
-		return new org.apache.http.conn.ssl.SSLSocketFactory(sc);
+	
+	private void sortLobcderEntries(List<LobcderEntry> entries) {
+		Collections.sort(entries, new Comparator<LobcderEntry>() {
+			@Override
+			public int compare(LobcderEntry le1, LobcderEntry le2) {
+				if(le1.isDirectory() == le2.isDirectory()) {
+					return le1.getName().compareTo(le2.getName());
+				} else {
+					if(le1.isDirectory()) {
+						return Integer.MIN_VALUE;
+					} else {
+						return Integer.MAX_VALUE;
+					}
+				}
+			}
+		});
 	}
 }

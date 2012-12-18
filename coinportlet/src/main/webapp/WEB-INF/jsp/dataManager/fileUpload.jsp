@@ -7,6 +7,7 @@
 <div class="coin-content coin-content-no-tabs">
 	<span class="coin-top-dir">LOBCDER file upload</span>
 	<form class="coin-form" method="post" action="${uploadFile}" enctype="multipart/form-data">
+		<input type="hidden" value="${path}"/>
 		<div class="coin-form-input">
 			<label for="file"><spring:message code="data.manager.portlet.select.file.to.upload.label"/></label>
 		    <input type="file" name="file"/>

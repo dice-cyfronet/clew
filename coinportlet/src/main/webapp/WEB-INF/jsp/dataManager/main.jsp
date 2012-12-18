@@ -2,12 +2,15 @@
 
 <portlet:renderURL var="uploadFile">
     <portlet:param name="action" value="uploadFile"/>
+    <portlet:param name="path" value="${path}"/>
 </portlet:renderURL>
 
 <div class="coin-content coin-content-no-tabs">
 	<span class="coin-top-dir">LOBCDER files</span>
 	<div id="files" class="coin-file-list">Loading files ...</div>
-	<portlet:resourceURL id="fileList" var="fileList"/>
+	<portlet:resourceURL id="fileList" var="fileList">
+		<portlet:param name="path" value="${path}"/>
+	</portlet:resourceURL>
 	<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	    	window.updateFiles = function () {
