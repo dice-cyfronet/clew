@@ -42,6 +42,7 @@
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>	
 
