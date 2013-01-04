@@ -195,8 +195,8 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public void deleteRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId, @FormParam("name") String name)
+	public void deleteRedirection(String contextId,
+			String asiId, String name)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
