@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,17 +36,25 @@ public class DataManagerPortlet {
 	private final Logger log = LoggerFactory.getLogger(DataManagerPortlet.class);
 	
 	private static final String MODEL_BEAN_LOBCDER_PATH = "path";
+	private static final String MODEL_BEAN_CREATE_DIRECTORY_REQUEST = "createDirectoryRequest";
 	
 	private static final String PARAM_ACTION = "action";
 	
 	private static final String ACTION_UPLOAD_FILE = "uploadFile";
+	private static final String ACTION_CREATE_DIRECTORY = "createDirectory";
+	private static final String ACTION_DELETE_RESOURCE = "deleteResource";
 	
 	@Autowired private LobcderClient lobcderClient;
+	@Autowired private Validator validator;
 	
 	@RequestMapping
 	public String doView(@RequestParam(value = MODEL_BEAN_LOBCDER_PATH, defaultValue = "/", required = false) String path, Model model) {
 		log.debug("Generating data portlet main view for location [{}]", path);
 		model.addAttribute(MODEL_BEAN_LOBCDER_PATH, path);
+		
+		if(!model.containsAttribute(MODEL_BEAN_CREATE_DIRECTORY_REQUEST)) {
+			model.addAttribute(MODEL_BEAN_CREATE_DIRECTORY_REQUEST, new CreateDirectoryRequest());
+		}
 		
 		return "dataManager/main";
 	}
@@ -81,31 +92,28 @@ public class DataManagerPortlet {
 		
 		//if we are looking at a subdirectory let's generate a back item
 		if(!path.equals("/")) {
-			int lastButOneSlashIndex = path.substring(0, path.length() - 1).lastIndexOf("/");
-			String backValue = null;
-			
-			if(lastButOneSlashIndex == -1) {
-				backValue = "/";
-			} else {
-				backValue = path.substring(0, lastButOneSlashIndex);
-			}
+			String backValue = getParentDirectory(path);
 
 			PortletURL url = response.createRenderURL();
 			url.setParameter(MODEL_BEAN_LOBCDER_PATH, backValue);
-			files.add(path + "..|" + url.toString() + "|");
+			files.add(path + "..|" + url.toString() + "||");
 		}
 		
 		for(LobcderEntry entry : entries) {
+			PortletURL deleteUrl = response.createActionURL();
+			deleteUrl.setParameter(PARAM_ACTION, ACTION_DELETE_RESOURCE);
+			deleteUrl.setParameter(MODEL_BEAN_LOBCDER_PATH, entry.getName());
+			
 			if(!entry.isDirectory()) {
 				ResourceURL url = response.createResourceURL();
 				url.setResourceID("getFile");
 				url.setParameter("filePath", entry.getName());
 				url.setParameter("size", "" + entry.getBytes());
-				files.add(entry.getName() + "|" + url.toString() + "|" + entry.getBytes() / 1024 + " kB");
+				files.add(entry.getName() + "|" + url.toString() + "|" + entry.getBytes() / 1024 + " kB|" + deleteUrl.toString());
 			} else {
 				PortletURL url = response.createRenderURL();
 				url.setParameter("path", entry.getName());
-				files.add(entry.getName() + "|" + url.toString() + "|");
+				files.add(entry.getName() + "|" + url.toString() + "||" + deleteUrl.toString());
 			}
 		}
 		
@@ -134,6 +142,42 @@ public class DataManagerPortlet {
 		response.setContentLength(size);
 		response.setContentType(contentType);
 		FileCopyUtils.copy(lobcderClient.get(filePath), response.getPortletOutputStream());
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_CREATE_DIRECTORY)
+	public void doActionCreateDirectory(@RequestParam(MODEL_BEAN_LOBCDER_PATH) String parentDirectory,
+			@ModelAttribute(MODEL_BEAN_CREATE_DIRECTORY_REQUEST) CreateDirectoryRequest createDirectoryRequest,
+			BindingResult errors, Model model, ActionResponse response) throws LobcderException {
+		log.debug("Directory creation request submitted for path [{}] and bean [{}]", parentDirectory,  createDirectoryRequest.toString());
+		validator.validate(createDirectoryRequest, errors);
+		
+		if(!errors.hasErrors()) {
+			lobcderClient.createDirectory(parentDirectory, createDirectoryRequest.getDirectoryName());
+			model.addAttribute(MODEL_BEAN_CREATE_DIRECTORY_REQUEST, new CreateDirectoryRequest());
+			log.info("Directory [{}] in [{}] successfully created", createDirectoryRequest.getDirectoryName(), parentDirectory);
+			response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, parentDirectory);
+		}
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_DELETE_RESOURCE)
+	public void doActionDeleteLobcderEntry(@RequestParam(MODEL_BEAN_LOBCDER_PATH) String path,
+			ActionResponse response) throws LobcderException {
+		log.debug("LOBCDER delete request processing for path [{}]", path);
+		lobcderClient.delete(path);
+		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, getParentDirectory(path));
+	}
+	
+	private String getParentDirectory(String path) {
+		int lastButOneSlashIndex = path.substring(0, path.length() - 1).lastIndexOf("/");
+		String backValue = null;
+		
+		if(lastButOneSlashIndex == -1) {
+			backValue = "/";
+		} else {
+			backValue = path.substring(0, lastButOneSlashIndex + 1);
+		}
+		
+		return backValue;
 	}
 	
 	private void sortLobcderEntries(List<LobcderEntry> entries) {

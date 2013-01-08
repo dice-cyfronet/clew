@@ -11,6 +11,7 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -22,6 +23,8 @@ import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.client.methods.DavMethod;
+import org.apache.jackrabbit.webdav.client.methods.DeleteMethod;
+import org.apache.jackrabbit.webdav.client.methods.MkColMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropFindMethod;
 import org.apache.jackrabbit.webdav.client.methods.PutMethod;
 import org.apache.jackrabbit.webdav.property.DavProperty;
@@ -125,6 +128,31 @@ public class LobcderClient {
 			return getMethod.getResponseBodyAsStream();
 		} catch (IOException e) {
 			String msg = "Could not download file from LOBCDER for base URL [" + baseUrl + "] and file path [" + filePath + "]";
+			log.error(msg, e);
+			throw new LobcderException(msg, e);
+		}
+	}
+	
+	public void createDirectory(String parentPath, String directoryName) throws LobcderException {
+		MkColMethod mkdirMethod = new MkColMethod(createLobcderPath(parentPath) + directoryName);
+		
+		try {
+			client.executeMethod(mkdirMethod);
+		} catch (IOException e) {
+			String msg = "Could not create new directory in LOBCDER for base URL [" + baseUrl + "], parent path [" + parentPath + "]" +
+					" and directory name [" + directoryName + "]";
+			log.error(msg, e);
+			throw new LobcderException(msg, e);
+		}
+	}
+	
+	public void delete(String path) throws LobcderException {
+		DeleteMethod deleteMethod = new DeleteMethod(createLobcderPath(path));
+		
+		try {
+			client.executeMethod(deleteMethod);
+		} catch (IOException e) {
+			String msg = "Could not delete LOBCDER resource for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
 		}

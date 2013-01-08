@@ -71,27 +71,6 @@ public class BasicLobcderTest {
 		Assert.assertTrue(!entries.contains(new LobcderEntry("/")));
 	}
 	
-//	@Test
-//	public void createDirectory() throws SardineException {
-//		String directoryName = createLobcderDirectoryName(String.valueOf(System.currentTimeMillis()));
-//		sardine.createDirectory(directoryName);
-//		Assert.assertTrue(sardine.exists(directoryName));
-//		
-//		//let's clean up
-//		sardine.delete(directoryName);
-//		Assert.assertTrue(!sardine.exists(directoryName));
-//	}
-	
-	private String createLobcderDirectoryName(String name) {
-		String baseUrl = webDavUrl;
-		
-		if(!webDavUrl.endsWith("/")) {
-			baseUrl += "/";
-		}
-		
-		return baseUrl + name + "/";
-	}
-	
 	private void sortLobcderEntries(List<LobcderEntry> entries) {
 		Collections.sort(entries, new Comparator<LobcderEntry>() {
 			@Override
