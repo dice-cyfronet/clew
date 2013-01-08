@@ -15,19 +15,13 @@
  */
 package pl.cyfronet.coin.api.beans;
 
-
 public class Endpoint {
-
+	private String id;
 	private String description;
-	
 	private String descriptor;
-	
 	private String invocationPath;
-	
 	private Integer port;
-	
 	private String serviceName;
-	
 	private EndpointType type; 
 	
 	public String getDescription() {
@@ -84,14 +78,17 @@ public class Endpoint {
 	public void setType(EndpointType type) {
 		this.type = type;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	@Override
 	public String toString() {
-		return "Endpoint [description=" + description + ", descriptor="
-				+ descriptor + ", invocationPath=" + invocationPath + ", port="
-				+ port + ", serviceName=" + serviceName + ", type=" + type
-				+ "]";
+		return "Endpoint [id=" + id + ", description=" + description
+				+ ", descriptor=" + descriptor + ", invocationPath="
+				+ invocationPath + ", port=" + port + ", serviceName="
+				+ serviceName + ", type=" + type + "]";
 	}
 }

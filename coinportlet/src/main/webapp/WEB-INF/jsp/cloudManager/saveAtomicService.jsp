@@ -21,46 +21,6 @@
 			<form:textarea path="description"/>
 			<form:errors path="description" cssClass="coin-error-panel"/>
 		</div>
-		<!-- 
-		<div class="coin-form-input">
-			<label for="descriptionEndpoint">
-				<spring:message code="cloud.manager.portlet.save.atomic.service.description.endpoint.label"/>
-			</label>
-			<form:input path="descriptionEndpoint"/>
-		</div>
-		-->
-		<div class="coin-form-input">
-			<label for="invocationName">
-				<spring:message code="cloud.manager.portlet.save.atomic.service.invocation.name.label"/>
-			</label>
-			<form:input path="invocationName"/>
-			<form:errors path="invocationName" cssClass="coin-error-panel"/>
-		</div>
-		<div class="coin-form-input">
-			<label for="invocationEndpoint">
-				<spring:message code="cloud.manager.portlet.save.atomic.service.invocation.endpoint.label"/>
-			</label>
-			<form:input path="invocationEndpoint"/>
-			<form:errors path="invocationEndpoint" cssClass="coin-error-panel"/>
-		</div>
-		<form:hidden path="invocationPort"/>
-		<!--
-		<div>
-			<label for="invocationPort">
-				<spring:message code="cloud.manager.portlet.save.atomic.service.invocation.port.label"/>
-			</label>
-			<form:input path="invocationPort"/>
-			<form:errors path="invocationPort" cssClass="portlet-msg-error"/>
-		</div>
-		-->
-		<!-- 
-		<div>
-			<label for="ports">
-				<spring:message code="cloud.manager.portlet.save.atomic.service.ports.label"/>
-			</label>
-			<form:input path="ports"/>
-		</div>
-		-->
 		<div class="coin-form-submit">
 			<input type='submit' value='<spring:message code='cloud.manager.portlet.submit.atomic.service.save.request'/>'/>
 		</div>

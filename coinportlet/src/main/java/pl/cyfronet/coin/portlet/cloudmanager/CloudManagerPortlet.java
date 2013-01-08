@@ -90,6 +90,9 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_UPLOAD_KEY_REQUEST = "uploadKeyRequest";
 	static final String MODEL_BEAN_ASI_REDIRECTIONS = "asiRedirections";
 	static final String MODEL_BEAN_WS_ENDPOINTS = "wsEndpoints";
+	static final String MODEL_BEAN_ENDPOINTS = "endpoints";
+	static final String MODEL_BEAN_ADD_ENDPOINT_REQUEST = "addEndpointRequest";
+	static final String MODEL_BEAN_ENDPOINT_TYPES = "endpointTypes";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -100,6 +103,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_WORKFLOW_TYPE = "workflowType";
 	static final String PARAM_INVOCATION_CODE = "atomicServiceInvocationCode";
 	static final String PARAM_USER_KEY_ID = "userKeyId";
+	static final String PARAM_ENDPOINT_ID = "endpointId";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -115,6 +119,9 @@ public class CloudManagerPortlet {
 	static final String ACTION_UPLOAD_KEY = "uploadKey";
 	static final String ACTION_REMOVE_KEY = "removeUserKey";
 	static final String ACTION_PICK_USER_KEY = "pickUserKey";
+	static final String ACTION_EDIT_ENDPOINTS = "editEndpoints";
+	static final String ACTION_ADD_ENDPOINT = "addEndpoint";
+	static final String ACTION_REMOVE_ENDPOINT = "removeEndpoint";
 	
 	@Value("${cloud.host.name}")
 	private String cloudHost;
@@ -311,7 +318,6 @@ public class CloudManagerPortlet {
 	public String doViewSaveAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId, Model model) {
 		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
 			SaveAtomicServiceRequest sasr = new SaveAtomicServiceRequest();
-			sasr.setInvocationPort("8443");
 			sasr.setAtomicServiceInstanceId(atomicServiceInstanceId);
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
@@ -335,9 +341,9 @@ public class CloudManagerPortlet {
 			atomicService.setDescription(saveAtomicServiceRequest.getDescription());
 			
 			Endpoint endpoint = new Endpoint();
-			endpoint.setInvocationPath(saveAtomicServiceRequest.getInvocationEndpoint());
-			endpoint.setPort(Integer.parseInt(saveAtomicServiceRequest.getInvocationPort()));
-			endpoint.setServiceName(saveAtomicServiceRequest.getInvocationName());
+			endpoint.setInvocationPath("/empty");
+			endpoint.setPort(8443);
+			endpoint.setServiceName("empty");
 			atomicService.setEndpoints(new ArrayList<Endpoint>());
 			atomicService.getEndpoints().add(endpoint);
 			atomicService.setPublished(true);
@@ -854,6 +860,73 @@ public class CloudManagerPortlet {
 		}
 		
 		return "cloudManager/pickUserKey";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_EDIT_ENDPOINTS)
+	public String doViewEditEndpoints(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			Model model, PortletRequest request) {
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
+		AtomicService atomicService = null;
+		
+		for(AtomicService as : atomicServices) {
+			if(as.getAtomicServiceId().equals(atomicServiceId)) {
+				atomicService = as;
+				break;
+			}
+		}
+		
+		List<Endpoint> endpoints = atomicService.getEndpoints();
+		
+		//TODO(DH): remove this when the id is set by CF ---
+		for(Endpoint endpoint : endpoints) {
+			endpoint.setId("temp");
+		}
+		//---
+		
+		model.addAttribute(MODEL_BEAN_ENDPOINTS, atomicService.getEndpoints());
+		
+		Map<String, String> endpointTypes = new HashMap<>();
+		
+		for(EndpointType type : EndpointType.values()) {
+			endpointTypes.put(type.name(), messages.getMessage("cloud.manager.portlet.endpoint." + type + ".label", null, null));
+		}
+		
+		model.addAttribute(MODEL_BEAN_ENDPOINT_TYPES, endpointTypes);
+		
+		if(!model.containsAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST)) {
+			AddEndpointRequest addEndpointRequest = new AddEndpointRequest();
+			addEndpointRequest.setAtomicServiceId(atomicServiceId);
+			model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, addEndpointRequest);
+		}
+		
+		return "cloudManager/editEndpoints";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_ADD_ENDPOINT)
+	public void doActionAddEndpoint(@ModelAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST) AddEndpointRequest addEndpointRequest,
+			BindingResult errors, Model model, PortletRequest request, ActionResponse response) {
+		log.debug("Adding new endpoint with request [{}]", addEndpointRequest);
+		validator.validate(addEndpointRequest, errors);
+		
+		if(!errors.hasErrors()) {
+			//TODO(DH): wait for the cloud facade API and implement proper actions
+			
+			AddEndpointRequest newEndpointRequest = new AddEndpointRequest();
+			newEndpointRequest.setAtomicServiceId(addEndpointRequest.getAtomicServiceId());
+			model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, newEndpointRequest);
+		}
+		
+		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, addEndpointRequest.getAtomicServiceId());
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_REMOVE_ENDPOINT)
+	public void doActionRemoveEndpoint(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_ENDPOINT_ID) String endpointId, ActionResponse response) {
+		log.debug("Removing endpoint for atomic service [{}] and endpoint id [{}]", atomicServiceId, endpointId);
+		//TODO(DH): wait for the cloud facade API and implement proper actions
+		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
 	}
 	
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
