@@ -66,7 +66,8 @@ public class BeanConverter {
 		asEndpoint.setPort(atEndpoint.getPort());
 		asEndpoint.setServiceName(atEndpoint.getService_name());
 		asEndpoint.setType(getEdnpointType(atEndpoint.getEndpoint_type()));
-
+		asEndpoint.setId(atEndpoint.getId());
+		
 		return asEndpoint;
 	}
 	
