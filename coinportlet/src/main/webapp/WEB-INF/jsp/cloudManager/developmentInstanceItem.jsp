@@ -13,9 +13,8 @@
 		</portlet:renderURL>
 		<c:set var="saveLinkId">saveLink-${atomicServiceInstance.id}</c:set>
 		<a id="${saveLinkId}" class="coin-link" href="${saveAtomicService}" style="visibility: hidden;">Save atomic service</a><br/>
-		
 		<c:set var="accessMethodsId">accessMethods-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${accessMethodsId}" href="#showAccessInfo" style="visibility: hidden;">Show access info</a>
+		<a class="coin-link" id="${accessMethodsId}" href="#showAccessInfo" style="visibility: hidden;">Show access info</a><br/>
 		
 		<portlet:actionURL var="shutdownAtomicServiceInstance">
 			<portlet:param name="action" value="stopDevInstance"/>
@@ -23,7 +22,14 @@
 			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a>
+		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a><br/>
+		
+		<portlet:renderURL var="editEndpoints">
+			<portlet:param name="action" value="editEndpoints"/>
+			<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
+		</portlet:renderURL>
+		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
+		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Edit endpoints</a>
 	</span>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -88,7 +94,7 @@
 			    							if(creds[0] == 'ssh') {
 			    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
 			    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
-			    										'monospace; white-space: nowrap;">ssh root@{host} -i {private_key_file}</span>)</span><br/>'
+			    										'monospace; white-space: nowrap;">ssh root@{host} -i {private_key_file}</span>)</span><br/>';
 			    							}
 		    							}
 		    							
@@ -116,6 +122,10 @@
 	    					});
 	    					timeoutSet = true;
 	    				}
+	    				
+	    				if(jQuery('#${editEndpointsId}').css('visibility') === 'hidden') {
+	    					jQuery('#${editEndpointsId}').css('visibility', 'visible');
+	    				}
 	    			} else {
 	    				if(jQuery('#${saveLinkId}').css('visibility') === 'visible') {
 	    					jQuery('#${saveLinkId}').css('visibility', 'hidden');
@@ -123,6 +133,10 @@
 	    				
 						if(jQuery('#${accessMethodsId}').css('visibility') === 'visible') {
 							jQuery('#${accessMethodsId}').css('visibility', 'hidden');
+	    				}
+						
+						if(jQuery('#${editEndpointsId}').css('visibility') === 'visible') {
+							jQuery('#${editEndpointsId}').css('visibility', 'hidden');
 	    				}
 	    			}
 	    			

@@ -69,6 +69,7 @@
     	<property name="workflowManagement" ref="wm-client"/>
     	<property name="cloudFacade" ref="cf-client"/>
     	<property name="keyManagement" ref="km-client"/>
+    	<property name="securityPolicyService" ref="sps-client"/>
     </bean>
     <jaxrs:client id="wm-client" address="${cloud.facade.wm.url}"
 			serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
@@ -97,6 +98,14 @@
 			<ref bean="keyServiceExceptionMapper" />
 		</jaxrs:providers>		
 	</jaxrs:client>
+	<jaxrs:client id="sps-client" address="${cloud.facade.sps.url}"
+			serviceClass="pl.cyfronet.coin.api.SecurityPolicyService"
+			threadSafe="true"
+			inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>		
+	</jaxrs:client>
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
 	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
 	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
@@ -110,4 +119,11 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 	</jaxrs:client>
+	
+	<!-- LOBCDER beans -->
+	<bean class="pl.cyfronet.coin.portlet.lobcder.LobcderClient" init-method="initialize">
+		<property name="baseUrl" value="${lobcder.url}"/>
+		<property name="username" value="${lobcder.user}"/>
+		<property name="password" value="${lobcder.password}"/>
+	</bean>
 </beans>

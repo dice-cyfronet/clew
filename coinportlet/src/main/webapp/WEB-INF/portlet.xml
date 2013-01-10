@@ -46,4 +46,18 @@
         </supports>
         <resource-bundle>coin-login-portlet</resource-bundle>
     </portlet>
+    <portlet>
+        <portlet-name>coin-policy-manager</portlet-name>
+        <display-name>Security Policy Manager</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>/WEB-INF/portlet-config/coin-policy-manager-portlet.xml</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <resource-bundle>coin-policy-manager-portlet</resource-bundle>
+    </portlet>
 </portlet-app>
