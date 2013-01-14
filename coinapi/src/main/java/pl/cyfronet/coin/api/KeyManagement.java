@@ -60,7 +60,7 @@ public interface KeyManagement {
 	 *             Currently only ssh-rsa and ssh-dss are supported.
 	 */
 	@POST
-	@Path("/add")
+	@Path("/")
 	String add(@FormParam("keyName") String keyName,
 			@FormParam("publicKey") String publicKey)
 			throws KeyAlreadyExistsException, WrongKeyFormatException;

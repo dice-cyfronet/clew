@@ -22,68 +22,64 @@ public class Endpoint {
 	private String invocationPath;
 	private Integer port;
 	private String serviceName;
-	private EndpointType type; 
-	
+	private EndpointType type;
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String serviceDescription) {
 		this.description = serviceDescription;
 	}
+
 	public String getInvocationPath() {
 		return invocationPath;
 	}
+
 	public void setInvocationPath(String invocationPath) {
 		this.invocationPath = invocationPath;
 	}
+
 	public Integer getPort() {
 		return port;
 	}
+
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	/**
-	 * @return the descriptor
-	 */
+
 	public String getDescriptor() {
 		return descriptor;
 	}
-	/**
-	 * @param descriptor the descriptor to set
-	 */
+
 	public void setDescriptor(String descriptor) {
 		this.descriptor = descriptor;
 	}
-	/**
-	 * @return the serviceName
-	 */
+
 	public String getServiceName() {
 		return serviceName;
 	}
-	/**
-	 * @param serviceName the serviceName to set
-	 */
+
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
-	/**
-	 * @return the type
-	 */
+
 	public EndpointType getType() {
 		return type;
 	}
-	/**
-	 * @param type the type to set
-	 */
+
 	public void setType(EndpointType type) {
 		this.type = type;
 	}
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	@Override
 	public String toString() {
 		return "Endpoint [id=" + id + ", description=" + description

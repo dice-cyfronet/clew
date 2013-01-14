@@ -31,16 +31,17 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class CoinedAsserts {
 
-	public static void assertATAndAs(ApplianceType at, AtomicService as, String... endpointsPayload) {
-		assertEquals(at.getName(), as.getName());
-		assertEquals(at.getDescription(), as.getDescription());
-		assertEquals(at.isHttp(), as.isHttp());
-		assertEquals(at.isPublished(), as.isPublished());
-		assertEquals(at.isHttp() && at.isIn_proxy(), as.isHttp());
-		assertEquals(at.isScalable(), as.isScalable());
-		assertEquals(at.isShared(), as.isShared());
-		assertEquals(at.isVnc(), as.isVnc());
-		assertEquals(at.getTemplates_count() > 0, as.isActive());
+	public static void assertATAndAs(ApplianceType at, AtomicService as,
+			String... endpointsPayload) {
+		assertEquals(as.getName(), at.getName());
+		assertEquals(as.getDescription(), at.getDescription());
+		assertEquals(as.isHttp(), at.isHttp());
+		assertEquals(as.isPublished(), at.isPublished());
+		assertEquals(as.isHttp(), at.isHttp() && at.isIn_proxy());
+		assertEquals(as.isScalable(), at.isScalable());
+		assertEquals(as.isShared(), at.isShared());
+		assertEquals(as.isVnc(), at.isVnc());
+		assertEquals(as.isActive(), at.getTemplates_count() > 0);
 
 		List<ATEndpoint> atEndpoints = at.getEndpoints();
 		if (atEndpoints != null) {
@@ -48,25 +49,27 @@ public class CoinedAsserts {
 
 			assertNotNull(asEndpoints);
 			int atSize = atEndpoints.size();
-			assertEquals(atSize, asEndpoints.size());
+			assertEquals(asEndpoints.size(), atSize);
 
 			for (int i = 0; i < atSize; i++) {
-				assertAtAndAsEndpoint(endpointsPayload[i], atEndpoints.get(i), asEndpoints.get(i));
+				assertAtAndAsEndpoint(endpointsPayload[i], atEndpoints.get(i),
+						asEndpoints.get(i));
 			}
 		}
 	}
 
-	private static void assertAtAndAsEndpoint(String descriptor, ATEndpoint atEndpoint,
-			Endpoint asEndpoint) {
+	private static void assertAtAndAsEndpoint(String descriptor,
+			ATEndpoint atEndpoint, Endpoint asEndpoint) {
 		assertEquals(asEndpoint.getDescription(), atEndpoint.getDescription());
 		assertEquals(asEndpoint.getDescriptor(), descriptor);
 		EndpointType type = "WS"
 				.equalsIgnoreCase(atEndpoint.getEndpoint_type()) ? EndpointType.WS
 				: EndpointType.REST;
-		assertEquals(type, asEndpoint.getType());
-		assertEquals(atEndpoint.getInvocation_path(),
-				asEndpoint.getInvocationPath());
-		assertEquals(atEndpoint.getPort(), asEndpoint.getPort());
-		assertEquals(atEndpoint.getService_name(), asEndpoint.getServiceName());
+		assertEquals(asEndpoint.getType(), type);
+		assertEquals(asEndpoint.getInvocationPath(),
+				atEndpoint.getInvocation_path());
+		assertEquals(asEndpoint.getPort(), atEndpoint.getPort());
+		assertEquals(asEndpoint.getServiceName(), atEndpoint.getService_name());
+		assertEquals(asEndpoint.getId(), atEndpoint.getId());
 	}
 }
