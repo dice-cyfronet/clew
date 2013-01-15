@@ -23,7 +23,7 @@
     	<property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
         	<list>
-        		<value>environmentProperties</value><!-- system properties will override the ones in the property files -->
+        		<value>environmentProperties</value><!-- system properties are the last fallback -->
         		<value>classpath:coinportlet-constants.properties</value>
         		<value>classpath:coinportlet-constants-override.properties</value>
         	</list>
