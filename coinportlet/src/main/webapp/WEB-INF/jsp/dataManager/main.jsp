@@ -44,10 +44,15 @@
 			    			var url = file.split('|')[1];
 			    			var size = file.split('|')[2];
 			    			var deleteUrl = file.split('|')[3];
+			    			var metadataUrl = file.split('|')[4];
 			    			files += '<li><a href="' + url + '" class="coin-link">' + fileName + '</a>';
 			    			
 			    			if(deleteUrl !== "") {
 			    				files += '<a href="' + deleteUrl + '" class="coin-link" style="margin-left: 10px; float: right;">Delete</a>';
+			    			}
+			    			
+			    			if(metadataUrl !== "") {
+			    				files += '<a href="' + metadataUrl + '" class="coin-link" style="margin-left: 10px; float: right;">Metadata</a>';
 			    			}
 			    			
 			    			files += '<span class="coin-file-size">' + size + '</span>' +

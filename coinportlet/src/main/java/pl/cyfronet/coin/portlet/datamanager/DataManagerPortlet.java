@@ -37,12 +37,14 @@ public class DataManagerPortlet {
 	
 	private static final String MODEL_BEAN_LOBCDER_PATH = "path";
 	private static final String MODEL_BEAN_CREATE_DIRECTORY_REQUEST = "createDirectoryRequest";
+	private static final String MODEL_BEAN_LOBCDER_PARENT_PATH = "parentPath";
 	
 	private static final String PARAM_ACTION = "action";
 	
 	private static final String ACTION_UPLOAD_FILE = "uploadFile";
 	private static final String ACTION_CREATE_DIRECTORY = "createDirectory";
 	private static final String ACTION_DELETE_RESOURCE = "deleteResource";
+	private static final String ACTION_METADATA = "metadata";
 	
 	@Autowired private LobcderClient lobcderClient;
 	@Autowired private Validator validator;
@@ -67,7 +69,8 @@ public class DataManagerPortlet {
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_UPLOAD_FILE)
-	public void doActionUploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path, ActionResponse response) throws LobcderException, IOException {
+	public void doActionUploadFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("path") String path, ActionResponse response) throws LobcderException, IOException {
 		log.info("Uploading file [{}] to path [{}]", file.getName(), path);
 		
 		if(!file.isEmpty()) {
@@ -96,7 +99,7 @@ public class DataManagerPortlet {
 
 			PortletURL url = response.createRenderURL();
 			url.setParameter(MODEL_BEAN_LOBCDER_PATH, backValue);
-			files.add(path + "..|" + url.toString() + "||");
+			files.add(path + "..|" + url.toString() + "|||");
 		}
 		
 		for(LobcderEntry entry : entries) {
@@ -104,16 +107,23 @@ public class DataManagerPortlet {
 			deleteUrl.setParameter(PARAM_ACTION, ACTION_DELETE_RESOURCE);
 			deleteUrl.setParameter(MODEL_BEAN_LOBCDER_PATH, entry.getName());
 			
+			PortletURL metadataUrl = response.createRenderURL();
+			metadataUrl.setParameter(PARAM_ACTION, ACTION_METADATA);
+			metadataUrl.setParameter(MODEL_BEAN_LOBCDER_PATH, entry.getName());
+			metadataUrl.setParameter(MODEL_BEAN_LOBCDER_PARENT_PATH, path);
+			
 			if(!entry.isDirectory()) {
 				ResourceURL url = response.createResourceURL();
 				url.setResourceID("getFile");
 				url.setParameter("filePath", entry.getName());
 				url.setParameter("size", "" + entry.getBytes());
-				files.add(entry.getName() + "|" + url.toString() + "|" + entry.getBytes() / 1024 + " kB|" + deleteUrl.toString());
+				files.add(entry.getName() + "|" + url.toString() + "|" + entry.getBytes() / 1024 + " kB|" +
+						deleteUrl.toString() + "|" + metadataUrl.toString());
 			} else {
 				PortletURL url = response.createRenderURL();
 				url.setParameter("path", entry.getName());
-				files.add(entry.getName() + "|" + url.toString() + "||" + deleteUrl.toString());
+				files.add(entry.getName() + "|" + url.toString() + "||" +
+						deleteUrl.toString() + "|" + metadataUrl.toString());
 			}
 		}
 		
@@ -165,6 +175,15 @@ public class DataManagerPortlet {
 		log.debug("LOBCDER delete request processing for path [{}]", path);
 		lobcderClient.delete(path);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, getParentDirectory(path));
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_METADATA)
+	public String doViewMetadata(@RequestParam(MODEL_BEAN_LOBCDER_PATH) String path,
+			@RequestParam(MODEL_BEAN_LOBCDER_PARENT_PATH) String parentPath, Model model) {
+		model.addAttribute(MODEL_BEAN_LOBCDER_PATH, path);
+		model.addAttribute(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
+		
+		return "dataManager/metadata";
 	}
 	
 	private String getParentDirectory(String path) {
