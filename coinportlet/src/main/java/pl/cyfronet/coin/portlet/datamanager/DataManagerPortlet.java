@@ -29,6 +29,8 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import pl.cyfronet.coin.portlet.lobcder.LobcderClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderEntry;
 import pl.cyfronet.coin.portlet.lobcder.LobcderException;
+import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
+import pl.cyfronet.coin.portlet.metadata.Metadata;
 
 @Controller
 @RequestMapping("VIEW")
@@ -38,6 +40,7 @@ public class DataManagerPortlet {
 	private static final String MODEL_BEAN_LOBCDER_PATH = "path";
 	private static final String MODEL_BEAN_CREATE_DIRECTORY_REQUEST = "createDirectoryRequest";
 	private static final String MODEL_BEAN_LOBCDER_PARENT_PATH = "parentPath";
+	private static final String MODEL_BEAN_METADATA = "metadata";
 	
 	private static final String PARAM_ACTION = "action";
 	
@@ -45,6 +48,7 @@ public class DataManagerPortlet {
 	private static final String ACTION_CREATE_DIRECTORY = "createDirectory";
 	private static final String ACTION_DELETE_RESOURCE = "deleteResource";
 	private static final String ACTION_METADATA = "metadata";
+	private static final String ACTION_UPDATE_METADATA = "updateMetadata";
 	
 	@Autowired private LobcderClient lobcderClient;
 	@Autowired private Validator validator;
@@ -179,13 +183,36 @@ public class DataManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_METADATA)
 	public String doViewMetadata(@RequestParam(MODEL_BEAN_LOBCDER_PATH) String path,
-			@RequestParam(MODEL_BEAN_LOBCDER_PARENT_PATH) String parentPath, Model model) {
+			@RequestParam(MODEL_BEAN_LOBCDER_PARENT_PATH) String parentPath, Model model) throws LobcderException {
 		model.addAttribute(MODEL_BEAN_LOBCDER_PATH, path);
 		model.addAttribute(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
+		
+		if(!model.containsAttribute(MODEL_BEAN_METADATA)) {
+			model.addAttribute(MODEL_BEAN_METADATA, getMetadata(path));
+		}
 		
 		return "dataManager/metadata";
 	}
 	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_UPDATE_METADATA)
+	public void doActionUpdateMetadata(@RequestParam(MODEL_BEAN_LOBCDER_PATH) String path,
+			@RequestParam(MODEL_BEAN_LOBCDER_PARENT_PATH) String parentPath,
+			@ModelAttribute(MODEL_BEAN_METADATA) Metadata metadata, BindingResult errors,
+			ActionResponse response) throws LobcderException {
+		lobcderClient.updateMetadata(path, metadata.getLobcderWebDavMetadata());
+		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, path);
+		response.setRenderParameter(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
+	}
+	
+	private Object getMetadata(String path) throws LobcderException {
+		LobcderWebDavMetadata lobcderWebDavMetadata = lobcderClient.getMetadata(path);
+		
+		Metadata metadata = new Metadata();
+		metadata.setLobcderWebDavMetadata(lobcderWebDavMetadata);
+		
+		return metadata;
+	}
+
 	private String getParentDirectory(String path) {
 		int lastButOneSlashIndex = path.substring(0, path.length() - 1).lastIndexOf("/");
 		String backValue = null;

@@ -16,10 +16,15 @@ import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.DavException;
 import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
+import org.apache.jackrabbit.webdav.Status;
 import org.apache.jackrabbit.webdav.client.methods.DavMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropFindMethod;
+import org.apache.jackrabbit.webdav.client.methods.PropPatchMethod;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
+import org.apache.jackrabbit.webdav.property.DavPropertySet;
+import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
+import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,9 +64,33 @@ public class BasicWebDavTest {
 	}
 
 	@Test
+	public void addProperties() throws IOException, DavException {
+		DavPropertySet setProperties = new DavPropertySet();
+		setProperties.add(new DefaultDavProperty<Boolean>("dri-supervised", true,
+				Namespace.getNamespace("c", "custom:")));
+		setProperties.add(new DefaultDavProperty<String>("dri-checksum", "checksum",
+				Namespace.getNamespace("c", "custom:")));
+		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", "validationDate",
+				Namespace.getNamespace("c", "custom:")));
+		
+		DavMethod propPatch = new PropPatchMethod(webDavUrl + "/test/", setProperties,
+				new DavPropertyNameSet());
+		client.executeMethod(propPatch);
+		
+		MultiStatus multiStatus = propPatch.getResponseBodyAsMultiStatus();
+		MultiStatusResponse[] responses = multiStatus.getResponses();
+
+		for (int i = 0; i < responses.length; i++) {
+			MultiStatusResponse response = responses[i];
+			
+			for(Status status : response.getStatus()) {
+				log.info("Status: {} for ", status.getStatusCode());
+			}
+		}
+	}
+
+	@Test
 	public void testPropfind() throws IOException, DavException {
-		DavPropertyNameSet properties = new DavPropertyNameSet();
-		properties.add(DavPropertyName.GETCONTENTLENGTH);
 		DavMethod pFind = new PropFindMethod(webDavUrl,
 				DavConstants.PROPFIND_ALL_PROP, DavConstants.DEPTH_INFINITY);
 		client.executeMethod(pFind);
@@ -71,7 +100,22 @@ public class BasicWebDavTest {
 
 		for (int i = 0; i < responses.length; i++) {
 			MultiStatusResponse response = responses[i];
-			log.info("{}: {}", response.getHref(), response.getProperties(200).getPropertyNames());
+			log.info("Resource: {}", response.getHref());
+			
+			for(Status status : response.getStatus()) {
+				log.info("\tStatus code: {}", status.getStatusCode());
+				
+				StringBuilder props = new StringBuilder();
+				
+				for(DavPropertyName propName : response.getProperties(status.getStatusCode()).
+						getPropertyNames()) {
+					props.append(propName.getNamespace().getURI()).
+							append(propName.getNamespace().getPrefix()).append(":").
+							append(propName.getName()).append(", ");
+				}
+				
+				log.info("\t\t{}", props.toString());
+			}
 		}
 	}
 }
