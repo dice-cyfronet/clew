@@ -1,8 +1,11 @@
 package pl.cyfronet.coin.portlet.lobcder;
 
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+
 public class LobcderWebDavMetadata {
 	private boolean driSupervised;
-	private String driChecksum;
+	@DecimalMin("0") @DecimalMax("9223372036854775807") private String driChecksum;
 	private String driLastValidationDateMs;
 	
 	public boolean isDriSupervised() {
@@ -22,5 +25,12 @@ public class LobcderWebDavMetadata {
 	}
 	public void setDriLastValidationDateMs(String driLastValidationDateMs) {
 		this.driLastValidationDateMs = driLastValidationDateMs;
+	}
+	
+	@Override
+	public String toString() {
+		return "LobcderWebDavMetadata [driSupervised=" + driSupervised
+				+ ", driChecksum=" + driChecksum + ", driLastValidationDateMs="
+				+ driLastValidationDateMs + "]";
 	}
 }

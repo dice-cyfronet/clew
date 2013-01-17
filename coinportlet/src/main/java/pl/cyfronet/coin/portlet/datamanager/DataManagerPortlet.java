@@ -199,7 +199,9 @@ public class DataManagerPortlet {
 			@RequestParam(MODEL_BEAN_LOBCDER_PARENT_PATH) String parentPath,
 			@ModelAttribute(MODEL_BEAN_METADATA) Metadata metadata, BindingResult errors,
 			ActionResponse response) throws LobcderException {
+		log.debug("Updating metadata with the following bean: {}", metadata);
 		lobcderClient.updateMetadata(path, metadata.getLobcderWebDavMetadata());
+		response.setRenderParameter(PARAM_ACTION, ACTION_METADATA);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, path);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
 	}

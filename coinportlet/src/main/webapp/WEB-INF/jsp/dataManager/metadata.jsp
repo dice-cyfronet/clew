@@ -3,10 +3,11 @@
 <portlet:renderURL var="goBack">
 	<portlet:param name="path" value="${parentPath}"/>
 </portlet:renderURL>
-<portlet:renderURL var="updateMetadata">
+<portlet:actionURL var="updateMetadata">
+	<portlet:param name="action" value="updateMetadata"/>
 	<portlet:param name="path" value="${path}"/>
 	<portlet:param name="parentPath" value="${parentPath}"/>
-</portlet:renderURL>
+</portlet:actionURL>
 
 <div class="coin-content coin-content-no-tabs">
 	<span class="coin-top-dir"><spring:message code="data.manager.portlet.metadata.header" arguments="${path}"/></span>

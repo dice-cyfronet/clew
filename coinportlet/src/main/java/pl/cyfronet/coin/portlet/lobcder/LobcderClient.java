@@ -42,6 +42,8 @@ import com.sun.xml.bind.v2.runtime.output.NamespaceContextImpl;
 public class LobcderClient {
 	private static final Logger log = org.slf4j.LoggerFactory.getLogger(LobcderClient.class);
 	
+	private static Namespace CUSTOM_NAMESPACE = Namespace.getNamespace("c", "custom:");
+	
 	private String baseUrl;
 	private String username;
 	private String password;
@@ -168,9 +170,9 @@ public class LobcderClient {
 	public LobcderWebDavMetadata getMetadata(String path) throws LobcderException {
 		LobcderWebDavMetadata lobcderWebDavMetadata = new LobcderWebDavMetadata();
 		DavPropertyNameSet properties = new DavPropertyNameSet();
-		properties.add(DavPropertyName.create("dri-supervised", Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
-		properties.add(DavPropertyName.create("dri-checksum", Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
-		properties.add(DavPropertyName.create("dri-last-validation-date-ms", Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+		properties.add(DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE));
+		properties.add(DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE));
+		properties.add(DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE));
 
 		try {
 			DavMethod propFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_0);
@@ -182,21 +184,21 @@ public class LobcderClient {
 		    if(responses.length > 0) {
 		    	MultiStatusResponse response = responses[0];
 		    	DavProperty driSupervised = response.getProperties(200).
-		    			get(DavPropertyName.create("dri-supervised", Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+		    			get(DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE));
 		    	
 		    	if(driSupervised != null) {
 		    		lobcderWebDavMetadata.setDriSupervised(Boolean.parseBoolean((String) driSupervised.getValue()));
 		    	}
 		    	
 		    	DavProperty driChecksum = response.getProperties(200).
-		    			get(DavPropertyName.create("dri-checksum", Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+		    			get(DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE));
 		    	
 		    	if(driChecksum != null) {
 		    		lobcderWebDavMetadata.setDriChecksum((String) driChecksum.getValue());
 		    	}
 		    	
 		    	DavProperty driLastValidationDateMs = response.getProperties(200).
-		    			get(DavPropertyName.create("dri-last-validation-date-ms", Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+		    			get(DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE));
 		    	
 		    	if(driLastValidationDateMs != null) {
 		    		lobcderWebDavMetadata.setDriLastValidationDateMs((String) driLastValidationDateMs.getValue());
@@ -213,15 +215,15 @@ public class LobcderClient {
 	
 	public void updateMetadata(String path, LobcderWebDavMetadata lobcderWebDavMetadata) throws LobcderException {
 		DavPropertySet setProperties = new DavPropertySet();
-		setProperties.add(new DefaultDavProperty<Boolean>("dri-supervised", lobcderWebDavMetadata.isDriSupervised(),
-				Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+		setProperties.add(new DefaultDavProperty<String>("dri-supervised", String.valueOf(lobcderWebDavMetadata.isDriSupervised()),
+				CUSTOM_NAMESPACE));
 		setProperties.add(new DefaultDavProperty<String>("dri-checksum", lobcderWebDavMetadata.getDriChecksum(),
-				Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+				CUSTOM_NAMESPACE));
 		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", lobcderWebDavMetadata.getDriLastValidationDateMs(),
-				Namespace.getNamespace("custom", "http://vph-share.eu/lobcder")));
+				CUSTOM_NAMESPACE));
 		
 		try {
-			DavMethod propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, null);
+			DavMethod propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
 			client.executeMethod(propPatch);
 		} catch (IOException e) {
 			String msg = "Could not set LOBCDER metadata for base URL [" + baseUrl + "] and path [" + path + "]";

@@ -64,18 +64,17 @@ public class BasicWebDavTest {
 		client.setHostConfiguration(hostConfig);
 	}
 
-	@Ignore("Awaiting fixed on the webdav server side")
 	@Test
 	public void addProperties() throws IOException, DavException {
 		DavPropertySet setProperties = new DavPropertySet();
 		setProperties.add(new DefaultDavProperty<Boolean>("dri-supervised", true,
 				Namespace.getNamespace("c", "custom:")));
-		setProperties.add(new DefaultDavProperty<String>("dri-checksum", "checksum",
+		setProperties.add(new DefaultDavProperty<String>("dri-checksum", "2500",
 				Namespace.getNamespace("c", "custom:")));
-		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", "validationDate",
-				Namespace.getNamespace("c", "custom:")));
+//		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", "100",
+//				Namespace.getNamespace("c", "custom:")));
 		
-		DavMethod propPatch = new PropPatchMethod(webDavUrl + "/test/", setProperties,
+		DavMethod propPatch = new PropPatchMethod(webDavUrl + "/test", setProperties,
 				new DavPropertyNameSet());
 		client.executeMethod(propPatch);
 		
@@ -86,15 +85,19 @@ public class BasicWebDavTest {
 			MultiStatusResponse response = responses[i];
 			
 			for(Status status : response.getStatus()) {
-				log.info("Status: {} for ", status.getStatusCode());
+				log.info("Status: {} for {}", status.getStatusCode(), response.getHref());
 			}
 		}
 	}
 
 	@Test
 	public void testPropfind() throws IOException, DavException {
-		DavMethod pFind = new PropFindMethod(webDavUrl,
-				DavConstants.PROPFIND_ALL_PROP, DavConstants.DEPTH_INFINITY);
+		DavPropertyNameSet properties = new DavPropertyNameSet();
+		properties.add("dri-checksum", Namespace.getNamespace("c", "custom:"));
+//		DavMethod pFind = new PropFindMethod(webDavUrl,
+//				DavConstants.PROPFIND_ALL_PROP, DavConstants.DEPTH_INFINITY);
+		DavMethod pFind = new PropFindMethod(webDavUrl + "/test",
+				properties, DavConstants.DEPTH_INFINITY);
 		client.executeMethod(pFind);
 
 		MultiStatus multiStatus = pFind.getResponseBodyAsMultiStatus();
@@ -114,6 +117,9 @@ public class BasicWebDavTest {
 					props.append(propName.getNamespace().getURI()).
 							append(propName.getNamespace().getPrefix()).append(":").
 							append(propName.getName()).append(", ");
+					String value = (String) response.getProperties(200).get(propName).getValue();
+					log.info("Is invisible: {}", response.getProperties(200).get(propName).isInvisibleInAllprop());
+					log.info("DRI Checksum: " + value);
 				}
 				
 				log.info("\t\t{}", props.toString());
