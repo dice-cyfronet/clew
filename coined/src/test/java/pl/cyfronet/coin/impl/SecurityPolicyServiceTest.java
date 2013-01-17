@@ -223,4 +223,79 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	private void whenDeleteNonexistingSecurityPolicy() {
 		whenDeleteSecurityPolicy();
 	}
+
+	@Test
+	public void shouldAddSecurityPolicyWithNameSpace() throws Exception {
+		givenEmptySecurityPoliciesWaitingForSecPolicyWithNamespace();
+		whenAddingSecurityPolicyWithNamespace();
+		thenSecurityPolicyWithNamespaceAdded();
+	}
+
+	private void givenEmptySecurityPoliciesWaitingForSecPolicyWithNamespace() {
+		uploadAction = mock(UploadSecurityPolicyAction.class);
+		when(
+				actionFactory.createUploadSecurityPolicyAction(
+						policyNameWithNamespace, givenSecurityPolicyContent,
+						false)).thenReturn(uploadAction);
+	}
+
+	private void whenAddingSecurityPolicyWithNamespace() {
+		securityPolicyClient.updateSecurityPolicy(policyNameWithNamespace,
+				givenSecurityPolicyContent, false);
+	}
+
+	private void thenSecurityPolicyWithNamespaceAdded() {
+		verify(actionFactory, times(1)).createUploadSecurityPolicyAction(
+				policyNameWithNamespace, givenSecurityPolicyContent, false);
+	}
+
+	@Test
+	public void shouldRemoveSecurityPolicyWithNamespace() throws Exception {
+		givenSecurityPolicyWithNamespaceForDelete();
+		whenDeleteSecurityPolicyWithNamespace();
+		thenSecurityWithNamespaceRemoved();
+	}
+
+	private void givenSecurityPolicyWithNamespaceForDelete() {
+		deleteAction = mock(DeleteSecurityPolicyAction.class);
+		when(
+				actionFactory
+						.createDeleteSecurityPolicyAction(policyNameWithNamespace))
+				.thenReturn(deleteAction);
+	}
+
+	private void whenDeleteSecurityPolicyWithNamespace() {
+		securityPolicyClient.deleteSecurityPolicy(policyNameWithNamespace);
+	}
+
+	private void thenSecurityWithNamespaceRemoved() {
+		verify(actionFactory, times(1)).createDeleteSecurityPolicyAction(
+				policyNameWithNamespace);
+	}
+
+	@Test
+	public void shouldGetSecurityPolicyWithNamespace() throws Exception {
+		givenSecurityPolicyWithNamespace();
+		whenGetSecurityPolicyWithNamespace();
+		thenSecurityPolicyWithNamespacePayloadReceived();
+	}
+
+	private void givenSecurityPolicyWithNamespace() {
+		securityPolicyContent = null;
+		GetSecurityPolicyAction action = mock(GetSecurityPolicyAction.class);
+		when(action.execute()).thenReturn(givenSecurityPolicyContent);
+		when(
+				actionFactory
+						.createGetSecurityPolicyAction(policyNameWithNamespace))
+				.thenReturn(action);
+	}
+
+	private void whenGetSecurityPolicyWithNamespace() {
+		securityPolicyContent = securityPolicyClient
+				.getSecurityPolicy(policyNameWithNamespace);
+	}
+
+	private void thenSecurityPolicyWithNamespacePayloadReceived() {
+		assertEquals(securityPolicyContent, givenSecurityPolicyContent);
+	}
 }
