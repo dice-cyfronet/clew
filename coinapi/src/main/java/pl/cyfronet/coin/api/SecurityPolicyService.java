@@ -33,25 +33,25 @@ import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @Path("/")
-public interface SecurityPolicyService {
-
-	@GET
-	@Path("/{policyName}")
-	String getSecurityPolicy(@PathParam("policyName") String policyName);
+public interface SecurityPolicyService {	
 
 	@GET
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON })
 	List<String> getPoliciesNames();
 
+	@GET
+	@Path("/{policyName : .+}")
+	String getSecurityPolicy(@PathParam("policyName") String policyName);
+	
 	@POST
-	@Path("/{policyName}")
+	@Path("/{policyName : .+}")
 	void updateSecurityPolicy(@PathParam("policyName") String policyName,
 			String policyContent, @QueryParam("overwrite") boolean overwrite)
 			throws SecurityPolicyAlreadyExistException;
 
 	@DELETE
-	@Path("/{policyName}")
+	@Path("/{policyName : .+}")
 	void deleteSecurityPolicy(@PathParam("policyName") String policyName)
 			throws SecurityPolicyNotFoundException;
 }
