@@ -196,9 +196,13 @@ body {
 						<li>(required) <strong>asConfigId</strong> atomic service
 							configuration id
 						</li>
-						<li>(required) <strong>name</strong> atomic service instance name</li>
-						<li>(optional query parmeter <strong>key</strong> key ID which should be injected while 
-						starting ASI. Key will be injected only when workflow is in development mode.</li>
+						<li>(required) <strong>name</strong> atomic service instance
+							name
+						</li>
+						<li>(optional query parmeter <strong>key</strong> key ID
+							which should be injected while starting ASI. Key will be injected
+							only when workflow is in development mode.
+						</li>
 					</ul>
 
 					<p>
@@ -237,28 +241,30 @@ body {
 					<ul>
 						<li><strong>atomicServiceId</strong> - atomic service id</li>
 						<li><strong>name</strong> - atomic service name</li>
-						<li><strong>description</strong> - atomic service
-							description</li>
+						<li><strong>description</strong> - atomic service description</li>
 						<li><strong>vnc</strong> - true if atomic service provides
 							VNC</li>
 						<li><strong>http</strong> - true if atomic service provides
 							http service</li>
 						<li><strong>shared</strong> - true if atomic service can be
 							shared among workflows</li>
-						<li><strong>scalable</strong> - true if atomic service can
-							be multiplicated among workflow</li>
+						<li><strong>scalable</strong> - true if atomic service can be
+							multiplicated among workflow</li>
 						<li><strong>publisher</strong> - true if atomic service is
 							published for the end users</li>
-						<li><strong>endpoints</strong> - registered atomic service endpoints:
+						<li><strong>endpoints</strong> - registered atomic service
+							endpoints:
 							<ul>
 								<li><strong>description</strong> - endpoint description</li>
-								<li><strong>descriptor</strong> - endpoint descriptor (e.g. WSDL)</li>
-								<li><strong>invocationPath</strong> - endpoint invocation path</li>
+								<li><strong>descriptor</strong> - endpoint descriptor (e.g.
+									WSDL)</li>
+								<li><strong>invocationPath</strong> - endpoint invocation
+									path</li>
 								<li><strong>port</strong> - endpoint port</li>
 								<li><strong>serviceName</strong> - service name</li>
-								<li><strong>type</strong> - endpoint type (WS, REST, WebApp)</li>
-							</ul>
-						</li>
+								<li><strong>type</strong> - endpoint type (WS, REST,
+									WebApp)</li>
+							</ul></li>
 					</ul>
 				</div>
 				<h3>
@@ -424,7 +430,7 @@ body {
 				<div>
 					<ul>
 						<li>(required) <strong>policyName</strong> - security policy
-							name
+							name (namespaces are supported, e.g. my/namespace/policy_name)
 						</li>
 					</ul>
 
@@ -439,7 +445,8 @@ body {
 				<div>
 					<ul>
 						<li>(required) path parameter <strong>policyName</strong> -
-							security policy name
+							security policy name (namespaces are supported, e.g.
+							my/namespace/policy_name)
 						</li>
 						<li>(required) query parameter <strong>overwrite</strong> -
 							if <b>true</b> than existing security policy will be updated,
@@ -463,13 +470,14 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>policyName</strong> - security policy name
+						<li>(required) <strong>policyName</strong> - security policy
+							name (namespaces are supported, e.g. my/namespace/policy_name)
 						</li>
 					</ul>
 
-					<p>The operation returns the 200 status code on success. 
-						The 404 status code is returned when
-						security policy with given name does not exist.</p>
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security policy with given name
+						does not exist.</p>
 				</div>
 			</div>
 			<div id="key-accordion">
@@ -478,14 +486,17 @@ body {
 						- lists user public keys</a>
 				</h3>
 				<div>
-					<p>The operation returns the 200 status code and the array of basic information about user keys.
-					The structure of the returned JSON includes table of following objects: 					  
-					</p>
+					<p>The operation returns the 200 status code and the array of
+						basic information about user keys. The structure of the returned
+						JSON includes table of following objects:</p>
 					<ul>
-					    <li>(required) <strong>keyName</strong> - key name</li>
-					    <li>(required) <strong>fingerprint</strong> - key fingerprint</li>
-					    <li>(required) <strong>id</strong> - key id</li>
-					  </ul>
+						<li>(required) <strong>keyName</strong> - key name
+						</li>
+						<li>(required) <strong>fingerprint</strong> - key fingerprint
+						</li>
+						<li>(required) <strong>id</strong> - key id
+						</li>
+					</ul>
 				</div>
 				<h3>
 					<a href="#"><strong class="method">POST</strong> <strong>/key</strong>
@@ -494,35 +505,45 @@ body {
 				<div>
 					<p>The structure of the request form parameters includes:</p>
 					<ul>
-						<li>(required, unique) <strong>keyName</strong> - new key name</li>
-						<li>(required) <strong>publicKey</strong> - public key payload</li>
+						<li>(required, unique) <strong>keyName</strong> - new key
+							name
+						</li>
+						<li>(required) <strong>publicKey</strong> - public key
+							payload
+						</li>
 					</ul>
-				
-					<p>The operation returns the 200 status code and the new added key id on success. 
-					If key with given name is already registered than 409 (conflict) is returned, 
-					when keys is not correct 400 (bad request is returned)</p>
+
+					<p>The operation returns the 200 status code and the new added
+						key id on success. If key with given name is already registered
+						than 409 (conflict) is returned, when keys is not correct 400 (bad
+						request is returned)</p>
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/key/{keyId}</strong>
 						- get public key content</a>
 				</h3>
 				<div>
-				    <ul>
-				    	<li>(required) request parameter <strong>keyId</strong> - key id</li>
-				    </ul>
-					<p>The operation returns the 200 status code and the public key payload on 
-					success. When keys is not found for the user than 404 is returned.</p>
-				</div>				
+					<ul>
+						<li>(required) request parameter <strong>keyId</strong> - key
+							id
+						</li>
+					</ul>
+					<p>The operation returns the 200 status code and the public key
+						payload on success. When keys is not found for the user than 404
+						is returned.</p>
+				</div>
 				<h3>
 					<a href="#"><strong class="method">DELETE</strong> <strong>/key/{keyId}</strong>
 						- delete user public key</a>
 				</h3>
 				<div>
 					<ul>
-				    	<li>(required) request parameter <strong>keyId</strong> - key to be deleted id</li>
-				    </ul>
-					<p>The operation returns the 200 status code on success. 
-					   When keys is not found for the user than 404 is returned.</p>
+						<li>(required) request parameter <strong>keyId</strong> - key
+							to be deleted id
+						</li>
+					</ul>
+					<p>The operation returns the 200 status code on success. When
+						keys is not found for the user than 404 is returned.</p>
 				</div>
 			</div>
 		</div>

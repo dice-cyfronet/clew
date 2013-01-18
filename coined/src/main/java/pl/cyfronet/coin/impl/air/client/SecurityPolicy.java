@@ -43,4 +43,10 @@ public class SecurityPolicy {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	@Override
+	public String toString() {
+		return "SecurityPolicy [policy_name=" + policy_name + ", id=" + id
+				+ "]";
+	}
 }
