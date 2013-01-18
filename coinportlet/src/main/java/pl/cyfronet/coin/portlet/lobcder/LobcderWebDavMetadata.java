@@ -5,8 +5,8 @@ import javax.validation.constraints.DecimalMin;
 
 public class LobcderWebDavMetadata {
 	private boolean driSupervised;
-	@DecimalMin("0") @DecimalMax("9223372036854775807") private String driChecksum;
-	private String driLastValidationDateMs;
+	@DecimalMin("0") @DecimalMax("9223372036854775807") private long driChecksum;
+	private long driLastValidationDateMs;
 	
 	public boolean isDriSupervised() {
 		return driSupervised;
@@ -14,19 +14,18 @@ public class LobcderWebDavMetadata {
 	public void setDriSupervised(boolean driSupervised) {
 		this.driSupervised = driSupervised;
 	}
-	public String getDriChecksum() {
+	public long getDriChecksum() {
 		return driChecksum;
 	}
-	public void setDriChecksum(String driChecksum) {
+	public void setDriChecksum(long driChecksum) {
 		this.driChecksum = driChecksum;
 	}
-	public String getDriLastValidationDateMs() {
+	public long getDriLastValidationDateMs() {
 		return driLastValidationDateMs;
 	}
-	public void setDriLastValidationDateMs(String driLastValidationDateMs) {
+	public void setDriLastValidationDateMs(long driLastValidationDateMs) {
 		this.driLastValidationDateMs = driLastValidationDateMs;
 	}
-	
 	@Override
 	public String toString() {
 		return "LobcderWebDavMetadata [driSupervised=" + driSupervised

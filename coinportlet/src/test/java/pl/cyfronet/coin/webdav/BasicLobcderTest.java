@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import pl.cyfronet.coin.portlet.lobcder.LobcderClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderEntry;
 import pl.cyfronet.coin.portlet.lobcder.LobcderException;
+import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/coinportlet-app-ctx.xml")
@@ -69,6 +70,27 @@ public class BasicLobcderTest {
 		Assert.assertNotNull(entries);
 		//the current directory should not be returned
 		Assert.assertTrue(!entries.contains(new LobcderEntry("/")));
+	}
+	
+	@Test
+	public void metadataTest() throws LobcderException {
+		String testDirName = String.valueOf(System.currentTimeMillis());
+		lobcder.createDirectory("/", testDirName);
+		
+		try {
+			LobcderWebDavMetadata metadata = new LobcderWebDavMetadata();
+			metadata.setDriChecksum(500);
+			metadata.setDriLastValidationDateMs(600);
+			metadata.setDriSupervised(true);
+			lobcder.updateMetadata("/" + testDirName, metadata);
+		
+			LobcderWebDavMetadata retrievedMetadata = lobcder.getMetadata("/" + testDirName);
+//			Assert.assertEquals(metadata.getDriChecksum(), retrievedMetadata.getDriChecksum());
+			Assert.assertEquals(metadata.getDriLastValidationDateMs(), retrievedMetadata.getDriLastValidationDateMs());
+			Assert.assertEquals(metadata.isDriSupervised(), retrievedMetadata.isDriSupervised());
+		} finally {
+			lobcder.delete("/" + testDirName);
+		}
 	}
 	
 	private void sortLobcderEntries(List<LobcderEntry> entries) {

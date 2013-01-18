@@ -160,7 +160,7 @@ public class LobcderClient {
 		
 		try {
 			client.executeMethod(deleteMethod);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			String msg = "Could not delete LOBCDER resource for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
@@ -183,28 +183,28 @@ public class LobcderClient {
 
 		    if(responses.length > 0) {
 		    	MultiStatusResponse response = responses[0];
-		    	DavProperty driSupervised = response.getProperties(200).
+		    	DavProperty<?> driSupervised = response.getProperties(200).
 		    			get(DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE));
 		    	
 		    	if(driSupervised != null) {
 		    		lobcderWebDavMetadata.setDriSupervised(Boolean.parseBoolean((String) driSupervised.getValue()));
 		    	}
 		    	
-		    	DavProperty driChecksum = response.getProperties(200).
+		    	DavProperty<?> driChecksum = response.getProperties(200).
 		    			get(DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE));
 		    	
 		    	if(driChecksum != null) {
-		    		lobcderWebDavMetadata.setDriChecksum((String) driChecksum.getValue());
+		    		lobcderWebDavMetadata.setDriChecksum(Long.parseLong((String) driChecksum.getValue()));
 		    	}
 		    	
-		    	DavProperty driLastValidationDateMs = response.getProperties(200).
+		    	DavProperty<?> driLastValidationDateMs = response.getProperties(200).
 		    			get(DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE));
 		    	
 		    	if(driLastValidationDateMs != null) {
-		    		lobcderWebDavMetadata.setDriLastValidationDateMs((String) driLastValidationDateMs.getValue());
+		    		lobcderWebDavMetadata.setDriLastValidationDateMs(Long.parseLong((String) driLastValidationDateMs.getValue()));
 		    	}
 		    }
-		} catch (IOException | DavException e) {
+		} catch (Exception e) {
 			String msg = "Could not fetch LOBCDER metadata for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
@@ -214,18 +214,29 @@ public class LobcderClient {
 	}
 	
 	public void updateMetadata(String path, LobcderWebDavMetadata lobcderWebDavMetadata) throws LobcderException {
-		DavPropertySet setProperties = new DavPropertySet();
-		setProperties.add(new DefaultDavProperty<String>("dri-supervised", String.valueOf(lobcderWebDavMetadata.isDriSupervised()),
-				CUSTOM_NAMESPACE));
-		setProperties.add(new DefaultDavProperty<String>("dri-checksum", lobcderWebDavMetadata.getDriChecksum(),
-				CUSTOM_NAMESPACE));
-		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", lobcderWebDavMetadata.getDriLastValidationDateMs(),
-				CUSTOM_NAMESPACE));
+		DavPropertySet setProperties = null;
+		DavMethod propPatch = null;
 		
+		//each property has to be updated separately :(
 		try {
-			DavMethod propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
+			setProperties = new DavPropertySet();
+			setProperties.add(new DefaultDavProperty<String>("dri-supervised", String.valueOf(lobcderWebDavMetadata.isDriSupervised()),
+					CUSTOM_NAMESPACE));
+			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
 			client.executeMethod(propPatch);
-		} catch (IOException e) {
+		
+			setProperties = new DavPropertySet();
+			setProperties.add(new DefaultDavProperty<Long>("dri-checksum", lobcderWebDavMetadata.getDriChecksum(),
+					CUSTOM_NAMESPACE));
+			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
+			client.executeMethod(propPatch);
+			
+			setProperties = new DavPropertySet();
+			setProperties.add(new DefaultDavProperty<Long>("dri-last-validation-date-ms", lobcderWebDavMetadata.getDriLastValidationDateMs(),
+					CUSTOM_NAMESPACE));
+			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
+			client.executeMethod(propPatch);
+		} catch (Exception e) {
 			String msg = "Could not set LOBCDER metadata for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
