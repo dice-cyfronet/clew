@@ -8,6 +8,7 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -18,6 +19,8 @@ import org.apache.jackrabbit.webdav.MultiStatus;
 import org.apache.jackrabbit.webdav.MultiStatusResponse;
 import org.apache.jackrabbit.webdav.Status;
 import org.apache.jackrabbit.webdav.client.methods.DavMethod;
+import org.apache.jackrabbit.webdav.client.methods.DeleteMethod;
+import org.apache.jackrabbit.webdav.client.methods.MkColMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropFindMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropPatchMethod;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
@@ -25,8 +28,8 @@ import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.xml.Namespace;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -45,9 +48,10 @@ public class BasicWebDavTest {
 	@Value("${lobcder.url}") private String webDavUrl;
 
 	private HttpClient client;
+	private String testFolder;
 
 	@Before
-	public void setup() throws MalformedURLException {
+	public void setup() throws HttpException, IOException {
 		HostConfiguration hostConfig = new HostConfiguration();
 		URL url = new URL(webDavUrl);
 		hostConfig.setHost(url.getHost(), url.getPort());
@@ -62,41 +66,40 @@ public class BasicWebDavTest {
 		client = new HttpClient(connectionManager);
 		client.getState().setCredentials(AuthScope.ANY, creds);
 		client.setHostConfiguration(hostConfig);
+		
+		//create test folder
+		testFolder = webDavUrl + "/" + String.valueOf(System.currentTimeMillis());
+		MkColMethod mkdirMethod = new MkColMethod(testFolder);
+		client.executeMethod(mkdirMethod);
+	}
+	
+	@After
+	public void clean() throws HttpException, IOException {
+		DeleteMethod deleteMethod = new DeleteMethod(testFolder);
+		client.executeMethod(deleteMethod);
 	}
 
 	@Test
 	public void addProperties() throws IOException, DavException {
 		DavPropertySet setProperties = new DavPropertySet();
-		setProperties.add(new DefaultDavProperty<Boolean>("dri-supervised", true,
+		setProperties.add(new DefaultDavProperty<String>("dri-supervised", "true",
 				Namespace.getNamespace("c", "custom:")));
 		setProperties.add(new DefaultDavProperty<String>("dri-checksum", "2500",
 				Namespace.getNamespace("c", "custom:")));
-//		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", "100",
-//				Namespace.getNamespace("c", "custom:")));
+		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", "100",
+				Namespace.getNamespace("c", "custom:")));
 		
-		DavMethod propPatch = new PropPatchMethod(webDavUrl + "/test", setProperties,
+		DavMethod propPatch = new PropPatchMethod(testFolder, setProperties,
 				new DavPropertyNameSet());
 		client.executeMethod(propPatch);
-		
-		MultiStatus multiStatus = propPatch.getResponseBodyAsMultiStatus();
-		MultiStatusResponse[] responses = multiStatus.getResponses();
-
-		for (int i = 0; i < responses.length; i++) {
-			MultiStatusResponse response = responses[i];
-			
-			for(Status status : response.getStatus()) {
-				log.info("Status: {} for {}", status.getStatusCode(), response.getHref());
-			}
-		}
 	}
 
 	@Test
 	public void testPropfind() throws IOException, DavException {
 		DavPropertyNameSet properties = new DavPropertyNameSet();
 		properties.add("dri-checksum", Namespace.getNamespace("c", "custom:"));
-//		DavMethod pFind = new PropFindMethod(webDavUrl,
-//				DavConstants.PROPFIND_ALL_PROP, DavConstants.DEPTH_INFINITY);
-		DavMethod pFind = new PropFindMethod(webDavUrl + "/test",
+		
+		DavMethod pFind = new PropFindMethod(testFolder,
 				properties, DavConstants.DEPTH_INFINITY);
 		client.executeMethod(pFind);
 

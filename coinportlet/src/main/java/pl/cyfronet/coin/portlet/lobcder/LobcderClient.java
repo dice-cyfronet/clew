@@ -220,7 +220,7 @@ public class LobcderClient {
 		//each property has to be updated separately :(
 		try {
 			setProperties = new DavPropertySet();
-			setProperties.add(new DefaultDavProperty<String>("dri-supervised", String.valueOf(lobcderWebDavMetadata.isDriSupervised()),
+			setProperties.add(new DefaultDavProperty<Boolean>("dri-supervised", lobcderWebDavMetadata.isDriSupervised(),
 					CUSTOM_NAMESPACE));
 			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
 			client.executeMethod(propPatch);
