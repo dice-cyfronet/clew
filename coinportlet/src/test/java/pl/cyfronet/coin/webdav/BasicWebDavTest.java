@@ -1,7 +1,6 @@
 package pl.cyfronet.coin.webdav;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.httpclient.Credentials;
@@ -23,6 +22,7 @@ import org.apache.jackrabbit.webdav.client.methods.DeleteMethod;
 import org.apache.jackrabbit.webdav.client.methods.MkColMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropFindMethod;
 import org.apache.jackrabbit.webdav.client.methods.PropPatchMethod;
+import org.apache.jackrabbit.webdav.property.DavProperty;
 import org.apache.jackrabbit.webdav.property.DavPropertyName;
 import org.apache.jackrabbit.webdav.property.DavPropertyNameSet;
 import org.apache.jackrabbit.webdav.property.DavPropertySet;
@@ -88,6 +88,7 @@ public class BasicWebDavTest {
 				Namespace.getNamespace("c", "custom:")));
 		setProperties.add(new DefaultDavProperty<String>("dri-last-validation-date-ms", "100",
 				Namespace.getNamespace("c", "custom:")));
+		setProperties.add(new DefaultDavProperty<String>(DavPropertyName.GETCONTENTTYPE, "aaa"));
 		
 		DavMethod propPatch = new PropPatchMethod(testFolder, setProperties,
 				new DavPropertyNameSet());
@@ -98,9 +99,12 @@ public class BasicWebDavTest {
 	public void testPropfind() throws IOException, DavException {
 		DavPropertyNameSet properties = new DavPropertyNameSet();
 		properties.add("dri-checksum", Namespace.getNamespace("c", "custom:"));
+		properties.add(DavPropertyName.CREATIONDATE);
+		properties.add(DavPropertyName.GETLASTMODIFIED);
+		properties.add(DavPropertyName.GETCONTENTTYPE);
 		
 		DavMethod pFind = new PropFindMethod(testFolder,
-				properties, DavConstants.DEPTH_INFINITY);
+				properties, DavConstants.DEPTH_0);
 		client.executeMethod(pFind);
 
 		MultiStatus multiStatus = pFind.getResponseBodyAsMultiStatus();
@@ -114,18 +118,22 @@ public class BasicWebDavTest {
 				log.info("\tStatus code: {}", status.getStatusCode());
 				
 				StringBuilder props = new StringBuilder();
+				props.append("\n");
 				
 				for(DavPropertyName propName : response.getProperties(status.getStatusCode()).
 						getPropertyNames()) {
+					Object value = null;
+					
+					if(response.getProperties(200).get(propName) != null) {
+						value = response.getProperties(200).get(propName).getValue();
+					}
+					
 					props.append(propName.getNamespace().getURI()).
 							append(propName.getNamespace().getPrefix()).append(":").
-							append(propName.getName()).append(", ");
-					String value = (String) response.getProperties(200).get(propName).getValue();
-					log.info("Is invisible: {}", response.getProperties(200).get(propName).isInvisibleInAllprop());
-					log.info("DRI Checksum: " + value);
+							append(propName.getName()).append(" - ").append(value).append("\n");
 				}
 				
-				log.info("\t\t{}", props.toString());
+				log.info("{}", props.toString());
 			}
 		}
 	}

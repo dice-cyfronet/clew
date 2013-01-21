@@ -82,12 +82,18 @@ public class BasicLobcderTest {
 			metadata.setDriChecksum(500);
 			metadata.setDriLastValidationDateMs(600);
 			metadata.setDriSupervised(true);
+			metadata.setCreationDate("should not be changed");
+			metadata.setModificationDate("should not be changed");
+			metadata.setFormat("new format");
 			lobcder.updateMetadata("/" + testDirName, metadata);
 		
 			LobcderWebDavMetadata retrievedMetadata = lobcder.getMetadata("/" + testDirName);
-//			Assert.assertEquals(metadata.getDriChecksum(), retrievedMetadata.getDriChecksum());
+			Assert.assertEquals(metadata.getDriChecksum(), retrievedMetadata.getDriChecksum());
 			Assert.assertEquals(metadata.getDriLastValidationDateMs(), retrievedMetadata.getDriLastValidationDateMs());
 			Assert.assertEquals(metadata.isDriSupervised(), retrievedMetadata.isDriSupervised());
+			Assert.assertTrue(!metadata.getCreationDate().equals(retrievedMetadata.getCreationDate()));
+			Assert.assertTrue(!metadata.getModificationDate().equals(retrievedMetadata.getModificationDate()));
+			Assert.assertTrue(!metadata.getFormat().equals(retrievedMetadata.getFormat()));
 		} finally {
 			lobcder.delete("/" + testDirName);
 		}

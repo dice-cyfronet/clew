@@ -7,6 +7,18 @@ public class LobcderWebDavMetadata {
 	private boolean driSupervised;
 	@DecimalMin("0") @DecimalMax("9223372036854775807") private long driChecksum;
 	private long driLastValidationDateMs;
+	private String creationDate;
+	private String modificationDate;
+	private String format;
+	
+	@Override
+	public String toString() {
+		return "LobcderWebDavMetadata [driSupervised=" + driSupervised
+				+ ", driChecksum=" + driChecksum + ", driLastValidationDateMs="
+				+ driLastValidationDateMs + ", creationDate=" + creationDate
+				+ ", modificationDate=" + modificationDate + ", format="
+				+ format + "]";
+	}
 	
 	public boolean isDriSupervised() {
 		return driSupervised;
@@ -26,10 +38,22 @@ public class LobcderWebDavMetadata {
 	public void setDriLastValidationDateMs(long driLastValidationDateMs) {
 		this.driLastValidationDateMs = driLastValidationDateMs;
 	}
-	@Override
-	public String toString() {
-		return "LobcderWebDavMetadata [driSupervised=" + driSupervised
-				+ ", driChecksum=" + driChecksum + ", driLastValidationDateMs="
-				+ driLastValidationDateMs + "]";
+	public String getCreationDate() {
+		return creationDate;
+	}
+	public void setCreationDate(String creationDate) {
+		this.creationDate = creationDate;
+	}
+	public String getModificationDate() {
+		return modificationDate;
+	}
+	public void setModificationDate(String modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+	public String getFormat() {
+		return format;
+	}
+	public void setFormat(String format) {
+		this.format = format;
 	}
 }

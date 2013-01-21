@@ -35,14 +35,14 @@ import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.slf4j.Logger;
 
-import pl.cyfronet.coin.portlet.metadata.Metadata;
-
-import com.sun.xml.bind.v2.runtime.output.NamespaceContextImpl;
-
 public class LobcderClient {
 	private static final Logger log = org.slf4j.LoggerFactory.getLogger(LobcderClient.class);
 	
 	private static Namespace CUSTOM_NAMESPACE = Namespace.getNamespace("c", "custom:");
+	
+	private static final DavPropertyName DRI_SUPERVISED = DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE);
+	private static final DavPropertyName DRI_CHECKSUM = DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE);
+	private static final DavPropertyName DRI_LAST_VALIDATION = DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE);
 	
 	private String baseUrl;
 	private String username;
@@ -170,9 +170,12 @@ public class LobcderClient {
 	public LobcderWebDavMetadata getMetadata(String path) throws LobcderException {
 		LobcderWebDavMetadata lobcderWebDavMetadata = new LobcderWebDavMetadata();
 		DavPropertyNameSet properties = new DavPropertyNameSet();
-		properties.add(DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE));
-		properties.add(DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE));
-		properties.add(DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE));
+		properties.add(DRI_SUPERVISED);
+		properties.add(DRI_CHECKSUM);
+		properties.add(DRI_LAST_VALIDATION);
+		properties.add(DavPropertyName.CREATIONDATE);
+		properties.add(DavPropertyName.GETLASTMODIFIED);
+		properties.add(DavPropertyName.GETCONTENTTYPE);
 
 		try {
 			DavMethod propFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_0);
@@ -183,26 +186,12 @@ public class LobcderClient {
 
 		    if(responses.length > 0) {
 		    	MultiStatusResponse response = responses[0];
-		    	DavProperty<?> driSupervised = response.getProperties(200).
-		    			get(DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE));
-		    	
-		    	if(driSupervised != null) {
-		    		lobcderWebDavMetadata.setDriSupervised(Boolean.parseBoolean((String) driSupervised.getValue()));
-		    	}
-		    	
-		    	DavProperty<?> driChecksum = response.getProperties(200).
-		    			get(DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE));
-		    	
-		    	if(driChecksum != null) {
-		    		lobcderWebDavMetadata.setDriChecksum(Long.parseLong((String) driChecksum.getValue()));
-		    	}
-		    	
-		    	DavProperty<?> driLastValidationDateMs = response.getProperties(200).
-		    			get(DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE));
-		    	
-		    	if(driLastValidationDateMs != null) {
-		    		lobcderWebDavMetadata.setDriLastValidationDateMs(Long.parseLong((String) driLastValidationDateMs.getValue()));
-		    	}
+		    	lobcderWebDavMetadata.setDriSupervised(Boolean.parseBoolean(getValue(response, DRI_SUPERVISED)));
+		    	lobcderWebDavMetadata.setDriChecksum(Long.parseLong(getValue(response, DRI_CHECKSUM)));
+		    	lobcderWebDavMetadata.setDriLastValidationDateMs(Long.parseLong(getValue(response, DRI_LAST_VALIDATION)));
+		    	lobcderWebDavMetadata.setCreationDate(getValue(response, DavPropertyName.CREATIONDATE));
+		    	lobcderWebDavMetadata.setModificationDate(getValue(response, DavPropertyName.GETLASTMODIFIED));
+		    	lobcderWebDavMetadata.setFormat(getValue(response, DavPropertyName.GETCONTENTTYPE));
 		    }
 		} catch (Exception e) {
 			String msg = "Could not fetch LOBCDER metadata for base URL [" + baseUrl + "] and path [" + path + "]";
@@ -212,7 +201,7 @@ public class LobcderClient {
 
 		return lobcderWebDavMetadata;
 	}
-	
+
 	public void updateMetadata(String path, LobcderWebDavMetadata lobcderWebDavMetadata) throws LobcderException {
 		DavPropertySet setProperties = null;
 		DavMethod propPatch = null;
@@ -220,20 +209,32 @@ public class LobcderClient {
 		//each property has to be updated separately :(
 		try {
 			setProperties = new DavPropertySet();
-			setProperties.add(new DefaultDavProperty<Boolean>("dri-supervised", lobcderWebDavMetadata.isDriSupervised(),
-					CUSTOM_NAMESPACE));
+			setProperties.add(new DefaultDavProperty<Boolean>(DRI_SUPERVISED, lobcderWebDavMetadata.isDriSupervised()));
 			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
 			client.executeMethod(propPatch);
 		
 			setProperties = new DavPropertySet();
-			setProperties.add(new DefaultDavProperty<Long>("dri-checksum", lobcderWebDavMetadata.getDriChecksum(),
-					CUSTOM_NAMESPACE));
+			setProperties.add(new DefaultDavProperty<Long>(DRI_CHECKSUM, lobcderWebDavMetadata.getDriChecksum()));
 			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
 			client.executeMethod(propPatch);
 			
 			setProperties = new DavPropertySet();
-			setProperties.add(new DefaultDavProperty<Long>("dri-last-validation-date-ms", lobcderWebDavMetadata.getDriLastValidationDateMs(),
-					CUSTOM_NAMESPACE));
+			setProperties.add(new DefaultDavProperty<Long>(DRI_LAST_VALIDATION, lobcderWebDavMetadata.getDriLastValidationDateMs()));
+			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
+			client.executeMethod(propPatch);
+			
+			setProperties = new DavPropertySet();
+			setProperties.add(new DefaultDavProperty<String>(DavPropertyName.CREATIONDATE, lobcderWebDavMetadata.getCreationDate()));
+			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
+			client.executeMethod(propPatch);
+			
+			setProperties = new DavPropertySet();
+			setProperties.add(new DefaultDavProperty<String>(DavPropertyName.GETLASTMODIFIED, lobcderWebDavMetadata.getModificationDate()));
+			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
+			client.executeMethod(propPatch);
+			
+			setProperties = new DavPropertySet();
+			setProperties.add(new DefaultDavProperty<String>(DavPropertyName.GETCONTENTTYPE, lobcderWebDavMetadata.getFormat()));
 			propPatch = new PropPatchMethod(createLobcderPath(path), setProperties, new DavPropertyNameSet());
 			client.executeMethod(propPatch);
 		} catch (Exception e) {
@@ -241,6 +242,16 @@ public class LobcderClient {
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
 		}
+	}
+
+	private String getValue(MultiStatusResponse response, DavPropertyName davPropertyName) {
+		DavProperty<?> property = response.getProperties(200).get(davPropertyName);
+		
+		if(property != null) {
+			return (String) property.getValue();
+		}
+		
+		return null;
 	}
 	
 	private String normalizeName(String nativeName) throws MalformedURLException {
