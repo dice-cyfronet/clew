@@ -15,12 +15,18 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import static pl.cyfronet.coin.impl.BeanConverter.getAtomicService;
+
 import java.util.Arrays;
 
+import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
@@ -36,7 +42,7 @@ import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 public class StartAtomicServiceAction extends
 		AtomicServiceWorkflowAction<String> {
 
-	private String atomicServiceId;
+	private String initConfigIdId;
 	private String asName;
 	private String contextId;
 	private Integer defaultPriority;
@@ -45,16 +51,16 @@ public class StartAtomicServiceAction extends
 	/**
 	 * @param air Air client.
 	 * @param atmosphere Atmosphere client.
-	 * @param atomicServiceId Atomic Service id.
+	 * @param initConfigId Initial configuration id.
 	 * @param name New instance name.
 	 * @param contextId Context id.
 	 * @param username User name.
 	 */
 	StartAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
-			String username, String atomicServiceId, String asName,
+			String username, String initConfigId, String asName,
 			String contextId, Integer priority, String keyName) {
 		super(air, atmosphere, username);
-		this.atomicServiceId = atomicServiceId;
+		this.initConfigIdId = initConfigId;
 		this.asName = asName;
 		this.contextId = contextId;
 		this.defaultPriority = priority;
@@ -72,9 +78,20 @@ public class StartAtomicServiceAction extends
 	@Override
 	public String execute() throws CloudFacadeException {
 		WorkflowDetail workflow = getUserWorkflow(contextId, getUsername());
-		logger.debug("Add atomic service [{} {}] into workflow [{}] with key {}",
-				new Object[] { asName, atomicServiceId, contextId, keyName });
-		registerVms(contextId, Arrays.asList(atomicServiceId),
+		logger.debug(
+				"Add atomic service [{} {}] into workflow [{}] with key {}",
+				new Object[] { asName, initConfigIdId, contextId, keyName });
+
+		ApplianceType type = getAir().getTypeFromConfig(initConfigIdId);
+		if (type.isDevelopment()) {
+			throw new AtomicServiceNotFoundException();
+		}
+
+		if (workflow.getWorkflow_type() == WorkflowType.development) {
+			initConfigIdId = createDevelopmentAtomicService(type);
+		}
+
+		registerVms(contextId, Arrays.asList(initConfigIdId),
 				Arrays.asList(asName), defaultPriority,
 				workflow.getWorkflow_type(), keyName);
 
@@ -83,6 +100,31 @@ public class StartAtomicServiceAction extends
 		return null;
 	}
 
+	private String createDevelopmentAtomicService(ApplianceType baseAS) {
+		AtomicService devAs = getAtomicService(baseAS);
+		devAs.setDevelopment(true);
+		devAs.setName(String.format("%s-%s", devAs.getName(),
+				System.currentTimeMillis()));
+
+		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
+				getAir(), getUsername(), devAs, baseAS.getId());
+		createASAction.execute();				
+		
+		return createInitConfCopy(devAs.getName(), initConfigIdId);
+	}
+
+	private String createInitConfCopy(String asName, String srcInitConfId) {
+		String initConfPayload = getAir().getApplianceConfig(initConfigIdId);
+
+		InitialConfiguration initConf = new InitialConfiguration();
+		initConf.setName(System.currentTimeMillis() + "");
+		initConf.setPayload(initConfPayload);
+		AddInitialConfigurationAction addInitConfAction = new AddInitialConfigurationAction(
+				getAir(), asName, initConf);
+		
+		return addInitConfAction.execute();
+	}
+	
 	@Override
 	public void rollback() {
 		// TODO Auto-generated method stub

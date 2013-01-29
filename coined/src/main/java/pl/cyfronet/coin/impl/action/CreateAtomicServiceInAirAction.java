@@ -49,11 +49,19 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	 */
 	private String username;
 
+	private String parentId;
+
 	CreateAtomicServiceInAirAction(AirClient air, String username,
 			AtomicService atomicService) {
+		this(air, username, atomicService, null);
+	}
+
+	public CreateAtomicServiceInAirAction(AirClient air, String username,
+			AtomicService atomicService, String parentId) {		
 		this.air = air;
 		this.username = username;
 		this.atomicService = atomicService;
+		this.parentId = parentId;
 	}
 
 	@Override
@@ -70,7 +78,8 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setShared(atomicService.isShared());
 		addASRequest.setVnc(atomicService.isShared());
 		addASRequest.setAuthor(username);
-
+		addASRequest.setOriginal_appliance(parentId);
+		
 		try {
 			createdAtomicServiceId = air.addAtomicService(addASRequest);
 			return createdAtomicServiceId;

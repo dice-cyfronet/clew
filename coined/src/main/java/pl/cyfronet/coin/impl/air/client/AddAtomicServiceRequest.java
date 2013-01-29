@@ -45,6 +45,7 @@ public class AddAtomicServiceRequest {
 	
 	private boolean development;
 	
+	private String original_appliance;
 	
 	private List<ATEndpoint> endpoints;
 
@@ -220,5 +221,19 @@ public class AddAtomicServiceRequest {
 	 */
 	public void setDevelopment(boolean development) {
 		this.development = development;
+	}
+	
+	/**
+	 * @return the original_appliance
+	 */
+	public String getOriginal_appliance() {
+		return original_appliance;
+	}
+
+	/**
+	 * @param original_appliance the original_appliance to set
+	 */
+	public void setOriginal_appliance(String original_appliance) {
+		this.original_appliance = original_appliance;
 	}
 }

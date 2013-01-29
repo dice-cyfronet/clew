@@ -15,7 +15,10 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,12 +27,14 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.atmosphere.ManagerResponseTestImpl;
+import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 import pl.cyfronet.coin.impl.mock.matcher.AddRequiredAppliancesRequestMatcher;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
@@ -41,13 +46,17 @@ import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
  */
 public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
-	private String atomicServiceId = "asId";
+	private String initConfigId = "asId";
 	private String name = "asIdName";
 
 	private String id;
 	private String keyId = "myKey";
 	private AddRequiredAppliancesRequestMatcher matcher;
 	private AddRequiredAppliancesRequestImpl request;
+	private String initConfigPayload = "initConfigPayload";
+	private String newConfigId = "newInitConf";
+	private ApplianceType baseAS;
+	private AtomicService as;
 
 	@Test
 	public void shouldStartWithoutKeyWhenProductionWorkflow() throws Exception {
@@ -56,16 +65,26 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		thenCheckIfAtomicServiceWasStarted();
 	}
 
-	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType workflowType) {
-		givenASInAir(atomicServiceId, false);
-		WorkflowDetail wd = new WorkflowDetail();
-		wd.setVph_username(username);
-		wd.setWorkflow_type(workflowType);
+	private ApplianceType givenAtomicServiceRequestAndWorkflowAlreadyStarted(
+			WorkflowType workflowType) {		
+		givenWorkflowStarted(workflowType);
+		givenAsiRequestMatcher(workflowType);
+		ApplianceType at = givenASInAir(initConfigId, false);
+		
+		return at;
+	}
 
-		matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
-				defaultPriority, username, workflowType, atomicServiceId);
-		matcher.setGivenKeyId(keyId);
-		givenWorkflowStarted(wd);
+	private void givenAsiRequestMatcher(WorkflowType workflowType) {
+		if (workflowType == WorkflowType.development) {
+			matcher = new AddRequiredAppliancesRequestMatcher(contextId,
+					defaultPriority, username, WorkflowType.development,
+					newConfigId);
+			matcher.setGivenKeyId(keyId);
+		} else {
+			matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
+					defaultPriority, username, workflowType, initConfigId);
+		}
+
 		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
 				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
 	}
@@ -76,11 +95,11 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	private void whenStartAtomicService(String username, String keyId) {
 		StartAtomicServiceAction action = actionFactory
-				.createStartAtomicServiceAction(atomicServiceId, name,
-						contextId, username, keyId);
+				.createStartAtomicServiceAction(initConfigId, name, contextId,
+						username, keyId);
 		id = action.execute();
 	}
-	
+
 	private void thenCheckIfAtomicServiceWasStarted() {
 		verify(atmosphere, times(1)).addRequiredAppliances(argThat(matcher));
 
@@ -92,11 +111,11 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	@Test
 	public void shouldStartASWithKeyWhenDevelopmentWorkflow() throws Exception {
-		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development);
+		givenMockedAtmosphereForStartingASInDevMode();
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
 	}
-	
+
 	@Test
 	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotBelongToTheUser()
 			throws Exception {
@@ -134,7 +153,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void givenNoWorkflowStartedForTheUser() {
 		mockGetNonExistingWorkflow(air, contextId);
 	}
-	
+
 	// FIXME
 	@Test(enabled = false)
 	public void shouldCreateExceptionWhileAtmosphereActionFailed()
@@ -150,9 +169,9 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 		thenVerifyRequestSendToAtmosphere();
 	}
-	
+
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
-		givenASInAir(atomicServiceId, false);
+		givenASInAir(initConfigId, false);
 		request = new AddRequiredAppliancesRequestImpl();
 
 		ManagerResponse response = new ManagerResponseImpl();
@@ -164,16 +183,50 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void thenVerifyRequestSendToAtmosphere() {
 		verify(atmosphere, times(1)).addRequiredAppliances(request);
 	}
-	
+
 	@Test
-	public void shouldThrowASNotFoundWhileTryingToStartDevelopmentAS() throws Exception {
+	public void shouldThrowASNotFoundWhileTryingToStartDevelopmentAS()
+			throws Exception {
 		givenWorkflowStarted();
-		givenASInAir(atomicServiceId, true);
+		givenASInAir(initConfigId, true);
 		try {
 			whenStartAtomicService();
 			fail();
-		} catch(AtomicServiceNotFoundException e) {
-			//Ok should be thrown
+		} catch (AtomicServiceNotFoundException e) {
+			// Ok should be thrown
 		}
+	}
+
+	@Test
+	public void shouldCreateTmpASWhileStartingASIInDevelopmentMode()
+			throws Exception {
+
+		givenMockedAtmosphereForStartingASInDevMode();
+		AddAtomicServiceMatcher asMatcher = new AddAtomicServiceMatcher(
+				username, as, true);
+
+		whenStartAtomicService();
+
+		verify(air, times(1)).getTypeFromConfig(initConfigId);
+		verify(air, times(1)).addAtomicService(argThat(asMatcher));
+		verify(air, times(1)).getApplianceConfig(initConfigId);
+		verify(air, times(1)).addInitialConfiguration(anyString(),
+				startsWith(as.getName()), eq(initConfigPayload));
+	}
+
+	private void givenMockedAtmosphereForStartingASInDevMode() {
+		baseAS = givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development);
+
+		as = new AtomicService();
+		as.setName(baseAS.getName());
+		as.setDescription(baseAS.getDescription());
+
+		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
+		when(air.getApplianceConfig(initConfigId))
+				.thenReturn(initConfigPayload);
+		when(
+				air.addInitialConfiguration(anyString(),
+						startsWith(as.getName()), eq(initConfigPayload)))
+				.thenReturn(newConfigId);
 	}
 }

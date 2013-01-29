@@ -16,6 +16,7 @@
 package pl.cyfronet.coin.impl.action;
 
 import static org.mockito.Mockito.when;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -27,10 +28,16 @@ public class WorkflowActionTest extends ActionTest {
 
 	protected final String contextId = "contextId";
 	protected final String username = "user";
-
+	
 	protected void givenWorkflowStarted() {
+		givenWorkflowStarted((WorkflowType)null);
+	}
+
+	protected void givenWorkflowStarted(WorkflowType workflowType) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
+		wd.setWorkflow_type(workflowType);
+
 		givenWorkflowStarted(wd);
 	}
 
@@ -42,10 +49,15 @@ public class WorkflowActionTest extends ActionTest {
 		when(air.getWorkflow(contextId)).thenThrow(getAirException(404));
 	}
 	
-	protected void givenASInAir(String initConfId, boolean development) {
+	protected ApplianceType givenASInAir(String initConfId, boolean development) {
 		ApplianceType at = new ApplianceType();
+		at.setAuthor("marek");
+		at.setName("BaseAS");
+		at.setDescription("description");
 		at.setDevelopment(development);
 		
 		when(air.getTypeFromConfig(initConfId)).thenReturn(at);
+		
+		return at;
 	}
 }

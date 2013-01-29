@@ -34,10 +34,18 @@ public class AddAtomicServiceMatcher extends
 
 	private AtomicService as;
 	private String username;
+	private boolean development;
 
 	public AddAtomicServiceMatcher(String username, AtomicService as) {
 		this.as = as;
 		this.username = username;
+	}
+
+	public AddAtomicServiceMatcher(String username, AtomicService as,
+			boolean development) {
+		this.as = as;
+		this.username = username;
+		this.development = development;
 	}
 
 	/*
@@ -47,8 +55,7 @@ public class AddAtomicServiceMatcher extends
 	@Override
 	public boolean matches(Object arg0) {
 		AddAtomicServiceRequest request = (AddAtomicServiceRequest) arg0;
-		return 	request.getAuthor().equals(username)
-				&& request.getName().equals(as.getName())
+		return request.getAuthor().equals(username) && nameEquals(request)
 				&& request.getClient().equals("rest")
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())
@@ -58,6 +65,14 @@ public class AddAtomicServiceMatcher extends
 				&& request.isScalable() == as.isScalable()
 				&& request.isShared() == as.isShared()
 				&& request.isVnc() == as.isVnc();
+	}
+
+	private boolean nameEquals(AddAtomicServiceRequest request) {
+		if (development) {
+			return request.getName().startsWith(as.getName());
+		} else {
+			return request.getName().equals(as.getName());
+		}
 	}
 
 	/**
@@ -77,7 +92,7 @@ public class AddAtomicServiceMatcher extends
 				return true;
 			}
 		} else {
-			return asEndpoints == null && endpoints == null;
+			return (asEndpoints == null || asEndpoints.size() == 0) && endpoints == null;
 		}
 		return false;
 	}

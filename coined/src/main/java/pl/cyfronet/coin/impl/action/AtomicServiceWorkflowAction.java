@@ -20,10 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
-import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.RunMode;
@@ -51,10 +49,7 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 			List<String> names, Integer priority, WorkflowType workflowType,
 			String keyId) throws CloudFacadeException {
 		if (configIds != null && configIds.size() > 0) {
-			List<ApplianceType> types = getApplianceTypes(configIds);
-			if(anyInDevelopment(types)) {
-				throw new AtomicServiceNotFoundException();
-			}
+			
 			
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
@@ -79,23 +74,6 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 		}
 	}
 
-	private List<ApplianceType> getApplianceTypes(List<String> initConfs) {
-		List<ApplianceType> types = new ArrayList<>();
-		for (String initConfId : initConfs) {
-			types.add(getAir().getTypeFromConfig(initConfId));
-		}
-		return types;
-	}
-	
-	private boolean anyInDevelopment(List<ApplianceType> types) {
-		for (ApplianceType applianceType : types) {
-			if(applianceType.isDevelopment()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * @param workflowType
 	 * @param keyId

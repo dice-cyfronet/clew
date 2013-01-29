@@ -102,9 +102,9 @@ public class AddRequiredAppliancesRequestMatcher extends
 			for (int i = 0; i < identites.size(); i++) {
 				ApplianceIdentity identity = identites.get(i);
 				String id = atomicServiceIds[i];
-				String name = checkName ? id + "Name" : null;
 				if (!equals(identity.getInitConfId(), id)
-						|| !equals(identity.getName(), name)) {
+						|| (checkName && !equals(identity.getName(), id
+								+ "Name"))) {
 					return false;
 				}
 			}
