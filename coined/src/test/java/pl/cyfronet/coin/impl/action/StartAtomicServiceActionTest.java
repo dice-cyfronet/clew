@@ -25,6 +25,7 @@ import static org.testng.Assert.fail;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -56,6 +57,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType workflowType) {
+		givenASInAir(atomicServiceId, false);
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 		wd.setWorkflow_type(workflowType);
@@ -148,8 +150,9 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 		thenVerifyRequestSendToAtmosphere();
 	}
-
+	
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
+		givenASInAir(atomicServiceId, false);
 		request = new AddRequiredAppliancesRequestImpl();
 
 		ManagerResponse response = new ManagerResponseImpl();
@@ -160,5 +163,17 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	private void thenVerifyRequestSendToAtmosphere() {
 		verify(atmosphere, times(1)).addRequiredAppliances(request);
+	}
+	
+	@Test
+	public void shouldThrowASNotFoundWhileTryingToStartDevelopmentAS() throws Exception {
+		givenWorkflowStarted();
+		givenASInAir(atomicServiceId, true);
+		try {
+			whenStartAtomicService();
+			fail();
+		} catch(AtomicServiceNotFoundException e) {
+			//Ok should be thrown
+		}
 	}
 }

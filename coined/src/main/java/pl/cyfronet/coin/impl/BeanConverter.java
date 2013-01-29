@@ -42,7 +42,8 @@ public class BeanConverter {
 		atomicService.setPublished(applianceType.isPublished());
 		atomicService.setActive(applianceType.getTemplates_count() > 0);
 		atomicService.setEndpoints(getEndpoints(applianceType));
-
+		atomicService.setDevelopment(applianceType.isDevelopment());
+		
 		return atomicService;
 	}
 	

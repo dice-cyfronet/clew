@@ -89,7 +89,11 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type2.setVnc(false);
 		type2.setTemplates_count(2);
 
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2));
+		//this AS should not be returned, because it is in development mode
+		ApplianceType devAS = new ApplianceType();
+		devAS.setDevelopment(true);
+		
+		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2, devAS));
 		
 		//descriptor payload
 		when(air.getEndpointDescriptor("1")).thenReturn(null);
