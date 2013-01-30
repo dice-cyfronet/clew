@@ -29,16 +29,16 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class GetInitialConfigurationsAction extends AirAction<List<InitialConfiguration>> {
 
-	private String atomicServiceId;
+	private String atomicServiceName;
 	
 	/**
 	 * @param air Air client.
-	 * @param atomicServiceId Atomic Service id.
+	 * @param atomicServiceName Atomic Service id.
 	 */
 	public GetInitialConfigurationsAction(AirClient air,
-			String atomicServiceId) {
+			String atomicServiceName) {
 		super(air);
-		this.atomicServiceId = atomicServiceId;
+		this.atomicServiceName = atomicServiceName;
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class GetInitialConfigurationsAction extends AirAction<List<InitialConfig
 	 */
 	@Override
 	public List<InitialConfiguration> execute() throws CloudFacadeException {
-		ApplianceType type = getApplianceType(atomicServiceId);
+		ApplianceType type = getApplianceType(atomicServiceName);
 		List<ApplianceConfiguration> typeConfigurations = type
 				.getConfigurations();
 		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();
