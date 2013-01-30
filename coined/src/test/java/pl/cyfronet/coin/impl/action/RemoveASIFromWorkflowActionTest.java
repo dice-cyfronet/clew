@@ -22,14 +22,18 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
@@ -44,7 +48,7 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	public void shouldRemoveASIFromWorkflow() throws Exception {
 		givenWorkflowWithASI();
 		whenRemoveASIFromWorkflow();
-		thenASIRemoved();
+		thenASIAndDevelopmentASRemovedRemoved();
 	}
 
 	private void givenWorkflowWithASI() {
@@ -58,12 +62,25 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 
 		List<Vms> vms = new ArrayList<Vms>();
 		
+		List<ApplianceType> ats = new ArrayList<>();
+		
 		for (String id : asiIds) {
-			vms.add(getVm(id));
+			Vms vm = getVm(id); 
+			vms.add(vm);			
+			
+			ApplianceType at = new ApplianceType();
+			at.setName(id + "AS");
+			ApplianceConfiguration ac = new ApplianceConfiguration();
+			ac.setId(id  + "InitConf");
+			at.setConfigurations(Arrays.asList(ac));
+			
+			when(air.getTypeFromVM(id)).thenReturn(at);
+			ats.add(at);
 		}
 		
 		wd.setVms(vms);
 		when(air.getWorkflow(contextId)).thenReturn(wd);
+		when(air.getApplianceTypes()).thenReturn(ats);
 	}
 	
 	private Vms getVm(String vmId) {
@@ -78,9 +95,12 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 		action.execute();
 	}
 
-	private void thenASIRemoved() {
+	private void thenASIAndDevelopmentASRemovedRemoved() {
 		verify(air, times(1)).getWorkflow(contextId);
 		verify(atmosphere, times(1)).removeAppliance(asiId);
+		verify(air, times(1)).getTypeFromVM(asiId);
+		verify(air, times(1)).removeInitialConfiguration(asiId + "InitConf");
+		verify(air, times(1)).deleteAtomicService(asiId  + "AS");		
 	}
 
 	@Test
