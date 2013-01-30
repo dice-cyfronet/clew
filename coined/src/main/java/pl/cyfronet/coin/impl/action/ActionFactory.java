@@ -37,10 +37,15 @@ public class ActionFactory {
 		return new ListAtomicServicesAction(air);
 	}
 
-	public CreateAtomicServiceAction createCreateAtomicServiceAction(String username,
-			String asInstanceId, AtomicService atomicService) {
-		return new CreateAtomicServiceAction(air, atmosphere, username, defaultSiteId,
-				asInstanceId, atomicService);
+	public DeleteAtomicServiceAction createDeleteAtomicServiceAction(
+			String atomicServiceName) {
+		return new DeleteAtomicServiceAction(air, atomicServiceName);
+	}
+
+	public CreateAtomicServiceAction createCreateAtomicServiceAction(
+			String username, String asInstanceId, AtomicService atomicService) {
+		return new CreateAtomicServiceAction(air, atmosphere, username,
+				defaultSiteId, asInstanceId, atomicService);
 	}
 
 	public AirAction<List<InitialConfiguration>> createGetInitialConfigurationsAction(
@@ -140,7 +145,7 @@ public class ActionFactory {
 			String contextId, String asiId) {
 		return new GetAsiRedirectionsAction(contextId, asiId, air);
 	}
-	
+
 	public RemoveAtomicServiceFromWorkflowAction createRemoveAtomicServiceFromWorkflowAction(
 			String username, String contextId, String asConfId) {
 		return new RemoveAtomicServiceFromWorkflowAction(air, atmosphere,

@@ -73,6 +73,10 @@ public interface AirClient {
 	@Path("/get_appliance_type_for_config/{conf_id}")
 	ApplianceType getTypeFromConfig(@PathParam("conf_id") String configId);
 
+	@GET
+	@Path("get_appliance_type_for_vm/{vm_id}")
+	ApplianceType getTypeFromVM(@PathParam("vm_id") String vmId);
+	
 	@POST
 	@Path("/add_appliance_type_json")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -88,6 +92,10 @@ public interface AirClient {
 			@FormParam("appliance_type") String applianceType,
 			@FormParam("config_text") String configText);
 
+	@DELETE
+	@Path("/appliance_config/{config_name}")
+	void removeInitialConfiguration(@FormParam("config_name") String configName);
+	
 	@GET
 	@Path("/get_endpoint_descriptor/{endpointId}")
 	String getEndpointDescriptor(@PathParam("endpointId") String endpointId);
