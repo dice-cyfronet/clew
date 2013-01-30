@@ -35,8 +35,6 @@ public class AddRequiredAppliancesRequestMatcher extends
 
 	private String[] atomicServiceIds;
 
-	private boolean checkName;
-
 	private Integer importanceLevel;
 
 	private String username;
@@ -48,16 +46,8 @@ public class AddRequiredAppliancesRequestMatcher extends
 	public AddRequiredAppliancesRequestMatcher(String contextId,
 			Integer importanceLevel, String username,
 			WorkflowType workflowType, String... atomicServiceIds) {
-		this(contextId, false, importanceLevel, username, workflowType,
-				atomicServiceIds);
-	}
-
-	public AddRequiredAppliancesRequestMatcher(String contextId,
-			boolean checkName, Integer importanceLevel, String username,
-			WorkflowType workflowType, String... atomicServiceIds) {
 		this.contextId = contextId;
 		this.atomicServiceIds = atomicServiceIds;
-		this.checkName = checkName;
 		this.username = username;
 		this.workflowType = workflowType;
 		this.importanceLevel = importanceLevel;
@@ -102,9 +92,7 @@ public class AddRequiredAppliancesRequestMatcher extends
 			for (int i = 0; i < identites.size(); i++) {
 				ApplianceIdentity identity = identites.get(i);
 				String id = atomicServiceIds[i];
-				if (!equals(identity.getInitConfId(), id)
-						|| (checkName && !equals(identity.getName(), id
-								+ "Name"))) {
+				if (!equals(identity.getInitConfId(), id)) {
 					return false;
 				}
 			}

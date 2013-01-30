@@ -33,9 +33,7 @@ import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
-import pl.cyfronet.coin.impl.mock.atmosphere.ManagerResponseTestImpl;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
-import pl.cyfronet.coin.impl.mock.matcher.AddRequiredAppliancesRequestMatcher;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
@@ -46,15 +44,10 @@ import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
  */
 public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
-	private String initConfigId = "asId";
 	private String name = "asIdName";
 
 	private String id;
-	private String keyId = "myKey";
-	private AddRequiredAppliancesRequestMatcher matcher;
 	private AddRequiredAppliancesRequestImpl request;
-	private String initConfigPayload = "initConfigPayload";
-	private String newConfigId = "newInitConf";
 	private ApplianceType baseAS;
 	private AtomicService as;
 
@@ -72,21 +65,6 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		ApplianceType at = givenASInAir(initConfigId, false);
 		
 		return at;
-	}
-
-	private void givenAsiRequestMatcher(WorkflowType workflowType) {
-		if (workflowType == WorkflowType.development) {
-			matcher = new AddRequiredAppliancesRequestMatcher(contextId,
-					defaultPriority, username, WorkflowType.development,
-					newConfigId);
-			matcher.setGivenKeyId(keyId);
-		} else {
-			matcher = new AddRequiredAppliancesRequestMatcher(contextId, true,
-					defaultPriority, username, workflowType, initConfigId);
-		}
-
-		when(atmosphere.addRequiredAppliances(argThat(matcher))).thenReturn(
-				new ManagerResponseTestImpl(OperationStatus.SUCCESSFUL));
 	}
 
 	private void whenStartAtomicService() {
@@ -222,8 +200,6 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		as.setDescription(baseAS.getDescription());
 
 		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
-		when(air.getApplianceConfig(initConfigId))
-				.thenReturn(initConfigPayload);
 		when(
 				air.addInitialConfiguration(anyString(),
 						startsWith(as.getName()), eq(initConfigPayload)))

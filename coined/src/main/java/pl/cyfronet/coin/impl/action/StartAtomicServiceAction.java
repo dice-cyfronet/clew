@@ -17,7 +17,9 @@ package pl.cyfronet.coin.impl.action;
 
 import static pl.cyfronet.coin.impl.BeanConverter.getAtomicService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -42,11 +44,11 @@ import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 public class StartAtomicServiceAction extends
 		AtomicServiceWorkflowAction<String> {
 
-	private String initConfigIdId;
-	private String asName;
 	private String contextId;
 	private Integer defaultPriority;
 	private String keyName;
+	private List<String> initConfigIds;
+	private List<String> asNames;
 
 	/**
 	 * @param air Air client.
@@ -59,9 +61,17 @@ public class StartAtomicServiceAction extends
 	StartAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
 			String username, String initConfigId, String asName,
 			String contextId, Integer priority, String keyName) {
+		this(air, atmosphere, username, Arrays.asList(initConfigId), Arrays
+				.asList(asName), contextId, priority, keyName);
+	}
+
+	public StartAtomicServiceAction(AirClient air,
+			DyReAllaManagerService atmosphere, String username,
+			List<String> initConfIds, List<String> asNames, String contextId,
+			Integer priority, String keyName) {
 		super(air, atmosphere, username);
-		this.initConfigIdId = initConfigId;
-		this.asName = asName;
+		this.initConfigIds = initConfIds;
+		this.asNames = asNames;
 		this.contextId = contextId;
 		this.defaultPriority = priority;
 		this.keyName = keyName;
@@ -80,19 +90,18 @@ public class StartAtomicServiceAction extends
 		WorkflowDetail workflow = getUserWorkflow(contextId, getUsername());
 		logger.debug(
 				"Add atomic service [{} {}] into workflow [{}] with key {}",
-				new Object[] { asName, initConfigIdId, contextId, keyName });
+				new Object[] { asNames, initConfigIds, contextId, keyName });
 
-		ApplianceType type = getAir().getTypeFromConfig(initConfigIdId);
-		if (type.isDevelopment()) {
+		List<ApplianceType> types = getTypes();
+		if (anyInDevelopment(types)) {
 			throw new AtomicServiceNotFoundException();
 		}
 
 		if (workflow.getWorkflow_type() == WorkflowType.development) {
-			initConfigIdId = createDevelopmentAtomicService(type);
+			initConfigIds = createDevelopmentAtomicServices(types);
 		}
 
-		registerVms(contextId, Arrays.asList(initConfigIdId),
-				Arrays.asList(asName), defaultPriority,
+		registerVms(contextId, initConfigIds, asNames, defaultPriority,
 				workflow.getWorkflow_type(), keyName);
 
 		// TODO information from Atmosphere about atomis service instance id
@@ -100,7 +109,39 @@ public class StartAtomicServiceAction extends
 		return null;
 	}
 
-	private String createDevelopmentAtomicService(ApplianceType baseAS) {
+	private List<String> createDevelopmentAtomicServices(
+			List<ApplianceType> types) {
+		List<String> newInitConfs = new ArrayList<>();
+
+		for (int i = 0; i < types.size(); i++) {
+			ApplianceType baseAS = types.get(i);
+			String initConfId = initConfigIds.get(i);
+			newInitConfs
+					.add(createDevelopmentAtomicService(baseAS, initConfId));
+		}
+
+		return newInitConfs;
+	}
+
+	private List<ApplianceType> getTypes() {
+		List<ApplianceType> types = new ArrayList<>();
+		for (String initConfId : initConfigIds) {
+			types.add(getAir().getTypeFromConfig(initConfId));
+		}
+		return types;
+	}
+
+	private boolean anyInDevelopment(List<ApplianceType> types) {
+		for (ApplianceType type : types) {
+			if (type.isDevelopment()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String createDevelopmentAtomicService(ApplianceType baseAS,
+			String initConfId) {
 		AtomicService devAs = getAtomicService(baseAS);
 		devAs.setDevelopment(true);
 		devAs.setName(String.format("%s-%s", devAs.getName(),
@@ -108,23 +149,23 @@ public class StartAtomicServiceAction extends
 
 		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
 				getAir(), getUsername(), devAs, baseAS.getId());
-		createASAction.execute();				
-		
-		return createInitConfCopy(devAs.getName(), initConfigIdId);
+		createASAction.execute();
+
+		return createInitConfCopy(devAs.getName(), initConfId);
 	}
 
 	private String createInitConfCopy(String asName, String srcInitConfId) {
-		String initConfPayload = getAir().getApplianceConfig(initConfigIdId);
+		String initConfPayload = getAir().getApplianceConfig(srcInitConfId);
 
 		InitialConfiguration initConf = new InitialConfiguration();
 		initConf.setName(System.currentTimeMillis() + "");
 		initConf.setPayload(initConfPayload);
 		AddInitialConfigurationAction addInitConfAction = new AddInitialConfigurationAction(
 				getAir(), asName, initConf);
-		
+
 		return addInitConfAction.execute();
 	}
-	
+
 	@Override
 	public void rollback() {
 		// TODO Auto-generated method stub
