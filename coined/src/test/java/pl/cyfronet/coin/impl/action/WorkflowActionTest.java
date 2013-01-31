@@ -36,7 +36,8 @@ public class WorkflowActionTest extends ActionTest {
 	protected final String initConfigPayload = "initConfigPayload";
 	protected final String newConfigId = "newInitConf";
 	protected final String keyId = "myKey";
-
+	protected WorkflowDetail workflowDetails;
+	
 	protected AddRequiredAppliancesRequestMatcher matcher;
 
 	protected void givenWorkflowStarted() {
@@ -52,6 +53,7 @@ public class WorkflowActionTest extends ActionTest {
 	}
 
 	protected void givenWorkflowStarted(WorkflowDetail wd) {
+		workflowDetails = wd;
 		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
 

@@ -15,9 +15,15 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.Vms;
+import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
@@ -30,7 +36,7 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 
 	/**
 	 * @param air Air client.
-	 * @param atmosphere Atmosphere client.	
+	 * @param atmosphere Atmosphere client.
 	 * @param contextId Workflow id.
 	 * @param username User which wants to stop the workflow.
 	 */
@@ -47,13 +53,24 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		logger.debug("stopping workflow {}", contextId);
-		checkIfWorkflowBelongsToUser(contextId, getUsername());
+		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
 		// ManagerResponse response =
 		getAtmosphere().removeRequiredAppliances(contextId);
 
 		// FIXME waiting for atmo improvement
 		// parseResponseAndThrowExceptionsWhenNeeded(response);
 		getAir().stopWorkflow(contextId);
+
+		List<Vms> vms = wd.getVms();
+		if (wd.getWorkflow_type() == WorkflowType.development && vms != null) {
+			List<String> asesToRemove = new ArrayList<>();
+			for (Vms vm : vms) {
+				asesToRemove.add(vm.getAppliance_type());
+			}
+			DeleteAtomicServiceAction deleteASAction = new DeleteAtomicServiceAction(
+					getAir(), asesToRemove);
+			deleteASAction.execute();
+		}
 
 		return Void.TYPE;
 	}

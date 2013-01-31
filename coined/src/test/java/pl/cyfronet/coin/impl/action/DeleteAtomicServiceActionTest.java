@@ -21,7 +21,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.testng.annotations.Test;
 
@@ -31,28 +33,33 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 public class DeleteAtomicServiceActionTest extends ActionTest {
 
 	private String asName = "atName";
-	
+
 	@Test
 	public void shouldDeleteAtomicService() throws Exception {
-		givenAtomicServiceWith2InitialConfigurations();
+		givenAtomicServiceWith2InitialConfigurations(asName);
 		whenRemovingAtomicService();
 		thenAtomicServiceAndAllInitConfsRemovedFromAir();
 	}
 
-	private void givenAtomicServiceWith2InitialConfigurations() {
-		ApplianceConfiguration ac1 = new ApplianceConfiguration();
-		ac1.setId("ac1");
-		ApplianceConfiguration ac2 = new ApplianceConfiguration();
-		ac2.setId("ac2");
-		
-		ApplianceType at = new ApplianceType();
-		at.setName(asName);
-		at.setConfigurations(Arrays.asList(ac1, ac2));
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(at));
+	private void givenAtomicServiceWith2InitialConfigurations(String... asNames) {
+		List<ApplianceType> ats = new ArrayList<>();
+		for (String asName : asNames) {
+			ApplianceConfiguration ac1 = new ApplianceConfiguration();
+			ac1.setId("ac1" + asName);
+			ApplianceConfiguration ac2 = new ApplianceConfiguration();
+			ac2.setId("ac2" + asName);
+
+			ApplianceType at = new ApplianceType();
+			at.setName(asName);
+			at.setConfigurations(Arrays.asList(ac1, ac2));
+			ats.add(at);
+		}
+		when(air.getApplianceTypes()).thenReturn(ats);
 	}
 
 	private void whenRemovingAtomicService() {
-		DeleteAtomicServiceAction action = actionFactory.createDeleteAtomicServiceAction(asName);
+		DeleteAtomicServiceAction action = actionFactory
+				.createDeleteAtomicServiceAction(asName);
 		action.execute();
 	}
 
@@ -60,5 +67,28 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 		verify(air, times(1)).getApplianceTypes();
 		verify(air, times(2)).removeInitialConfiguration(startsWith("ac"));
 		verify(air, times(1)).deleteAtomicService(asName);
+	}
+
+	@Test
+	public void shouldDelete2AtomicServices() throws Exception {
+		given2ASesToRemove();
+		whenRemoving2Ases();
+		thenBothASesAndTheirInitConfsAreRemovedFromAir();
+	}
+
+	private void given2ASesToRemove() {		
+		givenAtomicServiceWith2InitialConfigurations(asName + "1", asName + "2");		
+	}
+
+	private void whenRemoving2Ases() {
+		DeleteAtomicServiceAction action = new DeleteAtomicServiceAction(air,
+				Arrays.asList(asName + "1", asName + "2"));
+		action.execute();
+	}
+
+	private void thenBothASesAndTheirInitConfsAreRemovedFromAir() {
+		verify(air, times(2)).getApplianceTypes();
+		verify(air, times(4)).removeInitialConfiguration(startsWith("ac"));
+		verify(air, times(2)).deleteAtomicService(startsWith(asName));		
 	}
 }

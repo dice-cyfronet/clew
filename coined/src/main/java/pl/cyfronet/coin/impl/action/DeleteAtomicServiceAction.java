@@ -16,6 +16,7 @@
 
 package pl.cyfronet.coin.impl.action;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -33,26 +34,31 @@ public class DeleteAtomicServiceAction extends AirAction<Class<Void>> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(DeleteAtomicServiceAction.class);
 
-	private String atomicServiceName;
+	private List<String> atomicServicesNames;
 
 	public DeleteAtomicServiceAction(AirClient air, String atomicServiceName) {
+		this(air, Arrays.asList(atomicServiceName));
+	}
+
+	public DeleteAtomicServiceAction(AirClient air,
+			List<String> atomicServicesNames) {
 		super(air);
-		this.atomicServiceName = atomicServiceName;
+		this.atomicServicesNames = atomicServicesNames;
 	}
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		logger.debug("Removing {}", atomicServiceName);
-		
-		GetInitialConfigurationsAction initConfsAction = new GetInitialConfigurationsAction(
-				getAir(), atomicServiceName);
-		List<InitialConfiguration> initConfs = initConfsAction.execute();
-		for (InitialConfiguration initConf : initConfs) {
-			getAir().removeInitialConfiguration(initConf.getId());
+		logger.debug("Removing {}", atomicServicesNames);
+
+		for (String atomicServiceName : atomicServicesNames) {
+			GetInitialConfigurationsAction initConfsAction = new GetInitialConfigurationsAction(
+					getAir(), atomicServiceName);
+			List<InitialConfiguration> initConfs = initConfsAction.execute();
+			for (InitialConfiguration initConf : initConfs) {
+				getAir().removeInitialConfiguration(initConf.getId());
+			}
+			getAir().deleteAtomicService(atomicServiceName);
 		}
-
-		getAir().deleteAtomicService(atomicServiceName);
-
 		return Void.TYPE;
 	}
 

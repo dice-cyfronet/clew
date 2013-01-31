@@ -15,11 +15,12 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.fail;
+
+import java.util.Arrays;
 
 import org.testng.annotations.Test;
 
@@ -27,6 +28,9 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
+import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
@@ -40,29 +44,30 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	public void shouldStopWorkflow() throws Exception {
 		givenAirStateWithWorkflowListAndMockedStopWorkflowAction();
 		whenStopWorkflow();
-		thenCheckWorkflowStopped();		
-	}	
+		thenCheckWorkflowStopped();
+	}
 
 	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() {
 		givenWorkflowStarted();
-		mockStopWorkflowInAtmosphere();		
+		mockStopWorkflowInAtmosphere();
 	}
 
 	private void whenStopWorkflow() {
 		stopWorkflow(contextId);
 	}
-	
+
 	private void stopWorkflow(String contextId) {
-		StopWorkflowAction action = actionFactory.createStopWorkflowAction(contextId, username);
-		action.execute();		
+		StopWorkflowAction action = actionFactory.createStopWorkflowAction(
+				contextId, username);
+		action.execute();
 	}
-	
+
 	private void thenCheckWorkflowStopped() {
 		verify(air, times(1)).stopWorkflow(contextId);
 		verify(air, times(1)).getWorkflow(contextId);
-		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);		
+		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
 	}
-	
+
 	private void mockStopWorkflowInAtmosphere() {
 		ManagerResponseImpl atmosphereManagerResponse = new ManagerResponseImpl();
 		atmosphereManagerResponse
@@ -72,8 +77,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 				atmosphereManagerResponse);
 	}
 
-	//FIXME waiting for atmo improvement
-	@Test(enabled=false)
+	// FIXME waiting for atmo improvement
+	@Test(enabled = false)
 	public void shouldThrowCloudExceptionWhenAtmosphereFail() throws Exception {
 		// when
 		givenWorkflowStarted();
@@ -83,7 +88,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 			whenStopWorkflow();
 			fail();
 		} catch (CloudFacadeException e) {
-			// ok
+			// OK
 		}
 
 		// then
@@ -91,8 +96,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
 	}
 
-	//FIXME waiting for atmo improvement
-	@Test(enabled=false)
+	// FIXME waiting for atmo improvement
+	@Test(enabled = false)
 	public void shouldStopWorkflowWhenOnAtmosphereWarning() throws Exception {
 		// given
 		givenWorkflowStarted();
@@ -109,9 +114,9 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void mockStopWorkflowInAtmosphereWithWarning(String contextId) {
-		//FIXME
-//		mockStopWorkflowInAtmosphereWithReturnStatus(contextId,
-//				OperationStatus.COMPLETED_WITH_ERRORS);
+		// FIXME
+		// mockStopWorkflowInAtmosphereWithReturnStatus(contextId,
+		// OperationStatus.COMPLETED_WITH_ERRORS);
 	}
 
 	private void mockStopWorkflowInAtmosphereWithError(String contextId) {
@@ -144,7 +149,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 			whenStopNonExistingWorkflow();
 			fail();
 		} catch (WorkflowNotFoundException e) {
-			// shoud be thrown
+			// should be thrown
 		}
 
 		// then
@@ -152,7 +157,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStopNonExistingWorkflow() {
-		stopWorkflow("nonExisting");		
+		stopWorkflow("nonExisting");
 	}
 
 	@Test
@@ -173,10 +178,56 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 			whenStopWorkflow();
 			fail();
 		} catch (WorkflowNotFoundException e) {
-			// shoud be thrown
+			// should be thrown
 		}
 
 		// then
 		verify(air, times(1)).getWorkflow(contextId);
+	}
+
+	@Test
+	public void shouldStopWorkflowStartedInDevelopmentMode() throws Exception {
+		givenWorkflowWith2ASesStartedInDevelopmentMode();
+		whenStopWorkflow();
+		thenWorkflowIsStoppedAndDevelopmentASesAreRemoved();
+	}
+
+	private void givenWorkflowWith2ASesStartedInDevelopmentMode() {
+		givenWorkflowStarted(WorkflowType.development);
+		mockStopWorkflowInAtmosphere();
+
+		Vms vm1 = getVm("asi1");
+		Vms vm2 = getVm("asi2");
+
+		when(air.getApplianceTypes()).thenReturn(
+				Arrays.asList(getAT("asi1"), getAT("asi2")));
+
+		workflowDetails.setVms(Arrays.asList(vm1, vm2));
+	}
+
+	private ApplianceType getAT(String vmId) {
+		ApplianceType at = new ApplianceType();
+		at.setName(vmId + "AS");
+		ApplianceConfiguration ac = new ApplianceConfiguration();
+		ac.setId(vmId + "InitConf");
+		at.setConfigurations(Arrays.asList(ac));
+
+		return at;
+	}
+
+	private void thenWorkflowIsStoppedAndDevelopmentASesAreRemoved() {
+		thenCheckWorkflowStopped();
+
+		verify(air, times(1)).removeInitialConfiguration("asi1InitConf");		
+		verify(air, times(1)).removeInitialConfiguration("asi1InitConf");
+		verify(air, times(1)).deleteAtomicService("asi1AS");
+		verify(air, times(1)).deleteAtomicService("asi2AS");
+	}
+
+	private Vms getVm(String vmId) {
+		Vms vm = new Vms();
+		vm.setVms_id(vmId);
+		vm.setAppliance_type(vmId + "AS");
+		return vm;
 	}
 }
