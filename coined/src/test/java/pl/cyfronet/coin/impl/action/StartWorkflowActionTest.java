@@ -106,6 +106,8 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	@Test
 	public void shouldStartProductionWorkflowWithAtomicService()
 			throws Exception {
+		givenASInAir("id1", false);
+		givenASInAir("id2", false);
 		givenProductionWorkflowStartRequestWithAsIds(
 				OperationStatus.SUCCESSFUL, "id1", "id2");
 		whenStartWorkflow();
@@ -152,6 +154,8 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 		workflowType = WorkflowType.development;
 		createWorkflowStartRequest();
 		mockAirStartMethod();
+		givenASInAir("id1", false);
+		givenASInAir("id2", false);
 		startRequest.setAsConfigIds(Arrays.asList("id1", "id2"));
 		mockAtmosphereAddAppliancesWithResponse(OperationStatus.SUCCESSFUL);
 	}
@@ -163,6 +167,8 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	@Test
 	public void shouldNotStartWorkflowWithAsWhenAtmosphereOperationFailed()
 			throws Exception {
+		givenASInAir("id1", false);
+		givenASInAir("id2", false);
 		givenProductionWorkflowStartRequestWithAsIds(OperationStatus.FAILED,
 				"id1", "id2");
 		try {

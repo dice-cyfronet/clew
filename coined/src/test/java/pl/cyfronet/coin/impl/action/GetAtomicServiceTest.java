@@ -56,6 +56,7 @@ public class GetAtomicServiceTest extends ActionTest {
 		asType.setScalable(true);
 		asType.setShared(true);
 		asType.setVnc(true);
+		asType.setDevelopment(true);
 		asType.setTemplates_count(0);
 
 		ATEndpoint type1AsEndpoint = new ATEndpoint();

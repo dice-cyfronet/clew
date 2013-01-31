@@ -37,7 +37,8 @@ public class AtomicService {
 	private boolean published;
 	private boolean inProxy;
 	private boolean active;
-
+	private boolean development;
+	
 	public AtomicService() {
 	}
 
@@ -163,6 +164,23 @@ public class AtomicService {
 		this.active = active;
 	}
 	
+	/**
+	 * @return the development
+	 */
+	public boolean isDevelopment() {
+		return development;
+	}
+
+	/**
+	 * @param development the development to set
+	 */
+	public void setDevelopment(boolean development) {
+		this.development = development;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
@@ -170,7 +188,7 @@ public class AtomicService {
 				+ endpoints + ", vnc=" + vnc + ", http=" + http + ", shared="
 				+ shared + ", scalable=" + scalable + ", published="
 				+ published + ", inProxy=" + inProxy + ", active=" + active
-				+ "]";
+				+ ", development=" + development + "]";
 	}
 
 	/* (non-Javadoc)
@@ -185,6 +203,7 @@ public class AtomicService {
 				+ ((atomicServiceId == null) ? 0 : atomicServiceId.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + (development ? 1231 : 1237);
 		result = prime * result
 				+ ((endpoints == null) ? 0 : endpoints.hashCode());
 		result = prime * result + (http ? 1231 : 1237);
@@ -221,6 +240,8 @@ public class AtomicService {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
+		if (development != other.development)
+			return false;
 		if (endpoints == null) {
 			if (other.endpoints != null)
 				return false;
@@ -245,6 +266,4 @@ public class AtomicService {
 			return false;
 		return true;
 	}
-
-	
 }
