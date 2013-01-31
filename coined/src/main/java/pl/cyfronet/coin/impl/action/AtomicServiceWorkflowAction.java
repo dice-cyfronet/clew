@@ -64,7 +64,7 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 					names));
 			RunMode runMode = getRunMode(workflowType);
 			request.setRunMode(runMode);
-			request.setKeyPairName(getKeyPairId(runMode, keyId));
+			request.setKeyPairId(getKeyPairId(runMode, keyId));
 
 			logger.debug("Request sent do atmosphere: {}", request);
 			
