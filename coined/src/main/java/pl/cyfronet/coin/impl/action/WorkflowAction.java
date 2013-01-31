@@ -52,6 +52,7 @@ public abstract class WorkflowAction<T> extends AtmosphereAndAirAction<T> {
 
 	protected void parseResponseAndThrowExceptionsWhenNeeded(
 			ManagerResponse response) throws CloudFacadeException {
+		logger.debug("Atmosphere action response {}", response);
 		if (OperationStatus.FAILED == response.getOperationStatus()) {
 			String errorMessage = getErrorMessage(response);
 			throw new CloudFacadeException(errorMessage);
