@@ -198,7 +198,8 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		as = new AtomicService();
 		as.setName(baseAS.getName());
 		as.setDescription(baseAS.getDescription());
-
+		as.setDevelopment(true);
+		
 		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
 		when(
 				air.addInitialConfiguration(anyString(),

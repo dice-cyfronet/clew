@@ -64,7 +64,8 @@ public class AddAtomicServiceMatcher extends
 				&& request.isPublished() == as.isPublished()
 				&& request.isScalable() == as.isScalable()
 				&& request.isShared() == as.isShared()
-				&& request.isVnc() == as.isVnc();
+				&& request.isVnc() == as.isVnc()
+				&& request.isDevelopment() == as.isDevelopment();
 	}
 
 	private boolean nameEquals(AddAtomicServiceRequest request) {
