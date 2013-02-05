@@ -12,25 +12,22 @@
 					<portlet:param name="action" value="deletePolicy"/>
 					<portlet:param name="policyName" value="${policy.key}"/>
 				</portlet:actionURL>
+				<portlet:resourceURL var="downloadPolicy" id="downloadPolicy">
+					<portlet:param name="policyName" value="${policy.key}"/>
+				</portlet:resourceURL>
 				<c:set var="deleteConfirmation">deletePolicy-${status.index}</c:set>
 				<div class="coin-panel">
 					<div style="width: 20%; float: left;">
 						<span class="coin-header" style="width: 100%; display: block;">${policy.key}</span>
 					</div>
 					<div style="width: 80%; float: left;">
-						<c:choose>
-							<c:when test="${empty policy.value}">
-								<span class="coin-description" style="font-style: italic;"><spring:message code="policy.manager.portlet.policy.body.empty.label"/></span>
-							</c:when>
-							<c:otherwise>
-								<span class="coin-description">
-									<pre>
-${fn:escapeXml(policy.value)}
-									</pre>
-								</span>
-							</c:otherwise>
-						</c:choose>
+						<c:if test="${empty policy.value}">
+							<span class="coin-description" style="font-style: italic;"><spring:message code="policy.manager.portlet.policy.body.empty.label"/></span>
+						</c:if>
 						<span class="coin-actions">
+							<c:if test="${not empty policy.value}">
+								<a class="coin-link" href="${downloadPolicy}"><spring:message code="policy.manager.portlet.download.policy.label"/></a><br/>
+							</c:if>
 							<a class="coin-link" id="${deleteConfirmation}" href="${deletePolicy}"><spring:message code="policy.manager.portlet.delete.policy.label"/></a>
 						</span>
 					</div>
@@ -53,7 +50,7 @@ ${fn:escapeXml(policy.value)}
 	<div style="margin-top: 15px;">
 		<spring:message code="policy.manager.portlet.upload.policy"/>
 	</div>
-	<form:form class="coin-form" action='${uploadPolicy}' modelAttribute='uploadPolicyRequest'>
+	<form:form class="coin-form" action='${uploadPolicy}' modelAttribute='uploadPolicyRequest' enctype="multipart/form-data">
 		<div class="coin-form-input">
 			<label for="policyName">
 				<spring:message code="policy.manager.portlet.policy.name.label"/>
@@ -65,7 +62,7 @@ ${fn:escapeXml(policy.value)}
 			<label for="policyBody">
 				<spring:message code="policy.manager.portlet.policy.body.label"/>
 			</label>
-			<form:textarea path="policyBody"/>
+			<form:input path="policyBody" type="file"/>
 			<form:errors path="policyBody" cssClass="coin-error-panel"/>
 		</div>
 		<div class="coin-form-submit">
