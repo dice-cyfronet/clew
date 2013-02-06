@@ -19,6 +19,7 @@ package pl.cyfronet.coin.api;
 import java.util.List;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,16 +41,18 @@ public interface GrantService {
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public List<String> listGrants();
-	
+
 	@GET
 	@Path("/{grantName : .+}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Grant getGrant(@PathParam("grantName") String grantName);
-	
+
 	@POST
-	@Path("/{grantName : .+}")
-	void updateGrant(@PathParam("grantName") String grantName,
-			String policyContent, @QueryParam("overwrite") boolean overwrite)
+	@Path("/")
+	void updateGrant(@FormParam("grantName") String grantName,
+			@FormParam("get") String get, @FormParam("post") String post,
+			@FormParam("put") String put, @FormParam("delete") String delete,
+			@QueryParam("overwrite") boolean overwrite)
 			throws GrantAlreadyExistException;
 
 	@DELETE

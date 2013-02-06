@@ -26,7 +26,6 @@ import pl.cyfronet.coin.api.exception.GrantNotFoundException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class GrantServiceImpl implements GrantService {
 
@@ -42,13 +41,14 @@ public class GrantServiceImpl implements GrantService {
 		grant.setGet("get regexp");
 		grant.setPost("post regexp");
 		grant.setPut("put regexp");
-		
+
 		return grant;
 	}
 
 	@Override
-	public void updateGrant(String grantName, String policyContent,
-			boolean overwrite) throws GrantAlreadyExistException {
+	public void updateGrant(String grantName, String get, String post,
+			String put, String delete, boolean overwrite)
+			throws GrantAlreadyExistException {
 		// TODO Auto-generated method stub
 
 	}
