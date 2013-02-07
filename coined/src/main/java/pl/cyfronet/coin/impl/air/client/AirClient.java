@@ -94,7 +94,7 @@ public interface AirClient {
 
 	@DELETE
 	@Path("/appliance_config/{config_name}")
-	void removeInitialConfiguration(@FormParam("config_name") String configName);
+	void removeInitialConfiguration(@PathParam("config_name") String configName);
 	
 	@GET
 	@Path("/get_endpoint_descriptor/{endpointId}")
