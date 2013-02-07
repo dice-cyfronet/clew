@@ -55,8 +55,10 @@ public class DeleteAtomicServiceAction extends AirAction<Class<Void>> {
 					getAir(), atomicServiceName);
 			List<InitialConfiguration> initConfs = initConfsAction.execute();
 			for (InitialConfiguration initConf : initConfs) {
+				logger.debug("Removing initial configuration {}", initConf.getId());
 				getAir().removeInitialConfiguration(initConf.getId());
 			}
+			logger.debug("Removing atomic service {}", atomicServiceName);
 			getAir().deleteAtomicService(atomicServiceName);
 		}
 		return Void.TYPE;

@@ -67,6 +67,7 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 			for (Vms vm : vms) {
 				asesToRemove.add(vm.getAppliance_type());
 			}
+			logger.debug("Removing following ASes {}", asesToRemove);
 			DeleteAtomicServiceAction deleteASAction = new DeleteAtomicServiceAction(
 					getAir(), asesToRemove);
 			deleteASAction.execute();
