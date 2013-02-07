@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
