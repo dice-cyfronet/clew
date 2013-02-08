@@ -36,11 +36,11 @@ public abstract class AirAction<T> implements Action<T> {
 
 	private AirClient air;
 
-	AirAction(AirClient air) {
+	public AirAction(AirClient air) {
 		this.air = air;
 	}
 
-	protected List<ApplianceType> getApplianceTypes() {
+	List<ApplianceType> getApplianceTypes() {
 		return air.getApplianceTypes();
 	}
 

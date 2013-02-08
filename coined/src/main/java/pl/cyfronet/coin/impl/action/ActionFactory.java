@@ -18,8 +18,13 @@ package pl.cyfronet.coin.impl.action;
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
+import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
+import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
+import pl.cyfronet.coin.impl.action.grant.UpdateGrantAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
@@ -151,6 +156,25 @@ public class ActionFactory {
 			String username, String contextId, String asiId) {
 		return new RemoveASIFromWorkflowAction(air, atmosphere, username,
 				contextId, asiId);
+	}	
+	
+	// grants
+
+	public Action<List<String>> createListGrantsAction() {
+		return new ListGrantsAction(air);
+	}
+
+	public Action<Grant> createGetGrantAction(String name) {
+		return new GetGrantAction(air, name);
+	}
+
+	public Action<Class<Void>> createUpdateGrantAction(String name, Grant grant,
+			boolean overwrite) {
+		return new UpdateGrantAction(air, name, grant, overwrite);
+	}
+
+	public Action<Class<Void>> createDeleteGrantAction(String name) {
+		return new DeleteGrantAction(air, name);
 	}
 
 	// setters
@@ -169,5 +193,5 @@ public class ActionFactory {
 
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
-	}
+	}	
 }

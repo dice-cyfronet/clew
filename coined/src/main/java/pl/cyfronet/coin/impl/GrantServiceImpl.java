@@ -16,46 +16,57 @@
 
 package pl.cyfronet.coin.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.api.GrantService;
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.exception.GrantAlreadyExistException;
 import pl.cyfronet.coin.api.exception.GrantNotFoundException;
+import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class GrantServiceImpl implements GrantService {
 
+	private ActionFactory actionFactory;
+
 	@Override
 	public List<String> listGrants() {
-		return Arrays.asList("grant1", "grant2", "grant3");
+		Action<List<String>> action = actionFactory.createListGrantsAction();
+		return action.execute();
 	}
 
 	@Override
 	public Grant getGrant(String grantName) {
-		Grant grant = new Grant();
-		grant.setDelete("delete \"excaped\" regexp");
-		grant.setGet("get regexp");
-		grant.setPost("post regexp");
-		grant.setPut("put regexp");
-
-		return grant;
+		Action<Grant> action = actionFactory.createGetGrantAction(grantName);
+		return action.execute();
 	}
 
 	@Override
 	public void updateGrant(String grantName, String get, String post,
 			String put, String delete, boolean overwrite)
 			throws GrantAlreadyExistException {
-		// TODO Auto-generated method stub
+		Grant grant = new Grant();
+		grant.setDelete(delete);
+		grant.setGet(get);
+		grant.setPost(post);
+		grant.setPut(put);
 
+		Action<Class<Void>> action = actionFactory.createUpdateGrantAction(
+				grantName, grant, overwrite);
+		action.execute();
 	}
 
 	@Override
 	public void deleteGrant(String grantName) throws GrantNotFoundException {
-		// TODO Auto-generated method stub
+		Action<Class<Void>> action = actionFactory
+				.createDeleteGrantAction(grantName);
+		action.execute();
+	}
 
+	public void setActionFactory(ActionFactory actionFactory) {
+		this.actionFactory = actionFactory;
 	}
 }

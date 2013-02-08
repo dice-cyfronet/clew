@@ -43,7 +43,7 @@
 	</bean>
 
 	<bean name="grants-management" class="pl.cyfronet.coin.impl.GrantServiceImpl">
-
+		<property name="actionFactory" ref="actionFactory" />
 	</bean>
 	
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 ACC CYFRONET AGH
+ * Copyright 2013 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -14,26 +14,32 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.grant;
 
+import pl.cyfronet.coin.api.beans.Grant;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public abstract class ReadOnlyAirAction<T> extends AirAction<T> {
+public class GetGrantAction extends ReadOnlyAirAction<Grant> {
 
-	/**
-	 * @param air
-	 */
-	public ReadOnlyAirAction(AirClient air) {
+	public GetGrantAction(AirClient air, String name) {
 		super(air);
 	}
 
 	@Override
-	public void rollback() {
-		// readonly action, no rollback needed.		
+	public Grant execute() throws CloudFacadeException {
+		Grant grant = new Grant();
+		grant.setDelete("delete \"excaped\" regexp");
+		grant.setGet("get regexp");
+		grant.setPost("post regexp");
+		grant.setPut("put regexp");
+		
+		return grant;
 	}
 
 }

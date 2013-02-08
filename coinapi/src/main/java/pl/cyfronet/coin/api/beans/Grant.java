@@ -64,4 +64,53 @@ public class Grant {
 	public void setDelete(String delete) {
 		this.delete = delete;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((delete == null) ? 0 : delete.hashCode());
+		result = prime * result + ((get == null) ? 0 : get.hashCode());
+		result = prime * result + ((post == null) ? 0 : post.hashCode());
+		result = prime * result + ((put == null) ? 0 : put.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Grant other = (Grant) obj;
+		if (delete == null) {
+			if (other.delete != null)
+				return false;
+		} else if (!delete.equals(other.delete))
+			return false;
+		if (get == null) {
+			if (other.get != null)
+				return false;
+		} else if (!get.equals(other.get))
+			return false;
+		if (post == null) {
+			if (other.post != null)
+				return false;
+		} else if (!post.equals(other.post))
+			return false;
+		if (put == null) {
+			if (other.put != null)
+				return false;
+		} else if (!put.equals(other.put))
+			return false;
+		return true;
+	}
 }
