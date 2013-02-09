@@ -18,8 +18,6 @@ package pl.cyfronet.coin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 
 import org.slf4j.Logger;
@@ -38,15 +36,8 @@ import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
-import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
-import pl.cyfronet.coin.impl.action.GetUserWorkflowsAction;
-import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
-import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
-import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.StartWorkflowAction;
-import pl.cyfronet.coin.impl.action.StopWorkflowAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -67,14 +58,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public String startWorkflow(WorkflowStartRequest workflow)
 			throws WorkflowStartException {
-		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
+		Action<String> action = actionFactory.createStartWorkflowAction(
 				workflow, getUsername());
 		return action.execute();
 	}
 
 	@Override
 	public void stopWorkflow(String workflowId) {
-		StopWorkflowAction action = actionFactory.createStopWorkflowAction(
+		Action<Class<Void>> action = actionFactory.createStopWorkflowAction(
 				workflowId, getUsername());
 		try {
 			action.execute();
@@ -90,9 +81,8 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		logger.debug(
 				"Adding atomic service {} to worklow {} with given name {} and key {}",
 				new Object[] { asId, contextId, name, key });
-		StartAtomicServiceAction action = actionFactory
-				.createStartAtomicServiceAction(asId, name, contextId,
-						getUsername(), key);
+		Action<String> action = actionFactory.createStartAtomicServiceAction(
+				asId, name, contextId, getUsername(), key);
 		action.execute();
 	}
 
@@ -103,7 +93,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		logger.debug(
 				"Remove atomic service [{}] from workflow [{}] for user {}",
 				new Object[] { asConfigId, workflowId, username });
-		RemoveAtomicServiceFromWorkflowAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createRemoveAtomicServiceFromWorkflowAction(getUsername(),
 						workflowId, asConfigId);
 		action.execute();
@@ -118,7 +108,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 				"Remove atomic service instance [{}] from workflow [{}] for user {}",
 				new Object[] { asInstanceId, workflowId, username });
 
-		RemoveASIFromWorkflowAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createRemoveASIFromWorkflowAction(username, workflowId,
 						asInstanceId);
 		action.execute();
@@ -134,7 +124,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		UserWorkflows wrapper = new UserWorkflows();
 		wrapper.setUsername(username);
 
-		GetUserWorkflowsAction action = actionFactory
+		Action<List<WorkflowBaseInfo>> action = actionFactory
 				.createGetUserWorkflowsAction(username);
 		try {
 			List<WorkflowBaseInfo> workflows = action.execute();
@@ -147,8 +137,8 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Override
 	public Workflow getWorkflow(String workflowId) {
-		GetUserWorkflowAction action = actionFactory
-				.createGetUserWorkflowAction(workflowId, getUsername());
+		Action<Workflow> action = actionFactory.createGetUserWorkflowAction(
+				workflowId, getUsername());
 		try {
 			return action.execute();
 		} catch (WorkflowNotFoundException e) {
@@ -160,7 +150,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public List<Redirection> getRedirections(String contextId, String asiId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
-		GetAsiRedirectionsAction action = actionFactory
+		Action<List<Redirection>> action = actionFactory
 				.createGetAsiRedirectionsAction(contextId, asiId);
 		return action.execute();
 	}
@@ -195,8 +185,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public void deleteRedirection(String contextId,
-			String asiId, String name)
+	public void deleteRedirection(String contextId, String asiId, String name)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {

@@ -71,8 +71,8 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void whenGetWorkflow() {
-		GetUserWorkflowAction action = actionFactory
-				.createGetUserWorkflowAction(contextId, username);
+		Action<Workflow> action = actionFactory.createGetUserWorkflowAction(
+				contextId, username);
 		workflow = action.execute();
 
 	}
@@ -192,7 +192,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		sshMapping.setHeadnode_ip("headnodeIp");
 		sshMapping.setService_name("ssh");
 		sshMapping.setHttp(false);
-		
+
 		PortMapping vncMapping = new PortMapping();
 		vncMapping.setVm_port(5900);
 		vncMapping.setHeadnode_port(55900);

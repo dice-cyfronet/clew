@@ -67,7 +67,7 @@ public class ListUserKeysActionTest extends ActionTest {
 	}
 
 	private void whenGetUserKeys() {
-		ListUserKeysAction action = actionFactory
+		Action<List<PublicKeyInfo>> action = actionFactory
 				.createListUserKeysAction(vphUsername);
 		keys = action.execute();
 	}

@@ -71,7 +71,7 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 	private void whenGetInitialConfigurations(String atomicServiceId)
 			throws AtomicServiceNotFoundException {
 		when(air.getApplianceTypes()).thenReturn(applianceTypes);
-		AirAction<List<InitialConfiguration>> action = actionFactory
+		Action<List<InitialConfiguration>> action = actionFactory
 				.createGetInitialConfigurationsAction(atomicServiceId);
 		initialConfigurations = action.execute();
 	}

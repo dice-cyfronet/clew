@@ -51,21 +51,21 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 		givenWorkflowWithASIs("otherId", asiId, "yetAnotherId");
 	}
 
-	private void givenWorkflowWithASIs(String ...asiIds) {
+	private void givenWorkflowWithASIs(String... asiIds) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 		wd.setWorkflow_type(WorkflowType.development);
 
 		List<Vms> vms = new ArrayList<Vms>();
-		
+
 		for (String id : asiIds) {
 			vms.add(getVm(id));
 		}
-		
+
 		wd.setVms(vms);
 		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
-	
+
 	private Vms getVm(String vmId) {
 		Vms vm = new Vms();
 		vm.setVms_id(vmId);
@@ -73,7 +73,7 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	}
 
 	private void whenRemoveASIFromWorkflow() {
-		RemoveASIFromWorkflowAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createRemoveASIFromWorkflowAction(username, contextId, asiId);
 		action.execute();
 	}
@@ -97,7 +97,8 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	}
 
 	@Test
-	public void shouldThrownExceptionWhenWorkflowNotBelonsToTheUser() throws Exception {
+	public void shouldThrownExceptionWhenWorkflowNotBelonsToTheUser()
+			throws Exception {
 		givenWorkflowNotBelongingToTheUser();
 		try {
 			whenRemoveASIFromWorkflow();
@@ -108,12 +109,12 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 
 		thenOnlyAirActionInvoked();
 	}
-	
+
 	private void givenWorkflowNotBelongingToTheUser() {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username("otherUser");
-		wd.setWorkflow_type(WorkflowType.development);		
-		
+		wd.setWorkflow_type(WorkflowType.development);
+
 		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
 
@@ -131,11 +132,12 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	}
 
 	private void givenWorkflowWithoutASI() {
-		givenWorkflowWithASIs("otherId", "yetAnotherId");		
+		givenWorkflowWithASIs("otherId", "yetAnotherId");
 	}
 
 	@Test
-	public void shouldThrownExceptionWhenWorkflowInProductionMode() throws Exception {
+	public void shouldThrownExceptionWhenWorkflowInProductionMode()
+			throws Exception {
 		givenWorkflowInProductionMode();
 		try {
 			whenRemoveASIFromWorkflow();
@@ -146,12 +148,12 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 
 		thenOnlyAirActionInvoked();
 	}
-	
+
 	private void givenWorkflowInProductionMode() {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
-		wd.setWorkflow_type(WorkflowType.workflow);		
-		
+		wd.setWorkflow_type(WorkflowType.workflow);
+
 		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
 

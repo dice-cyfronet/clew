@@ -25,11 +25,8 @@ import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
-import pl.cyfronet.coin.impl.action.DeletePublicKeyAction;
-import pl.cyfronet.coin.impl.action.GetPublicKeyAction;
-import pl.cyfronet.coin.impl.action.ListUserKeysAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -49,7 +46,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	public List<PublicKeyInfo> list() {
 		String username = getUsername();
 		logger.debug("Listing keys for {}", username);
-		ListUserKeysAction action = actionFactory
+		Action<List<PublicKeyInfo>> action = actionFactory
 				.createListUserKeysAction(username);
 		return action.execute();
 	}
@@ -59,7 +56,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 			throws KeyAlreadyExistsException {
 		String username = getUsername();
 		logger.debug("Adding new key {} for {}", keyName, username);
-		AddPublicKeyAction action = actionFactory.createAddPublicKeyAction(
+		Action<String> action = actionFactory.createAddPublicKeyAction(
 				username, keyName, publicKey);
 		return action.execute();
 	}
@@ -68,8 +65,8 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	public void delete(String keyId) throws KeyNotFoundException {
 		String username = getUsername();
 		logger.debug("Adding key {} for {}", keyId, username);
-		DeletePublicKeyAction action = actionFactory
-				.createDeletePublicKeyAction(username, keyId);
+		Action<Class<Void>> action = actionFactory.createDeletePublicKeyAction(
+				username, keyId);
 		action.execute();
 	}
 
@@ -77,7 +74,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	public String get(String keyId) throws KeyNotFoundException {
 		String username = getUsername();
 		logger.debug("Getting key {} for {}", keyId, username);
-		GetPublicKeyAction action = actionFactory.createGetPublicKeyAction(
+		Action<String> action = actionFactory.createGetPublicKeyAction(
 				username, keyId);
 		return action.execute();
 	}

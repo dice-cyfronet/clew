@@ -85,7 +85,7 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStartWorkflow() throws WorkflowStartException {
-		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
+		Action<String> action = actionFactory.createStartWorkflowAction(
 				startRequest, username);
 		createdContextId = action.execute();
 	}

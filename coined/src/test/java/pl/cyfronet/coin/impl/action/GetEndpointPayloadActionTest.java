@@ -106,7 +106,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 			int servicePort, String path)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
-		GetEndpointPayloadAction action = actionFactory.createGetEndpointPayloadAction(
+		Action<String> action = actionFactory.createGetEndpointPayloadAction(
 				asName, servicePort, path);
 		receivedDescriptor = action.execute();
 	}

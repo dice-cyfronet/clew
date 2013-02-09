@@ -44,7 +44,7 @@ public class DeleteSecurityPolicyActionTest extends ActionTest {
 	}
 
 	private void whenDeleteSecurityPolicy() {
-		DeleteSecurityPolicyAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createDeleteSecurityPolicyAction(policyName);
 		action.execute();
 	}
@@ -88,7 +88,7 @@ public class DeleteSecurityPolicyActionTest extends ActionTest {
 	}
 
 	private void whenDeleteSecurityPolicyAndRollback() {
-		DeleteSecurityPolicyAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createDeleteSecurityPolicyAction(policyName);
 		action.execute();
 		action.rollback();

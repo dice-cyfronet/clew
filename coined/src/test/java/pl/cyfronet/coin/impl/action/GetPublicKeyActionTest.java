@@ -50,7 +50,7 @@ public class GetPublicKeyActionTest extends ActionTest {
 	}
 
 	private void whenGetUserKey() {
-		GetPublicKeyAction action = actionFactory.createGetPublicKeyAction(
+		Action<String> action = actionFactory.createGetPublicKeyAction(
 				vphUsername, keyId);
 		receivedKeyContent = action.execute();
 	}

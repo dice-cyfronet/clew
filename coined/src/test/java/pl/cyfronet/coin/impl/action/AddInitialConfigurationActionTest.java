@@ -66,9 +66,8 @@ public class AddInitialConfigurationActionTest extends ActionTest {
 	}
 
 	private void whenAddInitialConfiguration() {
-		AddInitialConfigurationAction action = actionFactory
-				.createAddInitialConfiguration(atomicServiceId,
-						initialConfiguration);
+		Action<String> action = actionFactory.createAddInitialConfiguration(
+				atomicServiceId, initialConfiguration);
 		addedConfigId = action.execute();
 	}
 
