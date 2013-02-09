@@ -45,15 +45,8 @@ public class GrantServiceImpl implements GrantService {
 	}
 
 	@Override
-	public void updateGrant(String grantName, String get, String post,
-			String put, String delete, boolean overwrite)
+	public void updateGrant(String grantName, Grant grant, boolean overwrite)
 			throws GrantAlreadyExistException {
-		Grant grant = new Grant();
-		grant.setDelete(delete);
-		grant.setGet(get);
-		grant.setPost(post);
-		grant.setPut(put);
-
 		Action<Class<Void>> action = actionFactory.createUpdateGrantAction(
 				grantName, grant, overwrite);
 		action.execute();

@@ -178,9 +178,7 @@ public class GrantServiceTest extends AbstractServiceTest {
 	}
 
 	private void whenCreateGrant() {
-		grantService.updateGrant(grantPath, givenGrant.getGet(),
-				givenGrant.getPost(), givenGrant.getPut(),
-				givenGrant.getDelete(), false);
+		grantService.updateGrant(grantPath, givenGrant, false);
 	}
 
 	private void thenNewGrantCreated() {
