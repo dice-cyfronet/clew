@@ -33,6 +33,7 @@ public class CoinedAsserts {
 
 	public static void assertATAndAs(ApplianceType at, AtomicService as,
 			String... endpointsPayload) {
+		assertEquals(as.getAtomicServiceId(), at.get_id());
 		assertEquals(as.getName(), at.getName());
 		assertEquals(as.getDescription(), at.getDescription());
 		assertEquals(as.isHttp(), at.isHttp());

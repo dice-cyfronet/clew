@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name ="applianceType")
 public class ApplianceType {
 
+	private String _id;
+	
 	private String name;
 	
 	private String author;
@@ -53,6 +55,20 @@ public class ApplianceType {
 
 	private List<ATEndpoint> endpoints;
 	
+	/**
+	 * @return the _id
+	 */
+	public String get_id() {
+		return _id;
+	}
+
+	/**
+	 * @param _id the _id to set
+	 */
+	public void set_id(String _id) {
+		this._id = _id;
+	}
+
 	/**
 	 * @return the name
 	 */
@@ -235,14 +251,17 @@ public class ApplianceType {
 		this.development = development;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "ApplianceType [name=" + name + ", author=" + author + ", vnc="
-				+ vnc + ", in_proxy=" + in_proxy + ", published=" + published
-				+ ", scalable=" + scalable + ", shared=" + shared + ", http="
-				+ http + ", development=" + development + ", description="
-				+ description + ", templates_count=" + templates_count
-				+ ", configurations=" + configurations + ", endpoints="
-				+ endpoints + "]";
+		return "ApplianceType [_id=" + _id + ", name=" + name + ", author="
+				+ author + ", vnc=" + vnc + ", in_proxy=" + in_proxy
+				+ ", published=" + published + ", scalable=" + scalable
+				+ ", shared=" + shared + ", http=" + http + ", development="
+				+ development + ", description=" + description
+				+ ", templates_count=" + templates_count + ", configurations="
+				+ configurations + ", endpoints=" + endpoints + "]";
 	}
 }

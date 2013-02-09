@@ -31,10 +31,11 @@ public class BeanConverter {
 
 	public static AtomicService getAtomicService(ApplianceType applianceType) {
 		AtomicService atomicService = new AtomicService();
-		atomicService.setAtomicServiceId(applianceType.getName());
+		atomicService.setAtomicServiceId(applianceType.get_id());
 		atomicService.setDescription(applianceType.getDescription());
 		atomicService.setHttp(applianceType.isHttp()
 				&& applianceType.isIn_proxy());
+		atomicService.setInProxy(applianceType.isIn_proxy());
 		atomicService.setName(applianceType.getName());
 		atomicService.setShared(applianceType.isShared());
 		atomicService.setScalable(applianceType.isScalable());
