@@ -13,14 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.security.mi;
+package pl.cyfronet.coin.auth.mi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.auth.AuthService;
-import pl.cyfronet.coin.auth.UserDetails;
-import pl.cyfronet.coin.impl.security.AuthenticationHandler;
+import pl.cyfronet.coin.auth.AuthenticationHandler;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -36,7 +35,7 @@ public class MasterInterfaceAuthenticationHandler implements
 	@Override
 	public boolean isAuthenticated(String username, String password) {
 		logger.trace("Checking if user is authenticated");
-		return authService.isValid(password);
+		return authService.authenticate(password);
 	}
 
 	@Override

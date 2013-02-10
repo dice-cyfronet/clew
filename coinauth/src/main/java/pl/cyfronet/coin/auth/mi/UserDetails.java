@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.auth;
+package pl.cyfronet.coin.auth.mi;
 
 import java.util.List;
 
@@ -97,7 +97,7 @@ public class UserDetails {
 		this.email = email;
 	}
 
-	long getCreationTime() {
+	public long getCreationTime() {
 		return creationTime;
 	}
 	

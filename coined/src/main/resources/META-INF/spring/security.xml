@@ -10,12 +10,12 @@
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<bean id="authenticationInterceptor"
-		class="pl.cyfronet.coin.impl.security.BasicRsAuthenticationHandler">
+		class="pl.cyfronet.coin.auth.rs.BasicRsAuthenticationHandler">
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
 	<bean id="authenticationHandler"
-		class="pl.cyfronet.coin.impl.security.mi.MasterInterfaceAuthenticationHandler">
+		class="pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler">
 		<property name="authService" ref="authService" />
 	</bean>
 	

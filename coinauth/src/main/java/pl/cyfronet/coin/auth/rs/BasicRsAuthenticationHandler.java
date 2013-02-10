@@ -13,7 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.security;
+package pl.cyfronet.coin.auth.rs;
+
+import java.lang.reflect.Method;
 
 import javax.ws.rs.core.Response;
 
@@ -23,10 +25,13 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import pl.cyfronet.coin.auth.AuthenticationHandler;
+import pl.cyfronet.coin.auth.annotation.Public;
+
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class BasicRsAuthenticationHandler implements RequestHandler {
+public class BasicRsAuthenticationHandler extends AuthHandler implements RequestHandler {
 
 	@Autowired
 	private AuthenticationHandler authenticator;
@@ -38,7 +43,8 @@ public class BasicRsAuthenticationHandler implements RequestHandler {
 		if (policy != null) {
 			String username = policy.getUserName();
 			String password = policy.getPassword();
-			if (authenticator.isAuthenticated(username, password)) {
+			if (isPublic(getTargetMethod(m))
+					|| authenticator.isAuthenticated(username, password)) {
 				// let request to continue
 				return null;
 			}
@@ -46,6 +52,10 @@ public class BasicRsAuthenticationHandler implements RequestHandler {
 		// authentication failed, request the authetication, add the
 		// realm name if needed to the value of WWW-Authenticate
 		return Response.status(401).header("WWW-Authenticate", "Basic").build();
+	}
+
+	private boolean isPublic(Method method) {
+		return method.getAnnotation(Public.class) != null;
 	}
 
 	/**

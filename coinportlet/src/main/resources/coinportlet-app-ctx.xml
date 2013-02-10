@@ -113,7 +113,7 @@
 	
 	<!-- Token service beans -->
 	<jaxrs:client id="validatetkt-client" address="${ticket.validation.service.url.base}"		
-			serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
+			serviceClass="pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient"
 			inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />

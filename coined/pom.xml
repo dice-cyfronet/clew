@@ -14,8 +14,7 @@
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
 		<atmosphere.version>0.7.1-SNAPSHOT</atmosphere.version>
-		<jackson.version>1.9.9</jackson.version>
-		<testng.version>6.1.1</testng.version>
+		<jackson.version>1.9.9</jackson.version>		
 	</properties>
 
 	<dependencies>

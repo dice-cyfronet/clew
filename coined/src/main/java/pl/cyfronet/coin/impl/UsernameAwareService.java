@@ -21,7 +21,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.apache.geronimo.mail.util.Base64;
 import org.springframework.beans.factory.annotation.Required;
 
-import pl.cyfronet.coin.impl.security.AuthenticationHandler;
+import pl.cyfronet.coin.auth.AuthenticationHandler;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
