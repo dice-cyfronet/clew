@@ -118,8 +118,7 @@ public interface AirClient {
 	@GET
 	@Path("/user_key/get_user_keys/{vph_username}")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<UserKeyInfo> getUserKeys(
-			@PathParam("vph_username") String vphUsername);
+	List<UserKeyInfo> getUserKeys(@PathParam("vph_username") String vphUsername);
 
 	@GET
 	@Path("/user_key/get_public_key/{vph_username}/{key_id}")
@@ -137,4 +136,27 @@ public interface AirClient {
 			@FormParam("name") String keyName,
 			@FormParam("public_key") String publicKey,
 			@FormParam("fingerprint") String fingerprint);
+
+	// grants
+	
+	@GET
+	@Path("/grants")
+	List<String> getGrantsNames();
+
+	@GET
+	@Path("/grants/{grantName : .+}")
+	GrantBean getGrant(@PathParam("grantName") String grantName);
+
+	@DELETE
+	@Path("/grants/{grantName : .+}")
+	void deleteGrant(@PathParam("grantName") String grantName);
+
+	@POST
+	@Path("/grants")
+	void addGrant(@FormParam("name") String name,
+			@FormParam("payload_get") String payload_get,
+			@FormParam("payload_post") String payload_post,
+			@FormParam("payload_put") String payload_put,
+			@FormParam("payload_delete") String payload_delete,
+			@FormParam("overwrite") boolean overwrite);
 }
