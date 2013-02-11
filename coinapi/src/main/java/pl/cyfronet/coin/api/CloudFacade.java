@@ -85,7 +85,7 @@ public interface CloudFacade {
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@Path("/{atomicServiceId}/configuration")
+	@Path("/{atomicServiceId}/configurations")
 	String addInitialConfiguration(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			InitialConfiguration initialConfiguration)
