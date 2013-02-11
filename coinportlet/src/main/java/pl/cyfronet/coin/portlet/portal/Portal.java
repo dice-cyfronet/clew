@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import pl.cyfronet.coin.auth.MasterInterfaceAuthClient;
-import pl.cyfronet.coin.auth.UserDetails;
+import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient;
+import pl.cyfronet.coin.auth.mi.UserDetails;
 
 public class Portal {
 	private static final Logger log = LoggerFactory.getLogger(Portal.class);

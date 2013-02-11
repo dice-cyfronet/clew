@@ -276,6 +276,11 @@ body {
 						- create new atomic service</a>
 				</h3>
 				<div>
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> <i>developer</i> role is required to perform this action.	
+					</div>
+				
 					<ul>
 						<li><strong>atomicServiceInstanceId</strong> - For this
 							atomic service instance new atomic service will be created</li>
@@ -325,10 +330,16 @@ body {
 						- gets atomic service configurations</a>
 				</h3>
 				<div>
+					<ul>
+						<li>(required) <strong>atomicServiceId</strong> - Atomic service id</li>
+						<li>(optional) <strong>load_payload</strong> - If true than configuration 
+							payload will be loaded (default <strong>false</strong>)</li>
+					</ul>
 					<p>The structure of the returned JSON includes:</p>
 					<ul>
 						<li><strong>id</strong> - configuration id</li>
 						<li><strong>name</strong> - configuration name</li>
+						<li><strong>payload</strong> - configuration payload (will be empty if <i>load_payload</i> is false)</li>
 					</ul>
 				</div>
 				<h3>
@@ -424,6 +435,11 @@ body {
 						- lists stored security policies names</a>
 				</h3>
 				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.	
+					</div>
+				
 					<p>The operation returns the 200 status code and the security
 						policies names on success.</p>
 				</div>
@@ -432,6 +448,11 @@ body {
 						- gets security policy content</a>
 				</h3>
 				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.	
+					</div>
+				
 					<ul>
 						<li>(required) <strong>policyName</strong> - security policy
 							name (namespaces are supported, e.g. my/namespace/policy_name)
@@ -447,6 +468,11 @@ body {
 						- uploads or update security policy</a>
 				</h3>
 				<div>
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
+					</div>
+				
 					<ul>
 						<li>(required) path parameter <strong>policyName</strong> -
 							security policy name (namespaces are supported, e.g.
@@ -473,6 +499,11 @@ body {
 						- removes security policy content</a>
 				</h3>
 				<div>
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
+					</div>
+				
 					<ul>
 						<li>(required) <strong>policyName</strong> - security policy
 							name (namespaces are supported, e.g. my/namespace/policy_name)

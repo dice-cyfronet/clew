@@ -239,7 +239,7 @@ public class CloudManagerPortlet {
 			@RequestParam("atomicServiceId") String atomicServiceId,
 			PortletRequest request, ActionResponse response) {
 		List<InitialConfiguration> initialConfigurations =
-				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId);
+				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false);
 		
 		if(initialConfigurations != null && initialConfigurations.size() > 0) {
 			String initialConfiguration = initialConfigurations.get(0).getId();
@@ -296,7 +296,7 @@ public class CloudManagerPortlet {
 		log.debug("Retrieving initial configurations for atomic service with id [{}]", atomicServiceId);
 		
 		List<InitialConfiguration> initialconfigurations =
-				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId);
+				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false);
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
 				initialconfigurations.get(0).getId() != null) {
@@ -400,9 +400,9 @@ public class CloudManagerPortlet {
 		String configurationId = null;
 		String workflowId = null;
 		
-		if(clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId) != null &&
-				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).size() > 0) {
-			configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId).get(0).getId();
+		if(clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false) != null &&
+				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false).size() > 0) {
+			configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false).get(0).getId();
 		}
 		
 		if(getWorkflowIds(WorkflowType.portal, request) != null &&

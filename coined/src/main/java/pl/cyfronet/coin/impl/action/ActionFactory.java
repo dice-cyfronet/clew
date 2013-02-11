@@ -49,8 +49,8 @@ public class ActionFactory {
 	}
 
 	public AirAction<List<InitialConfiguration>> createGetInitialConfigurationsAction(
-			String atomicServiceId) {
-		return new GetInitialConfigurationsAction(air, atomicServiceId);
+			String atomicServiceId, boolean loadPayload) {
+		return new GetInitialConfigurationsAction(air, atomicServiceId, loadPayload);
 	}
 
 	public AddInitialConfigurationAction createAddInitialConfiguration(

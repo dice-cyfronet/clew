@@ -74,7 +74,7 @@ public class MockCloudFacade implements CloudFacade {
 	 */
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) {
+			String atomicServiceId, boolean loadPayload) {
 		// TODO Auto-generated method stub
 		return null;
 	}

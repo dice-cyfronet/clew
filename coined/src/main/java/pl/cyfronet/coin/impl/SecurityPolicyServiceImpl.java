@@ -18,6 +18,8 @@ package pl.cyfronet.coin.impl;
 import java.util.List;
 
 import pl.cyfronet.coin.api.SecurityPolicyService;
+import pl.cyfronet.coin.auth.annotation.Public;
+import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.DeleteSecurityPolicyAction;
 import pl.cyfronet.coin.impl.action.GetSecurityPolicyAction;
@@ -31,6 +33,7 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
 
 	private ActionFactory actionFactory;
 
+	@Public
 	@Override
 	public String getSecurityPolicy(String policyName) {
 		GetSecurityPolicyAction action = actionFactory
@@ -38,6 +41,7 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
 		return action.execute();
 	}
 
+	@Public
 	@Override
 	public List<String> getPoliciesNames() {
 		ListSecurityPoliciesAction action = actionFactory
@@ -45,6 +49,7 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
 		return action.execute();
 	}
 
+	@Role(values = "admin")
 	@Override
 	public void updateSecurityPolicy(String policyName, String policyContent,
 			boolean overwrite) {
@@ -54,6 +59,7 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
 		action.execute();
 	}
 
+	@Role(values = "admin")
 	@Override
 	public void deleteSecurityPolicy(String policyName) {
 		DeleteSecurityPolicyAction action = actionFactory

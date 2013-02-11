@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.auth;
+package pl.cyfronet.coin.auth.mi;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

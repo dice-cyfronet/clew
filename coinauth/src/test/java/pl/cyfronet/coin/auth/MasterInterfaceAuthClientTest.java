@@ -18,6 +18,8 @@ package pl.cyfronet.coin.auth;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient;
+
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */

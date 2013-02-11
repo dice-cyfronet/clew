@@ -33,6 +33,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.AirAction;
@@ -75,6 +76,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		return action.execute();
 	}
 
+	@Role(values = "developer")
 	@Override
 	public String createAtomicService(String atomicServiceInstanceId,
 			AtomicService atomicService)
@@ -92,10 +94,11 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) throws AtomicServiceNotFoundException {
+			String atomicServiceId, boolean loadPayload)
+			throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
 		AirAction<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId);
+				.createGetInitialConfigurationsAction(atomicServiceId, loadPayload);
 		return action.execute();
 	}
 

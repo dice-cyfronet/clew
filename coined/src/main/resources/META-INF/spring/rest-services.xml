@@ -26,6 +26,8 @@
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
+			<ref bean="authorizationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>	
 
@@ -73,6 +75,7 @@
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
 			<ref bean="authenticationInterceptor" />
+			<ref bean="authorizationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>
 
@@ -91,6 +94,7 @@
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
 			<ref bean="authenticationInterceptor" />
+			<ref bean="authorizationInterceptor" />
 		</jaxrs:providers>
 	</jaxrs:server>
 

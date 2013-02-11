@@ -41,7 +41,7 @@ public class LobcderClient {
 	private static Namespace CUSTOM_NAMESPACE = Namespace.getNamespace("c", "custom:");
 	
 	private static final DavPropertyName DRI_SUPERVISED = DavPropertyName.create("dri-supervised", CUSTOM_NAMESPACE);
-	private static final DavPropertyName DRI_CHECKSUM = DavPropertyName.create("dri-checksum", CUSTOM_NAMESPACE);
+	private static final DavPropertyName DRI_CHECKSUM = DavPropertyName.create("dri-checksum-MD5", CUSTOM_NAMESPACE);
 	private static final DavPropertyName DRI_LAST_VALIDATION = DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE);
 	
 	private String baseUrl;
