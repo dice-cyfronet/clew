@@ -90,7 +90,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			String atomicServiceId) throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
 		Action<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId);
+				.createListInitialConfigurationsAction(atomicServiceId);
 		return action.execute();
 	}
 

@@ -35,7 +35,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetInitialConfigurationsActionTest extends ActionTest {
+public class ListInitialConfigurationsActionTest extends ActionTest {
 
 	private List<InitialConfiguration> initialConfigurations;
 	private List<ApplianceType> applianceTypes;
@@ -50,11 +50,13 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 
 	private void givenAtomicServicesList() {
 		ApplianceType type1 = new ApplianceType();
-		type1.setName("first");
+		type1.setName("first name");
+		type1.set_id("first");
 
 		ApplianceType type2 = new ApplianceType();
-		type2.setName("second");
-
+		type2.setName("second name");
+		type2.set_id("second");
+		
 		ApplianceConfiguration config1 = new ApplianceConfiguration();
 		config1.setConfig_name("config1");
 		config1.setId("1");
@@ -72,7 +74,7 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 			throws AtomicServiceNotFoundException {
 		when(air.getApplianceTypes()).thenReturn(applianceTypes);
 		Action<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId);
+				.createListInitialConfigurationsAction(atomicServiceId);
 		initialConfigurations = action.execute();
 	}
 

@@ -47,9 +47,9 @@ public class ActionFactory {
 				defaultSiteId, asInstanceId, atomicService);
 	}
 
-	public Action<List<InitialConfiguration>> createGetInitialConfigurationsAction(
+	public Action<List<InitialConfiguration>> createListInitialConfigurationsAction(
 			String atomicServiceId) {
-		return new GetInitialConfigurationsAction(air, atomicServiceId);
+		return new ListInitialConfigurationsAction(air, atomicServiceId);
 	}
 
 	public Action<String> createAddInitialConfiguration(String atomicServiceId,

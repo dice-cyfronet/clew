@@ -39,7 +39,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 
 	private int servicePort = 80;
 	private String existingInvocationPath = "/my/path";
-	private String asName = "as";
+	private String asId = "as";
 	private String descriptorValue = "my descriptor value";
 
 	private String receivedDescriptor;
@@ -48,7 +48,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 	@Test
 	public void shouldGetEndpointPayload() throws Exception {
 		givenAIRContent();
-		whenGetExistingDescriptorValueFor(asName, servicePort,
+		whenGetExistingDescriptorValueFor(asId, servicePort,
 				existingInvocationPath);
 		thanDescriptorValueIsEqual(receivedDescriptor);
 	}
@@ -79,7 +79,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 			String wrongInvocationPath) throws Exception {
 		givenAIRContent();
 		try {
-			whenGetExistingDescriptorValueFor(asName, wrongServicePort,
+			whenGetExistingDescriptorValueFor(asId, wrongServicePort,
 					wrongInvocationPath);
 			fail();
 		} catch (EndpointNotFoundException e) {
@@ -113,7 +113,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 
 	private void givenAIRContent() {
 		ApplianceType at1 = new ApplianceType();
-		at1.setName(asName);
+		at1.set_id(asId);
 
 		ATEndpoint endpoint1 = new ATEndpoint();
 		endpoint1.setPort(servicePort);
