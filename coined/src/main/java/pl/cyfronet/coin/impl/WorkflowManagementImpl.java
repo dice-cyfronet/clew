@@ -18,8 +18,6 @@ package pl.cyfronet.coin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 
 import org.slf4j.Logger;
@@ -38,6 +36,7 @@ import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.GetUserWorkflowAction;
@@ -165,6 +164,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		return action.execute();
 	}
 
+	@Role(values = "developer")
 	@Override
 	public Redirection addRedirection(String contextId, String asiId,
 			String name, int port, RedirectionType type)
@@ -184,6 +184,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		return null;
 	}
 
+	@Role(values = "developer")
 	@Override
 	public Redirection updateRedirection(String contextId, String asiId,
 			String name, int port, RedirectionType type)
@@ -194,6 +195,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		return null;
 	}
 
+	@Role(values = "developer")
 	@Override
 	public void deleteRedirection(String contextId,
 			String asiId, String name)
