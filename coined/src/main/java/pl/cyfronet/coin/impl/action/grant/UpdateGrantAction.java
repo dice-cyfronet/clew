@@ -16,8 +16,11 @@
 
 package pl.cyfronet.coin.impl.action.grant;
 
+import javax.ws.rs.WebApplicationException;
+
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.GrantAlreadyExistException;
 import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
@@ -26,12 +29,26 @@ import pl.cyfronet.coin.impl.air.client.AirClient;
  */
 public class UpdateGrantAction extends AirAction<Class<Void>> {
 
-	public UpdateGrantAction(AirClient air, String name, Grant grant, boolean overwrite) {
+	private boolean overwrite;
+	private Grant grant;
+	private String name;
+
+	public UpdateGrantAction(AirClient air, String name, Grant grant,
+			boolean overwrite) {
 		super(air);
+		this.name = name;
+		this.grant = grant;
+		this.overwrite = overwrite;
 	}
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
+		try {
+			getAir().updateGrant(name, grant.getGet(), grant.getPost(),
+					grant.getPut(), grant.getDelete(), overwrite);
+		} catch (WebApplicationException e) {
+			throw new GrantAlreadyExistException();
+		}
 
 		return Void.TYPE;
 	}

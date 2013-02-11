@@ -153,7 +153,7 @@ public interface AirClient {
 
 	@POST
 	@Path("/grants")
-	void addGrant(@FormParam("name") String name,
+	String updateGrant(@FormParam("name") String name,
 			@FormParam("payload_get") String payload_get,
 			@FormParam("payload_post") String payload_post,
 			@FormParam("payload_put") String payload_put,
