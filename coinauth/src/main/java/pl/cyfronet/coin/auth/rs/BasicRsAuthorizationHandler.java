@@ -19,8 +19,8 @@ public class BasicRsAuthorizationHandler extends AuthHandler implements
 	private AuthService authService;
 
 	@Override
-	public Response handleRequest(Message m, ClassResourceInfo resourceClass) {
-		Method method = getTargetMethod(m);
+	protected Response internalHandleRequest(Message m,
+			ClassResourceInfo resourceClass, Method method) {
 		AuthorizationPolicy policy = (AuthorizationPolicy) m
 				.get(AuthorizationPolicy.class);
 
@@ -31,6 +31,11 @@ public class BasicRsAuthorizationHandler extends AuthHandler implements
 		return Response.status(Response.Status.FORBIDDEN).build();
 	}
 
+	@Override
+	protected String getPhaseName() {
+		return "authorize";
+	}
+	
 	public void setAuthService(AuthService authService) {
 		this.authService = authService;
 	}

@@ -26,43 +26,42 @@ import org.apache.cxf.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import pl.cyfronet.coin.auth.AuthenticationHandler;
-import pl.cyfronet.coin.auth.annotation.Public;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class BasicRsAuthenticationHandler extends AuthHandler implements RequestHandler {
+public class BasicRsAuthenticationHandler extends AuthHandler implements
+		RequestHandler {
 
 	@Autowired
 	private AuthenticationHandler authenticator;
 
 	@Override
-	public Response handleRequest(Message m, ClassResourceInfo resourceClass) {
+	protected Response internalHandleRequest(Message m,
+			ClassResourceInfo resourceClass, Method method) {
 		AuthorizationPolicy policy = (AuthorizationPolicy) m
 				.get(AuthorizationPolicy.class);
 		if (policy != null) {
 			String username = policy.getUserName();
 			String password = policy.getPassword();
-			if (isPublic(getTargetMethod(m))
-					|| authenticator.isAuthenticated(username, password)) {
+
+			if (authenticator.isAuthenticated(username, password)) {
 				// let request to continue
 				return null;
 			}
 		}
 		// authentication failed, request the authetication, add the
 		// realm name if needed to the value of WWW-Authenticate
-		return Response.status(401).header("WWW-Authenticate", "Basic").build();
+		return Response.status(401).header("WWW-Authenticate", "Basic")
+				.build();
 	}
 
-	private boolean isPublic(Method method) {
-		return method.getAnnotation(Public.class) != null;
+	@Override
+	protected String getPhaseName() {
+		return "authenticate";
 	}
-
-	/**
-	 * @param authenticator the authenticator to set
-	 */
+	
 	public void setAuthenticator(AuthenticationHandler authenticator) {
 		this.authenticator = authenticator;
 	}
-
 }

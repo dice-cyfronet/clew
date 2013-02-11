@@ -2,15 +2,46 @@ package pl.cyfronet.coin.auth.rs;
 
 import java.lang.reflect.Method;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.cxf.interceptor.security.AccessDeniedException;
+import org.apache.cxf.jaxrs.ext.RequestHandler;
+import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.invoker.MethodDispatcher;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AuthHandler {
+import pl.cyfronet.coin.auth.annotation.Public;
 
-	protected Method getTargetMethod(Message m) {
+public abstract class AuthHandler implements RequestHandler {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(AuthHandler.class);
+
+	@Override
+	public Response handleRequest(Message m, ClassResourceInfo resourceClass) {
+		Method method = getTargetMethod(m);
+
+		logger.debug(
+				"trying to {} user for {} method with following annotations {}",
+				new Object[] {getPhaseName(), method, method.getAnnotations()});
+
+		if (isPublic(method)) {
+			return null;
+		}
+
+		return internalHandleRequest(m, resourceClass, method);
+	}
+
+	protected abstract Response internalHandleRequest(Message m,
+			ClassResourceInfo resourceClass, Method method);
+
+	protected abstract String getPhaseName();
+	
+	private Method getTargetMethod(Message m) {
 		BindingOperationInfo bop = m.getExchange().get(
 				BindingOperationInfo.class);
 		if (bop != null) {
@@ -24,5 +55,9 @@ public class AuthHandler {
 		}
 		throw new AccessDeniedException(
 				"Method is not available : Unauthorized");
+	}
+
+	private boolean isPublic(Method method) {
+		return method.getAnnotation(Public.class) != null;
 	}
 }

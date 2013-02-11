@@ -47,6 +47,10 @@ public class AuthService extends TimerTask {
 
 	private long cacheInterval = 5000;
 
+	public AuthService() {
+		logger.debug("!!!IMPORTANT!!! application is started in debug mode. Tickets will be available in log file !!!IMPORTANT!!!");
+	}
+
 	public boolean authenticate(String ticket) {
 		return getUserDetails(ticket) != null;
 	}
@@ -75,6 +79,7 @@ public class AuthService extends TimerTask {
 			return details;
 		} else if (ticket != null && !"".equals(ticket)) {
 			try {
+				logger.debug("Getting user data for {}", ticket);
 				details = authClient.validate(ticket);
 				logger.debug("User details {}", details);
 			} catch (WebApplicationException e) {
