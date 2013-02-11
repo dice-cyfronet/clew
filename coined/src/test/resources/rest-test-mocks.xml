@@ -12,4 +12,5 @@
 		class="pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler" />
 
 	<mockito:mock id="authenticationInterceptor" class="org.apache.cxf.jaxrs.ext.RequestHandler" />
+	<mockito:mock id="authorizationInterceptor" class="org.apache.cxf.jaxrs.ext.RequestHandler" />
 </beans>

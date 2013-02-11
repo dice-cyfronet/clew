@@ -14,6 +14,11 @@
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
+	<bean id="authorizationInterceptor"
+		class="pl.cyfronet.coin.auth.rs.BasicRsAuthorizationHandler">
+		<property name="authService" ref="authService" />
+	</bean>
+
 	<bean id="authenticationHandler"
 		class="pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler">
 		<property name="authService" ref="authService" />
