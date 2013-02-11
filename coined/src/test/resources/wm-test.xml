@@ -8,41 +8,42 @@
 	the specific language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring-2.0.0.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util/spring-util.xsd
        http://cxf.apache.org/jaxrs 
        http://cxf.apache.org/schemas/jaxrs.xsd
        ">
+
+	<context:property-placeholder location="classpath:password.properties" />
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
 	<jaxrs:client id="wm-client" address="https://vph.cyfronet.pl/cloudfacade/workflow"		
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
-		username="test" password="OGEyOTQ0OTlmZDA2YTc1MDNhNTkyYjE1MGUzNjUxOTI0ZjhjMzA1N2RoYXJlemxhayFkZXZlbG9wZXIhZGhhcmV6bGFrLERhbmllbCBIYXJlemxhaywsLCw="		
+		username="test" password="${ticket}"		
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>		
 	</jaxrs:client>
 
-	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
-		<property name="serializeAsArray" value="true" />
-		<property name="dropRootElement" value="true" />
-		<property name="supportUnwrapped" value="true" />
-		<property name="wrapperMap">
-			<map>
-				<entry>
-					<key>
-						<value>pl.cyfronet.coin.api.beans.WorkflowStartRequest</value>
-					</key>
-					<value>workflowStartRequest</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+	
+	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
+	
+	<bean id="jsonProvider-ignore-unknown" factory-bean="jsonProvider" factory-method="configure">
+        <constructor-arg  ref="failOnUnknown"/>
+        <constructor-arg  value="false"/>
+    </bean>
 </beans>
