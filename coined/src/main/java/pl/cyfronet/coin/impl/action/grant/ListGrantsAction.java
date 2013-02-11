@@ -16,7 +16,6 @@
 
 package pl.cyfronet.coin.impl.action.grant;
 
-import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -34,6 +33,6 @@ public class ListGrantsAction extends ReadOnlyAirAction<List<String>> {
 
 	@Override
 	public List<String> execute() throws CloudFacadeException {
-		return Arrays.asList("grant1", "grant2", "grant3");
+		return getAir().getGrantsNames();
 	}
 }
