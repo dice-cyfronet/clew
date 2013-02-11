@@ -22,6 +22,8 @@ import pl.cyfronet.coin.api.GrantService;
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.exception.GrantAlreadyExistException;
 import pl.cyfronet.coin.api.exception.GrantNotFoundException;
+import pl.cyfronet.coin.auth.annotation.Public;
+import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 
@@ -32,18 +34,21 @@ public class GrantServiceImpl implements GrantService {
 
 	private ActionFactory actionFactory;
 
+	@Public
 	@Override
 	public List<String> listGrants() {
 		Action<List<String>> action = actionFactory.createListGrantsAction();
 		return action.execute();
 	}
 
+	@Public
 	@Override
 	public Grant getGrant(String grantName) {
 		Action<Grant> action = actionFactory.createGetGrantAction(grantName);
 		return action.execute();
 	}
 
+	@Role(values = "admin")
 	@Override
 	public void updateGrant(String grantName, Grant grant, boolean overwrite)
 			throws GrantAlreadyExistException {
@@ -52,6 +57,7 @@ public class GrantServiceImpl implements GrantService {
 		action.execute();
 	}
 
+	@Role(values = "admin")
 	@Override
 	public void deleteGrant(String grantName) throws GrantNotFoundException {
 		Action<Class<Void>> action = actionFactory

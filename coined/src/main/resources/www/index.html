@@ -521,6 +521,10 @@ body {
 						- lists stored grants names</a>
 				</h3>
 				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.	
+					</div>
 					<p>The operation returns the 200 status code and the grants names on success.</p>
 				</div>
 				<h3>
@@ -528,6 +532,10 @@ body {
 						- gets the grant JSON content</a>
 				</h3>
 				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.	
+					</div>
 					<ul>
 						<li>(required) <strong>grantName</strong> - grant
 							name (namespaces are supported, e.g. my/namespace/grant_name)
@@ -552,6 +560,10 @@ body {
 						- uploads or update grant</a>
 				</h3>
 				<div>
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
+					</div>
 					<ul>
 						<li>(required) path parameter <strong>grantName</strong> -
 							security policy name (namespaces are supported, e.g.
@@ -584,6 +596,10 @@ body {
 						- removes grant</a>
 				</h3>
 				<div>
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
+					</div>
 					<ul>
 						<li>(required) <strong>grantName</strong> - grant
 							name (namespaces are supported, e.g. my/namespace/grant_name)
