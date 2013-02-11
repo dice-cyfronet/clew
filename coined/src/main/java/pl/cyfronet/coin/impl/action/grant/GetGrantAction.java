@@ -16,30 +16,41 @@
 
 package pl.cyfronet.coin.impl.action.grant;
 
+import javax.ws.rs.WebApplicationException;
+
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.GrantNotFoundException;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.GrantBean;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class GetGrantAction extends ReadOnlyAirAction<Grant> {
 
+	private String name;
+
 	public GetGrantAction(AirClient air, String name) {
 		super(air);
+		this.name = name;
 	}
 
 	@Override
 	public Grant execute() throws CloudFacadeException {
-		Grant grant = new Grant();
-		grant.setDelete("delete \"excaped\" regexp");
-		grant.setGet("get regexp");
-		grant.setPost("post regexp");
-		grant.setPut("put regexp");
-		
-		return grant;
+		try {
+			GrantBean grantBean = getAir().getGrant(name);
+			Grant grant = new Grant();
+			grant.setDelete(grantBean.getPayload_delete());
+			grant.setGet(grantBean.getPayload_get());
+			grant.setPost(grantBean.getPayload_post());
+			grant.setPut(grantBean.getPayload_put());
+
+			return grant;
+		} catch (WebApplicationException e) {
+			throw new GrantNotFoundException();
+		}
 	}
 
 }
