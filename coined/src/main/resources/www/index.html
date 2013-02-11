@@ -326,10 +326,16 @@ body {
 						- gets atomic service configurations</a>
 				</h3>
 				<div>
+					<ul>
+						<li>(required) <strong>atomicServiceId</strong> - Atomic service id</li>
+						<li>(optional) <strong>load_payload</strong> - If true than configuration 
+							payload will be loaded (default <strong>false</strong>)</li>
+					</ul>
 					<p>The structure of the returned JSON includes:</p>
 					<ul>
 						<li><strong>id</strong> - configuration id</li>
 						<li><strong>name</strong> - configuration name</li>
+						<li><strong>payload</strong> - configuration payload (will be empty if <i>load_payload</i> is false)</li>
 					</ul>
 				</div>
 				<h3>

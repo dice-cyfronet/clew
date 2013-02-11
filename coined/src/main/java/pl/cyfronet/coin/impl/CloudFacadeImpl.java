@@ -94,10 +94,11 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 	@Override
 	public List<InitialConfiguration> getInitialConfigurations(
-			String atomicServiceId) throws AtomicServiceNotFoundException {
+			String atomicServiceId, boolean loadPayload)
+			throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
 		AirAction<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId);
+				.createGetInitialConfigurationsAction(atomicServiceId, loadPayload);
 		return action.execute();
 	}
 

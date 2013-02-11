@@ -25,6 +25,7 @@ import static org.testng.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -40,11 +41,17 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 	private List<InitialConfiguration> initialConfigurations;
 	private List<ApplianceType> applianceTypes;
 
-	@Test
-	public void shouldGetInitialConfiguration() throws Exception {
+	@DataProvider
+	protected Object[][] getLoadPayload() {
+		return new Object[][] { { true }, { false } };
+	}
+
+	@Test(dataProvider = "getLoadPayload")
+	public void shouldGetInitialConfiguration(boolean loadPayload)
+			throws Exception {
 		givenAtomicServicesList();
-		whenGetInitialConfigurations("second");
-		thenCheck2InitialConfigurations();
+		whenGetInitialConfigurations("second", loadPayload);
+		thenCheck2InitialConfigurations(loadPayload);
 
 	}
 
@@ -58,7 +65,8 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 		ApplianceConfiguration config1 = new ApplianceConfiguration();
 		config1.setConfig_name("config1");
 		config1.setId("1");
-
+		
+		
 		ApplianceConfiguration config2 = new ApplianceConfiguration();
 		config2.setConfig_name("config2");
 		config2.setId("2");
@@ -66,42 +74,53 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 		type2.setConfigurations(Arrays.asList(config1, config2));
 
 		applianceTypes = Arrays.asList(type1, type2);
+		
+		when(air.getApplianceTypes()).thenReturn(applianceTypes);
+		when(air.getApplianceConfig("1")).thenReturn("payload1");
+		when(air.getApplianceConfig("2")).thenReturn("payload2");
 	}
 
-	private void whenGetInitialConfigurations(String atomicServiceId)
-			throws AtomicServiceNotFoundException {
-		when(air.getApplianceTypes()).thenReturn(applianceTypes);
+	private void whenGetInitialConfigurations(String atomicServiceId,
+			boolean loadPayload) throws AtomicServiceNotFoundException {		
 		AirAction<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId);
+				.createGetInitialConfigurationsAction(atomicServiceId,
+						loadPayload);
 		initialConfigurations = action.execute();
 	}
 
-	private void thenCheck2InitialConfigurations() {
+	private void thenCheck2InitialConfigurations(boolean loadPayload) {
 		thanCheckIfAirWasInvoked();
 		assertNotNull(initialConfigurations);
-		checkInitialConfiguration(initialConfigurations.get(0), "config1", "1");
-		checkInitialConfiguration(initialConfigurations.get(1), "config2", "2");		
+		checkInitialConfiguration(initialConfigurations.get(0), "config1", "1",
+				getPayload(loadPayload, "1"));
+		checkInitialConfiguration(initialConfigurations.get(1), "config2", "2",
+				getPayload(loadPayload, "2"));
+	}
+
+	private String getPayload(boolean loadPayload, String postfix) {
+		return loadPayload ? "payload" + postfix : null;
 	}
 
 	private void thanCheckIfAirWasInvoked() {
 		verify(air, times(1)).getApplianceTypes();
 	}
-	
+
 	private void checkInitialConfiguration(InitialConfiguration initConf,
-			String name, String id) {
+			String name, String id, String payload) {
 		assertNotNull(initConf);
 		assertEquals(initConf.getName(), name);
 		assertEquals(initConf.getId(), id);
+		assertEquals(initConf.getPayload(), payload);
 	}
 
 	@Test
 	public void shouldGetEmptyInitConfList() throws Exception {
 		givenAtomicServicesList();
-		whenGetInitialConfigurations("first");
+		whenGetInitialConfigurations("first", false);
 		thenCheckEmptyInitialConfigurationList();
 
 	}
-	
+
 	private void thenCheckEmptyInitialConfigurationList() {
 		thanCheckIfAirWasInvoked();
 		assertNotNull(initialConfigurations);
@@ -113,7 +132,7 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 			throws Exception {
 		givenAtomicServicesList();
 		try {
-			whenGetInitialConfigurations("nonExisting");
+			whenGetInitialConfigurations("nonExisting", false);
 			fail();
 		} catch (AtomicServiceNotFoundException e) {
 			thanCheckIfAirWasInvoked();

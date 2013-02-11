@@ -215,7 +215,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenReturn(initialConfigurations);
 		when(
 				actionFactory
-						.createGetInitialConfigurationsAction(atomicServiceId))
+						.createGetInitialConfigurationsAction(atomicServiceId, false))
 				.thenReturn(action);
 		currentAction = action;
 	}
@@ -231,7 +231,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private void whenGetInitialConfiguration() {
 		receivedInitialConfigurations = asManagementClient
-				.getInitialConfigurations(atomicServiceId);
+				.getInitialConfigurations(atomicServiceId, false);
 	}
 
 	private void thenInitialConfigurationReceived() {
@@ -249,7 +249,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		assertEquals(actual.getName(), expected.getName());
 		assertEquals(actual.getPayload(), expected.getPayload());
 	}
-
+	
 	@Test
 	public void shouldThrowExceptionWhileGettingICForNonExistingAS()
 			throws Exception {
@@ -270,7 +270,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenThrow(new AtomicServiceNotFoundException());
 		when(
 				actionFactory
-						.createGetInitialConfigurationsAction(atomicServiceId))
+						.createGetInitialConfigurationsAction(atomicServiceId, false))
 				.thenReturn(action);
 		currentAction = action;
 	}

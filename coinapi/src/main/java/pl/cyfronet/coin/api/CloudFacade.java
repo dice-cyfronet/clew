@@ -23,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
@@ -103,7 +104,8 @@ public interface CloudFacade {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/{atomicServiceId}/configurations")
 	List<InitialConfiguration> getInitialConfigurations(
-			@PathParam("atomicServiceId") String atomicServiceId);
+			@PathParam("atomicServiceId") String atomicServiceId,
+			@QueryParam("load_payload") boolean loadPayload);
 
 	@GET
 	@Path("/services_set")

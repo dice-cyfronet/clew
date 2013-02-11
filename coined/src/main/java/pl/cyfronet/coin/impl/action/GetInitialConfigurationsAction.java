@@ -27,18 +27,17 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetInitialConfigurationsAction extends AirAction<List<InitialConfiguration>> {
+public class GetInitialConfigurationsAction extends
+		AirAction<List<InitialConfiguration>> {
 
 	private String atomicServiceId;
-	
-	/**
-	 * @param air Air client.
-	 * @param atomicServiceId Atomic Service id.
-	 */
+	private boolean loadPayload;
+
 	public GetInitialConfigurationsAction(AirClient air,
-			String atomicServiceId) {
+			String atomicServiceId, boolean loadPayload) {
 		super(air);
 		this.atomicServiceId = atomicServiceId;
+		this.loadPayload = loadPayload;
 	}
 
 	/**
@@ -57,6 +56,9 @@ public class GetInitialConfigurationsAction extends AirAction<List<InitialConfig
 				configuration.setId(applianceConfiguration.getId());
 				configuration.setName(applianceConfiguration.getConfig_name());
 				configurations.add(configuration);
+				if(loadPayload) {
+					configuration.setPayload(getAir().getApplianceConfig(applianceConfiguration.getId()));
+				}
 			}
 		}
 
