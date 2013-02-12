@@ -24,7 +24,9 @@
 
 	<bean name="service" class="pl.cyfronet.coin.auth.RestServiceImpl" />
 
-	<bean name="authenticationHandler" class="pl.cyfronet.coin.auth.rs.BasicRsAuthenticationHandler" />
+	<bean name="authenticationHandler" class="pl.cyfronet.coin.auth.rs.BasicRsAuthenticationHandler">
+		<property name="authenticator" ref="authentication" />
+	</bean>
 	
 	<mockito:mock id="authentication" class="pl.cyfronet.coin.auth.AuthenticationHandler" />
 	

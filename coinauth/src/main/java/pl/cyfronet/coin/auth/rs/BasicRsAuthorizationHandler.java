@@ -8,14 +8,12 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import pl.cyfronet.coin.auth.AuthService;
 
 public class BasicRsAuthorizationHandler extends AuthHandler implements
 		RequestHandler {
 
-	@Autowired
 	private AuthService authService;
 
 	@Override
