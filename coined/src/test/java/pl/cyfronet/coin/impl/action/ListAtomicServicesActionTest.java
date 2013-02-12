@@ -51,7 +51,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	private void givenAirAtomicServicesList() {
 		type1 = new ApplianceType();
 		type1.setName("type1");
-		type1.set_id("type1Id");
+		type1.setId("type1Id");
 		type1.setDescription("type1 description");
 		type1.setHttp(true);
 		type1.setIn_proxy(true);
@@ -81,7 +81,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type2 = new ApplianceType();
 		type2.setPublished(false);
 		type2.setName("type2");
-		type2.set_id("type2Id");
+		type2.setId("type2Id");
 		type2.setDescription("type2 description");
 		type2.setHttp(false);
 		type2.setIn_proxy(false);

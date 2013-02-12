@@ -51,11 +51,11 @@ public class ListInitialConfigurationsActionTest extends ActionTest {
 	private void givenAtomicServicesList() {
 		ApplianceType type1 = new ApplianceType();
 		type1.setName("first name");
-		type1.set_id("first");
+		type1.setId("first");
 
 		ApplianceType type2 = new ApplianceType();
 		type2.setName("second name");
-		type2.set_id("second");
+		type2.setId("second");
 		
 		ApplianceConfiguration config1 = new ApplianceConfiguration();
 		config1.setConfig_name("config1");

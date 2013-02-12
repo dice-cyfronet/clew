@@ -20,7 +20,7 @@ public class BeanConverterTest {
 
 	private void givenAT() {
 		applianceType = new ApplianceType();
-		applianceType.set_id("id");
+		applianceType.setId("id");
 		applianceType.setAuthor("author");
 		applianceType.setDescription("description");
 		applianceType.setDevelopment(true);
@@ -38,7 +38,7 @@ public class BeanConverterTest {
 	}
 
 	private void thenAllFieldsFromATConvertedIntoAS() {
-		assertEquals(atomicService.getAtomicServiceId(), applianceType.get_id());
+		assertEquals(atomicService.getAtomicServiceId(), applianceType.getId());
 		assertEquals(atomicService.getDescription(),
 				applianceType.getDescription());
 		assertEquals(atomicService.getName(), applianceType.getName());

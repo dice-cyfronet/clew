@@ -113,7 +113,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 
 	private void givenAIRContent() {
 		ApplianceType at1 = new ApplianceType();
-		at1.set_id(asId);
+		at1.setId(asId);
 
 		ATEndpoint endpoint1 = new ATEndpoint();
 		endpoint1.setPort(servicePort);

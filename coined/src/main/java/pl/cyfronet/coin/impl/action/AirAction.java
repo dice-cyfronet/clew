@@ -53,7 +53,7 @@ public abstract class AirAction<T> implements Action<T> {
 		List<ApplianceType> applianceTypes = getApplianceTypes();
 
 		for (ApplianceType applianceType : applianceTypes) {
-			String id = applianceType.get_id();
+			String id = applianceType.getId();
 			if (id != null && id.equals(applianceTypeId)) {
 				return applianceType;
 			}

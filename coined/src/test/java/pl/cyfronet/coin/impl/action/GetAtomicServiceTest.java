@@ -48,7 +48,7 @@ public class GetAtomicServiceTest extends ActionTest {
 
 	private void givenAtomicServiceInAir() {
 		asType = new ApplianceType();
-		asType.set_id("asId");
+		asType.setId("asId");
 		asType.setName("as");
 		asType.setDescription("type1 description");
 		asType.setHttp(true);
