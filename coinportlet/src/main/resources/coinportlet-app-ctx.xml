@@ -113,7 +113,7 @@
 	
 	<!-- Token service beans -->
 	<jaxrs:client id="validatetkt-client" address="${ticket.validation.service.url.base}"		
-			serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
+			serviceClass="pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient"
 			inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
@@ -126,4 +126,8 @@
 		<property name="username" value="${lobcder.user}"/>
 		<property name="password" value="${lobcder.password}"/>
 	</bean>
+	<bean class="pl.cyfronet.coin.portlet.lobcder.LobcderRestClient">
+		<property name="baseUrl" value="${lobcder.rest.url}"/>
+	</bean>
+	<bean class="org.springframework.web.client.RestTemplate"/>
 </beans>

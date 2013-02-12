@@ -8,6 +8,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -16,15 +17,21 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs 
        http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util 
        http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
+	<context:property-placeholder location="classpath:password.properties" />
+
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
-	<jaxrs:client id="air-client" address="http://149.156.10.133/air" username="vphshare"
-		password="airtraffic123" serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
+	<jaxrs:client id="air-client" address="http://149.156.10.133/air" 
+		username="${air.username}" password="${air.password}" 
+		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" 
+		inheritHeaders="true">
 		<jaxrs:providers>
 			<!-- <ref bean="jaxbProvider" /> -->
 			<ref bean="jsonProvider" />

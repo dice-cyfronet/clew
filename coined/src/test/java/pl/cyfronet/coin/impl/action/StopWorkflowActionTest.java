@@ -57,7 +57,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void stopWorkflow(String contextId) {
-		StopWorkflowAction action = actionFactory.createStopWorkflowAction(
+		Action<Class<Void>> action = actionFactory.createStopWorkflowAction(
 				contextId, username);
 		action.execute();
 	}
@@ -207,7 +207,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 
 	private ApplianceType getAT(String vmId) {
 		ApplianceType at = new ApplianceType();
-		at.setName(vmId + "AS");
+		at.setId(vmId + "AS");
 		ApplianceConfiguration ac = new ApplianceConfiguration();
 		ac.setId(vmId + "InitConf");
 		at.setConfigurations(Arrays.asList(ac));

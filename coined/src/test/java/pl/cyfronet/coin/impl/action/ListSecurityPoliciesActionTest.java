@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.*;
+
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.impl.air.client.SecurityPolicy;
@@ -56,7 +57,7 @@ public class ListSecurityPoliciesActionTest extends ActionTest {
 	}
 
 	private void whenListSecurityPolicies() {
-		ListSecurityPoliciesAction action = actionFactory
+		Action<List<String>> action = actionFactory
 				.createListSecurityPoliciesAction();
 		policies = action.execute();
 	}

@@ -35,7 +35,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 	private AddAtomicServiceMatcher matcher;
 	private String asId = "asAirId";
 	private String createdAsId;
-	private CreateAtomicServiceAction action;
+	private Action<String> action;
 
 	/**
 	 * #1021

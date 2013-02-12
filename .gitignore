@@ -5,3 +5,4 @@ target
 */target
 */test-output
 /.classpath
+coined/src/test/resources/password.properties

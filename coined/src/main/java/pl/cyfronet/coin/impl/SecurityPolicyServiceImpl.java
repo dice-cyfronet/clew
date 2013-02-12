@@ -18,11 +18,10 @@ package pl.cyfronet.coin.impl;
 import java.util.List;
 
 import pl.cyfronet.coin.api.SecurityPolicyService;
+import pl.cyfronet.coin.auth.annotation.Public;
+import pl.cyfronet.coin.auth.annotation.Role;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.DeleteSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.GetSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.ListSecurityPoliciesAction;
-import pl.cyfronet.coin.impl.action.UploadSecurityPolicyAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -31,32 +30,36 @@ public class SecurityPolicyServiceImpl implements SecurityPolicyService {
 
 	private ActionFactory actionFactory;
 
+	@Public
 	@Override
 	public String getSecurityPolicy(String policyName) {
-		GetSecurityPolicyAction action = actionFactory
+		Action<String> action = actionFactory
 				.createGetSecurityPolicyAction(policyName);
 		return action.execute();
 	}
 
+	@Public
 	@Override
 	public List<String> getPoliciesNames() {
-		ListSecurityPoliciesAction action = actionFactory
+		Action<List<String>> action = actionFactory
 				.createListSecurityPoliciesAction();
 		return action.execute();
 	}
 
+	@Role(values = "admin")
 	@Override
 	public void updateSecurityPolicy(String policyName, String policyContent,
 			boolean overwrite) {
-		UploadSecurityPolicyAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createUploadSecurityPolicyAction(policyName, policyContent,
 						overwrite);
 		action.execute();
 	}
 
+	@Role(values = "admin")
 	@Override
 	public void deleteSecurityPolicy(String policyName) {
-		DeleteSecurityPolicyAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createDeleteSecurityPolicyAction(policyName);
 		action.execute();
 	}

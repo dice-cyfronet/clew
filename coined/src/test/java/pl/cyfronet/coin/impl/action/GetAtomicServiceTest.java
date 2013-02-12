@@ -41,13 +41,14 @@ public class GetAtomicServiceTest extends ActionTest {
 	@Test
 	public void shouldGetAtomicService() throws Exception {
 		givenAtomicServiceInAir();
-		whenGetAtomicService("as");
+		whenGetAtomicService("asId");
 		thenCheckReceivedAtomicService();
 
 	}
 
 	private void givenAtomicServiceInAir() {
 		asType = new ApplianceType();
+		asType.setId("asId");
 		asType.setName("as");
 		asType.setDescription("type1 description");
 		asType.setHttp(true);
@@ -82,7 +83,7 @@ public class GetAtomicServiceTest extends ActionTest {
 	}
 
 	private void whenGetAtomicService(String asId) {
-		GetAtomicServiceAction action = actionFactory
+		Action<AtomicService> action = actionFactory
 				.createGetAtomicServiceAction(asId);
 		atomicService = action.execute();
 	}

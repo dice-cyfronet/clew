@@ -1,10 +1,11 @@
 package pl.cyfronet.coin.portlet.policymanager;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UploadPolicyRequest {
 	private String policyName;
-	private String policyBody;
+	private MultipartFile policyBody;
 	
 	@NotEmpty(message = "Policy name cannot be empty")
 	public String getPolicyName() {
@@ -14,11 +15,10 @@ public class UploadPolicyRequest {
 		this.policyName = policyName;
 	}
 	
-	@NotEmpty(message = "Policy contents cannot be empty")
-	public String getPolicyBody() {
+	public MultipartFile getPolicyBody() {
 		return policyBody;
 	}
-	public void setPolicyBody(String policyBody) {
+	public void setPolicyBody(MultipartFile policyBody) {
 		this.policyBody = policyBody;
 	}
 	

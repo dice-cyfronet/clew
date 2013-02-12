@@ -41,7 +41,7 @@ public class DeletePublicKeyActionTest extends ActionTest {
 	private String keyName = "keyName";
 	private String publicKeyContent = FileUtils.getFileContent("id_rsa.pub");
 	private String fingerprint = "01:5b:10:bc:40:78:38:d1:d0:2a:5a:e6:6a:ab:87:59";
-	private DeletePublicKeyAction action;
+	private Action<Class<Void>> action;
 
 	@Test
 	public void shouldDeleteUserPublicKey() throws Exception {
@@ -84,15 +84,17 @@ public class DeletePublicKeyActionTest extends ActionTest {
 	}
 
 	private void givenMockedAirActionsForDeleteAndRollback() {
-		when(air.getPublicKey(vphUsername, keyId)).thenReturn(publicKeyContent.trim());
+		when(air.getPublicKey(vphUsername, keyId)).thenReturn(
+				publicKeyContent.trim());
 
 		UserKeyInfo info = new UserKeyInfo();
 		info.set_id(keyId);
 		info.setName(keyName);
 		when(air.getUserKeys(vphUsername)).thenReturn(Arrays.asList(info));
 
-		when(air.addKey(vphUsername, keyName, publicKeyContent.trim(), fingerprint))
-				.thenReturn("newId");
+		when(
+				air.addKey(vphUsername, keyName, publicKeyContent.trim(),
+						fingerprint)).thenReturn("newId");
 	}
 
 	private void whenKeyDeletedAndRollbacked() {
@@ -105,8 +107,8 @@ public class DeletePublicKeyActionTest extends ActionTest {
 		thenValidateAirDeleteRequest();
 
 		// rollback
-		verify(air, times(1)).addKey(vphUsername, keyName, publicKeyContent.trim(),
-				fingerprint);
+		verify(air, times(1)).addKey(vphUsername, keyName,
+				publicKeyContent.trim(), fingerprint);
 	}
 
 	private void thenValidatePubliKeyFetchedFromAir() {

@@ -55,200 +55,116 @@ public class ApplianceType {
 
 	private List<ATEndpoint> endpoints;
 	
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return the vnc
-	 */
-	public boolean isVnc() {
-		return vnc;
-	}
-
-	/**
-	 * @param vnc the vnc to set
-	 */
-	public void setVnc(boolean vnc) {
-		this.vnc = vnc;
-	}
-
-	/**
-	 * @return the in_proxy
-	 */
-	public boolean isIn_proxy() {
-		return in_proxy;
-	}
-
-	/**
-	 * @param in_proxy the in_proxy to set
-	 */
-	public void setIn_proxy(boolean in_proxy) {
-		this.in_proxy = in_proxy;
-	}
-
-	/**
-	 * @return the published
-	 */
-	public boolean isPublished() {
-		return published;
-	}
-
-	/**
-	 * @param published the published to set
-	 */
-	public void setPublished(boolean published) {
-		this.published = published;
-	}
-
-	/**
-	 * @return the scalable
-	 */
-	public boolean isScalable() {
-		return scalable;
-	}
-
-	/**
-	 * @param scalable the scalable to set
-	 */
-	public void setScalable(boolean scalable) {
-		this.scalable = scalable;
-	}
-
-	/**
-	 * @return the shared
-	 */
-	public boolean isShared() {
-		return shared;
-	}
-
-	/**
-	 * @param shared the shared to set
-	 */
-	public void setShared(boolean shared) {
-		this.shared = shared;
-	}
-
-	/**
-	 * @return the http
-	 */
-	public boolean isHttp() {
-		return http;
-	}
-
-	/**
-	 * @param http the http to set
-	 */
-	public void setHttp(boolean http) {
-		this.http = http;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * @return the templates_count
-	 */
-	public int getTemplates_count() {
-		return templates_count;
-	}
-
-	/**
-	 * @param templates_count the templates_count to set
-	 */
-	public void setTemplates_count(int templates_count) {
-		this.templates_count = templates_count;
-	}
-
-	/**
-	 * @return the configurations
-	 */
-	public List<ApplianceConfiguration> getConfigurations() {
-		return configurations;
-	}
-
-	/**
-	 * @param configurations the configurations to set
-	 */
-	public void setConfigurations(List<ApplianceConfiguration> configurations) {
-		this.configurations = configurations;
-	}
-
-	/**
-	 * @return the endpoints
-	 */
-	public List<ATEndpoint> getEndpoints() {
-		return endpoints;
-	}
-
-	/**
-	 * @param endpoints the endpoints to set
-	 */
-	public void setEndpoints(List<ATEndpoint> endpoints) {
-		this.endpoints = endpoints;
-	}
-
-	/**
-	 * @return the author
-	 */
-	public String getAuthor() {
-		return author;
-	}
-
-	/**
-	 * @param author the author to set
-	 */
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	/**
-	 * @return the development
-	 */
-	public boolean isDevelopment() {
-		return development;
-	}
-
-	/**
-	 * @param development the development to set
-	 */
-	public void setDevelopment(boolean development) {
-		this.development = development;
-	}
-
-	/**
-	 * @return the id
-	 */
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isVnc() {
+		return vnc;
+	}
+
+	public void setVnc(boolean vnc) {
+		this.vnc = vnc;
+	}
+
+	public boolean isIn_proxy() {
+		return in_proxy;
+	}
+
+	public void setIn_proxy(boolean in_proxy) {
+		this.in_proxy = in_proxy;
+	}
+
+	public boolean isPublished() {
+		return published;
+	}
+
+	public void setPublished(boolean published) {
+		this.published = published;
+	}
+
+	public boolean isScalable() {
+		return scalable;
+	}
+
+	public void setScalable(boolean scalable) {
+		this.scalable = scalable;
+	}
+
+	public boolean isShared() {
+		return shared;
+	}
+
+	public void setShared(boolean shared) {
+		this.shared = shared;
+	}
+
+	public boolean isHttp() {
+		return http;
+	}
+
+	public void setHttp(boolean http) {
+		this.http = http;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getTemplates_count() {
+		return templates_count;
+	}
+
+	public void setTemplates_count(int templates_count) {
+		this.templates_count = templates_count;
+	}
+
+	public List<ApplianceConfiguration> getConfigurations() {
+		return configurations;
+	}
+
+	public void setConfigurations(List<ApplianceConfiguration> configurations) {
+		this.configurations = configurations;
+	}
+
+	public List<ATEndpoint> getEndpoints() {
+		return endpoints;
+	}
+
+	public void setEndpoints(List<ATEndpoint> endpoints) {
+		this.endpoints = endpoints;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public boolean isDevelopment() {
+		return development;
+	}
+
+	public void setDevelopment(boolean development) {
+		this.development = development;
 	}
 
 	/* (non-Javadoc)

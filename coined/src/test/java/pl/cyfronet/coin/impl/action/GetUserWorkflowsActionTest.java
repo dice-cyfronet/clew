@@ -62,7 +62,7 @@ public class GetUserWorkflowsActionTest extends WorkflowActionTest {
 	}
 
 	private void whenGetUserWorkflows() {
-		GetUserWorkflowsAction action = actionFactory
+		Action<List<WorkflowBaseInfo>> action = actionFactory
 				.createGetUserWorkflowsAction(username);
 		infos = action.execute();
 	}

@@ -26,7 +26,7 @@
 	</jaxrs:client>
 
 	<jaxrs:client id="validatetkt-client" address="${mi.url}"		
-		serviceClass="pl.cyfronet.coin.auth.MasterInterfaceAuthClient"
+		serviceClass="pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />

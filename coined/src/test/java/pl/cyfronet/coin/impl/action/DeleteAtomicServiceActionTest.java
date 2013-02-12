@@ -41,16 +41,16 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 		thenAtomicServiceAndAllInitConfsRemovedFromAir();
 	}
 
-	private void givenAtomicServiceWith2InitialConfigurations(String... asNames) {
+	private void givenAtomicServiceWith2InitialConfigurations(String... asIds) {
 		List<ApplianceType> ats = new ArrayList<>();
-		for (String asName : asNames) {
+		for (String asId : asIds) {
 			ApplianceConfiguration ac1 = new ApplianceConfiguration();
-			ac1.setId("ac1" + asName);
+			ac1.setId("ac1" + asId);
 			ApplianceConfiguration ac2 = new ApplianceConfiguration();
-			ac2.setId("ac2" + asName);
+			ac2.setId("ac2" + asId);
 
 			ApplianceType at = new ApplianceType();
-			at.setName(asName);
+			at.setId(asId);
 			at.setConfigurations(Arrays.asList(ac1, ac2));
 			ats.add(at);
 		}

@@ -27,18 +27,17 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetInitialConfigurationsAction extends AirAction<List<InitialConfiguration>> {
+public class ListInitialConfigurationsAction extends
+		AirAction<List<InitialConfiguration>> {
 
-	private String atomicServiceName;
-	
-	/**
-	 * @param air Air client.
-	 * @param atomicServiceName Atomic Service id.
-	 */
-	public GetInitialConfigurationsAction(AirClient air,
-			String atomicServiceName) {
+	private String atomicServiceId;
+	private boolean loadPayload;
+
+	public ListInitialConfigurationsAction(AirClient air,
+			String atomicServiceId, boolean loadPayload) {
 		super(air);
-		this.atomicServiceName = atomicServiceName;
+		this.atomicServiceId = atomicServiceId;
+		this.loadPayload = loadPayload;
 	}
 
 	/**
@@ -47,7 +46,7 @@ public class GetInitialConfigurationsAction extends AirAction<List<InitialConfig
 	 */
 	@Override
 	public List<InitialConfiguration> execute() throws CloudFacadeException {
-		ApplianceType type = getApplianceType(atomicServiceName);
+		ApplianceType type = getApplianceType(atomicServiceId);
 		List<ApplianceConfiguration> typeConfigurations = type
 				.getConfigurations();
 		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();
@@ -57,6 +56,10 @@ public class GetInitialConfigurationsAction extends AirAction<List<InitialConfig
 				configuration.setId(applianceConfiguration.getId());
 				configuration.setName(applianceConfiguration.getConfig_name());
 				configurations.add(configuration);
+				if (loadPayload) {
+					configuration.setPayload(getAir().getApplianceConfig(
+							applianceConfiguration.getId()));
+				}
 			}
 		}
 

@@ -27,7 +27,7 @@ public abstract class ReadOnlyAirAction<T> extends AirAction<T> {
 	/**
 	 * @param air
 	 */
-	ReadOnlyAirAction(AirClient air) {
+	public ReadOnlyAirAction(AirClient air) {
 		super(air);
 	}
 

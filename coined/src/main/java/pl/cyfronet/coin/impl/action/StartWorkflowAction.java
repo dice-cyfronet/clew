@@ -71,6 +71,11 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 			priority = defaultPriority;
 		}
 
+		// issue #1311
+		if (workflow.getType() == null) {
+			workflow.setType(WorkflowType.workflow);
+		}
+
 		WorkflowType type = workflow.getType();
 		if (type == WorkflowType.portal || type == WorkflowType.development) {
 			try {

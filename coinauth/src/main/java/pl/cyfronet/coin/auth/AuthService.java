@@ -15,8 +15,11 @@
  */
 package pl.cyfronet.coin.auth;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
@@ -24,6 +27,11 @@ import javax.ws.rs.WebApplicationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import pl.cyfronet.coin.auth.annotation.Public;
+import pl.cyfronet.coin.auth.annotation.Role;
+import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient;
+import pl.cyfronet.coin.auth.mi.UserDetails;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -39,28 +47,51 @@ public class AuthService extends TimerTask {
 
 	private long cacheInterval = 5000;
 
-	public boolean isValid(String ticket) {
+	public AuthService() {
+		logger.debug("!!!IMPORTANT!!! application is started in debug mode. Tickets will be available in log file !!!IMPORTANT!!!");
+	}
+
+	public boolean authenticate(String ticket) {
 		return getUserDetails(ticket) != null;
 	}
 
-	public UserDetails getUserDetails(String ticket) {
-			UserDetails details = cache.get(ticket);
-			if (cache.containsKey(ticket)) {
-				return details;
-			} else if (ticket != null && !"".equals(ticket)) {
-				try {
-					details = authClient.validate(ticket);
-					logger.debug("User details {}", details);
-				} catch (WebApplicationException e) {
-					// wrong user ticket or service is down in the feature
-					// distinguish between these two situations
-					logger.debug("unable to connect to master interface", e);
-				}
-				synchronized (cache) {
-					cache.put(ticket, details);
-				}
+	private boolean isPublic(Method method) {
+		return method.getAnnotation(Public.class) != null;
+	}
+
+	public boolean authorize(String ticket, Method method) {
+		if (!isPublic(method)) {
+			Role role = method.getAnnotation(Role.class);
+
+			if (role != null) {
+				String[] requiredRoles = role.values();
+				List<String> userRoles = getUserDetails(ticket).getRole();
+				return userRoles.containsAll(Arrays.asList(requiredRoles));
 			}
+		}
+
+		return true;
+	}
+
+	public UserDetails getUserDetails(String ticket) {
+		UserDetails details = cache.get(ticket);
+		if (cache.containsKey(ticket)) {
 			return details;
+		} else if (ticket != null && !"".equals(ticket)) {
+			try {
+				logger.debug("Getting user data for {}", ticket);
+				details = authClient.validate(ticket);
+				logger.debug("User details {}", details);
+			} catch (WebApplicationException e) {
+				// wrong user ticket or service is down in the feature
+				// distinguish between these two situations
+				logger.debug("unable to connect to master interface", e);
+			}
+			synchronized (cache) {
+				cache.put(ticket, details);
+			}
+		}
+		return details;
 	}
 
 	@Override

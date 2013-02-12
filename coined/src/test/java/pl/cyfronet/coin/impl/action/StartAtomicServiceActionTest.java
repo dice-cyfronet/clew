@@ -72,7 +72,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStartAtomicService(String username, String keyId) {
-		StartAtomicServiceAction action = actionFactory
+		Action<String> action = actionFactory
 				.createStartAtomicServiceAction(initConfigId, name, contextId,
 						username, keyId);
 		id = action.execute();

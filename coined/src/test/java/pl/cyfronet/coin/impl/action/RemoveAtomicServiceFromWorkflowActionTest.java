@@ -89,7 +89,7 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends
 	}
 
 	private void whenRemoveASFromWorkflow() {
-		RemoveAtomicServiceFromWorkflowAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createRemoveAtomicServiceFromWorkflowAction(username,
 						contextId, asConfId);
 		action.execute();

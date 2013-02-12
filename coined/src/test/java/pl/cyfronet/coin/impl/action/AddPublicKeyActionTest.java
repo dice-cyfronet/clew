@@ -16,8 +16,6 @@
 
 package pl.cyfronet.coin.impl.action;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 
@@ -42,7 +40,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 	private String fingerprint;
 
 	private String addedKeytId;
-	private AddPublicKeyAction action;
+	private Action<String> action;
 
 	@BeforeMethod
 	protected void setUp() {

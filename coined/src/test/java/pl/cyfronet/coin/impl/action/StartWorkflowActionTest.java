@@ -89,7 +89,7 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStartWorkflow() throws WorkflowStartException {
-		StartWorkflowAction action = actionFactory.createStartWorkflowAction(
+		Action<String> action = actionFactory.createStartWorkflowAction(
 				startRequest, username);
 		createdContextId = action.execute();
 	}
@@ -266,5 +266,24 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 		verify(air, times(1)).getUserWorkflows(username);
 		verify(air, times(0)).startWorkflow(name, username, description,
 				priority, workflowType);
+	}
+	
+	@Test
+	public void shouldStartWorkflowWorkflowWhenTypeIsNull() throws Exception {
+		// issue #1311
+		givenWorkflowWithTypeNotSet();
+		whenStartWorkflow();
+		thenStartingWorkflowWithTypeWorkflow();
+	}
+
+	private void givenWorkflowWithTypeNotSet() {
+		workflowType = null;
+		createWorkflowStartRequest();
+		mockAirStartMethod();
+	}
+
+	private void thenStartingWorkflowWithTypeWorkflow() {
+		verify(air, times(1)).startWorkflow(name, username, description,
+				priority, WorkflowType.workflow);
 	}
 }

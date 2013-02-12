@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mockito="http://www.mockito.org/spring/mockito"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://cxf.apache.org/jaxrs 
+       http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.mockito.org/spring/mockito 
+       https://bitbucket.org/kubek2k/springockito/raw/tip/springockito/src/main/resources/spring/mockito.xsd
+       ">
+
+	<jaxrs:server id="roles-management-rs" address="http://0.0.0.0:10001/service">
+		<jaxrs:serviceBeans>
+			<ref bean="service" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="authenticationHandler" />
+		</jaxrs:providers>
+	</jaxrs:server>	
+
+	<bean name="service" class="pl.cyfronet.coin.auth.RestServiceImpl" />
+
+	<bean name="authenticationHandler" class="pl.cyfronet.coin.auth.rs.BasicRsAuthenticationHandler" />
+	
+	<mockito:mock id="authentication" class="pl.cyfronet.coin.auth.AuthenticationHandler" />
+	
+	<jaxrs:client id="client" address="http://0.0.0.0:10001/service"
+		serviceClass="pl.cyfronet.coin.auth.RestService"
+		username="User123" password="password"
+		inheritHeaders="true">				
+	</jaxrs:client>
+</beans>

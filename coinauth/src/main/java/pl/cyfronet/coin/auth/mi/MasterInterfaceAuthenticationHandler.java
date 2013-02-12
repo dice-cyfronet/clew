@@ -13,40 +13,42 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.security;
+package pl.cyfronet.coin.auth.mi;
 
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.factory.annotation.Required;
+import pl.cyfronet.coin.auth.AuthService;
+import pl.cyfronet.coin.auth.AuthenticationHandler;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class UsernamePasswordAuthenticationHandler implements
+public class MasterInterfaceAuthenticationHandler implements
 		AuthenticationHandler {
 
-	/**
-	 * Map of allowed users to this system with their corresponding passwords.
-	 */
-	private Map<String, String> users;
+	private static final Logger logger = LoggerFactory
+			.getLogger(MasterInterfaceAuthenticationHandler.class);
+
+	private AuthService authService;
 
 	@Override
 	public boolean isAuthenticated(String username, String password) {
-		String realPassword = users.get(username);
-		return realPassword != null && realPassword.equals(password);
+		logger.trace("Checking if user is authenticated");
+		return authService.authenticate(password);
 	}
 
 	@Override
 	public String getUsername(String username, String password) {
-		return username;
+		logger.trace("Getting user username");
+		UserDetails userDetails = authService.getUserDetails(password);
+		if (userDetails != null) {
+			return userDetails.getUsername();
+		}
+		return null;
 	}
 
-	/**
-	 * Set user names and passwords.
-	 * @param users Information about authorized users.
-	 */
-	@Required
-	public void setUsers(Map<String, String> users) {
-		this.users = users;
+	public void setAuthService(AuthService authService) {
+		this.authService = authService;
 	}
 }

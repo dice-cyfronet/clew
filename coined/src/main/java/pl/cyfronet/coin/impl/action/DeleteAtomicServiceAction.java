@@ -51,8 +51,8 @@ public class DeleteAtomicServiceAction extends AirAction<Class<Void>> {
 		logger.debug("Removing {}", atomicServicesNames);
 
 		for (String atomicServiceName : atomicServicesNames) {
-			GetInitialConfigurationsAction initConfsAction = new GetInitialConfigurationsAction(
-					getAir(), atomicServiceName);
+			ListInitialConfigurationsAction initConfsAction = new ListInitialConfigurationsAction(
+					getAir(), atomicServiceName, false);
 			List<InitialConfiguration> initConfs = initConfsAction.execute();
 			for (InitialConfiguration initConf : initConfs) {
 				logger.debug("Removing initial configuration {}", initConf.getId());

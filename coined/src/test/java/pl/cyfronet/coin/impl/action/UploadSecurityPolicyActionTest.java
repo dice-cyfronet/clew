@@ -37,7 +37,7 @@ public class UploadSecurityPolicyActionTest extends ActionTest {
 	private String policyName = "myPolicy";
 	private String policyText = "roles=new_role";
 	private String oldPolicyText = "roles=old_role";
-	private UploadSecurityPolicyAction action;
+	private Action<Class<Void>> action;
 
 	@Test
 	public void shouldCreateNewSecurityPolicy() throws Exception {
@@ -128,7 +128,7 @@ public class UploadSecurityPolicyActionTest extends ActionTest {
 	private void givenAirEmptyAndThenWithAddedSecurityPolicy() {
 		when(air.getSecurityPolicy(policyName)).thenReturn(oldPolicyText);
 	}
-	
+
 	private void whenUploadAndRollback() {
 		whenUploadAndRollback(false);
 	}
@@ -139,8 +139,8 @@ public class UploadSecurityPolicyActionTest extends ActionTest {
 	}
 
 	private void thenSecurityPolicyUploadedAndRollbacked() {
-		verify(air, times(1))
-				.uploadSecurityPolicy(policyName, policyText, false);
+		verify(air, times(1)).uploadSecurityPolicy(policyName, policyText,
+				false);
 		// delete action rollback
 		verify(air, times(1)).getSecurityPolicy(policyName);
 		verify(air, times(1)).deleteSecurityPolicy(policyName);

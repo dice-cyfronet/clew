@@ -54,7 +54,7 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 			getAtmosphere().removeAppliance(asiId);
 
 			DeleteAtomicServiceAction deleteASAction = new DeleteAtomicServiceAction(
-					getAir(), at.getName());
+					getAir(), at.getId());
 			deleteASAction.execute();
 		} else {
 			throw new AtomicServiceInstanceNotFoundException();

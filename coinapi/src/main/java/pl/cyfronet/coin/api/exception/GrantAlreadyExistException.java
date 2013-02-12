@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 ACC CYFRONET AGH
+ * Copyright 2013 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,21 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.auth;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+package pl.cyfronet.coin.api.exception;
+
+import javax.ws.rs.core.Response;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-public interface MasterInterfaceAuthClient {
+public class GrantAlreadyExistException extends CloudFacadeException {
 
-	@GET
-	@Path("/validatetkt/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public UserDetails validate(@QueryParam("ticket") String ticket);
+	private static final long serialVersionUID = -2265259217406422622L;
+
+	public GrantAlreadyExistException() {
+		super(Response.Status.CONFLICT);
+	}
 }

@@ -36,11 +36,11 @@ public abstract class AirAction<T> implements Action<T> {
 
 	private AirClient air;
 
-	AirAction(AirClient air) {
+	public AirAction(AirClient air) {
 		this.air = air;
 	}
 
-	protected List<ApplianceType> getApplianceTypes() {
+	List<ApplianceType> getApplianceTypes() {
 		return air.getApplianceTypes();
 	}
 
@@ -48,18 +48,18 @@ public abstract class AirAction<T> implements Action<T> {
 		return air;
 	}
 
-	protected ApplianceType getApplianceType(String applianceTypeName)
+	protected ApplianceType getApplianceType(String applianceTypeId)
 			throws AtomicServiceNotFoundException {
 		List<ApplianceType> applianceTypes = getApplianceTypes();
 
 		for (ApplianceType applianceType : applianceTypes) {
-			String name = applianceType.getName();
-			if (name != null && name.equals(applianceTypeName)) {
+			String id = applianceType.getId();
+			if (id != null && id.equals(applianceTypeId)) {
 				return applianceType;
 			}
 		}
 
-		logger.debug("Atomic service {} not found", applianceTypeName);
+		logger.debug("Atomic service {} not found", applianceTypeId);
 		throw new AtomicServiceNotFoundException();
 	}
 	

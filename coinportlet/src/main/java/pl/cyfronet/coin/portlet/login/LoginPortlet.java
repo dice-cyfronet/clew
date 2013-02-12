@@ -13,8 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import pl.cyfronet.coin.auth.MasterInterfaceAuthClient;
-import pl.cyfronet.coin.auth.UserDetails;
+import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient;
+import pl.cyfronet.coin.auth.mi.UserDetails;
 import pl.cyfronet.coin.portlet.portal.Portal;
 
 @Controller

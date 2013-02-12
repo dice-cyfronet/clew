@@ -25,6 +25,7 @@ import static org.testng.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -35,26 +36,34 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetInitialConfigurationsActionTest extends ActionTest {
+public class ListInitialConfigurationsActionTest extends ActionTest {
 
 	private List<InitialConfiguration> initialConfigurations;
 	private List<ApplianceType> applianceTypes;
 
-	@Test
-	public void shouldGetInitialConfiguration() throws Exception {
+	@DataProvider
+	protected Object[][] getLoadPayload() {
+		return new Object[][] { { true }, { false } };
+	}
+
+	@Test(dataProvider = "getLoadPayload")
+	public void shouldGetInitialConfiguration(boolean loadPayload)
+			throws Exception {
 		givenAtomicServicesList();
-		whenGetInitialConfigurations("second");
-		thenCheck2InitialConfigurations();
+		whenGetInitialConfigurations("second", loadPayload);
+		thenCheck2InitialConfigurations(loadPayload);
 
 	}
 
 	private void givenAtomicServicesList() {
 		ApplianceType type1 = new ApplianceType();
-		type1.setName("first");
+		type1.setName("first name");
+		type1.setId("first");
 
 		ApplianceType type2 = new ApplianceType();
-		type2.setName("second");
-
+		type2.setName("second name");
+		type2.setId("second");
+		
 		ApplianceConfiguration config1 = new ApplianceConfiguration();
 		config1.setConfig_name("config1");
 		config1.setId("1");
@@ -66,42 +75,52 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 		type2.setConfigurations(Arrays.asList(config1, config2));
 
 		applianceTypes = Arrays.asList(type1, type2);
+		
+		when(air.getApplianceTypes()).thenReturn(applianceTypes);
+		when(air.getApplianceConfig("1")).thenReturn("payload1");
+		when(air.getApplianceConfig("2")).thenReturn("payload2");
 	}
 
-	private void whenGetInitialConfigurations(String atomicServiceId)
+	private void whenGetInitialConfigurations(String atomicServiceId, boolean loadPayload)
 			throws AtomicServiceNotFoundException {
-		when(air.getApplianceTypes()).thenReturn(applianceTypes);
-		AirAction<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId);
+		Action<List<InitialConfiguration>> action = actionFactory
+				.createListInitialConfigurationsAction(atomicServiceId, loadPayload);
 		initialConfigurations = action.execute();
 	}
 
-	private void thenCheck2InitialConfigurations() {
+	private void thenCheck2InitialConfigurations(boolean loadPayload) {
 		thanCheckIfAirWasInvoked();
 		assertNotNull(initialConfigurations);
-		checkInitialConfiguration(initialConfigurations.get(0), "config1", "1");
-		checkInitialConfiguration(initialConfigurations.get(1), "config2", "2");		
+		checkInitialConfiguration(initialConfigurations.get(0), "config1", "1",
+				getPayload(loadPayload, "1"));
+		checkInitialConfiguration(initialConfigurations.get(1), "config2", "2",
+				getPayload(loadPayload, "2"));
+	}
+
+	private String getPayload(boolean loadPayload, String postfix) {
+		return loadPayload ? "payload" + postfix : null;
 	}
 
 	private void thanCheckIfAirWasInvoked() {
 		verify(air, times(1)).getApplianceTypes();
 	}
-	
+
 	private void checkInitialConfiguration(InitialConfiguration initConf,
-			String name, String id) {
+			String name, String id, String payload) {
 		assertNotNull(initConf);
 		assertEquals(initConf.getName(), name);
 		assertEquals(initConf.getId(), id);
+		assertEquals(initConf.getPayload(), payload);
 	}
 
 	@Test
 	public void shouldGetEmptyInitConfList() throws Exception {
 		givenAtomicServicesList();
-		whenGetInitialConfigurations("first");
+		whenGetInitialConfigurations("first", false);
 		thenCheckEmptyInitialConfigurationList();
 
 	}
-	
+
 	private void thenCheckEmptyInitialConfigurationList() {
 		thanCheckIfAirWasInvoked();
 		assertNotNull(initialConfigurations);
@@ -113,7 +132,7 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 			throws Exception {
 		givenAtomicServicesList();
 		try {
-			whenGetInitialConfigurations("nonExisting");
+			whenGetInitialConfigurations("nonExisting", false);
 			fail();
 		} catch (AtomicServiceNotFoundException e) {
 			thanCheckIfAirWasInvoked();
