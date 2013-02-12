@@ -109,7 +109,7 @@ public interface WorkflowManagement {
 	@Path("/{workflowId}/as/{asConfigId}/{name}")
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asConfigId,
-			@PathParam("name") String name, @QueryParam("key") String key)
+			@PathParam("name") String name, @QueryParam("key_id") String keyId)
 			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
