@@ -27,8 +27,6 @@ import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
 public class BasicLobcderTest {
 	private static final Logger log = LoggerFactory.getLogger(BasicLobcderTest.class);
 	
-	@Value("${lobcder.user}") private String webDavUser;
-	@Value("${lobcder.password}") private String webDavPassword;
 	@Value("${lobcder.url}") private String webDavUrl;
 	
 	@Autowired private LobcderClient lobcder;
