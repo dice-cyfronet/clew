@@ -28,8 +28,8 @@ import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
- * Start workflow. There can be many workflow type Workflows but only one
- * portal and development workflow.
+ * Start workflow. There can be many workflow type Workflows but only one portal
+ * and development workflow.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
@@ -71,6 +71,11 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 			priority = defaultPriority;
 		}
 
+		// issue #1311
+		if (workflow.getType() == null) {
+			workflow.setType(WorkflowType.workflow);
+		}
+
 		WorkflowType type = workflow.getType();
 		if (type == WorkflowType.portal || type == WorkflowType.development) {
 			try {
@@ -97,10 +102,11 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 		// FIXME error handling
 		contextId = getAir().startWorkflow(workflow.getName(), getUsername(),
 				workflow.getDescription(), priority, workflow.getType());
-		List<String> ids = workflow.getAsConfigIds();		
-		
+		List<String> ids = workflow.getAsConfigIds();
+
 		try {
-			registerVms(contextId, ids, null, priority, type, workflow.getKeyId());
+			registerVms(contextId, ids, null, priority, type,
+					workflow.getKeyId());
 		} catch (CloudFacadeException e) {
 			rollback();
 			throw new WorkflowStartException();
@@ -115,8 +121,6 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 		return action.execute();
 	}
 
-	
-	
 	@Override
 	public void rollback() {
 		try {

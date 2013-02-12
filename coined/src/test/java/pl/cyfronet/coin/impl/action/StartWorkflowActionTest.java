@@ -255,4 +255,23 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 		verify(air, times(0)).startWorkflow(name, username, description,
 				priority, workflowType);
 	}
+	
+	@Test
+	public void shouldStartWorkflowWorkflowWhenTypeIsNull() throws Exception {
+		// issue #1311
+		givenWorkflowWithTypeNotSet();
+		whenStartWorkflow();
+		thenStartingWorkflowWithTypeWorkflow();
+	}
+
+	private void givenWorkflowWithTypeNotSet() {
+		workflowType = null;
+		createWorkflowStartRequest();
+		mockAirStartMethod();
+	}
+
+	private void thenStartingWorkflowWithTypeWorkflow() {
+		verify(air, times(1)).startWorkflow(name, username, description,
+				priority, WorkflowType.workflow);
+	}
 }
