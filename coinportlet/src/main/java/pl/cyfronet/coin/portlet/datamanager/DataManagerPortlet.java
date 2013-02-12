@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -204,6 +205,13 @@ public class DataManagerPortlet {
 		response.setRenderParameter(PARAM_ACTION, ACTION_METADATA);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, path);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String handleExceptions(Exception e) {
+		log.error("Unexpected exception occurred", e);
+		
+		return "fatal/error";
 	}
 	
 	private Object getMetadata(String path) throws LobcderException {

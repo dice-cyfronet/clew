@@ -47,11 +47,6 @@
     <bean id="portletMultipartResolver"
         class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver"/>
     
-	<!-- Default ExceptionHandler -->
-    <bean id="defaultExceptionHandler" class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver">
-        <property name="defaultErrorView" value="fatal/error"/>
-    </bean>
-    
     <!-- Utility beans -->
     <bean class="pl.cyfronet.coin.portlet.util.ContextIdFactory">
     	<constructor-arg value="${cloud.context.id.prefix}"/>
