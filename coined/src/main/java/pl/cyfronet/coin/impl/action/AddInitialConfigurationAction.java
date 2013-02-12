@@ -41,6 +41,9 @@ public class AddInitialConfigurationAction extends AirAction<String> {
 	@Override
 	public String execute() throws CloudFacadeException {
 		try {
+			logger.debug(
+					"Adding initial configuration {} for {} atomic service",
+					initialConfiguration.getName(), atomicServiceId);
 			String addedConfigurationId = getAir().addInitialConfiguration(
 					initialConfiguration.getName(), atomicServiceId,
 					initialConfiguration.getPayload());

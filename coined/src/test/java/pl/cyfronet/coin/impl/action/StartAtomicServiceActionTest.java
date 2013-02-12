@@ -51,6 +51,8 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private ApplianceType baseAS;
 	private AtomicService as;
 
+	private AddAtomicServiceMatcher asMatcher;
+
 	@Test
 	public void shouldStartWithoutKeyWhenProductionWorkflow() throws Exception {
 		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal);
@@ -179,9 +181,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	public void shouldCreateTmpASWhileStartingASIInDevelopmentMode()
 			throws Exception {
 
-		givenMockedAtmosphereForStartingASInDevMode();
-		AddAtomicServiceMatcher asMatcher = new AddAtomicServiceMatcher(
-				username, as, true);
+		givenMockedAtmosphereForStartingASInDevMode();		
 
 		whenStartAtomicService();
 
@@ -189,7 +189,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		verify(air, times(1)).addAtomicService(argThat(asMatcher));
 		verify(air, times(1)).getApplianceConfig(initConfigId);
 		verify(air, times(1)).addInitialConfiguration(anyString(),
-				startsWith(as.getName()), eq(initConfigPayload));
+				eq("devAsId"), eq(initConfigPayload));
 	}
 
 	private void givenMockedAtmosphereForStartingASInDevMode() {
@@ -200,10 +200,15 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		as.setDescription(baseAS.getDescription());
 		as.setDevelopment(true);
 		
+		asMatcher = new AddAtomicServiceMatcher(
+				username, as, true);
+		
 		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
+		when(air.addAtomicService(argThat(asMatcher))).thenReturn("devAsId");
 		when(
 				air.addInitialConfiguration(anyString(),
-						startsWith(as.getName()), eq(initConfigPayload)))
+						eq("devAsId"), eq(initConfigPayload)))
 				.thenReturn(newConfigId);
+		
 	}
 }

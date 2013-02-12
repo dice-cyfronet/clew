@@ -64,7 +64,8 @@ public class WorkflowActionTest extends ActionTest {
 	protected ApplianceType givenASInAir(String initConfId, boolean development) {
 		ApplianceType at = new ApplianceType();
 		at.setAuthor("marek");
-		at.setName("BaseAS");
+		at.setName("BaseAS name");
+		at.setId("BaseAS");
 		at.setDescription("description");
 		at.setDevelopment(development);
 

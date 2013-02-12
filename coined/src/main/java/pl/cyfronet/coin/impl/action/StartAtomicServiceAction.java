@@ -149,9 +149,9 @@ public class StartAtomicServiceAction extends
 
 		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
 				getAir(), getUsername(), devAs, baseAS.getId());
-		createASAction.execute();
+		String devAsId = createASAction.execute();
 
-		return createInitConfCopy(devAs.getName(), initConfId);
+		return createInitConfCopy(devAsId, initConfId);
 	}
 
 	private String createInitConfCopy(String asName, String srcInitConfId) {
