@@ -83,9 +83,9 @@ public interface AirClient {
 	void deleteAtomicService(@PathParam("asName") String asName);
 
 	@POST
-	@Path("/upload_appliance_config")
+	@Path("/appliance_config")
 	String addInitialConfiguration(@FormParam("config_name") String configName,
-			@FormParam("appliance_type") String applianceType,
+			@FormParam("appliance_type_id") String applianceTypeId,
 			@FormParam("config_text") String configText);
 
 	@GET

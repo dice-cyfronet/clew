@@ -56,7 +56,8 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		thenCheckIfAtomicServiceWasStarted();
 	}
 
-	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType workflowType) {
+	private void givenAtomicServiceRequestAndWorkflowAlreadyStarted(
+			WorkflowType workflowType) {
 		givenASInAir(atomicServiceId, false);
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
@@ -75,12 +76,11 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStartAtomicService(String username, String keyId) {
-		StartAtomicServiceAction action = actionFactory
-				.createStartAtomicServiceAction(atomicServiceId, name,
-						contextId, username, keyId);
+		Action<String> action = actionFactory.createStartAtomicServiceAction(
+				atomicServiceId, name, contextId, username, keyId);
 		id = action.execute();
 	}
-	
+
 	private void thenCheckIfAtomicServiceWasStarted() {
 		verify(atmosphere, times(1)).addRequiredAppliances(argThat(matcher));
 
@@ -96,7 +96,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
 	}
-	
+
 	@Test
 	public void shouldTestAddingASIThrowWorkflowNotFoundWhenWorkflowDoesNotBelongToTheUser()
 			throws Exception {
@@ -134,7 +134,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void givenNoWorkflowStartedForTheUser() {
 		mockGetNonExistingWorkflow(air, contextId);
 	}
-	
+
 	// FIXME
 	@Test(enabled = false)
 	public void shouldCreateExceptionWhileAtmosphereActionFailed()
@@ -150,7 +150,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 		thenVerifyRequestSendToAtmosphere();
 	}
-	
+
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
 		givenASInAir(atomicServiceId, false);
 		request = new AddRequiredAppliancesRequestImpl();
@@ -164,16 +164,17 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void thenVerifyRequestSendToAtmosphere() {
 		verify(atmosphere, times(1)).addRequiredAppliances(request);
 	}
-	
+
 	@Test
-	public void shouldThrowASNotFoundWhileTryingToStartDevelopmentAS() throws Exception {
+	public void shouldThrowASNotFoundWhileTryingToStartDevelopmentAS()
+			throws Exception {
 		givenWorkflowStarted();
 		givenASInAir(atomicServiceId, true);
 		try {
 			whenStartAtomicService();
 			fail();
-		} catch(AtomicServiceNotFoundException e) {
-			//Ok should be thrown
+		} catch (AtomicServiceNotFoundException e) {
+			// Ok should be thrown
 		}
 	}
 }

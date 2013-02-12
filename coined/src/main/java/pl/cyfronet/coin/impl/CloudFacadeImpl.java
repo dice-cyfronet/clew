@@ -34,13 +34,8 @@ import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.auth.annotation.Role;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
-import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.action.CreateAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.GetAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.GetEndpointPayloadAction;
-import pl.cyfronet.coin.impl.action.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 import pl.cyfronet.coin.impl.utils.UrlUtils;
 
@@ -70,7 +65,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.debug("Get atomic services");
-		ListAtomicServicesAction action = actionFactory
+		Action<List<AtomicService>> action = actionFactory
 				.createListAtomicServicesAction();
 
 		return action.execute();
@@ -83,7 +78,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
 		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
 		try {
-			CreateAtomicServiceAction action = actionFactory
+			Action<String> action = actionFactory
 					.createCreateAtomicServiceAction(getUsername(),
 							atomicServiceInstanceId, atomicService);
 			return action.execute();
@@ -97,8 +92,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			String atomicServiceId, boolean loadPayload)
 			throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
-		AirAction<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId, loadPayload);
+		Action<List<InitialConfiguration>> action = actionFactory
+				.createListInitialConfigurationsAction(atomicServiceId, loadPayload);
 		return action.execute();
 	}
 
@@ -112,9 +107,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		logger.debug("Creating new atomic service from {}, metadata: {}",
 				atomicServiceId, initialConfiguration);
 
-		AddInitialConfigurationAction action = actionFactory
-				.createAddInitialConfiguration(atomicServiceId,
-						initialConfiguration);
+		Action<String> action = actionFactory.createAddInitialConfiguration(
+				atomicServiceId, initialConfiguration);
 
 		return action.execute();
 	}
@@ -124,7 +118,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 		StringBuilder sb = new StringBuilder();
 
-		ListAtomicServicesAction action = actionFactory
+		Action<List<AtomicService>> action = actionFactory
 				.createListAtomicServicesAction();
 
 		List<AtomicService> atomicServices = action.execute();
@@ -175,9 +169,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		logger.debug("Getting endpoint descriptor for {}:{}/{}", new Object[] {
 				atomicServiceId, servicePort, invocationPath });
 
-		GetEndpointPayloadAction action = actionFactory
-				.createGetEndpointPayloadAction(atomicServiceId, servicePort,
-						invocationPath);
+		Action<String> action = actionFactory.createGetEndpointPayloadAction(
+				atomicServiceId, servicePort, invocationPath);
 
 		String descriptor = action.execute();
 
@@ -192,7 +185,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
 		// check if atomic service with given id is registered in Atmosphere.
-		GetAtomicServiceAction action = actionFactory
+		Action<AtomicService> action = actionFactory
 				.createGetAtomicServiceAction(atomicServiceId);
 		AtomicService atomicService = action.execute();
 		return atomicService.getAtomicServiceId();

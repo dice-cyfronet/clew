@@ -36,7 +36,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetInitialConfigurationsActionTest extends ActionTest {
+public class ListInitialConfigurationsActionTest extends ActionTest {
 
 	private List<InitialConfiguration> initialConfigurations;
 	private List<ApplianceType> applianceTypes;
@@ -57,16 +57,17 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 
 	private void givenAtomicServicesList() {
 		ApplianceType type1 = new ApplianceType();
-		type1.setName("first");
+		type1.setName("first name");
+		type1.setId("first");
 
 		ApplianceType type2 = new ApplianceType();
-		type2.setName("second");
-
+		type2.setName("second name");
+		type2.setId("second");
+		
 		ApplianceConfiguration config1 = new ApplianceConfiguration();
 		config1.setConfig_name("config1");
 		config1.setId("1");
-		
-		
+
 		ApplianceConfiguration config2 = new ApplianceConfiguration();
 		config2.setConfig_name("config2");
 		config2.setId("2");
@@ -80,11 +81,10 @@ public class GetInitialConfigurationsActionTest extends ActionTest {
 		when(air.getApplianceConfig("2")).thenReturn("payload2");
 	}
 
-	private void whenGetInitialConfigurations(String atomicServiceId,
-			boolean loadPayload) throws AtomicServiceNotFoundException {		
-		AirAction<List<InitialConfiguration>> action = actionFactory
-				.createGetInitialConfigurationsAction(atomicServiceId,
-						loadPayload);
+	private void whenGetInitialConfigurations(String atomicServiceId, boolean loadPayload)
+			throws AtomicServiceNotFoundException {
+		Action<List<InitialConfiguration>> action = actionFactory
+				.createListInitialConfigurationsAction(atomicServiceId, loadPayload);
 		initialConfigurations = action.execute();
 	}
 

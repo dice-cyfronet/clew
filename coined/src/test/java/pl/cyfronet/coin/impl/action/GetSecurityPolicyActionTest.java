@@ -54,7 +54,7 @@ public class GetSecurityPolicyActionTest extends ActionTest {
 	}
 
 	private void loadSecurityPolicy(String policyName) {
-		GetSecurityPolicyAction action = actionFactory
+		Action<String> action = actionFactory
 				.createGetSecurityPolicyAction(policyName);
 		loadedPolicyPayload = action.execute();
 	}

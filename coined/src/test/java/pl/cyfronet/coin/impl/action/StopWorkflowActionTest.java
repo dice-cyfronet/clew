@@ -15,7 +15,6 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,29 +39,30 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	public void shouldStopWorkflow() throws Exception {
 		givenAirStateWithWorkflowListAndMockedStopWorkflowAction();
 		whenStopWorkflow();
-		thenCheckWorkflowStopped();		
-	}	
+		thenCheckWorkflowStopped();
+	}
 
 	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() {
 		givenWorkflowStarted();
-		mockStopWorkflowInAtmosphere();		
+		mockStopWorkflowInAtmosphere();
 	}
 
 	private void whenStopWorkflow() {
 		stopWorkflow(contextId);
 	}
-	
+
 	private void stopWorkflow(String contextId) {
-		StopWorkflowAction action = actionFactory.createStopWorkflowAction(contextId, username);
-		action.execute();		
+		Action<Class<Void>> action = actionFactory.createStopWorkflowAction(
+				contextId, username);
+		action.execute();
 	}
-	
+
 	private void thenCheckWorkflowStopped() {
 		verify(air, times(1)).stopWorkflow(contextId);
 		verify(air, times(1)).getWorkflow(contextId);
-		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);		
+		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
 	}
-	
+
 	private void mockStopWorkflowInAtmosphere() {
 		ManagerResponseImpl atmosphereManagerResponse = new ManagerResponseImpl();
 		atmosphereManagerResponse
@@ -72,8 +72,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 				atmosphereManagerResponse);
 	}
 
-	//FIXME waiting for atmo improvement
-	@Test(enabled=false)
+	// FIXME waiting for atmo improvement
+	@Test(enabled = false)
 	public void shouldThrowCloudExceptionWhenAtmosphereFail() throws Exception {
 		// when
 		givenWorkflowStarted();
@@ -91,8 +91,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
 	}
 
-	//FIXME waiting for atmo improvement
-	@Test(enabled=false)
+	// FIXME waiting for atmo improvement
+	@Test(enabled = false)
 	public void shouldStopWorkflowWhenOnAtmosphereWarning() throws Exception {
 		// given
 		givenWorkflowStarted();
@@ -109,9 +109,9 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void mockStopWorkflowInAtmosphereWithWarning(String contextId) {
-		//FIXME
-//		mockStopWorkflowInAtmosphereWithReturnStatus(contextId,
-//				OperationStatus.COMPLETED_WITH_ERRORS);
+		// FIXME
+		// mockStopWorkflowInAtmosphereWithReturnStatus(contextId,
+		// OperationStatus.COMPLETED_WITH_ERRORS);
 	}
 
 	private void mockStopWorkflowInAtmosphereWithError(String contextId) {
@@ -152,7 +152,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStopNonExistingWorkflow() {
-		stopWorkflow("nonExisting");		
+		stopWorkflow("nonExisting");
 	}
 
 	@Test
