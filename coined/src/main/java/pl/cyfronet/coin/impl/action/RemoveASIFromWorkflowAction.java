@@ -50,7 +50,7 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		if (workflowInDevelopmentModeHasASI()) {
-			ApplianceType at = getAir().getTypeFromVM(asiId);
+			ApplianceType at = new GetASITypeAction(getAir(), asiId).execute();
 			getAtmosphere().removeAppliance(asiId);
 
 			DeleteAtomicServiceAction deleteASAction = new DeleteAtomicServiceAction(

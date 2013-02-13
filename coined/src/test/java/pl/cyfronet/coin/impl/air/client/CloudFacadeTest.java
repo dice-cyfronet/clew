@@ -15,7 +15,6 @@
  */
 package pl.cyfronet.coin.impl.air.client;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -23,7 +22,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -63,29 +61,6 @@ public class CloudFacadeTest {
 
 		System.out.println(cf
 				.addInitialConfiguration(atomicServiceId, initConf));
-	}
-
-	static void addAtomicService(String atomicServiceInstanceId, String asName) {
-		AtomicService atomicService = new AtomicService();
-		atomicService.setName(asName);
-		atomicService.setDescription("Hello world REST and WS service secured using Security Proxy");
-		atomicService.setHttp(true);
-		atomicService.setPublished(true);
-		atomicService.setInProxy(true);
-
-		Endpoint e = new Endpoint();
-		e.setDescription("Simple hello world REST");
-		e.setDescriptor("");
-		e.setInvocationPath("/hello/{name}");
-		e.setPort(80);
-		e.setServiceName("HelloWorld");
-
-		atomicService.setEndpoints(Arrays.asList(e));
-
-		System.out
-				.println("atomic service id: "
-						+ cf.createAtomicService(atomicServiceInstanceId,
-								atomicService));
 	}
 
 	private static void initCloudFacde() throws Exception {

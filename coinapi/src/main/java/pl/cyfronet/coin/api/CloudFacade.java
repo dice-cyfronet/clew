@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -66,11 +67,9 @@ public interface CloudFacade {
 	 *             service (vm template) occurs.
 	 */
 	@POST
-	@Path("/create_from/{atomicServiceInstanceId}")
+	@Path("/")
 	@Consumes({ MediaType.APPLICATION_JSON })
-	String createAtomicService(
-			@PathParam("atomicServiceInstanceId") String atomicServiceInstanceId,
-			AtomicService atomicService)
+	String createAtomicService(NewAtomicService newAtomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
 
 	/**

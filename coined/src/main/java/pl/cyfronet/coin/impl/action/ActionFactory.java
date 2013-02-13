@@ -20,6 +20,7 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -52,14 +53,15 @@ public class ActionFactory {
 	}
 
 	public Action<String> createCreateAtomicServiceAction(String username,
-			String asInstanceId, AtomicService atomicService) {
+			NewAtomicService newAtomicService) {
 		return new CreateAtomicServiceAction(air, atmosphere, username,
-				defaultSiteId, asInstanceId, atomicService);
+				defaultSiteId, newAtomicService);
 	}
 
 	public Action<List<InitialConfiguration>> createListInitialConfigurationsAction(
 			String atomicServiceId, boolean loadPayload) {
-		return new ListInitialConfigurationsAction(air, atomicServiceId, loadPayload);
+		return new ListInitialConfigurationsAction(air, atomicServiceId,
+				loadPayload);
 	}
 
 	public Action<String> createAddInitialConfiguration(String atomicServiceId,
@@ -165,8 +167,8 @@ public class ActionFactory {
 			String username, String contextId, String asiId) {
 		return new RemoveASIFromWorkflowAction(air, atmosphere, username,
 				contextId, asiId);
-	}	
-	
+	}
+
 	// grants
 
 	public Action<List<String>> createListGrantsAction() {
@@ -177,8 +179,8 @@ public class ActionFactory {
 		return new GetGrantAction(air, name);
 	}
 
-	public Action<Class<Void>> createUpdateGrantAction(String name, Grant grant,
-			boolean overwrite) {
+	public Action<Class<Void>> createUpdateGrantAction(String name,
+			Grant grant, boolean overwrite) {
 		return new UpdateGrantAction(air, name, grant, overwrite);
 	}
 
@@ -202,5 +204,5 @@ public class ActionFactory {
 
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
-	}	
+	}
 }

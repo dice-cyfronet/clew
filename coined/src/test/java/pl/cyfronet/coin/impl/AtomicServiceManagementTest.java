@@ -36,6 +36,7 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -43,8 +44,8 @@ import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.CreateAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
 import pl.cyfronet.coin.impl.action.ListAtomicServicesAction;
+import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -77,7 +78,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private String addedICId;
 
-	private AtomicService atomicService;
+	private NewAtomicService atomicService;
 
 	private String asInstanceId = "asiId";
 
@@ -364,25 +365,32 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMocketAddAtomicServiceAction() {
-		atomicService = new AtomicService("newAS");
+		createNewAs();
 
 		CreateAtomicServiceAction action = mock(CreateAtomicServiceAction.class);
-		when(action.execute()).thenReturn(atomicService.getName());
+		when(action.execute()).thenReturn("newASId");
 
 		when(
 				actionFactory.createCreateAtomicServiceAction(username,
-						asInstanceId, atomicService)).thenReturn(action);
+						atomicService)).thenReturn(action);
 		currentAction = action;
 	}
 
+	private void createNewAs() {
+		atomicService = new NewAtomicService();
+		atomicService.setSourceAsiId(asInstanceId);
+		atomicService.setName("New as name");
+		atomicService.setDescription("New as description");
+	}
+	
 	private void whenAddNewAtomicService() {
-		createdAsId = asManagementClient.createAtomicService(asInstanceId,
+		createdAsId = asManagementClient.createAtomicService(
 				atomicService);
 	}
 
 	private void thenAtomicServiceAdded() {
 		thenActionExecuted();
-		assertEquals(createdAsId, atomicService.getName());
+		assertEquals(createdAsId, "newASId");
 	}
 
 	@Test
@@ -401,15 +409,14 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionWhichDoesNotKnowAsi() {
-		atomicService = new AtomicService("newAS");
-
+		createNewAs();
 		CreateAtomicServiceAction action = mock(CreateAtomicServiceAction.class);
 		when(action.execute()).thenThrow(
 				new AtomicServiceInstanceNotFoundException());
 
 		when(
 				actionFactory.createCreateAtomicServiceAction(username,
-						asInstanceId, atomicService)).thenReturn(action);
+						atomicService)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -428,15 +435,14 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionWhichReceivesASNonUniqueException() {
-		atomicService = new AtomicService("newAS");
-
+		createNewAs();
 		CreateAtomicServiceAction action = mock(CreateAtomicServiceAction.class);
 		when(action.execute()).thenThrow(
 				new AtomicServiceAlreadyExistsException());
 
 		when(
 				actionFactory.createCreateAtomicServiceAction(username,
-						asInstanceId, atomicService)).thenReturn(action);
+						atomicService)).thenReturn(action);
 		currentAction = action;
 	}
 }

@@ -51,6 +51,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
@@ -336,24 +337,14 @@ public class CloudManagerPortlet {
 			response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, saveAtomicServiceRequest.getAtomicServiceInstanceId());
 			response.setRenderParameter(PARAM_ACTION, ACTION_SAVE_ATOMIC_SERVICE);
 		} else {
-			AtomicService atomicService = new AtomicService();
-			atomicService.setHttp(true);
+			NewAtomicService atomicService = new NewAtomicService();
+			atomicService.setSourceAsiId(saveAtomicServiceRequest.getAtomicServiceInstanceId());
 			atomicService.setName(saveAtomicServiceRequest.getName());
 			atomicService.setDescription(saveAtomicServiceRequest.getDescription());
 			
-			Endpoint endpoint = new Endpoint();
-			endpoint.setInvocationPath("/empty");
-			endpoint.setPort(8443);
-			endpoint.setServiceName("empty");
-			atomicService.setEndpoints(new ArrayList<Endpoint>());
-			atomicService.getEndpoints().add(endpoint);
-			atomicService.setPublished(true);
-			atomicService.setHttp(true);
-			atomicService.setInProxy(true);
-			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());
+			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());				
 			
-			String atomicServiceId = clientFactory.getCloudFacade(request).createAtomicService(
-					saveAtomicServiceRequest.getAtomicServiceInstanceId(), atomicService);
+			String atomicServiceId = clientFactory.getCloudFacade(request).createAtomicService(atomicService);
 			
 			if(atomicServiceId != null) {
 				log.debug("Successfully retrieved new atomic service id of value [{}]", atomicServiceId);

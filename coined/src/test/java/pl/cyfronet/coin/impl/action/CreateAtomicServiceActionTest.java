@@ -14,15 +14,21 @@
  * the License.
  */
 package pl.cyfronet.coin.impl.action;
+
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
+import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
 /**
@@ -30,8 +36,10 @@ import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
  */
 public class CreateAtomicServiceActionTest extends ActionTest {
 
+	private NewAtomicService newAtomicService;
 	private AtomicService atomicService;
-	private String instanceId = "instanceId";	
+	private ApplianceType sourceAtomicService;
+	private String instanceId = "instanceId";
 	private AddAtomicServiceMatcher matcher;
 	private String asId = "asAirId";
 	private String createdAsId;
@@ -42,7 +50,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 	 * @since 1.1.0
 	 */
 	private String username = "user123";
-	
+
 	@Test
 	public void shouldCreateNewAtomicService() throws Exception {
 		givenAtomicServiceMetadata();
@@ -50,25 +58,46 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		thenAtomicServiceCreated();
 	}
 
-	private void givenAtomicServiceMetadata() {
+	private void givenAtomicServiceMetadata() throws Exception {
+		createASObjects();
+
+		when(air.addAtomicService(argThat(matcher))).thenReturn(asId);
+		when(
+				atmosphere.createTemplate(instanceId,
+						newAtomicService.getName(), cloudSiteId, asId))
+				.thenReturn("1");
+	}
+
+	private void createASObjects() {
 		String asName = "name";
 		String asDescription = "description";
 
+		newAtomicService = new NewAtomicService();
+		newAtomicService.setSourceAsiId(instanceId);
+		newAtomicService.setName(asName);
+		newAtomicService.setDescription(asDescription);
+
+		sourceAtomicService = new ApplianceType();
+		sourceAtomicService.setName("sourceASName");
+		sourceAtomicService.setHttp(true);
+		sourceAtomicService.setScalable(true);
+		sourceAtomicService.setId("sourceAsId");
+
 		atomicService = new AtomicService();
-		atomicService.setName(asName);
-		atomicService.setDescription(asDescription);
+		atomicService.setName(newAtomicService.getName());
+		atomicService.setDescription(newAtomicService.getDescription());
 		atomicService.setHttp(true);
+		atomicService.setScalable(true);
+
+		matcher = new AddAtomicServiceMatcher(username, atomicService);
+		matcher.setCreatingNewAS(true);
+
+		when(air.getTypeFromVM(instanceId)).thenReturn(sourceAtomicService);
 	}
 
 	private void whenCreateNewAtomicService() throws Exception {
-
-		matcher = new AddAtomicServiceMatcher(username, atomicService);
-		when(air.addAtomicService(argThat(matcher))).thenReturn(asId);
-		when(
-				atmosphere.createTemplate(instanceId, atomicService.getName(),
-						cloudSiteId, asId)).thenReturn("1");
-		action = actionFactory
-				.createCreateAtomicServiceAction(username, instanceId, atomicService);
+		action = actionFactory.createCreateAtomicServiceAction(username,
+				newAtomicService);
 		createdAsId = action.execute();
 	}
 
@@ -76,9 +105,9 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(instanceId,
 				atomicService.getName(), cloudSiteId, asId);
-		assertEquals(createdAsId, atomicService.getName());
+		assertEquals(createdAsId, asId);
 	}
-	
+
 	@Test
 	public void shouldCreateAtomicServiceAndRollback() throws Exception {
 		givenAtomicServiceMetadata();
@@ -93,7 +122,40 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 
 	private void thenAtomicServiceCreatedAndRemoved() throws Exception {
 		thenAtomicServiceCreated();
-		
+
 		verify(air, times(1)).deleteAtomicService(asId);
+	}
+
+	@Test
+	public void shouldThrown404WhenASINotFound() throws Exception {
+		givenNonExistingASI();
+		try {
+			whenCreateNewAtomicService();
+			fail();
+		} catch (AtomicServiceInstanceNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenNonExistingASI() {
+		when(air.getTypeFromVM(instanceId)).thenThrow(
+				getAirException(400));
+	}
+
+	@Test
+	public void shouldThrown302WhenASAlreadyExist() throws Exception {
+		givenAlreadyExistingAS();
+		try {
+			whenCreateNewAtomicService();
+		} catch (AtomicServiceAlreadyExistsException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenAlreadyExistingAS() {
+		createASObjects();
+
+		when(air.addAtomicService(argThat(matcher))).thenThrow(
+				getAirException(302));
 	}
 }

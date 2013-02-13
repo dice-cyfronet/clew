@@ -35,6 +35,7 @@ public class AddAtomicServiceMatcher extends
 	private AtomicService as;
 	private String username;
 	private boolean development;
+	private boolean creatingNewAS;
 
 	public AddAtomicServiceMatcher(String username, AtomicService as) {
 		this.as = as;
@@ -48,6 +49,10 @@ public class AddAtomicServiceMatcher extends
 		this.development = development;
 	}
 
+	public void setCreatingNewAS(boolean creatingNewAS) {
+		this.creatingNewAS = creatingNewAS;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.hamcrest.Matcher#matches(java.lang.Object)
@@ -55,17 +60,17 @@ public class AddAtomicServiceMatcher extends
 	@Override
 	public boolean matches(Object arg0) {
 		AddAtomicServiceRequest request = (AddAtomicServiceRequest) arg0;
-		return request.getAuthor().equals(username) && nameEquals(request)
+		return request.getAuthor().equals(username)
+				&& nameEquals(request)
 				&& request.getClient().equals("rest")
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())
 				&& request.isHttp() == as.isHttp()
 				&& request.isIn_proxy() == as.isInProxy()
-				&& request.isPublished() == as.isPublished()
 				&& request.isScalable() == as.isScalable()
 				&& request.isShared() == as.isShared()
 				&& request.isVnc() == as.isVnc()
-				&& request.isDevelopment() == as.isDevelopment();
+				&& correctPublishedState(request);
 	}
 
 	private boolean nameEquals(AddAtomicServiceRequest request) {
@@ -76,6 +81,15 @@ public class AddAtomicServiceMatcher extends
 		}
 	}
 
+	private boolean correctPublishedState(AddAtomicServiceRequest request) {
+		if(creatingNewAS) {
+			return request.isPublished() && !as.isDevelopment();
+		} else {
+			return request.isPublished() == as.isPublished() && request
+					.isDevelopment() == as.isDevelopment();
+		}
+	}
+	
 	/**
 	 * @param asEndpoints
 	 * @param endpoint
@@ -93,7 +107,8 @@ public class AddAtomicServiceMatcher extends
 				return true;
 			}
 		} else {
-			return (asEndpoints == null || asEndpoints.size() == 0) && endpoints == null;
+			return (asEndpoints == null || asEndpoints.size() == 0)
+					&& endpoints == null;
 		}
 		return false;
 	}

@@ -286,7 +286,7 @@ body {
 					</ul>
 				</div>
 				<h3>
-					<a href="#"><strong class="method">POST</strong> <strong>as/create_from/{atomicServiceInstanceId}</strong>
+					<a href="#"><strong class="method">POST</strong> <strong>/as</strong>
 						- create new atomic service</a>
 				</h3>
 				<div>
@@ -295,48 +295,21 @@ body {
 						<strong>Note!</strong> <i>developer</i> role is required to perform this action.	
 					</div>
 				
-					<ul>
-						<li><strong>atomicServiceInstanceId</strong> - For this
-							atomic service instance new atomic service will be created</li>
-					</ul>
 					<p>The structure of the JSON request includes:</p>
 					<ul>
+						<li>(required) <strong>sourceAsiId</strong> - New Atomic Service template
+						will be created from this Atomic Service Instance
+						</li>
 						<li>(required, unique) <strong>name</strong> - atomic service
 							name
 						</li>
 						<li><strong>description</strong> - atomic service description</li>
-						<li><strong>vnc</strong> - true if atomic service delivers
-							VNC</li>
-						<li><strong>http</strong> - true if atomic service delivers
-							HTTP service (e.g. web or rest service)</li>
-						<li><strong>shared</strong> - true if atomic service can be
-							shared among many workflows</li>
-						<li><strong>scalable</strong> - true if atomic service is
-							stateless and new VM can spanned by atmosphere</li>
-						<li><strong>published</strong> - true if atomic service is
-							published by the owner and is can be started in production
-							workflows</li>
-						<li><strong>inProxy</strong> - true if atomic service
-							endpoints will be added into proxy</li>
-						<li><strong>endpoints</strong> - list of atomic service
-							endpoints:
-							<ul>
-								<li>(required) <strong>invocationPath</strong> - path to
-									the service
-								</li>
-								<li>(required) <strong>port</strong> - service port
-								</li>
-								<li>(required) <strong>serviceName</strong> - service name
-								</li>
-								<li><strong>type</strong> - service type: REST or WS (REST
-									by default)</li>
-								<li><strong>descriptor</strong> - service descriptor (e.g.
-									WSDL, WADL)</li>
-								<li><strong>description</strong> - endpoint description</li>
-							</ul></li>
+						
 					</ul>
 					The operation returns the <strong>200</strong> status code on
-					success and the <strong>400</strong> status code and problem
+					success, the <strong>404</strong> when source atomic service 
+					instance not found, the <strong>302</strong> status code when AS with given name 
+					already exists, <strong>400</strong> status code and problem
 					explanation when failed.
 				</div>
 				<h3>

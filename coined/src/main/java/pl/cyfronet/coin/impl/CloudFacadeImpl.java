@@ -27,6 +27,7 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -73,14 +74,14 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 	@Role(values = "developer")
 	@Override
-	public String createAtomicService(String atomicServiceInstanceId,
-			AtomicService atomicService)
+	public String createAtomicService(NewAtomicService newAtomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		logger.debug("Create atomic service from {}", atomicServiceInstanceId);
+		logger.debug("Create atomic service from {}",
+				newAtomicService.getSourceAsiId());
 		try {
 			Action<String> action = actionFactory
 					.createCreateAtomicServiceAction(getUsername(),
-							atomicServiceInstanceId, atomicService);
+							newAtomicService);
 			return action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
@@ -93,7 +94,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
 		Action<List<InitialConfiguration>> action = actionFactory
-				.createListInitialConfigurationsAction(atomicServiceId, loadPayload);
+				.createListInitialConfigurationsAction(atomicServiceId,
+						loadPayload);
 		return action.execute();
 	}
 

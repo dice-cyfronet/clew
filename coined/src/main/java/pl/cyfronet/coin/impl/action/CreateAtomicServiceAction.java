@@ -19,10 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.BeanConverter;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.ApplianceNotFoundException;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
@@ -30,15 +33,13 @@ import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class CreateAtomicServiceAction implements Action<String> {
+public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(CreateAtomicServiceAction.class);
 
-	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
-	private String asInstanceId;
-	private AtomicService atomicService;
+	private NewAtomicService newAtomicService;
 	private CreateAtomicServiceInAirAction addASToAirAction;
 
 	// private String templateId;
@@ -48,18 +49,15 @@ public class CreateAtomicServiceAction implements Action<String> {
 	 * @param atmosphere Atmosphere client.
 	 * @param defaultSiteId Default cloud site id.
 	 * @param atomicServiceInstanceId Atomic Service Instance id.
-	 * @param atomicService Information about new Atomic Service.
+	 * @param newAtomicService Information about new Atomic Service.
 	 */
 	CreateAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
-			String username, String defaultSiteId, String asInstanceId,
-			AtomicService atomicService) {
-		this.atmosphere = atmosphere;
-		this.defaultSiteId = defaultSiteId;
-		this.asInstanceId = asInstanceId;
-		this.atomicService = atomicService;
+			String username, String defaultSiteId,
+			NewAtomicService newAtomicService) {
+		super(air, atmosphere, username);
 
-		addASToAirAction = new CreateAtomicServiceInAirAction(air, username,
-				atomicService);
+		this.defaultSiteId = defaultSiteId;
+		this.newAtomicService = newAtomicService;
 	}
 
 	/**
@@ -74,15 +72,31 @@ public class CreateAtomicServiceAction implements Action<String> {
 	 */
 	public String execute() throws AtomicServiceInstanceNotFoundException,
 			CloudFacadeException {
-		logger.debug("Creating {} from {} on {}", new Object[] { atomicService,
-				asInstanceId, defaultSiteId });
+		String asInstanceId = newAtomicService.getSourceAsiId();
+
+		logger.debug("Creating {} from {} on {}", new Object[] {
+				newAtomicService, newAtomicService.getSourceAsiId(),
+				defaultSiteId });
+
+		ApplianceType at = new GetASITypeAction(getAir(), asInstanceId)
+				.execute();
+
+		AtomicService as = BeanConverter.getAtomicService(at, true);
+		as.setName(newAtomicService.getName());
+		as.setDescription(newAtomicService.getDescription());
+		as.setDevelopment(false);
+		as.setPublished(true);
+
+		addASToAirAction = new CreateAtomicServiceInAirAction(getAir(),
+				getUsername(), as);
 
 		String atomicServiceId = addASToAirAction.execute();
+
 		try {
 			// templateId =
-			atmosphere.createTemplate(asInstanceId, atomicService.getName(),
-					defaultSiteId, atomicServiceId);
-			return atomicService.getName();
+			getAtmosphere().createTemplate(asInstanceId,
+					newAtomicService.getName(), defaultSiteId, atomicServiceId);
+			return atomicServiceId;
 		} catch (ApplianceNotFoundException e) {
 			addASToAirAction.rollback();
 			logger.debug("Error while creating AS - ASI {} not found",
