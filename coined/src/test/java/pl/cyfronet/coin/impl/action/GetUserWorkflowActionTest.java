@@ -128,6 +128,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");
+		vm1.setAppliance_type_name("type1 name");
 		vm1.setName("vm1");
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
@@ -135,6 +136,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
+		vm2.setAppliance_type("type2 name");
 		vm2.setName("vm2");
 		vm2.setState(Status.running);
 		vm2.setVms_id("id2");
@@ -202,6 +204,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");
+		vm1.setAppliance_type_name("type1 name");
 		vm1.setName("vm1");
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
@@ -210,6 +213,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
+		vm2.setAppliance_type_name("type2 name");
 		vm2.setName("vm2");
 		vm2.setState(Status.running);
 		vm2.setVms_id("id2");
@@ -251,6 +255,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 
 	private void equals(Vms vm, AtomicServiceInstance asi) {
 		assertEquals(asi.getAtomicServiceId(), vm.getAppliance_type());
+		assertEquals(asi.getAtomicServiceName(), vm.getAppliance_type_name());
 		assertEquals(asi.getName(), vm.getName());
 		assertEquals(asi.getStatus(), vm.getState());
 		assertEquals(asi.getId(), vm.getVms_id());

@@ -29,6 +29,8 @@ public class AtomicServiceInstance extends StatusBean {
 
 	private String atomicServiceId;
 
+	private String atomicServiceName;
+	
 	private List<Redirection> redirections;
 
 	private String configurationId;
@@ -43,6 +45,20 @@ public class AtomicServiceInstance extends StatusBean {
 
 	public void setAtomicServiceId(String atomicServiceId) {
 		this.atomicServiceId = atomicServiceId;
+	}
+
+	/**
+	 * @return the atomicServiceName
+	 */
+	public String getAtomicServiceName() {
+		return atomicServiceName;
+	}
+
+	/**
+	 * @param atomicServiceName the atomicServiceName to set
+	 */
+	public void setAtomicServiceName(String atomicServiceName) {
+		this.atomicServiceName = atomicServiceName;
 	}
 
 	/**
@@ -101,12 +117,10 @@ public class AtomicServiceInstance extends StatusBean {
 		this.publicKeyId = publicKeyId;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
+				+ ", atomicServiceName=" + atomicServiceName
 				+ ", redirections=" + redirections + ", configurationId="
 				+ configurationId + ", instanceId=" + instanceId
 				+ ", publicKeyId=" + publicKeyId + "]";

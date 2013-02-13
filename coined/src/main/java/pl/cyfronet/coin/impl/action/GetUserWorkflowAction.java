@@ -64,6 +64,7 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 
 				AtomicServiceInstance instance = new AtomicServiceInstance();
 				instance.setAtomicServiceId(vm.getAppliance_type());
+				instance.setAtomicServiceName(vm.getAppliance_type_name());
 				instance.setId(vm.getVms_id());
 				instance.setStatus(vm.getState());
 				instance.setName(vm.getName());

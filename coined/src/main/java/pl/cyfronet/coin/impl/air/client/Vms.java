@@ -25,23 +25,25 @@ import pl.cyfronet.coin.api.beans.Status;
 public class Vms {
 
 	private String name;
-	
+
 	private Specs specs;
-	
+
 	private String conf_id;
-	
+
 	private String appliance_type;
 	
-	private String source_template;
-
+	private String appliance_type_name;
+	
+	private String source_template;	
+	
 	private String vms_id;
-	
+
 	private Status state;
-	
+
 	private String user_key;
-	
+
 	private List<PortMapping> internal_port_mappings;
-	
+
 	/**
 	 * @return the name
 	 */
@@ -96,6 +98,20 @@ public class Vms {
 	 */
 	public void setAppliance_type(String appliance_type) {
 		this.appliance_type = appliance_type;
+	}
+
+	/**
+	 * @return the appliance_type_name
+	 */
+	public String getAppliance_type_name() {
+		return appliance_type_name;
+	}
+
+	/**
+	 * @param appliance_type_name the appliance_type_name to set
+	 */
+	public void setAppliance_type_name(String appliance_type_name) {
+		this.appliance_type_name = appliance_type_name;
 	}
 
 	/**
@@ -173,8 +189,9 @@ public class Vms {
 	public String toString() {
 		return "Vms [name=" + name + ", specs=" + specs + ", conf_id="
 				+ conf_id + ", appliance_type=" + appliance_type
-				+ ", source_template=" + source_template + ", vms_id=" + vms_id
-				+ ", state=" + state + ", user_key=" + user_key
+				+ ", source_template=" + source_template
+				+ ", appliance_type_name=" + appliance_type_name + ", vms_id="
+				+ vms_id + ", state=" + state + ", user_key=" + user_key
 				+ ", internal_port_mappings=" + internal_port_mappings + "]";
 	}
 }
