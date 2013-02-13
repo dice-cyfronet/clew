@@ -34,32 +34,32 @@ public class DeleteAtomicServiceAction extends AirAction<Class<Void>> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(DeleteAtomicServiceAction.class);
 
-	private List<String> atomicServicesNames;
+	private List<String> atomicServicesIds;
 
 	public DeleteAtomicServiceAction(AirClient air, String atomicServiceName) {
 		this(air, Arrays.asList(atomicServiceName));
 	}
 
 	public DeleteAtomicServiceAction(AirClient air,
-			List<String> atomicServicesNames) {
+			List<String> atomicServicesIds) {
 		super(air);
-		this.atomicServicesNames = atomicServicesNames;
+		this.atomicServicesIds = atomicServicesIds;
 	}
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		logger.debug("Removing {}", atomicServicesNames);
+		logger.debug("Removing {}", atomicServicesIds);
 
-		for (String atomicServiceName : atomicServicesNames) {
+		for (String atomicServiceId : atomicServicesIds) {
 			ListInitialConfigurationsAction initConfsAction = new ListInitialConfigurationsAction(
-					getAir(), atomicServiceName, false);
+					getAir(), atomicServiceId, false);
 			List<InitialConfiguration> initConfs = initConfsAction.execute();
 			for (InitialConfiguration initConf : initConfs) {
 				logger.debug("Removing initial configuration {}", initConf.getId());
 				getAir().removeInitialConfiguration(initConf.getId());
 			}
-			logger.debug("Removing atomic service {}", atomicServiceName);
-			getAir().deleteAtomicService(atomicServiceName);
+			logger.debug("Removing atomic service {}", atomicServiceId);
+			getAir().deleteAtomicService(atomicServiceId);
 		}
 		return Void.TYPE;
 	}
