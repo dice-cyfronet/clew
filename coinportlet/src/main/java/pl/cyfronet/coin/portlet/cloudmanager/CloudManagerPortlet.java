@@ -38,6 +38,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -864,7 +865,7 @@ public class CloudManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_EDIT_ENDPOINTS)
 	public String doViewEditEndpoints(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
-			Model model, PortletRequest request) {
+		Model model, PortletRequest request) {
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		AtomicService atomicService = null;
 		
@@ -927,6 +928,13 @@ public class CloudManagerPortlet {
 		//TODO(DH): wait for the cloud facade API and implement proper actions
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public String handleExceptions(Exception e) {
+		log.error("Unexpected exception occurred", e);
+		
+		return "fatal/error";
 	}
 	
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
