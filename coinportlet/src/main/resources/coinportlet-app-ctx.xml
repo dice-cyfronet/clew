@@ -101,7 +101,12 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>		
 	</jaxrs:client>
-	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
+	<bean id="jsonProvider-ignore-unknown" factory-bean="jsonProvider" factory-method="configure">
+		<constructor-arg  ref="failOnUnknown"/>
+		<constructor-arg  value="false"/>
+	</bean>
 	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
 	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
 	<bean id="keyServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.KeyServiceExceptionMapper" />
