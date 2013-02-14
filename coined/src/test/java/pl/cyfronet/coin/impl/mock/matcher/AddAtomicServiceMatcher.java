@@ -25,6 +25,7 @@ import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -32,17 +33,17 @@ import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 public class AddAtomicServiceMatcher extends
 		BaseMatcher<AddAtomicServiceRequest> {
 
-	private AtomicService as;
+	private ApplianceType as;
 	private String username;
 	private boolean development;
 	private boolean creatingNewAS;
 
-	public AddAtomicServiceMatcher(String username, AtomicService as) {
+	public AddAtomicServiceMatcher(String username, ApplianceType as) {
 		this.as = as;
 		this.username = username;
 	}
 
-	public AddAtomicServiceMatcher(String username, AtomicService as,
+	public AddAtomicServiceMatcher(String username, ApplianceType as,
 			boolean development) {
 		this.as = as;
 		this.username = username;
@@ -66,7 +67,7 @@ public class AddAtomicServiceMatcher extends
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())
 				&& request.isHttp() == as.isHttp()
-				&& request.isIn_proxy() == as.isInProxy()
+				&& request.isIn_proxy() == as.isIn_proxy()
 				&& request.isScalable() == as.isScalable()
 				&& request.isShared() == as.isShared()
 				&& request.isVnc() == as.isVnc()
@@ -96,7 +97,7 @@ public class AddAtomicServiceMatcher extends
 	 * @return
 	 */
 	private boolean equals(List<ATEndpoint> asEndpoints,
-			List<Endpoint> endpoints) {
+			List<ATEndpoint> endpoints) {
 		if (asEndpoints != null && endpoints != null) {
 			if (asEndpoints.size() == endpoints.size()) {
 				for (int i = 0; i < asEndpoints.size(); i++) {
@@ -118,20 +119,17 @@ public class AddAtomicServiceMatcher extends
 	 * @param endpoint
 	 * @return
 	 */
-	private boolean equals(ATEndpoint asEndpoint, Endpoint endpoint) {
-		EndpointType endpointType = endpoint.getType() == null ? EndpointType.REST
-				: endpoint.getType();
-
+	private boolean equals(ATEndpoint asEndpoint, ATEndpoint endpoint) {
 		return asEndpoint.getInvocation_path().equals(
-				endpoint.getInvocationPath())
+				endpoint.getInvocation_path())
 				&& asEndpoint.getPort() == endpoint.getPort()
 				&& asEndpoint.getDescription()
 						.equals(endpoint.getDescription())
 				&& asEndpoint.getDescriptor().equals(endpoint.getDescriptor())
 				&& asEndpoint.getService_name().equals(
-						endpoint.getServiceName())
+						endpoint.getService_name())
 				&& asEndpoint.getEndpoint_type()
-						.equals(endpointType.toString());
+						.equals(endpoint.getEndpoint_type());
 	}
 
 	/*

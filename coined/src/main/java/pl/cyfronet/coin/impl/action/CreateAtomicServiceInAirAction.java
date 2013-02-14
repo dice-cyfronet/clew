@@ -22,14 +22,12 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -40,7 +38,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 			.getLogger(CreateAtomicServiceInAirAction.class);
 
 	private AirClient air;
-	private AtomicService atomicService;
+	private ApplianceType applianceType;
 	private String createdAtomicServiceId;
 
 	/**
@@ -52,15 +50,15 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	private String parentId;
 
 	CreateAtomicServiceInAirAction(AirClient air, String username,
-			AtomicService atomicService) {
+			ApplianceType atomicService) {
 		this(air, username, atomicService, null);
 	}
 
 	public CreateAtomicServiceInAirAction(AirClient air, String username,
-			AtomicService atomicService, String parentId) {
+			ApplianceType atomicService, String parentId) {
 		this.air = air;
 		this.username = username;
-		this.atomicService = atomicService;
+		this.applianceType = atomicService;
 		this.parentId = parentId;
 	}
 
@@ -68,16 +66,16 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	public String execute() throws CloudFacadeException {
 		AddAtomicServiceRequest addASRequest = new AddAtomicServiceRequest();
 		addASRequest.setClient("rest");
-		addASRequest.setDescription(atomicService.getDescription());
-		addASRequest.setEndpoints(getAsEndpoints(atomicService.getEndpoints()));
-		addASRequest.setHttp(atomicService.isHttp());
-		addASRequest.setIn_proxy(atomicService.isInProxy());
-		addASRequest.setName(atomicService.getName());
-		addASRequest.setPublished(atomicService.isPublished());
-		addASRequest.setScalable(atomicService.isScalable());
-		addASRequest.setShared(atomicService.isShared());
-		addASRequest.setVnc(atomicService.isShared());
-		addASRequest.setDevelopment(atomicService.isDevelopment());
+		addASRequest.setDescription(applianceType.getDescription());
+		addASRequest.setEndpoints(getEndpoints(applianceType.getEndpoints()));
+		addASRequest.setHttp(applianceType.isHttp());
+		addASRequest.setIn_proxy(applianceType.isIn_proxy());
+		addASRequest.setName(applianceType.getName());
+		addASRequest.setPublished(applianceType.isPublished());
+		addASRequest.setScalable(applianceType.isScalable());
+		addASRequest.setShared(applianceType.isShared());
+		addASRequest.setVnc(applianceType.isShared());
+		addASRequest.setDevelopment(applianceType.isDevelopment());
 
 		addASRequest.setAuthor(username);
 		addASRequest.setOriginal_appliance(parentId);
@@ -94,19 +92,17 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		}
 	}
 
-	private List<ATEndpoint> getAsEndpoints(List<Endpoint> endpoints) {
+	private List<ATEndpoint> getEndpoints(List<ATEndpoint> endpoints) {
 		if (endpoints != null) {
 			List<ATEndpoint> asEndpoints = new ArrayList<ATEndpoint>();
-			for (Endpoint endpoint : endpoints) {
+			for (ATEndpoint endpoint : endpoints) {
 				ATEndpoint asEndpoint = new ATEndpoint();
 				asEndpoint.setDescription(endpoint.getDescription());
 				asEndpoint.setDescriptor(endpoint.getDescriptor());
-				asEndpoint.setInvocation_path(endpoint.getInvocationPath());
+				asEndpoint.setInvocation_path(endpoint.getInvocation_path());
 				asEndpoint.setPort(endpoint.getPort());
-				asEndpoint.setService_name(endpoint.getServiceName());
-				asEndpoint
-						.setEndpoint_type(endpoint.getType() == null ? EndpointType.REST
-								.toString() : endpoint.getType().toString());
+				asEndpoint.setService_name(endpoint.getService_name());
+				asEndpoint.setEndpoint_type(endpoint.getEndpoint_type());
 
 				asEndpoints.add(asEndpoint);
 			}

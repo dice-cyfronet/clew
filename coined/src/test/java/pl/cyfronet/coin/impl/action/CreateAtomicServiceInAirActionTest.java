@@ -26,10 +26,11 @@ import java.util.Arrays;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
+import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
 /**
@@ -37,7 +38,7 @@ import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
  */
 public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
-	private AtomicService atomicService;
+	private ApplianceType at;
 	private String createdAsId;
 	private String asAirId = "as123";
 	private AddAtomicServiceMatcher matcher;
@@ -58,44 +59,43 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
 	private void givenAtomicServiceDefinitionWithEndpoints() {
 		createAtomicService();
-		matcher = new AddAtomicServiceMatcher(username, atomicService);
+		matcher = new AddAtomicServiceMatcher(username, at);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
 	}
 
 	private void createAtomicService() {
-		atomicService = new AtomicService();
-		atomicService.setAtomicServiceId("as");
-		atomicService.setName("as");
-		atomicService.setActive(true);
-		atomicService.setDescription("description");
-		atomicService.setHttp(true);
-		atomicService.setInProxy(true);
-		atomicService.setPublished(true);
-		atomicService.setScalable(true);
-		atomicService.setShared(true);
-		atomicService.setVnc(true);
+		at = new ApplianceType();
+		at.setId("as");
+		at.setName("as");
+		at.setDescription("description");
+		at.setHttp(true);
+		at.setIn_proxy(true);
+		at.setPublished(true);
+		at.setScalable(true);
+		at.setShared(true);
+		at.setVnc(true);
 
-		Endpoint e1 = new Endpoint();
+		ATEndpoint e1 = new ATEndpoint();
 		e1.setDescription("e1 description");
 		e1.setDescriptor("e1 descriptor");
-		e1.setInvocationPath("e1/path");
+		e1.setInvocation_path("e1/path");
 		e1.setPort(9000);
-		e1.setServiceName("e1");
-		e1.setType(EndpointType.REST);
+		e1.setService_name("e1");
+		e1.setEndpoint_type(EndpointType.REST.toString());
 
-		Endpoint e2 = new Endpoint();
+		ATEndpoint e2 = new ATEndpoint();
 		e2.setDescription("e2 description");
 		e2.setDescriptor("e2 descriptor");
-		e2.setInvocationPath("e2/path");
+		e2.setInvocation_path("e2/path");
 		e2.setPort(9000);
-		e2.setServiceName("e2");
-		e2.setType(EndpointType.WS);
+		e2.setService_name("e2");
+		e2.setEndpoint_type(EndpointType.WS.toString());
 
-		atomicService.setEndpoints(Arrays.asList(e1, e2));
+		at.setEndpoints(Arrays.asList(e1, e2));
 	}
 
 	private void whenAddAtomicServiceToAir() {
-		action = new CreateAtomicServiceInAirAction(air, username, atomicService);
+		action = new CreateAtomicServiceInAirAction(air, username, at);
 		createdAsId = action.execute();
 	}
 
@@ -115,12 +115,12 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		String asName = "name";
 		String asDescription = "description";
 
-		atomicService = new AtomicService();
-		atomicService.setName(asName);
-		atomicService.setDescription(asDescription);
-		atomicService.setHttp(true);
+		at = new ApplianceType();
+		at.setName(asName);
+		at.setDescription(asDescription);
+		at.setHttp(true);
 
-		matcher = new AddAtomicServiceMatcher(username, atomicService);
+		matcher = new AddAtomicServiceMatcher(username, at);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
 	}
 
@@ -159,7 +159,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private void givenAirWithAlreadyASRegistered() {
 		createAtomicService();
 
-		matcher = new AddAtomicServiceMatcher(username, atomicService);
+		matcher = new AddAtomicServiceMatcher(username, at);
 		when(air.addAtomicService(argThat(matcher))).thenThrow(
 				getAirException(302));
 	}

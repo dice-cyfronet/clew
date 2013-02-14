@@ -29,17 +29,12 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class BeanConverter {
 
-	public static AtomicService getAtomicService(ApplianceType applianceType,
-			boolean strictCopy) {
+	public static AtomicService getAtomicService(ApplianceType applianceType) {
 		AtomicService atomicService = new AtomicService();
 		atomicService.setAtomicServiceId(applianceType.getId());
 		atomicService.setDescription(applianceType.getDescription());
-		if (strictCopy) {
-			atomicService.setHttp(applianceType.isHttp());
-		} else {
-			atomicService.setHttp(applianceType.isHttp()
-					&& applianceType.isIn_proxy());
-		}
+		atomicService.setHttp(applianceType.isHttp()
+				&& applianceType.isIn_proxy());
 		atomicService.setInProxy(applianceType.isIn_proxy());
 		atomicService.setName(applianceType.getName());
 		atomicService.setShared(applianceType.isShared());
@@ -53,10 +48,6 @@ public class BeanConverter {
 		return atomicService;
 	}
 
-	public static AtomicService getAtomicService(ApplianceType applianceType) {
-		return getAtomicService(applianceType, false);
-	}
-	
 	public static List<Endpoint> getEndpoints(ApplianceType applianceType) {
 		List<ATEndpoint> atEndpoints = applianceType.getEndpoints();
 		List<Endpoint> asEndpoints = new ArrayList<Endpoint>();
