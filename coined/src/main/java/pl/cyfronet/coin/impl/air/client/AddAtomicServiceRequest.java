@@ -236,4 +236,18 @@ public class AddAtomicServiceRequest {
 	public void setOriginal_appliance(String original_appliance) {
 		this.original_appliance = original_appliance;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AddAtomicServiceRequest [client=" + client + ", name=" + name
+				+ ", description=" + description + ", in_proxy=" + in_proxy
+				+ ", scalable=" + scalable + ", published=" + published
+				+ ", shared=" + shared + ", http=" + http + ", vnc=" + vnc
+				+ ", development=" + development + ", original_appliance="
+				+ original_appliance + ", endpoints=" + endpoints + ", author="
+				+ author + "]";
+	}
 }

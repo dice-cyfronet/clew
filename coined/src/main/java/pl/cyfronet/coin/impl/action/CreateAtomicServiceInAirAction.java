@@ -57,10 +57,10 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	}
 
 	public CreateAtomicServiceInAirAction(AirClient air, String username,
-			ApplianceType atomicService, String parentId) {
+			ApplianceType applianceType, String parentId) {
 		this.air = air;
 		this.username = username;
-		this.applianceType = atomicService;
+		this.applianceType = applianceType;
 		this.parentId = parentId;
 	}
 
@@ -83,7 +83,10 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setOriginal_appliance(parentId);
 
 		try {
+			logger.debug("Creating new appliance type in AIR {}", addASRequest);
 			createdAtomicServiceId = air.addAtomicService(addASRequest);
+			logger.debug("New appliance type created {}",
+					createdAtomicServiceId);
 			if (applianceType.getPort_mappings() != null) {
 				for (ATPortMapping portMapping : applianceType
 						.getPort_mappings()) {
