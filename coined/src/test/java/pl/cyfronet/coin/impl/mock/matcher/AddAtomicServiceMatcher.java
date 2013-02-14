@@ -20,9 +20,6 @@ import java.util.List;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -66,6 +63,8 @@ public class AddAtomicServiceMatcher extends
 				&& request.getClient().equals("rest")
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())
+				//port mapping missing //TODO #1331 -> waits for #1333
+				//&& equals(request.getPost_mappings(), as.getPort_mappings())
 				&& request.isHttp() == as.isHttp()
 				&& request.isIn_proxy() == as.isIn_proxy()
 				&& request.isScalable() == as.isScalable()

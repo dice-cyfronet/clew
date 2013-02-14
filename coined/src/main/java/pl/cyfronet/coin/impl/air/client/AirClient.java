@@ -76,7 +76,7 @@ public interface AirClient {
 	@GET
 	@Path("get_appliance_type_for_vm/{vm_id}")
 	ApplianceType getTypeFromVM(@PathParam("vm_id") String vmId);
-	
+
 	@POST
 	@Path("/add_appliance_type_json")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ public interface AirClient {
 	@DELETE
 	@Path("/appliance_config/{config_name}")
 	void removeInitialConfiguration(@PathParam("config_name") String configName);
-	
+
 	@GET
 	@Path("/get_endpoint_descriptor/{endpointId}")
 	String getEndpointDescriptor(@PathParam("endpointId") String endpointId);
@@ -146,7 +146,7 @@ public interface AirClient {
 			@FormParam("fingerprint") String fingerprint);
 
 	// grants
-	
+
 	@GET
 	@Path("/grants")
 	List<String> getGrantsNames();
@@ -167,4 +167,12 @@ public interface AirClient {
 			@FormParam("payload_put") String payload_put,
 			@FormParam("payload_delete") String payload_delete,
 			@FormParam("overwrite") boolean overwrite);
+
+	// redirections
+
+	@POST
+	@Path("/add_port_mapping/{asId}")
+	String addPortMapping(@PathParam("asId") String asId,
+			@FormParam("service_name") String serviceName,
+			@FormParam("port") int port, @FormParam("http") boolean http);
 }

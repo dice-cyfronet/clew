@@ -15,7 +15,11 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,21 +47,21 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private String asAirId = "as123";
 	private AddAtomicServiceMatcher matcher;
 	private CreateAtomicServiceInAirAction action;
-	
+
 	/**
 	 * #1021
 	 * @since 1.1.0
 	 */
 	private String username = "user123";
-	
+
 	@Test
 	public void shouldCreateAtomicServiceRecord() throws Exception {
-		givenAtomicServiceDefinitionWithEndpoints();
+		givenAtomicServiceDefinitionWithEndpointsAndRedirections();
 		whenAddAtomicServiceToAir();
-		thenCheckRequestSendToAir();
+		thenCheckASWithEndpointsAndPortMappingsAdded();
 	}
 
-	private void givenAtomicServiceDefinitionWithEndpoints() {
+	private void givenAtomicServiceDefinitionWithEndpointsAndRedirections() {
 		createAtomicService();
 		matcher = new AddAtomicServiceMatcher(username, at);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);
@@ -79,7 +83,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		e1.setDescription("e1 description");
 		e1.setDescriptor("e1 descriptor");
 		e1.setInvocation_path("e1/path");
-		e1.setPort(9000);
+		e1.setPort(80);
 		e1.setService_name("e1");
 		e1.setEndpoint_type(EndpointType.REST.toString());
 
@@ -87,11 +91,32 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		e2.setDescription("e2 description");
 		e2.setDescriptor("e2 descriptor");
 		e2.setInvocation_path("e2/path");
-		e2.setPort(9000);
+		e2.setPort(81);
 		e2.setService_name("e2");
 		e2.setEndpoint_type(EndpointType.WS.toString());
 
 		at.setEndpoints(Arrays.asList(e1, e2));
+
+		// #1331
+		ATPortMapping p80 = new ATPortMapping();
+		p80.setHttp(true);
+		p80.setId("p80id");
+		p80.setPort(80);
+		p80.setService_name("p80_service_name");
+
+		ATPortMapping p81 = new ATPortMapping();
+		p81.setHttp(true);
+		p81.setId("p81id");
+		p81.setPort(81);
+		p81.setService_name("p81_service_name");
+
+		ATPortMapping p22 = new ATPortMapping();
+		p22.setHttp(false);
+		p22.setId("p22id");
+		p22.setPort(22);
+		p22.setService_name("p22_service_name");
+
+		at.setPort_mappings(Arrays.asList(p80, p81, p22));
 	}
 
 	private void whenAddAtomicServiceToAir() {
@@ -99,19 +124,27 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		createdAsId = action.execute();
 	}
 
+	private void thenCheckASWithEndpointsAndPortMappingsAdded() {
+		thenCheckRequestSendToAir();
+		verify(air, times(3)).addPortMapping(eq(asAirId), anyString(),
+				anyInt(), anyBoolean());
+	}
+	
 	private void thenCheckRequestSendToAir() {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
+		
 		assertEquals(createdAsId, asAirId);
 	}
 
 	@Test
-	public void shouldCreateAtomicServiceWithoutEndpoints() throws Exception {
-		givenAtomicServiceDefinitionWithoutEndpoints();
+	public void shouldCreateAtomicServiceWithoutEndpointsAndRedirections()
+			throws Exception {
+		givenAtomicServiceDefinitionWithoutEndpointsAndRedirections();
 		whenAddAtomicServiceToAir();
 		thenCheckRequestSendToAir();
 	}
 
-	private void givenAtomicServiceDefinitionWithoutEndpoints() {
+	private void givenAtomicServiceDefinitionWithoutEndpointsAndRedirections() {
 		String asName = "name";
 		String asDescription = "description";
 
@@ -126,7 +159,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
 	@Test
 	public void shouldRemoveAtomicServiceOnRollback() throws Exception {
-		givenAtomicServiceDefinitionWithoutEndpoints();
+		givenAtomicServiceDefinitionWithoutEndpointsAndRedirections();
 		whenAddAtomicServiceToAirAndRollback();
 		thenAtomicServiceCreatedAndRemovedFromAir();
 

@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -82,6 +84,15 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 
 		try {
 			createdAtomicServiceId = air.addAtomicService(addASRequest);
+			if (applianceType.getPort_mappings() != null) {
+				for (ATPortMapping portMapping : applianceType
+						.getPort_mappings()) {
+					new AddPortMappingAction(air, createdAtomicServiceId,
+							portMapping.getService_name(),
+							portMapping.getPort(), portMapping.isHttp())
+							.execute();
+				}
+			}
 			return createdAtomicServiceId;
 		} catch (ServerWebApplicationException e) {
 			if (e.getStatus() == 302) {
