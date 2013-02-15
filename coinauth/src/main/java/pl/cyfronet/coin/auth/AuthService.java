@@ -74,8 +74,10 @@ public class AuthService extends TimerTask {
 	}
 
 	public UserDetails getUserDetails(String ticket) {
+		logger.debug("Getting user details for {}", ticket);
 		UserDetails details = cache.get(ticket);
 		if (cache.containsKey(ticket)) {
+			logger.debug("Getting cached user details: {}", details);
 			return details;
 		} else if (ticket != null && !"".equals(ticket)) {
 			try {
@@ -91,6 +93,7 @@ public class AuthService extends TimerTask {
 				cache.put(ticket, details);
 			}
 		}
+		logger.debug("Returning user details {}", details);
 		return details;
 	}
 

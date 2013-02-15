@@ -34,7 +34,7 @@ public class MasterInterfaceAuthenticationHandler implements
 
 	@Override
 	public boolean isAuthenticated(String username, String password) {
-		logger.trace("Checking if user is authenticated");
+		logger.debug("Checking if user is authenticated");
 		return authService.authenticate(password);
 	}
 

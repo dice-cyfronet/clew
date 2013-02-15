@@ -23,6 +23,8 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.auth.AuthenticationHandler;
 
@@ -32,6 +34,8 @@ import pl.cyfronet.coin.auth.AuthenticationHandler;
 public class BasicRsAuthenticationHandler extends AuthHandler implements
 		RequestHandler {
 
+	private static Logger logger = LoggerFactory.getLogger(BasicRsAuthenticationHandler.class);
+	
 	private AuthenticationHandler authenticator;
 
 	@Override
@@ -39,6 +43,7 @@ public class BasicRsAuthenticationHandler extends AuthHandler implements
 			ClassResourceInfo resourceClass, Method method) {
 		AuthorizationPolicy policy = (AuthorizationPolicy) m
 				.get(AuthorizationPolicy.class);
+		logger.debug("Authenticate user with following policy {}", policy);
 		if (policy != null) {
 			String username = policy.getUserName();
 			String password = policy.getPassword();
