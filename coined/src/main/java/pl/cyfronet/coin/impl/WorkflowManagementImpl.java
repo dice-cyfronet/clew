@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -32,6 +33,7 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
@@ -158,7 +160,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Role(values = "developer")
 	@Override
-	public Redirection addRedirection(String contextId, String asiId,
+	public String addRedirection(String contextId, String asiId,
 			String name, int port, RedirectionType type)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
@@ -178,5 +180,31 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	public void setActionFactory(ActionFactory actionFactory) {
 		this.actionFactory = actionFactory;
+	}
+
+	@Override
+	public List<Endpoint> getEndpoints(String contextId, String asiId)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String addEndpoint(String contextId, String asiId, Endpoint endpoint)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteEndpoint(String contextId, String asiId,
+			String redirectionId) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
+		// TODO Auto-generated method stub
+		
 	}
 }
