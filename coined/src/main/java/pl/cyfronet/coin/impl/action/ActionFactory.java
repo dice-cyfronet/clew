@@ -30,6 +30,7 @@ import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
 import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
 import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
 import pl.cyfronet.coin.impl.action.grant.UpdateGrantAction;
+import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 

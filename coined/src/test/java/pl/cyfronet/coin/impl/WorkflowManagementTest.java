@@ -39,10 +39,10 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
-import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
