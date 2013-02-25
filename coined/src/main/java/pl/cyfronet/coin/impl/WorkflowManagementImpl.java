@@ -167,26 +167,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		return null;
 	}
 
-	@Override
-	public Redirection getRedirection(String contextId, String asiId,
-			String redirectionName) throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			RedirectionNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Role(values = "developer")
-	@Override
-	public Redirection updateRedirection(String contextId, String asiId,
-			String name, int port, RedirectionType type)
-			throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Role(values = "developer")
 	@Override
 	public void deleteRedirection(String contextId, String asiId, String name)

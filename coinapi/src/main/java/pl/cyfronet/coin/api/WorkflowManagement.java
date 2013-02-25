@@ -164,25 +164,6 @@ public interface WorkflowManagement {
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException;
 
-	@GET
-	@Path("/workflow/{contextId}/asi/{asiId}/redirection/{name}")
-	@Produces({ MediaType.APPLICATION_JSON })
-	Redirection getRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId,
-			@PathParam("name") String redirectionName)
-			throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			RedirectionNotFoundException;
-
-	@PUT
-	@Path("/workflow/{contextId}/asi/{asiId}/redirection/{redirectionName}")
-	Redirection updateRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId, @FormParam("name") String name,
-			@FormParam("port") int port, @FormParam("type") RedirectionType type)
-			throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException;
-
 	@DELETE
 	@Path("/workflow/{contextId}/asi/{asiId}/redirection/{name}")
 	void deleteRedirection(@PathParam("contextId") String contextId,
