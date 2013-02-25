@@ -67,7 +67,6 @@ public class GetAtomicServiceTest extends ActionTest {
 		type1AsEndpoint.setId("123asd");
 		type1AsEndpoint.setInvocation_path("invocation/path");
 		type1AsEndpoint.setPort(9090);
-		type1AsEndpoint.setService_name("gimias");
 
 		ATEndpoint type2AsEndpoint = new ATEndpoint();
 		type2AsEndpoint.setDescription("description");
@@ -75,7 +74,6 @@ public class GetAtomicServiceTest extends ActionTest {
 		type2AsEndpoint.setId("www");
 		type2AsEndpoint.setInvocation_path("path");
 		type2AsEndpoint.setPort(9090);
-		type2AsEndpoint.setService_name("gimias");
 
 		asType.setEndpoints(Arrays.asList(type1AsEndpoint, type2AsEndpoint));
 

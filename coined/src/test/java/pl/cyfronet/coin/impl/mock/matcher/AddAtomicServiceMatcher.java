@@ -20,11 +20,10 @@ import java.util.List;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -32,17 +31,17 @@ import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 public class AddAtomicServiceMatcher extends
 		BaseMatcher<AddAtomicServiceRequest> {
 
-	private AtomicService as;
+	private ApplianceType as;
 	private String username;
 	private boolean development;
 	private boolean creatingNewAS;
 
-	public AddAtomicServiceMatcher(String username, AtomicService as) {
+	public AddAtomicServiceMatcher(String username, ApplianceType as) {
 		this.as = as;
 		this.username = username;
 	}
 
-	public AddAtomicServiceMatcher(String username, AtomicService as,
+	public AddAtomicServiceMatcher(String username, ApplianceType as,
 			boolean development) {
 		this.as = as;
 		this.username = username;
@@ -52,7 +51,7 @@ public class AddAtomicServiceMatcher extends
 	public void setCreatingNewAS(boolean creatingNewAS) {
 		this.creatingNewAS = creatingNewAS;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.hamcrest.Matcher#matches(java.lang.Object)
@@ -65,8 +64,10 @@ public class AddAtomicServiceMatcher extends
 				&& request.getClient().equals("rest")
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())
+				&& portMappingsEquals(request.getPort_mappings(),
+						as.getPort_mappings())
 				&& request.isHttp() == as.isHttp()
-				&& request.isIn_proxy() == as.isInProxy()
+				&& request.isIn_proxy() == as.isIn_proxy()
 				&& request.isScalable() == as.isScalable()
 				&& request.isShared() == as.isShared()
 				&& request.isVnc() == as.isVnc()
@@ -82,21 +83,21 @@ public class AddAtomicServiceMatcher extends
 	}
 
 	private boolean correctPublishedState(AddAtomicServiceRequest request) {
-		if(creatingNewAS) {
+		if (creatingNewAS) {
 			return request.isPublished() && !as.isDevelopment();
 		} else {
-			return request.isPublished() == as.isPublished() && request
-					.isDevelopment() == as.isDevelopment();
+			return request.isPublished() == as.isPublished()
+					&& request.isDevelopment() == as.isDevelopment();
 		}
 	}
-	
+
 	/**
 	 * @param asEndpoints
 	 * @param endpoint
 	 * @return
 	 */
 	private boolean equals(List<ATEndpoint> asEndpoints,
-			List<Endpoint> endpoints) {
+			List<ATEndpoint> endpoints) {
 		if (asEndpoints != null && endpoints != null) {
 			if (asEndpoints.size() == endpoints.size()) {
 				for (int i = 0; i < asEndpoints.size(); i++) {
@@ -113,25 +114,43 @@ public class AddAtomicServiceMatcher extends
 		return false;
 	}
 
+	private boolean portMappingsEquals(List<ATPortMapping> request,
+			List<ATPortMapping> expected) {
+		if (request != null && expected != null) {
+			if (request.size() == expected.size()) {
+				for (int i = 0; i < request.size(); i++) {
+					if (!equals(request.get(i), expected.get(i))) {
+						return false;
+					}
+				}
+				return true;
+			}
+		} else {
+			return (request == null || request.size() == 0) && expected == null;
+		}
+		return false;
+	}
+
+	private boolean equals(ATPortMapping actual, ATPortMapping expected) {
+		return actual.getPort() == expected.getPort()
+				&& actual.getService_name().equals(expected.getService_name())
+				&& actual.isHttp() == expected.isHttp();
+	}
+
 	/**
 	 * @param asEndpoint
 	 * @param endpoint
 	 * @return
 	 */
-	private boolean equals(ATEndpoint asEndpoint, Endpoint endpoint) {
-		EndpointType endpointType = endpoint.getType() == null ? EndpointType.REST
-				: endpoint.getType();
-
+	private boolean equals(ATEndpoint asEndpoint, ATEndpoint endpoint) {
 		return asEndpoint.getInvocation_path().equals(
-				endpoint.getInvocationPath())
+				endpoint.getInvocation_path())
 				&& asEndpoint.getPort() == endpoint.getPort()
 				&& asEndpoint.getDescription()
 						.equals(endpoint.getDescription())
 				&& asEndpoint.getDescriptor().equals(endpoint.getDescriptor())
-				&& asEndpoint.getService_name().equals(
-						endpoint.getServiceName())
-				&& asEndpoint.getEndpoint_type()
-						.equals(endpointType.toString());
+				&& asEndpoint.getEndpoint_type().equals(
+						endpoint.getEndpoint_type());
 	}
 
 	/*

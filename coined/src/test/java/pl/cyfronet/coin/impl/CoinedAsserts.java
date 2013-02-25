@@ -70,7 +70,6 @@ public class CoinedAsserts {
 		assertEquals(asEndpoint.getInvocationPath(),
 				atEndpoint.getInvocation_path());
 		assertEquals(asEndpoint.getPort(), atEndpoint.getPort());
-		assertEquals(asEndpoint.getServiceName(), atEndpoint.getService_name());
 		assertEquals(asEndpoint.getId(), atEndpoint.getId());
 	}
 }

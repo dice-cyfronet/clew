@@ -17,24 +17,21 @@ package pl.cyfronet.coin.impl.air.client;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
 public class ATEndpoint {
 
 	private String invocation_path;
-	
+
 	private String description;
-	
+
 	private String descriptor;
-	
+
 	private Integer port;
-	
-	private String service_name;
 
 	private String endpoint_type;
-	
+
 	private String id;
-	
+
 	/**
 	 * @return the id
 	 */
@@ -106,20 +103,6 @@ public class ATEndpoint {
 	}
 
 	/**
-	 * @return the service_name
-	 */
-	public String getService_name() {
-		return service_name;
-	}
-
-	/**
-	 * @param service_name the service_name to set
-	 */
-	public void setService_name(String service_name) {
-		this.service_name = service_name;
-	}
-
-	/**
 	 * @return the endpoint_type
 	 */
 	public String getEndpoint_type() {
@@ -133,14 +116,15 @@ public class ATEndpoint {
 		this.endpoint_type = endpoint_type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "ASEndpoint [invocation_path=" + invocation_path
 				+ ", description=" + description + ", descriptor=" + descriptor
-				+ ", port=" + port + ", service_name=" + service_name
-				+ ", endpoint_type=" + endpoint_type + ", id=" + id + "]";
+				+ ", port=" + port + ", endpoint_type=" + endpoint_type
+				+ ", id=" + id + "]";
 	}
 }
