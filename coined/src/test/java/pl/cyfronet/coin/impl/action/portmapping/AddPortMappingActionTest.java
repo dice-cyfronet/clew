@@ -29,7 +29,6 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenExistingAS() {
-		// FIXME waiting for #1334 point 3
 		when(air.addPortMapping("rest", asId, serviceName, port, http)).thenReturn(
 				givenRedirectionId);
 	}
