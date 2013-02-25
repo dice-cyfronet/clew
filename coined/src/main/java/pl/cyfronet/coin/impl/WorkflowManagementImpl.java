@@ -160,13 +160,13 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Role(values = "developer")
 	@Override
-	public String addRedirection(String contextId, String asiId,
-			String name, int port, RedirectionType type)
-			throws WorkflowNotFoundException,
+	public String addRedirection(String contextId, String asiId, String name,
+			int port, RedirectionType type) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		// TODO Auto-generated method stub
-		return null;
+		Action<String> action = actionFactory.createAddAsiRedirectionAction(
+				getUsername(), contextId, asiId, name, port, type);
+		return action.execute();
 	}
 
 	@Role(values = "developer")
@@ -205,6 +205,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

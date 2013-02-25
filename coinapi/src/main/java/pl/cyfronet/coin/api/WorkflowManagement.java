@@ -184,6 +184,7 @@ public interface WorkflowManagement {
 
 	@POST
 	@Path("/{contextId}/asi/{asiId}/redirection")
+	@Consumes({ MediaType.APPLICATION_JSON })
 	String addEndpoint(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId, Endpoint endpoint)
 			throws WorkflowNotFoundException,
