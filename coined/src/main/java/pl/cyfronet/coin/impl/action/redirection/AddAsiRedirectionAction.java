@@ -9,7 +9,6 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
-import pl.cyfronet.coin.impl.action.WorkflowAction;
 import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.Vms;
@@ -21,18 +20,14 @@ import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
 
-public class AddAsiRedirectionAction extends WorkflowAction<String> {
+public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AddAsiRedirectionAction.class);
 
-	private String contextId;
-	private String asiId;
 	private String serviceName;
 	private int port;
 	private boolean http;
-	private DyReAllaProxyManagerService httpRedirectionService;
-	private DyReAllaDNATManagerService dnatRedirectionService;
 	private WorkflowDetail wd;
 
 	public AddAsiRedirectionAction(AirClient air,
@@ -40,11 +35,8 @@ public class AddAsiRedirectionAction extends WorkflowAction<String> {
 			DyReAllaProxyManagerService httpRedirectionService,
 			DyReAllaDNATManagerService dnatRedirectionService, String username,
 			String contextId, String asiId) {
-		super(air, atmosphere, username);
-		this.httpRedirectionService = httpRedirectionService;
-		this.dnatRedirectionService = dnatRedirectionService;
-		this.contextId = contextId;
-		this.asiId = asiId;
+		super(air, atmosphere, httpRedirectionService, dnatRedirectionService,
+				username, contextId, asiId);
 	}
 
 	public void setRedirectionDetails(String serviceName, int port, boolean http) {
@@ -55,18 +47,18 @@ public class AddAsiRedirectionAction extends WorkflowAction<String> {
 
 	@Override
 	public String execute() throws CloudFacadeException {
-		wd = getUserWorkflow(contextId, getUsername());
+		wd = getUserWorkflow(getContextId(), getUsername());
 
 		checkIfWorkflowInDevelopmentMode();
 
 		String atId = getAsiApplianceType();
 		logger.debug("Adding port mapping into {} AT: {} port {} http {}",
-				new Object[] { atId, serviceName, port, http });		
+				new Object[] { atId, serviceName, port, http });
 		String redirectionId = new AddPortMappingAction(getAir(), atId,
 				serviceName, port, http).execute();
 
 		logger.debug("Added redirection id {}", redirectionId);
-		
+
 		if (http) {
 			addHttpRedirection();
 		} else {
@@ -80,7 +72,7 @@ public class AddAsiRedirectionAction extends WorkflowAction<String> {
 		List<Vms> vms = wd.getVms();
 		if (vms != null) {
 			for (Vms asi : vms) {
-				if (asi.getVms_id().equals(asiId)) {
+				if (asi.getVms_id().equals(getAsiId())) {
 					return asi.getAppliance_type();
 				}
 			}
@@ -97,8 +89,8 @@ public class AddAsiRedirectionAction extends WorkflowAction<String> {
 	private void addHttpRedirection() {
 		try {
 			logger.debug("Adding http redirection using DyReAlla");
-			httpRedirectionService.registerHttpService(contextId, asiId, port,
-					serviceName);
+			getHttpRedirectionService().registerHttpService(getContextId(),
+					getAsiId(), port, serviceName);
 		} catch (VirtualMachineNotFoundException e) {
 			logger.debug("Error while adding http redirection", e);
 			throw new AtomicServiceInstanceNotFoundException();
@@ -111,7 +103,7 @@ public class AddAsiRedirectionAction extends WorkflowAction<String> {
 	private void addDnatRedirection() {
 		try {
 			logger.debug("Adding dnat redirection using DyReAlla");
-			dnatRedirectionService.addPortRedirection(asiId, port,
+			getDnatRedirectionService().addPortRedirection(getAsiId(), port,
 					Protocol.TCP, serviceName);
 		} catch (VirtualMachineNotFoundException e) {
 			logger.debug("Error while adding dnat redirection", e);

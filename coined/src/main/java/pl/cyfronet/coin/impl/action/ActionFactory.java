@@ -33,6 +33,7 @@ import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
 import pl.cyfronet.coin.impl.action.grant.UpdateGrantAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
@@ -188,6 +189,14 @@ public class ActionFactory {
 		action.setRedirectionDetails(serviceName, port,
 				type == RedirectionType.HTTP);
 		return action;
+	}
+
+	public Action<Class<Void>> createRemoveAsiRedirectionAction(
+			String username, String contextId, String asiId,
+			String redirectionId) {
+		return new RemoveAsiRedirectionAction(air, atmosphere,
+				httpRedirectionService, dnatRedirectionService, username,
+				contextId, asiId, redirectionId);
 	}
 
 	// grants

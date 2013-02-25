@@ -172,7 +172,12 @@ public interface AirClient {
 
 	@POST
 	@Path("/add_port_mapping/{asId}")
-	String addPortMapping(@FormParam("client") String client, @PathParam("asId") String asId,
+	String addPortMapping(@FormParam("client") String client,
+			@PathParam("asId") String asId,
 			@FormParam("service_name") String serviceName,
 			@FormParam("port") int port, @FormParam("http") boolean http);
+
+	@DELETE
+	@Path("/port_mapping/{portMappingId}")
+	void removePortMapping(@PathParam("portMappingId") String redirectionId);
 }

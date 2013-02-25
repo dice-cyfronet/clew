@@ -171,15 +171,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Role(values = "developer")
 	@Override
-	public void deleteRedirection(String contextId, String asiId, String name)
-			throws WorkflowNotFoundException,
+	public void deleteRedirection(String contextId, String asiId,
+			String redirectionId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
-		// TODO Auto-generated method stub
-	}
-
-	public void setActionFactory(ActionFactory actionFactory) {
-		this.actionFactory = actionFactory;
+		Action<Class<Void>> action = actionFactory
+				.createRemoveAsiRedirectionAction(getUsername(), contextId,
+						asiId, redirectionId);
+		action.execute();
 	}
 
 	@Override
@@ -206,5 +205,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setActionFactory(ActionFactory actionFactory) {
+		this.actionFactory = actionFactory;
 	}
 }

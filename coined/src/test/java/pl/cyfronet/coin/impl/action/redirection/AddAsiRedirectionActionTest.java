@@ -2,7 +2,6 @@ package pl.cyfronet.coin.impl.action.redirection;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,32 +17,15 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.WorkflowActionTest;
 import pl.cyfronet.coin.impl.air.client.Vms;
-import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
-import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
 
-public class AddAsiRedirectionActionTest extends WorkflowActionTest {
+public class AddAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
-	private DyReAllaProxyManagerService httpRedirectionService;
-	private DyReAllaDNATManagerService dnatRedirectionService;
-
-	private String asiId = "asId";
-	private String serviceName = "myRedirection";
-	private int port = 123;
+	private String serviceName = "myRedirection";	
 	private String atId = "developmentApplianceTypeId";
 	private String givenRedirectionId = "rId";
 	private String redirectionId;
-
-	@Override
-	protected void postSetUp() {
-		httpRedirectionService = mock(DyReAllaProxyManagerService.class);
-		dnatRedirectionService = mock(DyReAllaDNATManagerService.class);
-
-		actionFactory.setHttpRedirectionService(httpRedirectionService);
-		actionFactory.setDnatRedirectionService(dnatRedirectionService);
-	}
 
 	@Test
 	public void shouldCreateHttpRedirection() throws Exception {
