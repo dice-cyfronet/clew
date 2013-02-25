@@ -18,7 +18,6 @@ package pl.cyfronet.coin.impl.action;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +26,6 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -49,7 +47,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private String id;
 	private AddRequiredAppliancesRequestImpl request;
 	private ApplianceType baseAS;
-	private AtomicService as;
+	private ApplianceType at;
 
 	private AddAtomicServiceMatcher asMatcher;
 
@@ -195,13 +193,15 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void givenMockedAtmosphereForStartingASInDevMode() {
 		baseAS = givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development);
 
-		as = new AtomicService();
-		as.setName(baseAS.getName());
-		as.setDescription(baseAS.getDescription());
-		as.setDevelopment(true);
+		at = new ApplianceType();
+		at.setName(baseAS.getName());
+		at.setDescription(baseAS.getDescription());
+		at.setDevelopment(true);
+		at.setEndpoints(baseAS.getEndpoints());
+		at.setPort_mappings(baseAS.getPort_mappings());
 		
 		asMatcher = new AddAtomicServiceMatcher(
-				username, as, true);
+				username, at, true);
 		
 		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
 		when(air.addAtomicService(argThat(asMatcher))).thenReturn("devAsId");

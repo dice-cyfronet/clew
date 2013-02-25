@@ -22,39 +22,40 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- *
  */
-@XmlRootElement(name ="applianceType")
+@XmlRootElement(name = "applianceType")
 public class ApplianceType {
 
 	private String id;
-	
+
 	private String name;
-	
+
 	private String author;
-	
+
 	private boolean vnc;
-	
+
 	private boolean in_proxy;
-	
+
 	private boolean published;
-	
+
 	private boolean scalable;
-	
+
 	private boolean shared;
-	
+
 	private boolean http;
-	
+
 	private boolean development;
-	
+
 	private String description;
-	
+
 	private int templates_count;
-	
+
 	private List<ApplianceConfiguration> configurations;
 
 	private List<ATEndpoint> endpoints;
-	
+
+	private List<ATPortMapping> port_mappings;
+
 	public String getId() {
 		return id;
 	}
@@ -167,9 +168,20 @@ public class ApplianceType {
 		this.development = development;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the port_mappings
 	 */
+	public List<ATPortMapping> getPort_mappings() {
+		return port_mappings;
+	}
+
+	/**
+	 * @param port_mappings the port_mappings to set
+	 */
+	public void setPort_mappings(List<ATPortMapping> port_mappings) {
+		this.port_mappings = port_mappings;
+	}
+
 	@Override
 	public String toString() {
 		return "ApplianceType [id=" + id + ", name=" + name + ", author="
@@ -178,6 +190,7 @@ public class ApplianceType {
 				+ ", shared=" + shared + ", http=" + http + ", development="
 				+ development + ", description=" + description
 				+ ", templates_count=" + templates_count + ", configurations="
-				+ configurations + ", endpoints=" + endpoints + "]";
+				+ configurations + ", endpoints=" + endpoints
+				+ ", port_mappings=" + port_mappings + "]";
 	}
 }

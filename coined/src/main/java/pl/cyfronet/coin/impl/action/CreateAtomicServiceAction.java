@@ -18,12 +18,10 @@ package pl.cyfronet.coin.impl.action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.impl.BeanConverter;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.ApplianceNotFoundException;
@@ -81,14 +79,13 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		ApplianceType at = new GetASITypeAction(getAir(), asInstanceId)
 				.execute();
 
-		AtomicService as = BeanConverter.getAtomicService(at, true);
-		as.setName(newAtomicService.getName());
-		as.setDescription(newAtomicService.getDescription());
-		as.setDevelopment(false);
-		as.setPublished(true);
-
+		at.setName(newAtomicService.getName());
+		at.setDescription(newAtomicService.getDescription());
+		at.setDevelopment(false);
+		at.setPublished(true);
+		
 		addASToAirAction = new CreateAtomicServiceInAirAction(getAir(),
-				getUsername(), as);
+				getUsername(), at);
 
 		String atomicServiceId = addASToAirAction.execute();
 
