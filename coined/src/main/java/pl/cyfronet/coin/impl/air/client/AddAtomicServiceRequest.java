@@ -50,6 +50,12 @@ public class AddAtomicServiceRequest {
 	private List<ATEndpoint> endpoints;
 
 	/**
+	 * #1331
+	 * @since 1.2.0
+	 */
+	private List<ATPortMapping> port_mappings;
+	
+	/**
 	 * #1021
 	 * @since 1.1.0
 	 */
@@ -237,9 +243,14 @@ public class AddAtomicServiceRequest {
 		this.original_appliance = original_appliance;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public List<ATPortMapping> getPort_mappings() {
+		return port_mappings;
+	}
+
+	public void setPort_mappings(List<ATPortMapping> port_mappings) {
+		this.port_mappings = port_mappings;
+	}
+
 	@Override
 	public String toString() {
 		return "AddAtomicServiceRequest [client=" + client + ", name=" + name
@@ -247,7 +258,8 @@ public class AddAtomicServiceRequest {
 				+ ", scalable=" + scalable + ", published=" + published
 				+ ", shared=" + shared + ", http=" + http + ", vnc=" + vnc
 				+ ", development=" + development + ", original_appliance="
-				+ original_appliance + ", endpoints=" + endpoints + ", author="
-				+ author + "]";
+				+ original_appliance + ", endpoints=" + endpoints
+				+ ", port_mappings=" + port_mappings + ", author=" + author
+				+ "]";
 	}
 }

@@ -15,11 +15,7 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -84,7 +80,6 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		e1.setDescriptor("e1 descriptor");
 		e1.setInvocation_path("e1/path");
 		e1.setPort(80);
-		e1.setService_name("e1");
 		e1.setEndpoint_type(EndpointType.REST.toString());
 
 		ATEndpoint e2 = new ATEndpoint();
@@ -92,7 +87,6 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		e2.setDescriptor("e2 descriptor");
 		e2.setInvocation_path("e2/path");
 		e2.setPort(81);
-		e2.setService_name("e2");
 		e2.setEndpoint_type(EndpointType.WS.toString());
 
 		at.setEndpoints(Arrays.asList(e1, e2));
@@ -126,8 +120,6 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
 	private void thenCheckASWithEndpointsAndPortMappingsAdded() {
 		thenCheckRequestSendToAir();
-		verify(air, times(3)).addPortMapping(eq(asAirId), anyString(),
-				anyInt(), anyBoolean());
 	}
 	
 	private void thenCheckRequestSendToAir() {

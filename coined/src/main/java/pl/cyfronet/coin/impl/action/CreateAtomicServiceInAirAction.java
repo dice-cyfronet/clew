@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
@@ -70,6 +69,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setClient("rest");
 		addASRequest.setDescription(applianceType.getDescription());
 		addASRequest.setEndpoints(getEndpoints(applianceType.getEndpoints()));
+		addASRequest.setPort_mappings(getPortMapping(applianceType.getPort_mappings()));
 		addASRequest.setHttp(applianceType.isHttp());
 		addASRequest.setIn_proxy(applianceType.isIn_proxy());
 		addASRequest.setName(applianceType.getName());
@@ -86,16 +86,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 			logger.debug("Creating new appliance type in AIR {}", addASRequest);
 			createdAtomicServiceId = air.addAtomicService(addASRequest);
 			logger.debug("New appliance type created {}",
-					createdAtomicServiceId);
-			if (applianceType.getPort_mappings() != null) {
-				for (ATPortMapping portMapping : applianceType
-						.getPort_mappings()) {
-					new AddPortMappingAction(air, createdAtomicServiceId,
-							portMapping.getService_name(),
-							portMapping.getPort(), portMapping.isHttp())
-							.execute();
-				}
-			}
+					createdAtomicServiceId);			
 			return createdAtomicServiceId;
 		} catch (ServerWebApplicationException e) {
 			if (e.getStatus() == 302) {
@@ -115,9 +106,8 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 				asEndpoint.setDescriptor(endpoint.getDescriptor());
 				asEndpoint.setInvocation_path(endpoint.getInvocation_path());
 				asEndpoint.setPort(endpoint.getPort());
-				asEndpoint.setService_name(endpoint.getService_name());
 				asEndpoint.setEndpoint_type(endpoint.getEndpoint_type());
-
+				
 				asEndpoints.add(asEndpoint);
 			}
 			return asEndpoints;
@@ -125,6 +115,22 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		return null;
 	}
 
+	private List<ATPortMapping> getPortMapping(List<ATPortMapping> portMappings) {
+		if(portMappings != null) {
+			List<ATPortMapping> asPortMapping = new ArrayList<>();
+			for (ATPortMapping atPortMapping : portMappings) {
+				ATPortMapping portMapping = new ATPortMapping();
+				portMapping.setHttp(atPortMapping.isHttp());
+				portMapping.setPort(atPortMapping.getPort());
+				portMapping.setService_name(atPortMapping.getService_name());
+				asPortMapping.add(portMapping);
+			}
+			return asPortMapping;
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public void rollback() {
 		try {

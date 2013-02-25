@@ -21,6 +21,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
@@ -50,7 +51,7 @@ public class AddAtomicServiceMatcher extends
 	public void setCreatingNewAS(boolean creatingNewAS) {
 		this.creatingNewAS = creatingNewAS;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.hamcrest.Matcher#matches(java.lang.Object)
@@ -63,8 +64,8 @@ public class AddAtomicServiceMatcher extends
 				&& request.getClient().equals("rest")
 				&& request.getDescription().equals(as.getDescription())
 				&& equals(request.getEndpoints(), as.getEndpoints())
-				//port mapping missing //TODO #1331 -> waits for #1333
-				//&& equals(request.getPost_mappings(), as.getPort_mappings())
+				&& portMappingsEquals(request.getPort_mappings(),
+						as.getPort_mappings())
 				&& request.isHttp() == as.isHttp()
 				&& request.isIn_proxy() == as.isIn_proxy()
 				&& request.isScalable() == as.isScalable()
@@ -82,14 +83,14 @@ public class AddAtomicServiceMatcher extends
 	}
 
 	private boolean correctPublishedState(AddAtomicServiceRequest request) {
-		if(creatingNewAS) {
+		if (creatingNewAS) {
 			return request.isPublished() && !as.isDevelopment();
 		} else {
-			return request.isPublished() == as.isPublished() && request
-					.isDevelopment() == as.isDevelopment();
+			return request.isPublished() == as.isPublished()
+					&& request.isDevelopment() == as.isDevelopment();
 		}
 	}
-	
+
 	/**
 	 * @param asEndpoints
 	 * @param endpoint
@@ -113,6 +114,29 @@ public class AddAtomicServiceMatcher extends
 		return false;
 	}
 
+	private boolean portMappingsEquals(List<ATPortMapping> request,
+			List<ATPortMapping> expected) {
+		if (request != null && expected != null) {
+			if (request.size() == expected.size()) {
+				for (int i = 0; i < request.size(); i++) {
+					if (!equals(request.get(i), expected.get(i))) {
+						return false;
+					}
+				}
+				return true;
+			}
+		} else {
+			return (request == null || request.size() == 0) && expected == null;
+		}
+		return false;
+	}
+
+	private boolean equals(ATPortMapping actual, ATPortMapping expected) {
+		return actual.getPort() == expected.getPort()
+				&& actual.getService_name().equals(expected.getService_name())
+				&& actual.isHttp() == expected.isHttp();
+	}
+
 	/**
 	 * @param asEndpoint
 	 * @param endpoint
@@ -125,10 +149,8 @@ public class AddAtomicServiceMatcher extends
 				&& asEndpoint.getDescription()
 						.equals(endpoint.getDescription())
 				&& asEndpoint.getDescriptor().equals(endpoint.getDescriptor())
-				&& asEndpoint.getService_name().equals(
-						endpoint.getService_name())
-				&& asEndpoint.getEndpoint_type()
-						.equals(endpoint.getEndpoint_type());
+				&& asEndpoint.getEndpoint_type().equals(
+						endpoint.getEndpoint_type());
 	}
 
 	/*
