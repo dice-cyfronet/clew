@@ -39,6 +39,9 @@ public class GetAsiRedirectionsAction extends AirAction<List<Redirection>> {
 	@Override
 	public List<Redirection> execute() throws CloudFacadeException {
 		// TODO Auto-generated method stub
+		// uzyc 2 metod AIR
+		// 1) pobrac workflow (patrz na klase workflow action) wf detail, wyciagnac vm, wyciagnac info o przekierowaniach tcp/ip
+		// 2) dla vm pobrac appliance type i z niego przekirowania http, patrz na getApplianceType z workflow action 
 		return null;
 	}
 
