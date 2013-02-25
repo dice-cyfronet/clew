@@ -21,7 +21,6 @@ public class Endpoint {
 	private String descriptor;
 	private String invocationPath;
 	private Integer port;
-	private String serviceName;
 	private EndpointType type;
 
 	public String getDescription() {
@@ -56,14 +55,6 @@ public class Endpoint {
 		this.descriptor = descriptor;
 	}
 
-	public String getServiceName() {
-		return serviceName;
-	}
-
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
-
 	public EndpointType getType() {
 		return type;
 	}
@@ -84,7 +75,6 @@ public class Endpoint {
 	public String toString() {
 		return "Endpoint [id=" + id + ", description=" + description
 				+ ", descriptor=" + descriptor + ", invocationPath="
-				+ invocationPath + ", port=" + port + ", serviceName="
-				+ serviceName + ", type=" + type + "]";
+				+ invocationPath + ", port=" + port + ", type=" + type + "]";
 	}
 }

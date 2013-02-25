@@ -14,12 +14,13 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.redirection;
 
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
@@ -30,7 +31,7 @@ public class GetAsiRedirectionsAction extends AirAction<List<Redirection>> {
 	private String asiId;
 	private String contextId;
 
-	GetAsiRedirectionsAction(String contextId, String asiId, AirClient air) {
+	public GetAsiRedirectionsAction(String contextId, String asiId, AirClient air) {
 		super(air);
 		this.contextId = contextId;
 		this.asiId = asiId;

@@ -129,7 +129,6 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 			endpoint.setDescriptor("descriptor " + i);
 			endpoint.setInvocationPath("/path/" + i);
 			endpoint.setPort(900 + i);
-			endpoint.setServiceName("serviceName" + i);
 			endpoint.setType(getEndpointType(i));
 			endpoints.add(endpoint);
 		}
@@ -193,7 +192,6 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		assertEquals(endpoint.getDescriptor(), "descriptor " + nr);
 		assertEquals(endpoint.getInvocationPath(), "/path/" + nr);
 		assertEquals(endpoint.getPort(), new Integer(900 + nr));
-		assertEquals(endpoint.getServiceName(), "serviceName" + nr);
 		assertEquals(endpoint.getType(), getEndpointType(nr));
 	}
 
