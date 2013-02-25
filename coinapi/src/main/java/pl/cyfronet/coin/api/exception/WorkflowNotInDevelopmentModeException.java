@@ -28,7 +28,7 @@ public class WorkflowNotInDevelopmentModeException extends CloudFacadeException 
 
 	private static final long serialVersionUID = 7838369096410915468L;
 
-	public static final String ERROR_MESSAGE = "Workflow not i development mode";
+	public static final String ERROR_MESSAGE = "Workflow not in development mode";
 	
 	public WorkflowNotInDevelopmentModeException() {
 		super(ERROR_MESSAGE, Response.Status.FORBIDDEN);
