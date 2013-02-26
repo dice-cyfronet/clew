@@ -28,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 
 /**
@@ -180,4 +181,16 @@ public interface AirClient {
 	@DELETE
 	@Path("/port_mapping/{portMappingId}")
 	void removePortMapping(@PathParam("portMappingId") String redirectionId);
+
+	// endpoints
+
+	@POST
+	@Path("/add_endpoint/{atId}")
+	String addEndpoint(@FormParam("client") String client,
+			@PathParam("atId") String atId,
+			@FormParam("invocation_path") String invocationPath,
+			@FormParam("endpoint_type") EndpointType type,
+			@FormParam("description") String description,
+			@FormParam("descriptor") String descritor,
+			@FormParam("port") int port);
 }

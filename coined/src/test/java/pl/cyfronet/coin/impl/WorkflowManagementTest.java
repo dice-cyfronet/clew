@@ -18,7 +18,6 @@ package pl.cyfronet.coin.impl;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertEqualsNoOrder;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
@@ -48,6 +47,7 @@ import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
@@ -96,6 +96,12 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private List<Endpoint> givenEndpoints;
 
+	private Endpoint endpoint;
+
+	private String givenId = "id";
+
+	private String endpointId;
+
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
 		givenAsiRedirections(nr);
@@ -124,8 +130,9 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
 		when(action.execute()).thenReturn(asiRedirections);
 
-		when(actionFactory.createGetAsiRedirectionsAction(contextId, username,  asiId))
-				.thenReturn(action);
+		when(
+				actionFactory.createGetAsiRedirectionsAction(contextId,
+						username, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -173,8 +180,9 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
 		when(action.execute()).thenThrow(exception);
 
-		when(actionFactory.createGetAsiRedirectionsAction(contextId, username, asiId))
-				.thenReturn(action);
+		when(
+				actionFactory.createGetAsiRedirectionsAction(contextId,
+						username, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -581,4 +589,35 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		assertEquals(endpoints.get(2).getId(), "e3Id");
 	}
 
+	@Test
+	public void shouldAddNewEndpoint() throws Exception {
+		givenAsiStartedInDevelopmentMode();
+		whenAddNewEndpoint();
+		thenEndpointAdded();
+	}
+
+	private void givenAsiStartedInDevelopmentMode() {
+		endpoint = new Endpoint();
+		endpoint.setDescription("description");
+		endpoint.setDescriptor("descriptor");
+		endpoint.setInvocationPath("/invocation_path");
+		endpoint.setPort(80);
+		endpoint.setType(EndpointType.REST);
+
+		Action<String> action = mock(AddAsiEndpointAction.class);
+		when(action.execute()).thenReturn(givenId);
+
+		when(
+				actionFactory.createAddAsiEndpointAction(username, contextId,
+						asiId, endpoint)).thenReturn(action);
+	}
+
+	private void whenAddNewEndpoint() {
+		endpointId = workflowManagement.addEndpoint(contextId, asiId, endpoint);
+	}
+
+	private void thenEndpointAdded() {
+		thenActionExecuted();
+		assertEquals(endpointId, givenId);
+	}
 }

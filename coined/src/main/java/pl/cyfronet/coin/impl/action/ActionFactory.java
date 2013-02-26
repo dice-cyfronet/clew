@@ -28,6 +28,7 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
 import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
@@ -209,6 +210,11 @@ public class ActionFactory {
 	public Action<List<Endpoint>> createListAsiEndpointsAction(String username,
 			String contextId, String asiId) {
 		return new ListAsiEndpointsAction(air, username, contextId, asiId);
+	}
+	
+	public Action<String> createAddAsiEndpointAction(String username,
+			String contextId, String asiId, Endpoint endpoint) {
+		return new AddAsiEndpointAction(air, username, contextId, asiId, endpoint);
 	}
 	
 	// grants

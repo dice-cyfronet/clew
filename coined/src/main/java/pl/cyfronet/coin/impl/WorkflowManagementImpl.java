@@ -195,8 +195,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		// TODO Auto-generated method stub
-		return null;
+		Action<String> action = actionFactory.createAddAsiEndpointAction(
+				getUsername(), contextId, asiId, endpoint);
+		return action.execute();
 	}
 
 	@Override
