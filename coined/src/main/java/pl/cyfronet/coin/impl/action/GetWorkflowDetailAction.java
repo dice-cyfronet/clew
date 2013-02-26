@@ -59,7 +59,7 @@ public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail>{
 			if (e.getResponse().getStatus() == 404) {
 				throw new WorkflowNotFoundException();
 			} else {
-				throw new CloudFacadeException();
+				throw new CloudFacadeException(e.getMessage());
 			}
 		}
 	}

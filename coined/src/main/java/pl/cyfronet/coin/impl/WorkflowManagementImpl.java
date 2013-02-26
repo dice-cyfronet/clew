@@ -190,6 +190,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		return action.execute();
 	}
 
+	@Role(values = "developer")
 	@Override
 	public String addEndpoint(String contextId, String asiId, Endpoint endpoint)
 			throws WorkflowNotFoundException,
@@ -200,13 +201,16 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		return action.execute();
 	}
 
+	@Role(values = "developer")
 	@Override
-	public void deleteEndpoint(String contextId, String asiId,
-			String redirectionId) throws WorkflowNotFoundException,
+	public void deleteEndpoint(String contextId, String asiId, String endpointId)
+			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
-		// TODO Auto-generated method stub
-
+		Action<Class<Void>> action = actionFactory
+				.createRemoveAsiEndpointAction(getUsername(), contextId, asiId,
+						endpointId);
+		action.execute();
 	}
 
 	public void setActionFactory(ActionFactory actionFactory) {

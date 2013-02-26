@@ -30,6 +30,7 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
+import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
 import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
 import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
@@ -51,10 +52,10 @@ public class ActionFactory {
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
 	private Integer defaultPriority;
-	
-	private String proxyHost;	
-	private int proxyPort;	
-	
+
+	private String proxyHost;
+	private int proxyPort;
+
 	private DyReAllaProxyManagerService httpRedirectionService;
 
 	private DyReAllaDNATManagerService dnatRedirectionService;
@@ -184,7 +185,8 @@ public class ActionFactory {
 
 	public Action<List<Redirection>> createGetAsiRedirectionsAction(
 			String contextId, String username, String asiId) {
-		return new GetAsiRedirectionsAction(contextId, username, asiId, proxyHost, proxyPort, air);
+		return new GetAsiRedirectionsAction(contextId, username, asiId,
+				proxyHost, proxyPort, air);
 	}
 
 	public Action<String> createAddAsiRedirectionAction(String username,
@@ -211,12 +213,19 @@ public class ActionFactory {
 			String contextId, String asiId) {
 		return new ListAsiEndpointsAction(air, username, contextId, asiId);
 	}
-	
+
 	public Action<String> createAddAsiEndpointAction(String username,
 			String contextId, String asiId, Endpoint endpoint) {
-		return new AddAsiEndpointAction(air, username, contextId, asiId, endpoint);
+		return new AddAsiEndpointAction(air, username, contextId, asiId,
+				endpoint);
 	}
-	
+
+	public Action<Class<Void>> createRemoveAsiEndpointAction(String username,
+			String contextId, String asiId, String endpointId) {
+		return new RemoveAsiEndpointAction(air, username, contextId, asiId,
+				endpointId);
+	}
+
 	// grants
 
 	public Action<List<String>> createListGrantsAction() {
@@ -263,7 +272,7 @@ public class ActionFactory {
 			DyReAllaDNATManagerService dnatRedirectionService) {
 		this.dnatRedirectionService = dnatRedirectionService;
 	}
-	
+
 	public void setProxyHost(String proxyHost) {
 		this.proxyHost = proxyHost;
 	}

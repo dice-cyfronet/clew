@@ -2,7 +2,9 @@ package pl.cyfronet.coin.impl.action;
 
 import java.util.List;
 
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
@@ -27,6 +29,12 @@ public abstract class AsiAction<T> extends WorkflowAction<T> {
 		return at;
 	}
 
+	protected void ensureDevelopmentWorklow(WorkflowDetail wd) {
+		if(wd.getWorkflow_type() != WorkflowType.development) {
+			throw new WorkflowNotInDevelopmentModeException();
+		}		
+	}
+	
 	protected String getAsiApplianceTypeId() {
 		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
 		List<Vms> vms = wd.getVms();

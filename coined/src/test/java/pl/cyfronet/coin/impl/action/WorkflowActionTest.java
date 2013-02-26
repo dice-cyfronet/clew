@@ -31,7 +31,7 @@ import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 public class WorkflowActionTest extends ActionTest {
 
 	protected final String contextId = "contextId";
-	protected final String username = "user";
+	protected String username = "user";
 	protected final String initConfigId = "asId";
 	protected final String initConfigPayload = "initConfigPayload";
 	protected final String newConfigId = "newInitConf";

@@ -193,4 +193,8 @@ public interface AirClient {
 			@FormParam("description") String description,
 			@FormParam("descriptor") String descritor,
 			@FormParam("port") int port);
+
+	@DELETE
+	@Path("/endpoint/{endpointId}")
+	void removeEndpoint(@PathParam("endpointId") String endpointId);
 }

@@ -16,7 +16,7 @@
 package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -39,6 +39,7 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
@@ -49,6 +50,7 @@ import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
+import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -619,5 +621,48 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private void thenEndpointAdded() {
 		thenActionExecuted();
 		assertEquals(endpointId, givenId);
+	}
+
+	@Test
+	public void shouldRemoveAsiEndpoint() throws Exception {
+		givenAsiWithEndpoint();
+		whenRemoveAsiEndpoint();
+		thenAsiRemoved();
+	}
+
+	private void givenAsiWithEndpoint() {
+		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		when(
+				actionFactory.createRemoveAsiEndpointAction(username,
+						contextId, asiId, endpointId)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenRemoveAsiEndpoint() {
+		workflowManagement.deleteEndpoint(contextId, asiId, endpointId);
+	}
+
+	private void thenAsiRemoved() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldThrow404WhenEndpointNotFound() throws Exception {
+		givenAsiWithoutEndpoint();
+		try {
+			whenRemoveAsiEndpoint();
+			fail();
+		} catch (EndpointNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenAsiWithoutEndpoint() {
+		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		when(action.execute()).thenThrow(new EndpointNotFoundException());
+		when(
+				actionFactory.createRemoveAsiEndpointAction(username,
+						contextId, asiId, endpointId)).thenReturn(action);
+		currentAction = action;
 	}
 }
