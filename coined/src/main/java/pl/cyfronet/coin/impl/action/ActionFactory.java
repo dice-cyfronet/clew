@@ -48,6 +48,10 @@ public class ActionFactory {
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
 	private Integer defaultPriority;
+	
+	private String proxyHost;	
+	private int proxyPort;	
+	
 	private DyReAllaProxyManagerService httpRedirectionService;
 
 	private DyReAllaDNATManagerService dnatRedirectionService;
@@ -244,5 +248,13 @@ public class ActionFactory {
 	public void setDnatRedirectionService(
 			DyReAllaDNATManagerService dnatRedirectionService) {
 		this.dnatRedirectionService = dnatRedirectionService;
+	}
+	
+	public void setProxyHost(String proxyHost) {
+		this.proxyHost = proxyHost;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
 	}
 }
