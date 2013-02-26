@@ -39,7 +39,7 @@ public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail>{
 	 * @param contextId Workflow context id.
 	 * @param username Workflow owner username.
 	 */
-	GetWorkflowDetailAction(AirClient air, String contextId, String username) {
+	public GetWorkflowDetailAction(AirClient air, String contextId, String username) {
 		super(air);
 		this.contextId = contextId;
 		this.username = username;
