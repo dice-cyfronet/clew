@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.util.HtmlUtils;
 
+import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
@@ -96,6 +97,9 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_ADD_ENDPOINT_REQUEST = "addEndpointRequest";
 	static final String MODEL_BEAN_ENDPOINT_TYPES = "endpointTypes";
 	static final String MODEL_BEAN_REDIRECTIONS = "redirections";
+	static final String MODEL_BEAN_REDIRECTION_TYPES = "redirectionTypes";
+	static final String MODEL_BEAN_ADD_REDIRECTION_REQUEST = "addRedirectionRequest";
+	static final String MODEL_BEAN_REDIRECTION_SELECTION = "redirectionSelection";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -107,6 +111,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_INVOCATION_CODE = "atomicServiceInvocationCode";
 	static final String PARAM_USER_KEY_ID = "userKeyId";
 	static final String PARAM_ENDPOINT_ID = "endpointId";
+	static final String PARAM_REDIRECTION_ID = "redirectionId";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -125,6 +130,8 @@ public class CloudManagerPortlet {
 	static final String ACTION_EDIT_ENDPOINTS = "editEndpoints";
 	static final String ACTION_ADD_ENDPOINT = "addEndpoint";
 	static final String ACTION_REMOVE_ENDPOINT = "removeEndpoint";
+	static final String ACTION_ADD_REDIRECTION = "addRedirection";
+	static final String ACTION_REMOVE_REDIRECTION = "removeRedirection";
 	
 	@Value("${cloud.host.name}")
 	private String cloudHost;
@@ -279,6 +286,16 @@ public class CloudManagerPortlet {
 			PortletRequest request, ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
+		List<AtomicService> ass = getSortedAtomicServices(request);
+		AtomicService atomicService = null;
+		
+		for(AtomicService as : ass) {
+			if(as.getAtomicServiceId().equals(atomicServiceId)) {
+				atomicService = as;
+				break;
+			}
+		}
+		
 		List<String> workflowIds = getWorkflowIds(workflowType, request);
 		String workflowId = null;
 		
@@ -308,9 +325,8 @@ public class CloudManagerPortlet {
 					new String[] {workflowId, initialconfigurations.get(0).getId(), userKeyId});
 			
 			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), "Ask user about it?", userKeyId);
+					initialconfigurations.get(0).getId(), atomicService.getName(), userKeyId);
 		} else {
-			//TODO - inform the user about the problem
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
 		}
 
@@ -856,6 +872,7 @@ public class CloudManagerPortlet {
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_EDIT_ENDPOINTS)
 	public String doViewEditEndpoints(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
 			@RequestParam(PARAM_WORKFLOW_ID) String workflowId, Model model, PortletRequest request) {
+		log.debug("Generating endpoint and redirection management view for workflow id [{}] and atomic service instance id [{}]", workflowId, atomicServiceInstanceId);
 		List<Endpoint> endpoints = clientFactory.getWorkflowManagement(request).getEndpoints(workflowId, atomicServiceInstanceId);
 		List<Redirection> redirections = clientFactory.getWorkflowManagement(request).getRedirections(workflowId, atomicServiceInstanceId);
 		model.addAttribute(MODEL_BEAN_ENDPOINTS, endpoints);
@@ -869,11 +886,34 @@ public class CloudManagerPortlet {
 		
 		model.addAttribute(MODEL_BEAN_ENDPOINT_TYPES, endpointTypes);
 		
+		Map<String, String> redirectionTypes = new HashMap<>();
+		
+		for(RedirectionType type : RedirectionType.values()) {
+			redirectionTypes.put(type.name(), messages.getMessage("cloud.manager.portlet.redirection." + type + ".label", null, null));
+		}
+		
+		model.addAttribute(MODEL_BEAN_REDIRECTION_TYPES, redirectionTypes);
+		
+		Map<String, String> redirectionSelection = new HashMap<>();
+		
+		for(Redirection redirection : redirections) {
+			redirectionSelection.put(String.valueOf(redirection.getToPort()), redirection.getName() + "(" + redirection.getToPort() + ")");
+		}
+		
+		model.addAttribute(MODEL_BEAN_REDIRECTION_SELECTION, redirectionSelection);
+		
 		if(!model.containsAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST)) {
 			AddEndpointRequest addEndpointRequest = new AddEndpointRequest();
 			addEndpointRequest.setAtomicServiceInstanceId(atomicServiceInstanceId);
 			addEndpointRequest.setWorkflowId(workflowId);
 			model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, addEndpointRequest);
+		}
+		
+		if(!model.containsAttribute(MODEL_BEAN_ADD_REDIRECTION_REQUEST)) {
+			AddRedirectionRequest addRedirectionRequest = new AddRedirectionRequest();
+			addRedirectionRequest.setAtomicServiceInstanceId(atomicServiceInstanceId);
+			addRedirectionRequest.setWorkflowId(workflowId);
+			model.addAttribute(MODEL_BEAN_ADD_REDIRECTION_REQUEST, addRedirectionRequest);
 		}
 		
 		return "cloudManager/editEndpoints";
@@ -913,7 +953,8 @@ public class CloudManagerPortlet {
 		log.debug("Removing endpoint for atomic service instance [{}] and endpoint id [{}]", atomicServiceInstanceId, endpointId);
 		clientFactory.getWorkflowManagement(request).deleteEndpoint(workflowId, atomicServiceInstanceId, endpointId);
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
-		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, atomicServiceInstanceId);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, atomicServiceInstanceId);
+		response.setRenderParameter(PARAM_WORKFLOW_ID, workflowId);
 	}
 	
 	@ExceptionHandler(Exception.class)
@@ -921,6 +962,39 @@ public class CloudManagerPortlet {
 		log.error("Unexpected exception occurred", e);
 		
 		return "fatal/error";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_ADD_REDIRECTION)
+	public void doActionAddRedirection(@ModelAttribute(MODEL_BEAN_ADD_REDIRECTION_REQUEST) AddRedirectionRequest addRedirectionRequest,
+			BindingResult errors, Model model, PortletRequest request, ActionResponse response) {
+		log.debug("Adding new redirection with request [{}]", addRedirectionRequest);
+		validator.validate(addRedirectionRequest, errors);
+		
+		if(!errors.hasErrors()) {
+			clientFactory.getWorkflowManagement(request).addRedirection(addRedirectionRequest.getWorkflowId(),
+					addRedirectionRequest.getAtomicServiceInstanceId(), addRedirectionRequest.getName(),
+					addRedirectionRequest.getToPort(), addRedirectionRequest.getType());
+			
+			AddRedirectionRequest newAddRedirectionRequest = new AddRedirectionRequest();
+			newAddRedirectionRequest.setAtomicServiceInstanceId(addRedirectionRequest.getAtomicServiceInstanceId());
+			newAddRedirectionRequest.setWorkflowId(addRedirectionRequest.getWorkflowId());
+			model.addAttribute(MODEL_BEAN_ADD_REDIRECTION_REQUEST, newAddRedirectionRequest);
+		}
+		
+		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, addRedirectionRequest.getAtomicServiceInstanceId());
+		response.setRenderParameter(PARAM_WORKFLOW_ID, addRedirectionRequest.getWorkflowId());
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_REMOVE_REDIRECTION)
+	public void doActionRemoveRedirection(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
+			@RequestParam(PARAM_REDIRECTION_ID) String redirectionId, @RequestParam(PARAM_WORKFLOW_ID) String workflowId,
+			PortletRequest request, ActionResponse response) {
+		log.debug("Removing redirection for atomic service instance id [{}] and redirection id [{}]", atomicServiceInstanceId, redirectionId);
+		clientFactory.getWorkflowManagement(request).deleteRedirection(workflowId, atomicServiceInstanceId, redirectionId);
+		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, atomicServiceInstanceId);
+		response.setRenderParameter(PARAM_WORKFLOW_ID, workflowId);
 	}
 	
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
@@ -1058,6 +1132,7 @@ public class CloudManagerPortlet {
 				return as1.getName().compareToIgnoreCase(as2.getName());
 			}
 		});
+		
 		return atomicServices;
 	}
 	
