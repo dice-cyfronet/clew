@@ -124,7 +124,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
 		when(action.execute()).thenReturn(asiRedirections);
 
-		when(actionFactory.createGetAsiRedirectionsAction(contextId, asiId))
+		when(actionFactory.createGetAsiRedirectionsAction(contextId, username,  asiId))
 				.thenReturn(action);
 		currentAction = action;
 	}
@@ -173,7 +173,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
 		when(action.execute()).thenThrow(exception);
 
-		when(actionFactory.createGetAsiRedirectionsAction(contextId, asiId))
+		when(actionFactory.createGetAsiRedirectionsAction(contextId, username, asiId))
 				.thenReturn(action);
 		currentAction = action;
 	}

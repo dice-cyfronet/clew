@@ -9,11 +9,12 @@ import pl.cyfronet.coin.api.beans.EndpointType;
 public class AddEndpointRequest {
 	@NotNull private EndpointType type;
 	@NotEmpty private String invocationPath;
-	@NotEmpty private String port;
+	@NotEmpty private int port;
 	@NotEmpty private String serviceName;
 	private String description;
 	private String descriptor;
-	private String atomicServiceId;
+	private String atomicServiceInstanceId;
+	private String workflowId;
 	
 	public EndpointType getType() {
 		return type;
@@ -27,10 +28,10 @@ public class AddEndpointRequest {
 	public void setInvocationPath(String invocationPath) {
 		this.invocationPath = invocationPath;
 	}
-	public String getPort() {
+	public int getPort() {
 		return port;
 	}
-	public void setPort(String port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 	public String getServiceName() {
@@ -51,18 +52,26 @@ public class AddEndpointRequest {
 	public void setDescriptor(String descriptor) {
 		this.descriptor = descriptor;
 	}
+	
 	@Override
 	public String toString() {
 		return "AddEndpointRequest [type=" + type + ", invocationPath="
 				+ invocationPath + ", port=" + port + ", serviceName="
 				+ serviceName + ", description=" + description
-				+ ", descriptor=" + descriptor + ", atomicServiceId="
-				+ atomicServiceId + "]";
+				+ ", descriptor=" + descriptor + ", atomicServiceInstanceId="
+				+ atomicServiceInstanceId + ", workflowId=" + workflowId + "]";
 	}
-	public String getAtomicServiceId() {
-		return atomicServiceId;
+	
+	public String getAtomicServiceInstanceId() {
+		return atomicServiceInstanceId;
 	}
-	public void setAtomicServiceId(String atomicServiceId) {
-		this.atomicServiceId = atomicServiceId;
+	public void setAtomicServiceInstanceId(String atomicServiceInstanceId) {
+		this.atomicServiceInstanceId = atomicServiceInstanceId;
+	}
+	public String getWorkflowId() {
+		return workflowId;
+	}
+	public void setWorkflowId(String workflowId) {
+		this.workflowId = workflowId;
 	}
 }

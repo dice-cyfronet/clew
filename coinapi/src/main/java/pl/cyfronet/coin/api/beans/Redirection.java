@@ -21,17 +21,12 @@ import pl.cyfronet.coin.api.RedirectionType;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class Redirection {
-
+	private String id; 
 	private String name;
-
 	private Integer toPort;
-
 	private Integer fromPort;
-
 	private String host;
-
 	private RedirectionType type;
-
 	private String postfix;
 
 	public String getName() {
@@ -84,8 +79,16 @@ public class Redirection {
 
 	@Override
 	public String toString() {
-		return "Redirection [name=" + name + ", toPort=" + toPort
-				+ ", fromPort=" + fromPort + ", host=" + host + ", type="
-				+ type + ", postfix=" + postfix + "]";
+		return "Redirection [id=" + id + ", name=" + name + ", toPort="
+				+ toPort + ", fromPort=" + fromPort + ", host=" + host
+				+ ", type=" + type + ", postfix=" + postfix + "]";
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

@@ -16,8 +16,9 @@
 					<span class="coin-actions">
 						<portlet:actionURL var="removeEndpoint">
 							<portlet:param name="action" value="removeEndpoint"/>
-							<portlet:param name="atomicServiceId" value="${addEndpointRequest.atomicServiceId}"/>
+							<portlet:param name="atomicServiceInstanceId" value="${addEndpointRequest.atomicServiceInstanceId}"/>
 							<portlet:param name="endpointId" value="${endpoint.id}"/>
+							<portlet:param name="workflowId" value="${workflowId}"/>
 						</portlet:actionURL>
 						<c:set var="removeConfirmation">removeEndpoint-${endpoint.id}</c:set>
 						<a id="${removeConfirmation}" class="coin-link" href='${removeEndpoint}'><spring:message code='cloud.manager.portlet.remove.endpoint.label'/></a>
@@ -42,7 +43,8 @@
 		<spring:message code="cloud.manager.portlet.define.endpoint.form.label"/>
 	</div>
 	<form:form class="coin-form" action='${addEndpoint}' modelAttribute='addEndpointRequest'>
-		<form:hidden path="atomicServiceId"/>
+		<form:hidden path="atomicServiceInstanceId"/>
+		<form:hidden path="workflowId"/>
 		<div class="coin-form-input">
 			<label for="type">
 				<spring:message code="cloud.manager.portlet.add.endpoint.service.name.label"/>

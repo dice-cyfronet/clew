@@ -19,6 +19,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import pl.cyfronet.coin.api.WorkflowManagement;
+
 /**
  * Bean which describes atomic service (vm template).
  * @author <a href="mailto:d.harezlak@cyfronet.pl>Daniel Harezlak</a>
@@ -76,10 +78,18 @@ public class AtomicService {
 		this.description = description;
 	}
 
+	/**
+	 * @deprecated use endpoint management methods present in the {@link WorkflowManagement} service
+	 */
+	@Deprecated
 	public List<Endpoint> getEndpoints() {
 		return endpoints;
 	}
 
+	/**
+	 * @deprecated use endpoint management methods present in the {@link WorkflowManagement} service
+	 */
+	@Deprecated
 	public void setEndpoints(List<Endpoint> endpoints) {
 		this.endpoints = endpoints;
 	}

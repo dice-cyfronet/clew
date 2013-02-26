@@ -26,10 +26,11 @@
 		
 		<portlet:renderURL var="editEndpoints">
 			<portlet:param name="action" value="editEndpoints"/>
-			<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
+			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
+			<portlet:param name="workflowId" value="${workflowId}"/>
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Edit endpoints</a>
+		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Edit redirections and endpoints</a>
 	</span>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
