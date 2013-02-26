@@ -195,7 +195,7 @@ public interface WorkflowManagement {
 	@Path("/{contextId}/asi/{asiId}/endpoint/{endpointId}")
 	void deleteEndpoint(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId,
-			@PathParam("redirectionId") String redirectionId)
+			@PathParam("endpointId") String endpointId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException;

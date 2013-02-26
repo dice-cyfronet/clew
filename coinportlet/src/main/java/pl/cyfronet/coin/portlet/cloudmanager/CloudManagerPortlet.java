@@ -95,6 +95,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_ENDPOINTS = "endpoints";
 	static final String MODEL_BEAN_ADD_ENDPOINT_REQUEST = "addEndpointRequest";
 	static final String MODEL_BEAN_ENDPOINT_TYPES = "endpointTypes";
+	static final String MODEL_BEAN_REDIRECTIONS = "redirections";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -417,7 +418,7 @@ public class CloudManagerPortlet {
 							webAppEndpoints.add(endpoint);
 
 							//temporary fix to pass NoMachine port
-							if(endpoint.getServiceName().equals("/nx")) {
+							if(endpoint.getInvocationPath().equals("/nx")) {
 								Workflow wf = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
 								List<Redirection> redirects = null;
 								
@@ -455,7 +456,7 @@ public class CloudManagerPortlet {
 								iasr.setConfigurationId(configurationId);
 								iasr.setAtomicServiceId(atomicServiceId);
 								iasr.setFormFields(new ArrayList<FormField>());
-								iasr.setServiceId(endpoint.getServiceName());
+								iasr.setServiceId(endpoint.getInvocationPath());
 								
 								if(endpoint.getInvocationPath() != null) {
 									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
@@ -479,9 +480,7 @@ public class CloudManagerPortlet {
 								iasr = (InvokeAtomicServiceRequest) model.asMap().get(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST);
 							}
 							
-							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(iasr.getWorkflowId(),
-									iasr.getConfigurationId()) + endpoint.getServiceName() +
-									iasr.getInvocationPath());
+							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(findPostfix(workflowId, atomicServiceInstanceId, endpoint.getPort(), request).getPostfix()));
 						break;
 						case WS:
 							wsEndpoints.add(endpoint);
@@ -855,27 +854,12 @@ public class CloudManagerPortlet {
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_EDIT_ENDPOINTS)
-	public String doViewEditEndpoints(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
-		Model model, PortletRequest request) {
-		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
-		AtomicService atomicService = null;
-		
-		for(AtomicService as : atomicServices) {
-			if(as.getAtomicServiceId().equals(atomicServiceId)) {
-				atomicService = as;
-				break;
-			}
-		}
-		
-		List<Endpoint> endpoints = atomicService.getEndpoints();
-		
-		//TODO(DH): remove this when the id is set by CF ---
-		for(Endpoint endpoint : endpoints) {
-			endpoint.setId("temp");
-		}
-		//---
-		
-		model.addAttribute(MODEL_BEAN_ENDPOINTS, atomicService.getEndpoints());
+	public String doViewEditEndpoints(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
+			@RequestParam(PARAM_WORKFLOW_ID) String workflowId, Model model, PortletRequest request) {
+		List<Endpoint> endpoints = clientFactory.getWorkflowManagement(request).getEndpoints(workflowId, atomicServiceInstanceId);
+		List<Redirection> redirections = clientFactory.getWorkflowManagement(request).getRedirections(workflowId, atomicServiceInstanceId);
+		model.addAttribute(MODEL_BEAN_ENDPOINTS, endpoints);
+		model.addAttribute(MODEL_BEAN_REDIRECTIONS, redirections);;
 		
 		Map<String, String> endpointTypes = new HashMap<>();
 		
@@ -887,7 +871,8 @@ public class CloudManagerPortlet {
 		
 		if(!model.containsAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST)) {
 			AddEndpointRequest addEndpointRequest = new AddEndpointRequest();
-			addEndpointRequest.setAtomicServiceId(atomicServiceId);
+			addEndpointRequest.setAtomicServiceInstanceId(atomicServiceInstanceId);
+			addEndpointRequest.setWorkflowId(workflowId);
 			model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, addEndpointRequest);
 		}
 		
@@ -901,24 +886,34 @@ public class CloudManagerPortlet {
 		validator.validate(addEndpointRequest, errors);
 		
 		if(!errors.hasErrors()) {
-			//TODO(DH): wait for the cloud facade API and implement proper actions
+			Endpoint endpoint = new Endpoint();
+			endpoint.setInvocationPath(addEndpointRequest.getInvocationPath());
+			endpoint.setDescription(addEndpointRequest.getDescription());
+			endpoint.setDescriptor(addEndpointRequest.getDescriptor());
+			endpoint.setPort(addEndpointRequest.getPort());
+			endpoint.setType(addEndpointRequest.getType());
+			clientFactory.getWorkflowManagement(request).addEndpoint(addEndpointRequest.getWorkflowId(),
+					addEndpointRequest.getAtomicServiceInstanceId(), endpoint);
 			
 			AddEndpointRequest newEndpointRequest = new AddEndpointRequest();
-			newEndpointRequest.setAtomicServiceId(addEndpointRequest.getAtomicServiceId());
+			newEndpointRequest.setAtomicServiceInstanceId(addEndpointRequest.getAtomicServiceInstanceId());
+			newEndpointRequest.setWorkflowId(addEndpointRequest.getWorkflowId());
 			model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, newEndpointRequest);
 		}
 		
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
-		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, addEndpointRequest.getAtomicServiceId());
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, addEndpointRequest.getAtomicServiceInstanceId());
+		response.setRenderParameter(PARAM_WORKFLOW_ID, addEndpointRequest.getWorkflowId());
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_REMOVE_ENDPOINT)
-	public void doActionRemoveEndpoint(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
-			@RequestParam(PARAM_ENDPOINT_ID) String endpointId, ActionResponse response) {
-		log.debug("Removing endpoint for atomic service [{}] and endpoint id [{}]", atomicServiceId, endpointId);
-		//TODO(DH): wait for the cloud facade API and implement proper actions
+	public void doActionRemoveEndpoint(@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
+			@RequestParam(PARAM_ENDPOINT_ID) String endpointId, @RequestParam(PARAM_WORKFLOW_ID) String workflowId,
+			PortletRequest request, ActionResponse response) {
+		log.debug("Removing endpoint for atomic service instance [{}] and endpoint id [{}]", atomicServiceInstanceId, endpointId);
+		clientFactory.getWorkflowManagement(request).deleteEndpoint(workflowId, atomicServiceInstanceId, endpointId);
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
-		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+		response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, atomicServiceInstanceId);
 	}
 	
 	@ExceptionHandler(Exception.class)
@@ -994,6 +989,13 @@ public class CloudManagerPortlet {
 		return urlPath.trim();
 	}
 	
+	private String createInvocationPath(String postfix) {
+		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.postfix.endpoint.template", null, null).
+				replace("{host}", cloudHost).replace("{postfix}", postfix);
+		
+		return urlPath.trim();
+	}
+	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {
 		List<String> result = new ArrayList<String>();
 		UserWorkflows userWorkflows = clientFactory.getWorkflowManagement(request).getWorkflows();
@@ -1060,15 +1062,15 @@ public class CloudManagerPortlet {
 	}
 	
 	private void fixPaths(Endpoint endpoint) {
-		if(endpoint.getServiceName() != null){
-			endpoint.setServiceName(endpoint.getServiceName().trim());
+		if(endpoint.getInvocationPath() != null){
+			endpoint.setInvocationPath(endpoint.getInvocationPath().trim());
 			
-			if(!endpoint.getServiceName().startsWith("/")) {
-				endpoint.setServiceName("/" + endpoint.getServiceName());
+			if(!endpoint.getInvocationPath().startsWith("/")) {
+				endpoint.setInvocationPath("/" + endpoint.getInvocationPath());
 			}
 			
-			if(endpoint.getServiceName().endsWith("/")) {
-				endpoint.setServiceName(endpoint.getServiceName().substring(0, endpoint.getServiceName().length() - 1));
+			if(endpoint.getInvocationPath().endsWith("/")) {
+				endpoint.setInvocationPath(endpoint.getInvocationPath().substring(0, endpoint.getInvocationPath().length() - 1));
 			}
 		}
 		
@@ -1083,5 +1085,15 @@ public class CloudManagerPortlet {
 				endpoint.setInvocationPath(endpoint.getInvocationPath().substring(0, endpoint.getInvocationPath().length() - 1));
 			}
 		}
+	}
+	
+	private Redirection findPostfix(String workflowId, String atomicServiceInstanceId, int port, PortletRequest request) {
+		for(Redirection redirection : clientFactory.getWorkflowManagement(request).getRedirections(workflowId, atomicServiceInstanceId)) {
+			if(redirection.getToPort() == port) {
+				return redirection;
+			}
+		}
+		
+		return null;
 	}
 }
