@@ -5,15 +5,20 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "logicalDatas")
 public class LobcderRestMetadataList {
-	@XmlElement(name = "logicalData")
 	private List<LobcderRestMetadata> metadataList;
 
+	@XmlElement(name = "logicalData")
 	public List<LobcderRestMetadata> getMetadataList() {
 		return metadataList;
 	}
 	public void setMetadataList(List<LobcderRestMetadata> metadataList) {
 		this.metadataList = metadataList;
+	}
+	
+	@Override
+	public String toString() {
+		return "LobcderRestMetadataList [metadataList=" + metadataList + "]";
 	}
 }

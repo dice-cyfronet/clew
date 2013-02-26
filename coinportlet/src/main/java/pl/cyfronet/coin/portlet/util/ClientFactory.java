@@ -4,15 +4,13 @@ import javax.portlet.PortletRequest;
 
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.jetspeed.CommonPortletServices;
-import org.apache.jetspeed.security.SecurityAttribute;
-import org.apache.jetspeed.security.SecurityException;
-import org.apache.jetspeed.security.UserManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.KeyManagement;
 import pl.cyfronet.coin.api.SecurityPolicyService;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.portlet.portal.Portal;
 
 public class ClientFactory {
 	public static final String HEADER_AUTHORIZATION = "Authorization";
@@ -21,6 +19,8 @@ public class ClientFactory {
 	private WorkflowManagement workflowManagement;
 	private KeyManagement keyManagement;
 	private SecurityPolicyService securityPolicyService;
+	
+	@Autowired private Portal portal;
 	
 	public void setCloudFacade(CloudFacade cloudFacade) {
 		this.cloudFacade = cloudFacade;
@@ -53,26 +53,8 @@ public class ClientFactory {
 		return securityPolicyService;
 	}
 	
-	public String createBasicAuthHeader(PortletRequest request) {
-		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
-				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
-		String token = null;
-		
-		try {
-			SecurityAttribute tokenAttribute = userManager.getUser(request.getUserPrincipal().getName()).
-					getSecurityAttributes().getAttribute("token");
-			
-			if(tokenAttribute != null) {
-				token = tokenAttribute.getStringValue();
-			}
-		} catch (SecurityException e) {
-			throw new IllegalArgumentException("Could not obtain user token from security attribute map");
-		}
-		
-		if(token == null) {
-			throw new IllegalArgumentException("Could not obtaing user token from portlet session " +
-					"with id " + request.getPortletSession().getId());
-		}
+	private String createBasicAuthHeader(PortletRequest request) {
+		String token = portal.getUserToken(request);
 
 		return "Basic " 
 			    + org.apache.cxf.common.util.Base64Utility.encode((

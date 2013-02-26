@@ -64,6 +64,7 @@ import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.portlet.portal.Portal;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
+import pl.cyfronet.coin.portlet.util.HttpUtil;
 
 @Controller
 @RequestMapping("VIEW")
@@ -132,6 +133,7 @@ public class CloudManagerPortlet {
 	@Autowired private Portal portal;
 	@Autowired private MessageSource messages;
 	@Autowired private Validator validator;
+	@Autowired private HttpUtil httpUtil;
 	
 	@RequestMapping
 	public String doView(Model model, RenderRequest request, PortletResponse response) {
@@ -957,7 +959,7 @@ public class CloudManagerPortlet {
 		try {
 			URL asUrl = new URL(urlPath);
 			connection = (HttpURLConnection) asUrl.openConnection();
-			connection.setRequestProperty(ClientFactory.HEADER_AUTHORIZATION, clientFactory.createBasicAuthHeader(portletRequest));
+			connection.setRequestProperty(ClientFactory.HEADER_AUTHORIZATION, httpUtil.createBasicAuthenticationHeaderValue(null, portal.getUserToken(portletRequest)));
 			connection.setDoOutput(true);
 			
 	//		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());

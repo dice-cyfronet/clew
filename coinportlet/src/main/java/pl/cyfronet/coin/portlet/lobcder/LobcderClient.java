@@ -7,13 +7,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
@@ -34,6 +33,9 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import pl.cyfronet.coin.portlet.util.HttpUtil;
 
 public class LobcderClient {
 	private static final Logger log = org.slf4j.LoggerFactory.getLogger(LobcderClient.class);
@@ -45,21 +47,12 @@ public class LobcderClient {
 	private static final DavPropertyName DRI_LAST_VALIDATION = DavPropertyName.create("dri-last-validation-date-ms", CUSTOM_NAMESPACE);
 	
 	private String baseUrl;
-	private String username;
-	private String password;
-	
 	private HttpClient client;
+	
+	@Autowired private HttpUtil httpUtil;
 	
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public void initialize() throws MalformedURLException {
@@ -72,21 +65,19 @@ public class LobcderClient {
         int maxHostConnections = 20;
         params.setMaxConnectionsPerHost(hostConfig, maxHostConnections);
         connectionManager.setParams(params);
-        
-        Credentials creds = new UsernamePasswordCredentials(username, password);
         client = new HttpClient(connectionManager);
-        client.getState().setCredentials(AuthScope.ANY, creds);
         client.setHostConfiguration(hostConfig);
 	}
 	
-	public List<LobcderEntry> list(String path) throws LobcderException {
+	public List<LobcderEntry> list(String path, String securityToken) throws LobcderException {
 		List<LobcderEntry> entries = new ArrayList<>();
+		DavMethod pFind = null;
 		
 		try {
 			DavPropertyNameSet properties = new DavPropertyNameSet();
 			properties.add(DavPropertyName.GETCONTENTLENGTH);
-			DavMethod pFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_1);
-			client.executeMethod(pFind);
+			pFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_1);
+			executeMethod(pFind, securityToken);
 
 		    MultiStatus multiStatus = pFind.getResponseBodyAsMultiStatus();
 		    MultiStatusResponse[] responses = multiStatus.getResponses();
@@ -110,12 +101,17 @@ public class LobcderClient {
 			String msg = "Could not list LOBCDER resources for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(pFind != null) {
+				pFind.releaseConnection();
+			}
 		}
 
 		return entries;
 	}
-	
-	public void put(String path, String fileName, InputStream inputStream) throws LobcderException {
+
+	public void put(String path, String fileName, InputStream inputStream, String securityToken) throws LobcderException {
+		path = ensureDirectory(path);
 		PutMethod putMethod = new PutMethod(createLobcderPath(path) + fileName);
 		putMethod.setRequestEntity(new InputStreamRequestEntity(inputStream));
 		
@@ -125,10 +121,14 @@ public class LobcderClient {
 			String msg = "Could not upload file to LOBCDER for base URL [" + baseUrl + "], path [" + path + "] and file [" + fileName + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(putMethod != null) {
+				putMethod.releaseConnection();
+			}
 		}
 	}
-	
-	public InputStream get(String filePath) throws LobcderException {
+
+	public InputStream get(String filePath, String securityToken) throws LobcderException {
 		GetMethod getMethod = new GetMethod(createLobcderPath(filePath));
 		
 		try {
@@ -139,10 +139,14 @@ public class LobcderClient {
 			String msg = "Could not download file from LOBCDER for base URL [" + baseUrl + "] and file path [" + filePath + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(getMethod != null) {
+				getMethod.releaseConnection();
+			}
 		}
 	}
 	
-	public void createDirectory(String parentPath, String directoryName) throws LobcderException {
+	public void createDirectory(String parentPath, String directoryName, String securityToken) throws LobcderException {
 		MkColMethod mkdirMethod = new MkColMethod(createLobcderPath(parentPath) + directoryName);
 		
 		try {
@@ -152,10 +156,14 @@ public class LobcderClient {
 					" and directory name [" + directoryName + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(mkdirMethod != null) {
+				mkdirMethod.releaseConnection();
+			}
 		}
 	}
 	
-	public void delete(String path) throws LobcderException {
+	public void delete(String path, String securityToken) throws LobcderException {
 		DeleteMethod deleteMethod = new DeleteMethod(createLobcderPath(path));
 		
 		try {
@@ -164,10 +172,14 @@ public class LobcderClient {
 			String msg = "Could not delete LOBCDER resource for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(deleteMethod != null) {
+				deleteMethod.releaseConnection();
+			}
 		}
 	}
 	
-	public LobcderWebDavMetadata getMetadata(String path) throws LobcderException {
+	public LobcderWebDavMetadata getMetadata(String path, String securityToken) throws LobcderException {
 		LobcderWebDavMetadata lobcderWebDavMetadata = new LobcderWebDavMetadata();
 		DavPropertyNameSet properties = new DavPropertyNameSet();
 		properties.add(DRI_SUPERVISED);
@@ -176,9 +188,10 @@ public class LobcderClient {
 		properties.add(DavPropertyName.CREATIONDATE);
 		properties.add(DavPropertyName.GETLASTMODIFIED);
 		properties.add(DavPropertyName.GETCONTENTTYPE);
+		DavMethod propFind = null;
 
 		try {
-			DavMethod propFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_0);
+			propFind = new PropFindMethod(createLobcderPath(path), properties, DavConstants.DEPTH_0);
 			client.executeMethod(propFind);
 			
 			MultiStatus multiStatus = propFind.getResponseBodyAsMultiStatus();
@@ -197,12 +210,16 @@ public class LobcderClient {
 			String msg = "Could not fetch LOBCDER metadata for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(propFind != null) {
+				propFind.releaseConnection();
+			}
 		}
 
 		return lobcderWebDavMetadata;
 	}
 
-	public void updateMetadata(String path, LobcderWebDavMetadata lobcderWebDavMetadata) throws LobcderException {
+	public void updateMetadata(String path, LobcderWebDavMetadata lobcderWebDavMetadata, String securityToken) throws LobcderException {
 		DavPropertySet setProperties = null;
 		DavMethod propPatch = null;
 		
@@ -241,6 +258,10 @@ public class LobcderClient {
 			String msg = "Could not set LOBCDER metadata for base URL [" + baseUrl + "] and path [" + path + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
+		} finally {
+			if(propPatch != null) {
+				propPatch.releaseConnection();
+			}
 		}
 	}
 
@@ -282,5 +303,22 @@ public class LobcderClient {
 		result.append(path);
 		
 		return result.toString();
+	}
+	
+	private String ensureDirectory(String path) {
+		String result = path;
+		
+		if(path != null) {
+			if(!path.endsWith("/")) {
+				result = path + "/";
+			}
+		}
+		
+		return result;
+	}
+	
+	private void executeMethod(DavMethod method, String securityToken) throws HttpException, IOException {
+		method.addRequestHeader("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
+		client.executeMethod(method);
 	}
 }

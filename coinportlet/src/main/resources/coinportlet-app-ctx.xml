@@ -48,10 +48,8 @@
         class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver"/>
     
     <!-- Utility beans -->
-    <bean class="pl.cyfronet.coin.portlet.util.ContextIdFactory">
-    	<constructor-arg value="${cloud.context.id.prefix}"/>
-    </bean>
     <bean class="pl.cyfronet.coin.portlet.portal.Portal"/>
+    <bean class="pl.cyfronet.coin.portlet.util.HttpUtil"/>
     
     <!-- Mock definitions -->
     <!-- <bean class="pl.cyfronet.coin.portlet.mock.MockCloudFacade">
@@ -123,8 +121,6 @@
 	<!-- LOBCDER beans -->
 	<bean class="pl.cyfronet.coin.portlet.lobcder.LobcderClient" init-method="initialize">
 		<property name="baseUrl" value="${lobcder.url}"/>
-		<property name="username" value="${lobcder.user}"/>
-		<property name="password" value="${lobcder.password}"/>
 	</bean>
 	<bean class="pl.cyfronet.coin.portlet.lobcder.LobcderRestClient">
 		<property name="baseUrl" value="${lobcder.rest.url}"/>

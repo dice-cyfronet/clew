@@ -18,10 +18,6 @@ import org.apache.jetspeed.security.User;
 import org.apache.jetspeed.security.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthClient;
-import pl.cyfronet.coin.auth.mi.UserDetails;
 
 public class Portal {
 	private static final Logger log = LoggerFactory.getLogger(Portal.class);
@@ -93,5 +89,29 @@ public class Portal {
 		} catch (RegistrationException e) {
 			log.error("Could not register or update user [{}]", userName, e);
 		}
+	}
+	
+	public String getUserToken(PortletRequest request) {
+		UserManager userManager = (UserManager) request.getPortletSession().getPortletContext().
+				getAttribute(CommonPortletServices.CPS_USER_MANAGER_COMPONENT);
+		String token = null;
+		
+		try {
+			SecurityAttribute tokenAttribute = userManager.getUser(request.getUserPrincipal().getName()).
+					getSecurityAttributes().getAttribute("token");
+			
+			if(tokenAttribute != null) {
+				token = tokenAttribute.getStringValue();
+			}
+		} catch (SecurityException e) {
+			throw new IllegalArgumentException("Could not obtain user token from security attribute map");
+		}
+		
+		if(token == null) {
+			throw new IllegalArgumentException("Could not obtaing user token from portlet session " +
+					"with id " + request.getPortletSession().getId());
+		}
+		
+		return token;
 	}
 }

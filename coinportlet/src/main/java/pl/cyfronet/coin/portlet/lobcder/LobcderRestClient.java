@@ -1,36 +1,30 @@
 package pl.cyfronet.coin.portlet.lobcder;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import pl.cyfronet.coin.portlet.util.HttpUtil;
 
 public class LobcderRestClient {
 	private static final Logger log = LoggerFactory.getLogger(LobcderRestClient.class);
 	
 	@Autowired private RestTemplate rest;
+	@Autowired private HttpUtil httpUtil;
 	
 	private String baseUrl;
-	private ObjectMapper mapper;
-	
-	public LobcderRestClient() {
-		mapper = new ObjectMapper();
-		
-		AnnotationIntrospector ai = new JaxbAnnotationIntrospector();
-		mapper.getDeserializationConfig().setAnnotationIntrospector(ai);
-		mapper.getSerializationConfig().setAnnotationIntrospector(ai);
-	}
 	
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
 	
-	public LobcderRestMetadata getMetadata(String path) throws LobcderException {
+	public LobcderRestMetadata getMetadata(String path, String securityToken) throws LobcderException {
 		if(path.equals("/")) {
 			throw new LobcderException("Cannot fetch metadata for the root LOBCDER directory from the REST service");
 		}
@@ -48,20 +42,28 @@ public class LobcderRestClient {
 		
 		log.debug("Fetching LOBCDER metadata for resource {} in parent {}", resourceName, parentPath);
 		
-		String response = rest.getForObject(getMetadataUrl(parentPath), String.class);
-		log.debug("LOBCDER REST response for {} is {}", resourceName, response);
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.add("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
+		requestHeaders.add("Accept", "application/xml");
 		
-		LobcderRestMetadataList metadataList = null;
+		HttpEntity<?> requestEntity = new HttpEntity(requestHeaders);
 		
-		try {
-			metadataList = mapper.readValue(response, LobcderRestMetadataList.class);
-		} catch (IOException e) {
-			throw new LobcderException("Could not find LOBCDER metadata for resource " + resourceName + " and parent " + parentPath, e);
-		}
 		
-		for(LobcderRestMetadata metadata : metadataList.getMetadataList()) {
-			if(metadata.getName().equals(resourceName)) {
-				return metadata;
+		ResponseEntity<String> debug = rest.exchange(getMetadataUrl(parentPath), HttpMethod.GET, requestEntity, String.class);
+		System.out.println("Debug response: " + debug.getBody());
+		
+		
+		
+		ResponseEntity<LobcderRestMetadataList> response = rest.exchange(getMetadataUrl(parentPath), HttpMethod.GET, requestEntity, LobcderRestMetadataList.class);
+		log.debug("LOBCDER REST response status and body for {} ({}) is {} and {}",
+				new String[] {resourceName, getMetadataUrl(parentPath), String.valueOf(response.getStatusCode()),
+				response.getBody().toString()});
+
+		if(response.getBody() != null && response.getBody().getMetadataList() != null) {
+			for(LobcderRestMetadata metadata : response.getBody().getMetadataList()) {
+				if(metadata.getName().equals(resourceName)) {
+					return metadata;
+				}
 			}
 		}
 		
@@ -69,6 +71,6 @@ public class LobcderRestClient {
 	}
 
 	private String getMetadataUrl(String path) {
-		return baseUrl + "/Items?path=" + path;
+		return baseUrl + "/items/query?path=" + path;
 	}
 }

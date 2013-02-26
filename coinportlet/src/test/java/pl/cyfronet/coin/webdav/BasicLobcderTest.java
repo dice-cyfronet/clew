@@ -28,6 +28,7 @@ public class BasicLobcderTest {
 	private static final Logger log = LoggerFactory.getLogger(BasicLobcderTest.class);
 	
 	@Value("${lobcder.url}") private String webDavUrl;
+	@Value("${security.token}") private String securityToken;
 	
 	@Autowired private LobcderClient lobcder;
 	
@@ -59,7 +60,7 @@ public class BasicLobcderTest {
 	@Test
 	public void connectAndList() throws LobcderException {
 		log.info("Connecting to LOBCDER service at {}", webDavUrl);
-		List<LobcderEntry> entries = lobcder.list("/");
+		List<LobcderEntry> entries = lobcder.list("/", securityToken);
 		
 		for(LobcderEntry entry : entries) {
 		     log.info(entry.toString());
@@ -73,7 +74,7 @@ public class BasicLobcderTest {
 	@Test
 	public void metadataTest() throws LobcderException {
 		String testDirName = String.valueOf(System.currentTimeMillis());
-		lobcder.createDirectory("/", testDirName);
+		lobcder.createDirectory("/", testDirName, securityToken);
 		
 		try {
 			LobcderWebDavMetadata metadata = new LobcderWebDavMetadata();
@@ -83,9 +84,9 @@ public class BasicLobcderTest {
 			metadata.setCreationDate("should not be changed");
 			metadata.setModificationDate("should not be changed");
 			metadata.setFormat("new format");
-			lobcder.updateMetadata("/" + testDirName, metadata);
+			lobcder.updateMetadata("/" + testDirName, metadata, securityToken);
 		
-			LobcderWebDavMetadata retrievedMetadata = lobcder.getMetadata("/" + testDirName);
+			LobcderWebDavMetadata retrievedMetadata = lobcder.getMetadata("/" + testDirName, securityToken);
 			Assert.assertEquals(metadata.getDriChecksum(), retrievedMetadata.getDriChecksum());
 			Assert.assertEquals(metadata.getDriLastValidationDateMs(), retrievedMetadata.getDriLastValidationDateMs());
 			Assert.assertEquals(metadata.isDriSupervised(), retrievedMetadata.isDriSupervised());
@@ -93,7 +94,7 @@ public class BasicLobcderTest {
 			Assert.assertTrue(!metadata.getModificationDate().equals(retrievedMetadata.getModificationDate()));
 			Assert.assertTrue(!metadata.getFormat().equals(retrievedMetadata.getFormat()));
 		} finally {
-			lobcder.delete("/" + testDirName);
+			lobcder.delete("/" + testDirName, securityToken);
 		}
 	}
 	
