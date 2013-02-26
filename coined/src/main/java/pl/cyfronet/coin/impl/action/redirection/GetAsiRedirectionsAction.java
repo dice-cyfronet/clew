@@ -24,8 +24,8 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.GetWorkflowDetailAction;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -35,18 +35,24 @@ import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ * @author <a href="mailto:t.bartynski@cyfronet.pl">Tomek Bartyński</a>
  */
-public class GetAsiRedirectionsAction extends AirAction<List<Redirection>> {
+public class GetAsiRedirectionsAction extends ReadOnlyAirAction<List<Redirection>> {
 
 	private String asiId;
 	private String contextId;
 	private String username;
+	private String proxyHost;
+	private int proxyPort;
 
-	public GetAsiRedirectionsAction(String contextId, String username, String asiId, AirClient air) {
+	public GetAsiRedirectionsAction(String contextId, String username, String asiId,
+			String proxyHost, int proxyPort, AirClient air) {
 		super(air);
 		this.contextId = contextId;
 		this.username = username;
 		this.asiId = asiId;
+		this.proxyHost = proxyHost;
+		this.proxyPort = proxyPort;
 	}
 
 	@Override
@@ -85,27 +91,20 @@ public class GetAsiRedirectionsAction extends AirAction<List<Redirection>> {
 		for (ATPortMapping atpm : atpms) {
 			if (atpm.isHttp()) {
 				red = new Redirection();
-				red.setFromPort(atpm.getPort());
-				red.setHost("proxyhost");//TODO
+				red.setFromPort(proxyPort);
+				red.setHost(proxyHost);
 				red.setName(atpm.getService_name());
-				if (wfd.getWorkflow_type().equals(WorkflowType.development)) {
+				if (wfd.getWorkflow_type() == WorkflowType.development) {
 					red.setPostfix(contextId + "/" + asiId + "/" + atpm.getService_name());
 				} else {
 					red.setPostfix(contextId + "/" + initConfId + "/" + atpm.getService_name());
 				}
-				red.setToPort(0); //TODO
+				red.setToPort(atpm.getPort());
 				red.setType(RedirectionType.HTTP);
 				redirections.add(red);
 			}
 		}
-		// uzyc 2 metod AIR
-		// 1) pobrac workflow (patrz na klase workflow action) wf detail, wyciagnac vm, wyciagnac info o przekierowaniach tcp/ip
-		// 2) dla vm pobrac appliance type i z niego przekirowania http, patrz na getApplianceType z workflow action 
 		return redirections;
 	}
 
-	@Override
-	public void rollback() {
-		// TODO Auto-generated method stub
-	}
 }

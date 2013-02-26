@@ -181,7 +181,7 @@ public class ActionFactory {
 
 	public Action<List<Redirection>> createGetAsiRedirectionsAction(
 			String contextId, String username, String asiId) {
-		return new GetAsiRedirectionsAction(contextId, username, asiId, air);
+		return new GetAsiRedirectionsAction(contextId, username, asiId, proxyHost, proxyPort, air);
 	}
 
 	public Action<String> createAddAsiRedirectionAction(String username,
