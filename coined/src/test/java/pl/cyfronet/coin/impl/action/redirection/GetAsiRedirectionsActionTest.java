@@ -2,8 +2,8 @@ package pl.cyfronet.coin.impl.action.redirection;
 
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -33,6 +33,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private static final String VNC_SRV_NAME = "vnc";
 	private static final int VNC_TO_PORT = 5900;
 	private static final int VNC_FROM_PORT = 55900;
+	private static final String SSH_ID = "sshId";
 	private static final String SSH_SRV_NAME = "ssh";
 	private static final String ASI_ID = "siteId-vm-redirections";
 	private static final String CTX_ID = "redirectionsTest";
@@ -46,6 +47,8 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private static final int SSH_FROM_PORT = 222;
 	private static final int SSH_FROM_PORT_2 = 444;
 	private static final int SSH_TO_PORT = 22;
+	private static final String SSH_ID2 = "ssh2Id";
+	private static final String VNC_ID = "vncId";
 	
 	private List<Redirection> redirections = null;
 	
@@ -64,6 +67,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		wd.setName(WORKFLOW_NAME);
 		wd.setWorkflow_type(WorkflowType.development);
 		PortMapping sshMapping = new PortMapping();
+		sshMapping.setId(SSH_ID);
 		sshMapping.setVm_port(SSH_TO_PORT);
 		sshMapping.setHeadnode_port(SSH_FROM_PORT);
 		sshMapping.setHeadnode_ip(HEADNODE_IP);
@@ -71,6 +75,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		sshMapping.setHttp(false);
 		
 		PortMapping sshMapping2 = new PortMapping();
+		sshMapping2.setId(SSH_ID2);
 		sshMapping2.setVm_port(SSH_TO_PORT);
 		sshMapping2.setHeadnode_port(SSH_FROM_PORT_2);
 		sshMapping2.setHeadnode_ip(HEADNODE_IP);
@@ -78,12 +83,13 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		sshMapping2.setHttp(false);
 
 		PortMapping vncMapping = new PortMapping();
+		vncMapping.setId(VNC_ID);
 		vncMapping.setVm_port(VNC_TO_PORT);
 		vncMapping.setHeadnode_port(VNC_FROM_PORT);
 		vncMapping.setHeadnode_ip(HEADNODE_IP);
 		vncMapping.setService_name(VNC_SRV_NAME);
-		vncMapping.setHttp(false);
-
+		vncMapping.setHttp(false);		
+		
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");
 		vm1.setAppliance_type_name("type1 name");
@@ -147,7 +153,8 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 			if (r.getName().equals(SSH_SRV_NAME)) { redirection = r;  break;}
 		}
 		if (redirection == null) { fail("Expected SSH redirection not found"); }
-		assertTrue(redirection.getFromPort() == SSH_FROM_PORT);
+		assertEquals(redirection.getId(), SSH_ID);
+		assertEquals(redirection.getFromPort().intValue(), SSH_FROM_PORT);
 		assertEquals(redirection.getHost(), HEADNODE_IP);
 		assertEquals(redirection.getName(), SSH_SRV_NAME);
 		assertNull(redirection.getPostfix());
@@ -161,6 +168,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 			if (r.getName().equals(HTTP_SRV_NAME)) { redirection = r;  break;}
 		}
 		if (redirection == null) { fail("Expected HTTP redirection not found"); }
+		assertEquals(redirection.getId(), WEBAPP_ATPM_ID);
 		assertTrue(redirection.getFromPort() == PROXY_PORT);
 		assertEquals(redirection.getHost(), PROXY_HOST);
 		assertEquals(redirection.getName(), HTTP_SRV_NAME);
@@ -175,6 +183,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 			if (r.getName().equals(VNC_SRV_NAME)) { redirection = r;  break;}
 		}
 		if (redirection == null) { fail("Expected VNC redirection not found"); }
+		assertEquals(redirection.getId(), VNC_ID);
 		assertTrue(redirection.getFromPort() == VNC_FROM_PORT);
 		assertEquals(redirection.getHost(), HEADNODE_IP);
 		assertEquals(redirection.getName(), VNC_SRV_NAME);
@@ -182,5 +191,4 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		assertTrue(redirection.getToPort() == VNC_TO_PORT);
 		assertTrue(redirection.getType() == RedirectionType.TCP);
 	}
-
 }

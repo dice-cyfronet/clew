@@ -21,6 +21,8 @@ package pl.cyfronet.coin.impl.air.client;
  */
 public class PortMapping {
 
+	private String id;
+	
 	private int vm_port;
 	
 	private int headnode_port;
@@ -31,6 +33,20 @@ public class PortMapping {
 	
 	private boolean http;
 	
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	/**
 	 * @return the vm_port
 	 */
@@ -104,8 +120,9 @@ public class PortMapping {
 
 	@Override
 	public String toString() {
-		return "PortMapping [vm_port=" + vm_port + ", headnode_port="
-				+ headnode_port + ", headnode_ip=" + headnode_ip
-				+ ", service_name=" + service_name + ", http=" + http + "]";
+		return "PortMapping [id=" + id + ", vm_port=" + vm_port
+				+ ", headnode_port=" + headnode_port + ", headnode_ip="
+				+ headnode_ip + ", service_name=" + service_name + ", http="
+				+ http + "]";
 	}
 }

@@ -73,12 +73,13 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<List<Redirection
 				if (pms == null) { break; }
 				for(PortMapping pm : pms) {
 					red = new Redirection();
+					red.setId(pm.getId());
 					red.setFromPort(pm.getHeadnode_port());
 					red.setHost(pm.getHeadnode_ip());
 					red.setName(pm.getService_name());
 					red.setToPort(pm.getVm_port());
 					red.setType(RedirectionType.TCP);
-					redirections.add(red);
+					redirections.add(red);					
 				}
 				break;
 			}
@@ -91,6 +92,7 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<List<Redirection
 		for (ATPortMapping atpm : atpms) {
 			if (atpm.isHttp()) {
 				red = new Redirection();
+				red.setId(atpm.getId());
 				red.setFromPort(proxyPort);
 				red.setHost(proxyHost);
 				red.setName(atpm.getService_name());
