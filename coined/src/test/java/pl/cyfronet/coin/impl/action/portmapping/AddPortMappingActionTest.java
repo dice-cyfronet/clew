@@ -29,8 +29,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenExistingAS() {
-		// FIXME waiting for #1334 point 3
-		when(air.addPortMapping(asId, serviceName, port, http)).thenReturn(
+		when(air.addPortMapping("rest", asId, serviceName, port, http)).thenReturn(
 				givenRedirectionId);
 	}
 
@@ -41,7 +40,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void thenRedirectionAdded() {
-		verify(air, times(1)).addPortMapping(asId, serviceName, port, http);
+		verify(air, times(1)).addPortMapping("rest", asId, serviceName, port, http);
 		assertEquals(redirectionId, givenRedirectionId);
 	}
 
@@ -57,7 +56,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenNonExistingAS() {
-		when(air.addPortMapping(asId, serviceName, port, http)).thenThrow(
-				getAirException(500));
+		when(air.addPortMapping("rest", asId, serviceName, port, http)).thenThrow(
+				getAirException(404));
 	}
 }

@@ -160,26 +160,25 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 
 	@Role(values = "developer")
 	@Override
-	public String addRedirection(String contextId, String asiId,
-			String name, int port, RedirectionType type)
-			throws WorkflowNotFoundException,
+	public String addRedirection(String contextId, String asiId, String name,
+			int port, RedirectionType type) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		// TODO Auto-generated method stub
-		return null;
+		Action<String> action = actionFactory.createAddAsiRedirectionAction(
+				getUsername(), contextId, asiId, name, port, type);
+		return action.execute();
 	}
 
 	@Role(values = "developer")
 	@Override
-	public void deleteRedirection(String contextId, String asiId, String name)
-			throws WorkflowNotFoundException,
+	public void deleteRedirection(String contextId, String asiId,
+			String redirectionId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
-		// TODO Auto-generated method stub
-	}
-
-	public void setActionFactory(ActionFactory actionFactory) {
-		this.actionFactory = actionFactory;
+		Action<Class<Void>> action = actionFactory
+				.createRemoveAsiRedirectionAction(getUsername(), contextId,
+						asiId, redirectionId);
+		action.execute();
 	}
 
 	@Override
@@ -205,6 +204,10 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void setActionFactory(ActionFactory actionFactory) {
+		this.actionFactory = actionFactory;
 	}
 }

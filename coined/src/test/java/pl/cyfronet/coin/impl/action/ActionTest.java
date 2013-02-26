@@ -50,6 +50,12 @@ public abstract class ActionTest {
 		actionFactory.setAtmosphere(atmosphere);
 		actionFactory.setDefaultSiteId(cloudSiteId);
 		actionFactory.setDefaultPriority(defaultPriority);
+		
+		postSetUp();
+	}
+	
+	protected void postSetUp() {
+		
 	}
 	
 	protected ServerWebApplicationException getAirException(int status) {

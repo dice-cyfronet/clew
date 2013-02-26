@@ -149,6 +149,15 @@ public interface WorkflowManagement {
 
 	// redirections
 
+	@DELETE
+	@Path("/{contextId}/asi/{asiId}/redirection/{redirectionId}")
+	void deleteRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId,
+			@PathParam("redirectionId") String redirectionId)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException;
+	
 	@GET
 	@Path("/{contextId}/asi/{asiId}/redirection")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -165,15 +174,6 @@ public interface WorkflowManagement {
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException;
 
-	@DELETE
-	@Path("/{contextId}/asi/{asiId}/redirection/{redirectionId}")
-	void deleteRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId,
-			@PathParam("redirectionId") String redirectionId)
-			throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException;
-
 	// endpoints
 
 	@GET
@@ -183,7 +183,8 @@ public interface WorkflowManagement {
 			AtomicServiceInstanceNotFoundException;
 
 	@POST
-	@Path("/{contextId}/asi/{asiId}/redirection")
+	@Path("/{contextId}/asi/{asiId}/endpoint")
+	@Consumes({ MediaType.APPLICATION_JSON })
 	String addEndpoint(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId, Endpoint endpoint)
 			throws WorkflowNotFoundException,
@@ -191,7 +192,7 @@ public interface WorkflowManagement {
 			WorkflowNotInDevelopmentModeException;
 
 	@DELETE
-	@Path("/{contextId}/asi/{asiId}/redirection/{endpointId}")
+	@Path("/{contextId}/asi/{asiId}/endpoint/{endpointId}")
 	void deleteEndpoint(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId,
 			@PathParam("redirectionId") String redirectionId)

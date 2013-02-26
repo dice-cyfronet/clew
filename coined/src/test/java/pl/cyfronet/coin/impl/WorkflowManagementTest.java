@@ -36,13 +36,16 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -66,17 +69,23 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private String host = "host.com";
 
 	private String contextId = "contextId";
-	
+
 	private String asConfigId = "asConfId";
-	
+
 	private String asiId = "asiId";
-	
+
 	private String username = "User123";
-	
-	private String atomicServiceId ="as";
-	private String asName ="asName";
-	private String keyName ="myKey";
-	
+
+	private String atomicServiceId = "as";
+	private String asName = "asName";
+	private String keyName = "myKey";
+
+	private RedirectionType redirectionType = RedirectionType.HTTP;
+	private int redirectionPort = 80;
+	private String redirectionName = "myRedirection";
+
+	private String redirectionId = "redirectionId";
+
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
 		givenAsiRedirections(nr);
@@ -127,7 +136,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			assertEquals(redirection.getName(), "redirection" + i);
 			assertEquals(redirection.getType(),
 					i % 2 == 0 ? RedirectionType.HTTP : RedirectionType.TCP);
-			assertEquals(redirection.getType() == RedirectionType.HTTP, i % 2 == 0);
+			assertEquals(redirection.getType() == RedirectionType.HTTP,
+					i % 2 == 0);
 
 		}
 	}
@@ -364,5 +374,158 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void thenAtomicServiceWithKeyAdded() {
 		thenActionExecuted();
+	}
+
+	// redirections
+
+	@Test
+	public void shouldAddNewRedirection() throws Exception {
+		givenAddAsiRedirectionAction();
+		whenAddAsiRedirectionAction();
+		thenRedirectionAdded();
+	}
+
+	private void givenAddAsiRedirectionAction() {
+		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		when(
+				actionFactory.createAddAsiRedirectionAction(username,
+						contextId, asiId, redirectionName, redirectionPort,
+						redirectionType)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenAddAsiRedirectionAction() {
+		workflowManagement.addRedirection(contextId, asiId, redirectionName,
+				redirectionPort, redirectionType);
+	}
+
+	private void thenRedirectionAdded() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldAddRedirectionThrowExceptionWhileWorkflowNotFoud()
+			throws Exception {
+		givenAddAsiRedirectionActionThrowException(new WorkflowNotFoundException());
+		try {
+			whenAddAsiRedirectionAction();
+			fail();
+		} catch (WorkflowNotFoundException e) {
+			// OK should be thrown
+		}
+	}
+
+	private void givenAddAsiRedirectionActionThrowException(
+			CloudFacadeException exception) {
+		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		when(action.execute()).thenThrow(exception);
+		when(
+				actionFactory.createAddAsiRedirectionAction(username,
+						contextId, asiId, redirectionName, redirectionPort,
+						redirectionType)).thenReturn(action);
+	}
+
+	@Test
+	public void shouldAddRedirectionThrowExceptionWhileWorkflowNotInDevelopment()
+			throws Exception {
+		givenAddAsiRedirectionActionThrowException(new WorkflowNotInDevelopmentModeException());
+		try {
+			whenAddAsiRedirectionAction();
+			fail();
+		} catch (WorkflowNotInDevelopmentModeException e) {
+			// OK should be thrown
+		}
+	}
+
+	@Test
+	public void shouldAddRedirectionThrowExceptionWhileAsiNotFound()
+			throws Exception {
+		givenAddAsiRedirectionActionThrowException(new AtomicServiceInstanceNotFoundException());
+		try {
+			whenAddAsiRedirectionAction();
+			fail();
+		} catch (AtomicServiceInstanceNotFoundException e) {
+			// OK should be thrown
+		}
+	}
+
+	@Test
+	public void shouldRemoveRedirection() throws Exception {
+		givenAsiWithRedirection();
+		whenRemoveAsiRedirection();
+		thenAsiRedirectionRemoved();
+	}
+
+	private void givenAsiWithRedirection() {
+		RemoveAsiRedirectionAction action = mock(RemoveAsiRedirectionAction.class);
+		when(
+				actionFactory.createRemoveAsiRedirectionAction(username,
+						contextId, asiId, redirectionId)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenRemoveAsiRedirection() {
+		workflowManagement.deleteRedirection(contextId, asiId, redirectionId);
+	}
+
+	private void thenAsiRedirectionRemoved() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldRemoveRedirectionThrowWorkflowNotInDevelopment()
+			throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new WorkflowNotInDevelopmentModeException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (WorkflowNotInDevelopmentModeException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenRemoveAsiRedirectionActionThrowException(
+			Exception exception) {
+		RemoveAsiRedirectionAction action = mock(RemoveAsiRedirectionAction.class);
+		when(action.execute()).thenThrow(exception);
+		when(
+				actionFactory.createRemoveAsiRedirectionAction(username,
+						contextId, asiId, redirectionId)).thenReturn(action);
+	}
+	
+	@Test
+	public void shouldRemoveRedirectionThrowWorkflowNotFound()
+			throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new WorkflowNotFoundException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (WorkflowNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+	
+	@Test
+	public void shouldRemoveRedirectionThrowAsiNotFound()
+			throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new AtomicServiceInstanceNotFoundException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (AtomicServiceInstanceNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+	
+	@Test
+	public void shouldRemoveRedirectionThrowRedirectionNotFound()
+			throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new RedirectionNotFoundException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (RedirectionNotFoundException e) {
+			// OK should be thrown.
+		}
 	}
 }
