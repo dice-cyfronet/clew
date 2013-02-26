@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -9,8 +10,7 @@ import pl.cyfronet.coin.api.beans.EndpointType;
 public class AddEndpointRequest {
 	@NotNull private EndpointType type;
 	@NotEmpty private String invocationPath;
-	@NotEmpty private int port;
-	@NotEmpty private String serviceName;
+	@DecimalMin("1") private int port;
 	private String description;
 	private String descriptor;
 	private String atomicServiceInstanceId;
@@ -34,12 +34,6 @@ public class AddEndpointRequest {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	public String getServiceName() {
-		return serviceName;
-	}
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
 	public String getDescription() {
 		return description;
 	}
@@ -56,10 +50,10 @@ public class AddEndpointRequest {
 	@Override
 	public String toString() {
 		return "AddEndpointRequest [type=" + type + ", invocationPath="
-				+ invocationPath + ", port=" + port + ", serviceName="
-				+ serviceName + ", description=" + description
-				+ ", descriptor=" + descriptor + ", atomicServiceInstanceId="
-				+ atomicServiceInstanceId + ", workflowId=" + workflowId + "]";
+				+ invocationPath + ", port=" + port + ", description="
+				+ description + ", descriptor=" + descriptor
+				+ ", atomicServiceInstanceId=" + atomicServiceInstanceId
+				+ ", workflowId=" + workflowId + "]";
 	}
 	
 	public String getAtomicServiceInstanceId() {
