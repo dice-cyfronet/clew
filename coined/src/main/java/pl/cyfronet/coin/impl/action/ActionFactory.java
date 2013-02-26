@@ -19,6 +19,7 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
@@ -27,6 +28,7 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
 import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
 import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
@@ -203,6 +205,12 @@ public class ActionFactory {
 				contextId, asiId, redirectionId);
 	}
 
+	// endpoints
+	public Action<List<Endpoint>> createListAsiEndpointsAction(String username,
+			String contextId, String asiId) {
+		return new ListAsiEndpointsAction(air, username, contextId, asiId);
+	}
+	
 	// grants
 
 	public Action<List<String>> createListGrantsAction() {

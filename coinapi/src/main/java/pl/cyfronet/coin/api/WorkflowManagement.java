@@ -178,6 +178,7 @@ public interface WorkflowManagement {
 
 	@GET
 	@Path("/{contextId}/asi/{asiId}/endpoint")
+	@Produces({ MediaType.APPLICATION_JSON })
 	List<Endpoint> getEndpoints(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException;

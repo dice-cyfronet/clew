@@ -185,8 +185,9 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public List<Endpoint> getEndpoints(String contextId, String asiId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		Action<List<Endpoint>> action = actionFactory
+				.createListAsiEndpointsAction(getUsername(), contextId, asiId);
+		return action.execute();
 	}
 
 	@Override
