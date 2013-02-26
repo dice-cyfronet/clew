@@ -21,6 +21,7 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.Redirection;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.AirAction;
@@ -55,8 +56,13 @@ public class GetAsiRedirectionsAction extends AirAction<List<Redirection>> {
 		WorkflowDetail wfd = getWfDetailAct.execute();
 		if (wfd.getVms() == null || wfd.getVms().isEmpty()) { return redirections; }
 		Redirection red = null;
+		String initConfId = null;
 		for (Vms asi : wfd.getVms()) {
 			if (asi.getVms_id().equals(asiId)) {
+				initConfId = asi.getConf_id();
+				if (initConfId == null) {
+					throw new CloudFacadeException("Error while getting redirection for ASI " + asiId + " because ASI does not have a valid init conf id");
+				}
 				List<PortMapping> pms = asi.getInternal_port_mappings();
 				if (pms == null) { break; }
 				for(PortMapping pm : pms) {
@@ -71,15 +77,27 @@ public class GetAsiRedirectionsAction extends AirAction<List<Redirection>> {
 				break;
 			}
 		}
-		/*
+		
 		ApplianceType applType = getAir().getTypeFromVM(asiId);
 		if (applType == null) { return redirections; }
 		List<ATPortMapping> atpms = applType.getPort_mappings();
 		if (atpms == null || atpms.isEmpty()) { return redirections; }
 		for (ATPortMapping atpm : atpms) {
-			red = new Redirection();
-			red.setFromPort(fromPort);
-		}*/
+			if (atpm.isHttp()) {
+				red = new Redirection();
+				red.setFromPort(atpm.getPort());
+				red.setHost("proxyhost");//TODO
+				red.setName(atpm.getService_name());
+				if (wfd.getWorkflow_type().equals(WorkflowType.development)) {
+					red.setPostfix(contextId + "/" + asiId + "/" + atpm.getService_name());
+				} else {
+					red.setPostfix(contextId + "/" + initConfId + "/" + atpm.getService_name());
+				}
+				red.setToPort(0); //TODO
+				red.setType(RedirectionType.HTTP);
+				redirections.add(red);
+			}
+		}
 		// uzyc 2 metod AIR
 		// 1) pobrac workflow (patrz na klase workflow action) wf detail, wyciagnac vm, wyciagnac info o przekierowaniach tcp/ip
 		// 2) dla vm pobrac appliance type i z niego przekirowania http, patrz na getApplianceType z workflow action 

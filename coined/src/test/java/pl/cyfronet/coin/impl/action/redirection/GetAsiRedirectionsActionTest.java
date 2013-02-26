@@ -4,6 +4,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionTest;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -24,6 +27,8 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private static final String CTX_ID = "redirectionsTest";
 	private static final String USERNAME = "redirectedUser";
 	private static final String WORKFLOW_NAME = "redirectedWorkflow";
+	private static final String WEBAPP_ATPM_ID = "http-redirection-id";
+	private static final String INIT_CONF_ID = "init-conf-id";
 	
 	
 	private List<Redirection> redirections = null;
@@ -71,6 +76,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		vm1.setVms_id(ASI_ID);
 		vm1.setInternal_port_mappings(Arrays.asList(sshMapping, vncMapping));
 		vm1.setUser_key("userKey1");
+		vm1.setConf_id(INIT_CONF_ID);
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
@@ -84,6 +90,25 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		wd.setVms(Arrays.asList(vm1, vm2));
 
 		when(air.getWorkflow(CTX_ID)).thenReturn(wd);
+
+		ApplianceType applType = new ApplianceType();
+		ATPortMapping httpMapping = new ATPortMapping();
+		httpMapping.setPort(8080);
+		httpMapping.setService_name("webapp");
+		httpMapping.setHttp(true);
+		httpMapping.setId(WEBAPP_ATPM_ID);
+		ATPortMapping vncatpm = new ATPortMapping();
+		vncatpm.setPort(5900);
+		vncatpm.setService_name("vnc");
+		vncatpm.setHttp(false);
+		ATPortMapping sshatpm = new ATPortMapping();
+		sshatpm.setPort(22);
+		sshatpm.setService_name("ssh");
+		sshatpm.setHttp(false);
+		List<ATPortMapping> pms =  Arrays.asList(httpMapping, vncatpm, sshatpm);
+		applType.setPort_mappings(pms);
+		
+		when(air.getTypeFromVM(ASI_ID)).thenReturn(applType);
 	}
 
 	private void whenGetAsiRedirections() {
@@ -93,7 +118,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 
 	private void thenAsiRedirectionsReturned() {
 		assertNotNull(redirections);
-		assertEquals(redirections.size(), 2);
+		assertEquals(redirections.size(), 3);
 	}
 
 }
