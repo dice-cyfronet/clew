@@ -100,6 +100,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_REDIRECTION_TYPES = "redirectionTypes";
 	static final String MODEL_BEAN_ADD_REDIRECTION_REQUEST = "addRedirectionRequest";
 	static final String MODEL_BEAN_REDIRECTION_SELECTION = "redirectionSelection";
+	static final String MODEL_BEAN_ENDPOINT_LINKS = "endpointLinks";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -889,7 +890,9 @@ public class CloudManagerPortlet {
 		Map<String, String> redirectionTypes = new HashMap<>();
 		
 		for(RedirectionType type : RedirectionType.values()) {
-			redirectionTypes.put(type.name(), messages.getMessage("cloud.manager.portlet.redirection." + type + ".label", null, null));
+			if(type != RedirectionType.UDP) {
+				redirectionTypes.put(type.name(), messages.getMessage("cloud.manager.portlet.redirection." + type + ".label", null, null));
+			}
 		}
 		
 		model.addAttribute(MODEL_BEAN_REDIRECTION_TYPES, redirectionTypes);
@@ -897,10 +900,33 @@ public class CloudManagerPortlet {
 		Map<String, String> redirectionSelection = new HashMap<>();
 		
 		for(Redirection redirection : redirections) {
-			redirectionSelection.put(String.valueOf(redirection.getToPort()), redirection.getName() + "(" + redirection.getToPort() + ")");
+			if(redirection.getType() == RedirectionType.HTTP) {
+				redirectionSelection.put(String.valueOf(redirection.getToPort()), redirection.getName() + "(" + redirection.getToPort() + ")");
+			}
 		}
 		
 		model.addAttribute(MODEL_BEAN_REDIRECTION_SELECTION, redirectionSelection);
+		
+		Map<String, String> endpointLinks = new HashMap<>();
+		
+		for(Endpoint endpoint : endpoints) {
+			Redirection redirection = null;
+			
+			for(Redirection r : redirections) {
+				if(r.getToPort() != null && r.getToPort().equals(endpoint.getPort())) {
+					redirection = r;
+					
+					break;
+				}
+			}
+			
+			if(redirection != null) {
+				endpointLinks.put(endpoint.getId(), "http://" + redirection.getHost() + ":" + redirection.getFromPort() + 
+						"/" + redirection.getPostfix() + (endpoint.getInvocationPath().startsWith("/") ? "" : "/") + endpoint.getInvocationPath());
+			}
+		}
+		
+		model.addAttribute(MODEL_BEAN_ENDPOINT_LINKS, endpointLinks);
 		
 		if(!model.containsAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST)) {
 			AddEndpointRequest addEndpointRequest = new AddEndpointRequest();
@@ -926,19 +952,31 @@ public class CloudManagerPortlet {
 		validator.validate(addEndpointRequest, errors);
 		
 		if(!errors.hasErrors()) {
-			Endpoint endpoint = new Endpoint();
-			endpoint.setInvocationPath(addEndpointRequest.getInvocationPath());
-			endpoint.setDescription(addEndpointRequest.getDescription());
-			endpoint.setDescriptor(addEndpointRequest.getDescriptor());
-			endpoint.setPort(addEndpointRequest.getPort());
-			endpoint.setType(addEndpointRequest.getType());
-			clientFactory.getWorkflowManagement(request).addEndpoint(addEndpointRequest.getWorkflowId(),
-					addEndpointRequest.getAtomicServiceInstanceId(), endpoint);
+			List<Endpoint> endpoints = clientFactory.getWorkflowManagement(request).
+					getEndpoints(addEndpointRequest.getWorkflowId(), addEndpointRequest.getAtomicServiceInstanceId());
 			
-			AddEndpointRequest newEndpointRequest = new AddEndpointRequest();
-			newEndpointRequest.setAtomicServiceInstanceId(addEndpointRequest.getAtomicServiceInstanceId());
-			newEndpointRequest.setWorkflowId(addEndpointRequest.getWorkflowId());
-			model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, newEndpointRequest);
+			for(Endpoint endpoint : endpoints) {
+				if(endpoint.getInvocationPath().equals(addEndpointRequest.getInvocationPath())) {
+					errors.addError(new FieldError(MODEL_BEAN_ADD_ENDPOINT_REQUEST, "invocationPath",
+							messages.getMessage("cloud.manager.portlet.endpoint.invocation.path.taken.error.message", null, null)));
+				}
+			}
+			
+			if(!errors.hasErrors()) {
+				Endpoint endpoint = new Endpoint();
+				endpoint.setInvocationPath(addEndpointRequest.getInvocationPath());
+				endpoint.setDescription(addEndpointRequest.getDescription());
+				endpoint.setDescriptor(addEndpointRequest.getDescriptor());
+				endpoint.setPort(addEndpointRequest.getPort());
+				endpoint.setType(addEndpointRequest.getType());
+				clientFactory.getWorkflowManagement(request).addEndpoint(addEndpointRequest.getWorkflowId(),
+						addEndpointRequest.getAtomicServiceInstanceId(), endpoint);
+				
+				AddEndpointRequest newEndpointRequest = new AddEndpointRequest();
+				newEndpointRequest.setAtomicServiceInstanceId(addEndpointRequest.getAtomicServiceInstanceId());
+				newEndpointRequest.setWorkflowId(addEndpointRequest.getWorkflowId());
+				model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, newEndpointRequest);
+			}
 		}
 		
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
@@ -971,14 +1009,30 @@ public class CloudManagerPortlet {
 		validator.validate(addRedirectionRequest, errors);
 		
 		if(!errors.hasErrors()) {
-			clientFactory.getWorkflowManagement(request).addRedirection(addRedirectionRequest.getWorkflowId(),
-					addRedirectionRequest.getAtomicServiceInstanceId(), addRedirectionRequest.getName(),
-					addRedirectionRequest.getToPort(), addRedirectionRequest.getType());
+			List<Redirection> redirections = clientFactory.getWorkflowManagement(request).
+					getRedirections(addRedirectionRequest.getWorkflowId(), addRedirectionRequest.getAtomicServiceInstanceId());
+			for(Redirection redirection : redirections) {
+				if(redirection.getName().equals(addRedirectionRequest.getName())) {
+					errors.addError(new FieldError(MODEL_BEAN_ADD_REDIRECTION_REQUEST, "name",
+							messages.getMessage("cloud.manager.portlet.redirection.name.taken.error.message", null, null)));
+				}
+				
+				if(redirection.getToPort().equals(addRedirectionRequest.getToPort())) {
+					errors.addError(new FieldError(MODEL_BEAN_ADD_REDIRECTION_REQUEST, "toPort",
+							messages.getMessage("cloud.manager.portlet.redirection.to.port.taken.error.message", null, null)));
+				}
+			}
 			
-			AddRedirectionRequest newAddRedirectionRequest = new AddRedirectionRequest();
-			newAddRedirectionRequest.setAtomicServiceInstanceId(addRedirectionRequest.getAtomicServiceInstanceId());
-			newAddRedirectionRequest.setWorkflowId(addRedirectionRequest.getWorkflowId());
-			model.addAttribute(MODEL_BEAN_ADD_REDIRECTION_REQUEST, newAddRedirectionRequest);
+			if(!errors.hasErrors()) {
+				clientFactory.getWorkflowManagement(request).addRedirection(addRedirectionRequest.getWorkflowId(),
+						addRedirectionRequest.getAtomicServiceInstanceId(), addRedirectionRequest.getName(),
+						addRedirectionRequest.getToPort(), addRedirectionRequest.getType());
+				
+				AddRedirectionRequest newAddRedirectionRequest = new AddRedirectionRequest();
+				newAddRedirectionRequest.setAtomicServiceInstanceId(addRedirectionRequest.getAtomicServiceInstanceId());
+				newAddRedirectionRequest.setWorkflowId(addRedirectionRequest.getWorkflowId());
+				model.addAttribute(MODEL_BEAN_ADD_REDIRECTION_REQUEST, newAddRedirectionRequest);
+			}
 		}
 		
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);

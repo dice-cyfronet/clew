@@ -13,7 +13,7 @@
 			<c:when test="${fn:length(endpoints) > 0}">
 				<c:forEach var="endpoint" items="${endpoints}">
 					<div class="coin-panel">
-						<span class="coin-header">${endpoint.type} (${endpoint.invocationPath})</span>
+						<span class="coin-header"><a class="coin-link" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a></span>
 						<span class="coin-description">
 							${endpoint.description}
 						</span>
@@ -47,7 +47,7 @@
 			<spring:message code="cloud.manager.portlet.define.endpoint.form.label"/>
 		</div>
 		<c:choose>
-			<c:when test="${fn:length(redirections) > 0}">
+			<c:when test="${fn:length(redirectionSelection) > 0}">
 				<form:form class="coin-form" action='${addEndpoint}' modelAttribute='addEndpointRequest'>
 					<form:hidden path="atomicServiceInstanceId"/>
 					<form:hidden path="workflowId"/>
