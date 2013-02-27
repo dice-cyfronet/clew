@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -111,19 +112,20 @@ public interface CloudFacade {
 	String getServicesSet();
 
 	@GET
-	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath : .+}/get_as_id")
-	String getAtomicServiceId(
+	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath : .+}/get_path_info")
+	@Produces({ MediaType.APPLICATION_JSON })
+	InvocationPathInfo getInvocationPathInfo(
 			@PathParam("atomicServiceId") String atomicServiceId,
-			@PathParam("servicePort") int servicePort,
+			@PathParam("servicePort") String servicePort,
 			@PathParam("invocationPath") String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;
 
 	@GET
-	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath : .+}")
+	@Path("/{atomicServiceId}/endpoint/{serviceName}/{invocationPath : .+}")
 	String getEndpointDescriptor(
 			@PathParam("atomicServiceId") String atomicServiceId,
-			@PathParam("servicePort") int servicePort,
+			@PathParam("serviceName") String servicePort,
 			@PathParam("invocationPath") String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;

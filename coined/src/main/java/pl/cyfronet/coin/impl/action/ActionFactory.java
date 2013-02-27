@@ -22,12 +22,16 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.impl.action.as.GetEndpointPayloadAction;
+import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
+import pl.cyfronet.coin.impl.action.as.GetServicesSetAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
@@ -57,8 +61,9 @@ public class ActionFactory {
 	private int proxyPort;
 
 	private DyReAllaProxyManagerService httpRedirectionService;
-
 	private DyReAllaDNATManagerService dnatRedirectionService;
+	
+	private String coinBaseUrl;
 
 	public Action<List<AtomicService>> createListAtomicServicesAction() {
 		return new ListAtomicServicesAction(air);
@@ -88,8 +93,8 @@ public class ActionFactory {
 	}
 
 	public Action<String> createGetEndpointPayloadAction(
-			String atomicServiceId, int servicePort, String invocationPath) {
-		return new GetEndpointPayloadAction(air, atomicServiceId, servicePort,
+			String atomicServiceId, String serviceName, String invocationPath) {
+		return new GetEndpointPayloadAction(air, atomicServiceId, serviceName,
 				invocationPath);
 	}
 
@@ -245,6 +250,17 @@ public class ActionFactory {
 		return new DeleteGrantAction(air, name);
 	}
 
+	// taverna
+	
+	public Action<String> createGetServicesSetAction() {
+		return new GetServicesSetAction(air, coinBaseUrl);
+	}
+	
+	public Action<InvocationPathInfo> createGetInvocationPathInfo(
+			String atomicServiceId, String serviceName) {
+		return new GetInvocationPathInfo(air, atomicServiceId, serviceName);
+	}
+	
 	// setters
 
 	public void setAir(AirClient air) {
@@ -279,5 +295,9 @@ public class ActionFactory {
 
 	public void setProxyPort(int proxyPort) {
 		this.proxyPort = proxyPort;
+	}
+	
+	public void setCoinBaseUrl(String coinBaseUrl) {
+		this.coinBaseUrl = coinBaseUrl;
 	}
 }

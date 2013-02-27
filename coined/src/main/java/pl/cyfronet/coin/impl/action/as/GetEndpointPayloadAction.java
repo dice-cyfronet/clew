@@ -13,7 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.as;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,51 +24,59 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetEndpointPayloadAction extends AirAction<String> {
+public class GetEndpointPayloadAction extends ReadOnlyAirAction<String> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GetEndpointPayloadAction.class);
 
 	private String atomicServiceId;
-	private int servicePort;
+	private String serviceName;
 	private String invocationPath;
 
-	GetEndpointPayloadAction(AirClient air, String atomicServiceId, int servicePort,
-			String invocationPath) {
+	public GetEndpointPayloadAction(AirClient air, String atomicServiceId,
+			String serviceName, String invocationPath) {
 		super(air);
 		this.atomicServiceId = atomicServiceId;
-		this.servicePort = servicePort;
+		this.serviceName = serviceName;
 		this.invocationPath = invocationPath;
 	}
 
 	@Override
 	public String execute() throws CloudFacadeException {
-		ATEndpoint endpoint = getEndpoint(atomicServiceId, servicePort,
+		ATEndpoint endpoint = getEndpoint(atomicServiceId, serviceName,
 				invocationPath);
 		String endpointId = endpoint.getId();
 		return getAir().getEndpointDescriptor(endpointId);
 	}
 
-	private ATEndpoint getEndpoint(String atomicServiceId, int servicePort,
+	private ATEndpoint getEndpoint(String atomicServiceId, String serviceName,
 			String invocationPath) throws AtomicServiceNotFoundException,
 			EndpointNotFoundException {
 
 		ApplianceType type = getApplianceType(atomicServiceId);
 
+		Map<String, Integer> name2port = new HashMap<>();
+		for (ATPortMapping portMapping : type.getPort_mappings()) {
+			name2port.put(portMapping.getService_name(), portMapping.getPort());
+		}
+
 		for (ATEndpoint endpoint : type.getEndpoints()) {
 			int endpointPort = endpoint.getPort();
 			String endpointInvocationPath = endpoint.getInvocation_path();
 			logger.debug("Comparing {}=={} and {}=={}", new Object[] {
-					endpointPort, servicePort, endpointInvocationPath,
+					endpointPort, serviceName, endpointInvocationPath,
 					invocationPath });
-			if (endpointPort == servicePort
+			if (name2port.containsKey(serviceName)
+					&& endpointPort == name2port.get(serviceName)
 					&& endpointPathEquals(endpointInvocationPath,
 							invocationPath)) {
 				return endpoint;
@@ -73,7 +84,7 @@ public class GetEndpointPayloadAction extends AirAction<String> {
 		}
 
 		logger.debug("Endpoint {}:{}/{} not found", new Object[] {
-				atomicServiceId, servicePort, invocationPath });
+				atomicServiceId, serviceName, invocationPath });
 		throw new EndpointNotFoundException();
 	}
 
@@ -88,10 +99,4 @@ public class GetEndpointPayloadAction extends AirAction<String> {
 	private String removeSlashesFromTheBeginning(String str) {
 		return str.replaceAll("^/+", "");
 	}
-
-	@Override
-	public void rollback() {
-		// read only action no rollback needed
-	}
-
 }

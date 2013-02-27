@@ -381,7 +381,7 @@ body {
 					</pre>
 				</div>
 				<h3>
-					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/endpoint/{servicePort}/{invocationPath}</strong>
+					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/endpoint/{redirectionName}/{invocationPath}</strong>
 						- Get endpoint descriptor</a>
 				</h3>
 				<div>
@@ -389,7 +389,7 @@ body {
 						<li>(required) <strong>atomicServiceId</strong> - atomic
 							service id
 						</li>
-						<li>(required) <strong>servicePort</strong> - endpoint port
+						<li>(required) <strong>redirectionName</strong> - redirection name
 						</li>
 						<li>(required) <strong>invocationPath</strong> - encoded
 							invocation path (/ should be changed into %2f)
@@ -401,14 +401,20 @@ body {
 					code and problem explanation when failed.
 				</div>
 				<h3>
-					<a href="#"><strong class="method">GET</strong> <strong>/{descriptorPath}/get_as_id</strong>
-						- Get atomic service id for given descriptor</a>
+					<a href="#"><strong class="method">GET</strong> <strong>/{descriptorPath}/get_path_info</strong>
+						- Get detail information about invocation path</a>
 				</h3>
 				<div>
 					<ul>
 						<li>(required) <strong>descriptorPath</strong> - descriptor
 							endpoint (see previous tab for details)
 						</li>
+					</ul>
+
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>atomicServiceId</strong> - Endpoint Atomic service id</li>
+						<li><strong>redirectionName</strong> - Redirection used for this endpoint</li>						
 					</ul>
 
 					The operation returns the <strong>200</strong> status code and

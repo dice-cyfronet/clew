@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.as;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -29,7 +29,10 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
+import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
@@ -37,7 +40,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class GetEndpointPayloadActionTest extends ActionTest {
 
-	private int servicePort = 80;
+	private String serviceName = "serviceName";
 	private String existingInvocationPath = "/my/path";
 	private String asId = "as";
 	private String descriptorValue = "my descriptor value";
@@ -48,7 +51,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 	@Test
 	public void shouldGetEndpointPayload() throws Exception {
 		givenAIRContent();
-		whenGetExistingDescriptorValueFor(asId, servicePort,
+		whenGetExistingDescriptorValueFor(asId, serviceName,
 				existingInvocationPath);
 		thanDescriptorValueIsEqual(receivedDescriptor);
 	}
@@ -58,7 +61,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 			throws Exception {
 		givenAIRContent();
 		try {
-			whenGetExistingDescriptorValueFor("nonExist", servicePort,
+			whenGetExistingDescriptorValueFor("nonExist", serviceName,
 					existingInvocationPath);
 			fail();
 		} catch (AtomicServiceNotFoundException e) {
@@ -69,17 +72,17 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 
 	@DataProvider(name = "getNonExistingEndpointIdentificationPortAndPath")
 	protected Object[][] getNonExistingEndpointIdentificationPortAndPath() {
-		int nonExistingServicePort = 90;
-		return new Object[][] { { servicePort, "nonExisting" },
-				{ nonExistingServicePort, existingInvocationPath } };
+		return new Object[][] { { serviceName, "nonExisting" },
+				{ "nonExistingService", existingInvocationPath } };
 	}
 
 	@Test(dataProvider = "getNonExistingEndpointIdentificationPortAndPath")
-	public void shouldThrowExceptionWhenEndpointNotFound(int wrongServicePort,
-			String wrongInvocationPath) throws Exception {
+	public void shouldThrowExceptionWhenEndpointNotFound(
+			String wrongServiceName, String wrongInvocationPath)
+			throws Exception {
 		givenAIRContent();
 		try {
-			whenGetExistingDescriptorValueFor(asId, wrongServicePort,
+			whenGetExistingDescriptorValueFor(asId, wrongServiceName,
 					wrongInvocationPath);
 			fail();
 		} catch (EndpointNotFoundException e) {
@@ -103,11 +106,11 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 	}
 
 	private void whenGetExistingDescriptorValueFor(String asName,
-			int servicePort, String path)
+			String serviceName, String path)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
 		Action<String> action = actionFactory.createGetEndpointPayloadAction(
-				asName, servicePort, path);
+				asName, serviceName, path);
 		receivedDescriptor = action.execute();
 	}
 
@@ -116,7 +119,7 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 		at1.setId(asId);
 
 		ATEndpoint endpoint1 = new ATEndpoint();
-		endpoint1.setPort(servicePort);
+		endpoint1.setPort(81);
 		endpoint1.setInvocation_path(existingInvocationPath);
 		endpoint1.setId(endpointId);
 
@@ -125,6 +128,13 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 		endpoint2.setInvocation_path("other/path");
 
 		at1.setEndpoints(Arrays.asList(endpoint1, endpoint2));
+
+		ATPortMapping portMapping = new ATPortMapping();
+		portMapping.setHttp(true);
+		portMapping.setPort(81);
+		portMapping.setService_name(serviceName);
+
+		at1.setPort_mappings(Arrays.asList(portMapping));
 
 		ApplianceType at2 = new ApplianceType();
 
