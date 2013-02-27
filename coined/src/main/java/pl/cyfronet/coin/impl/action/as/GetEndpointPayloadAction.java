@@ -55,7 +55,8 @@ public class GetEndpointPayloadAction extends ReadOnlyAirAction<String> {
 		ATEndpoint endpoint = getEndpoint(atomicServiceId, serviceName,
 				invocationPath);
 		String endpointId = endpoint.getId();
-		return getAir().getEndpointDescriptor(endpointId);
+		String descriptor = getAir().getEndpointDescriptor(endpointId);
+		return descriptor != null ? descriptor.trim() : descriptor;
 	}
 
 	private ATEndpoint getEndpoint(String atomicServiceId, String serviceName,
