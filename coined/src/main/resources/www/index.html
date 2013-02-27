@@ -248,6 +248,146 @@ body {
 						explanation when failed.
 					</p>
 				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/asi/{asiId}/redirection</strong>
+						- gets information about Atomic Service instance redirections</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>
+						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+					</ul>
+				
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>id</strong> - redirection id</li>
+						<li><strong>name</strong> - redirection name</li>
+						<li><strong>toPort</strong> - internal atomic service port this redirection is pointing to</li>
+						<li><strong>fromPort</strong> - public redirection port</li>
+						<li><strong>host</strong> - public redirection host</li>
+						<li><strong>type</strong> - redirection type (<i>HTTP</i> or <i>TCP</i>)</li>						
+						<li><strong>postfix</strong> - if <i>HTTP</i> redirection than combination of <i>host</i>:<i>port</i>/<i>postfix</i> composes redirection link</li>
+					</ul>
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
+						and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/asi/{asiId}/redirection</strong>
+						- reates new Atomic Service instance redirection</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>
+						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+					</ul>
+				
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li>(required) <strong>name</strong> - workflow name</li>
+						<li>(required) <strong>toPort</strong> - workflow description</li>
+						<li>(required) <strong>type</strong> - workflow priority</li>						
+					</ul>
+				
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
+						and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/asi/{asiId}/redirection/{redirectionId}</strong>
+						- deletes Atomic Service instance redirection</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>
+						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+						<li>(required) <strong>redirectionId</strong> atomic service instance endpoint id</li>
+					</ul>
+
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success, <strong>404</strong> when Atomic Service instance or redirection does not exist 
+						and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/asi/{asiId}/endpoint</strong>
+						- gets information about Atomic Service instance endpoints</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>
+						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+					</ul>
+				
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>id</strong> - endpoint id</li>
+						<li><strong>description</strong> - endpoint description</li>
+						<li><strong>descriptor</strong> - endpoint descriptor payload</li>
+						<li><strong>invocationPath</strong> - endpoint invocation path</li>
+						<li><strong>port</strong> - endpoint port</li>
+						<li><strong>type</strong> - endpoint type (<i>REST</i>, <i>WS</i> or <i>WEBAPP</i>)</li>						
+					</ul>
+				
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
+						and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/asi/{asiId}/endpoint</strong>
+						- reates new Atomic Service instance endpoint</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>
+						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+					</ul>
+					
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li><strong>description</strong> - endpoint description</li>
+						<li><strong>descriptor</strong> - endpoint descriptor payload</li>
+						<li><strong>invocationPath</strong> - endpoint invocation path</li>
+						<li><strong>port</strong> - endpoint port</li>
+						<li><strong>type</strong> - endpoint type (<i>REST</i>, <i>WS</i> or <i>WEBAPP</i>)</li>						
+					</ul>
+				
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
+						and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/asi/{asiId}/endpoint/{endpointId}</strong>
+						- deletes Atomic Service instance endpoint</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>
+						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+						<li>(required) <strong>endpointId</strong> atomic service instance endpoint id</li>
+					</ul>
+
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
+						and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
 			</div>
 			<div id="as-accordion">
 				<h3>
@@ -402,7 +542,7 @@ body {
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/{descriptorPath}/get_path_info</strong>
-						- Get detail information about invocation path</a>
+						- gets detail information about invocation path</a>
 				</h3>
 				<div>
 					<ul>
@@ -420,8 +560,8 @@ body {
 					The operation returns the <strong>200</strong> status code and
 					Atomic Service id on success and the <strong>400</strong> status
 					code and problem explanation when failed.
-				</div>
-			</div>
+				</div>				
+			</div>			
 			<div id="securitypolicy-accordion">
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy</strong>
