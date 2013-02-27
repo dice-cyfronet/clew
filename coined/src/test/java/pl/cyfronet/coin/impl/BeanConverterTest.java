@@ -31,6 +31,8 @@ public class BeanConverterTest {
 		applianceType.setScalable(true);
 		applianceType.setShared(true);
 		applianceType.setVnc(true);
+		
+		
 	}
 
 	private void whenConvertToAS() {

@@ -24,7 +24,6 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
@@ -37,7 +36,7 @@ import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 public class CreateAtomicServiceActionTest extends ActionTest {
 
 	private NewAtomicService newAtomicService;
-	private AtomicService atomicService;
+	private ApplianceType atomicService;
 	private ApplianceType sourceAtomicService;
 	private String instanceId = "instanceId";
 	private AddAtomicServiceMatcher matcher;
@@ -83,7 +82,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		sourceAtomicService.setScalable(true);
 		sourceAtomicService.setId("sourceAsId");
 
-		atomicService = new AtomicService();
+		atomicService = new ApplianceType();
 		atomicService.setName(newAtomicService.getName());
 		atomicService.setDescription(newAtomicService.getDescription());
 		atomicService.setHttp(true);

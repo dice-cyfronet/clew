@@ -15,13 +15,10 @@
  */
 package pl.cyfronet.coin.impl.action;
 
-import static pl.cyfronet.coin.impl.BeanConverter.getAtomicService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -142,13 +139,12 @@ public class StartAtomicServiceAction extends
 
 	private String createDevelopmentAtomicService(ApplianceType baseAS,
 			String initConfId) {
-		AtomicService devAs = getAtomicService(baseAS);
-		devAs.setDevelopment(true);
-		devAs.setName(String.format("%s-%s", devAs.getName(),
+		baseAS.setDevelopment(true);
+		baseAS.setName(String.format("%s-%s", baseAS.getName(),
 				System.currentTimeMillis()));
 
 		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
-				getAir(), getUsername(), devAs, baseAS.getId());
+				getAir(), getUsername(), baseAS, baseAS.getId());
 		String devAsId = createASAction.execute();
 
 		return createInitConfCopy(devAsId, initConfId);
