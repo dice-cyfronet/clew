@@ -18,6 +18,14 @@
 	<osgi:reference id="atmosphere" interface="pl.cyfronet.dyrealla.api.DyReAllaManagerService"
 		cardinality="0..1" />
 
+	<osgi:reference id="dnatRedirectionService"
+		interface="pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService"
+		cardinality="0..1" />
+
+	<osgi:reference id="httpRedirectionService"
+		interface="pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService"
+		cardinality="0..1" />
+
 	<jaxrs:client id="air-client" address="${air.url}" username="${air.username}" password="${air.password}"
 		serviceClass="pl.cyfronet.coin.impl.air.client.AirClient" inheritHeaders="true">
 		<jaxrs:providers>

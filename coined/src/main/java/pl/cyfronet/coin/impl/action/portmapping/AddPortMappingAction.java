@@ -33,12 +33,12 @@ public class AddPortMappingAction extends AirAction<String> {
 		try {
 			logger.debug("Adding port mapping {} port {} http {} for {}",
 					new Object[] { serviceName, port, http, asId });
-			return getAir().addPortMapping(asId, serviceName, port, http);
+			return getAir().addPortMapping("rest", asId, serviceName, port, http);
 		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 500) {
+			if (e.getStatus() == 404) {
 				throw new AtomicServiceNotFoundException();
 			}
-			throw new CloudFacadeException();
+			throw new CloudFacadeException(e.getMessage());
 		}
 	}
 

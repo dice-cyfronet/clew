@@ -45,9 +45,12 @@ public class CoinedAsserts {
 		assertEquals(as.isActive(), at.getTemplates_count() > 0);
 
 		List<ATEndpoint> atEndpoints = at.getEndpoints();
-		if (atEndpoints != null) {
-			List<Endpoint> asEndpoints = as.getEndpoints();
+		assertEndpoints(as.getEndpoints(), atEndpoints, endpointsPayload);
+	}
 
+	public static void assertEndpoints(List<Endpoint> asEndpoints,
+			List<ATEndpoint> atEndpoints, String... endpointsPayload) {
+		if (atEndpoints != null) {
 			assertNotNull(asEndpoints);
 			int atSize = atEndpoints.size();
 			assertEquals(asEndpoints.size(), atSize);
@@ -63,13 +66,21 @@ public class CoinedAsserts {
 			ATEndpoint atEndpoint, Endpoint asEndpoint) {
 		assertEquals(asEndpoint.getDescription(), atEndpoint.getDescription());
 		assertEquals(asEndpoint.getDescriptor(), descriptor);
-		EndpointType type = "WS"
-				.equalsIgnoreCase(atEndpoint.getEndpoint_type()) ? EndpointType.WS
-				: EndpointType.REST;
+		EndpointType type = getType(atEndpoint.getEndpoint_type());
 		assertEquals(asEndpoint.getType(), type);
 		assertEquals(asEndpoint.getInvocationPath(),
 				atEndpoint.getInvocation_path());
 		assertEquals(asEndpoint.getPort(), atEndpoint.getPort());
 		assertEquals(asEndpoint.getId(), atEndpoint.getId());
+	}
+
+	private static EndpointType getType(String airType) {
+		if ("WS".equalsIgnoreCase(airType)) {
+			return EndpointType.WS;
+		} else if ("WEBAPP".equalsIgnoreCase(airType)) {
+			return EndpointType.WEBAPP;
+		} else {
+			return EndpointType.REST;
+		}
 	}
 }

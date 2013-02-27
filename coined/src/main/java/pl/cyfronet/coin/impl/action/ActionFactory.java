@@ -17,21 +17,35 @@ package pl.cyfronet.coin.impl.action;
 
 import java.util.List;
 
+import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.impl.action.as.GetEndpointPayloadAction;
+import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
+import pl.cyfronet.coin.impl.action.as.GetServicesSetAction;
+import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
+import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
+import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
 import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
 import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
 import pl.cyfronet.coin.impl.action.grant.UpdateGrantAction;
+import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
+import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
+import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
+import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -42,6 +56,14 @@ public class ActionFactory {
 	private DyReAllaManagerService atmosphere;
 	private String defaultSiteId;
 	private Integer defaultPriority;
+
+	private String proxyHost;
+	private int proxyPort;
+
+	private DyReAllaProxyManagerService httpRedirectionService;
+	private DyReAllaDNATManagerService dnatRedirectionService;
+	
+	private String coinBaseUrl;
 
 	public Action<List<AtomicService>> createListAtomicServicesAction() {
 		return new ListAtomicServicesAction(air);
@@ -71,8 +93,8 @@ public class ActionFactory {
 	}
 
 	public Action<String> createGetEndpointPayloadAction(
-			String atomicServiceId, int servicePort, String invocationPath) {
-		return new GetEndpointPayloadAction(air, atomicServiceId, servicePort,
+			String atomicServiceId, String serviceName, String invocationPath) {
+		return new GetEndpointPayloadAction(air, atomicServiceId, serviceName,
 				invocationPath);
 	}
 
@@ -152,11 +174,6 @@ public class ActionFactory {
 				publicKeyContent);
 	}
 
-	public Action<List<Redirection>> createGetAsiRedirectionsAction(
-			String contextId, String asiId) {
-		return new GetAsiRedirectionsAction(contextId, asiId, air);
-	}
-
 	public Action<Class<Void>> createRemoveAtomicServiceFromWorkflowAction(
 			String username, String contextId, String asConfId) {
 		return new RemoveAtomicServiceFromWorkflowAction(air, atmosphere,
@@ -167,6 +184,51 @@ public class ActionFactory {
 			String username, String contextId, String asiId) {
 		return new RemoveASIFromWorkflowAction(air, atmosphere, username,
 				contextId, asiId);
+	}
+
+	// redirections
+
+	public Action<List<Redirection>> createGetAsiRedirectionsAction(
+			String contextId, String username, String asiId) {
+		return new GetAsiRedirectionsAction(contextId, username, asiId,
+				proxyHost, proxyPort, air);
+	}
+
+	public Action<String> createAddAsiRedirectionAction(String username,
+			String contextId, String asiId, String serviceName, int port,
+			RedirectionType type) {
+		AddAsiRedirectionAction action = new AddAsiRedirectionAction(air,
+				atmosphere, httpRedirectionService, dnatRedirectionService,
+				username, contextId, asiId);
+		action.setRedirectionDetails(serviceName, port,
+				type == RedirectionType.HTTP);
+		return action;
+	}
+
+	public Action<Class<Void>> createRemoveAsiRedirectionAction(
+			String username, String contextId, String asiId,
+			String redirectionId) {
+		return new RemoveAsiRedirectionAction(air, atmosphere,
+				httpRedirectionService, dnatRedirectionService, username,
+				contextId, asiId, redirectionId);
+	}
+
+	// endpoints
+	public Action<List<Endpoint>> createListAsiEndpointsAction(String username,
+			String contextId, String asiId) {
+		return new ListAsiEndpointsAction(air, username, contextId, asiId);
+	}
+
+	public Action<String> createAddAsiEndpointAction(String username,
+			String contextId, String asiId, Endpoint endpoint) {
+		return new AddAsiEndpointAction(air, username, contextId, asiId,
+				endpoint);
+	}
+
+	public Action<Class<Void>> createRemoveAsiEndpointAction(String username,
+			String contextId, String asiId, String endpointId) {
+		return new RemoveAsiEndpointAction(air, username, contextId, asiId,
+				endpointId);
 	}
 
 	// grants
@@ -188,6 +250,17 @@ public class ActionFactory {
 		return new DeleteGrantAction(air, name);
 	}
 
+	// taverna
+	
+	public Action<String> createGetServicesSetAction() {
+		return new GetServicesSetAction(air, coinBaseUrl);
+	}
+	
+	public Action<InvocationPathInfo> createGetInvocationPathInfo(
+			String atomicServiceId, String serviceName) {
+		return new GetInvocationPathInfo(air, atomicServiceId, serviceName);
+	}
+	
 	// setters
 
 	public void setAir(AirClient air) {
@@ -204,5 +277,27 @@ public class ActionFactory {
 
 	public void setDefaultPriority(Integer defaultPriority) {
 		this.defaultPriority = defaultPriority;
+	}
+
+	public void setHttpRedirectionService(
+			DyReAllaProxyManagerService httpRedirectionService) {
+		this.httpRedirectionService = httpRedirectionService;
+	}
+
+	public void setDnatRedirectionService(
+			DyReAllaDNATManagerService dnatRedirectionService) {
+		this.dnatRedirectionService = dnatRedirectionService;
+	}
+
+	public void setProxyHost(String proxyHost) {
+		this.proxyHost = proxyHost;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
+	}
+	
+	public void setCoinBaseUrl(String coinBaseUrl) {
+		this.coinBaseUrl = coinBaseUrl;
 	}
 }

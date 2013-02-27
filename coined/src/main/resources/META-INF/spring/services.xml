@@ -29,8 +29,13 @@
 	<bean id="actionFactory" class="pl.cyfronet.coin.impl.action.ActionFactory">
 		<property name="air" ref="air-client" />
 		<property name="atmosphere" ref="atmosphere" />
+		<property name="httpRedirectionService" ref="httpRedirectionService" />
+		<property name="dnatRedirectionService" ref="dnatRedirectionService" />		
 		<property name="defaultSiteId" value="${default.cloud.site.id}" />
 		<property name="defaultPriority" value="${default.workflow.priority}" />
+		<property name="proxyHost" value="${proxy.host}" />
+		<property name="proxyPort" value="${proxy.port}" />
+		<property name="coinBaseUrl" value="${coinBaseUrl}" />
 	</bean>
 	
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>

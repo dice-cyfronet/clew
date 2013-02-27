@@ -24,9 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
-import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -37,8 +36,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.utils.FileUtils;
-import pl.cyfronet.coin.impl.utils.UrlUtils;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
@@ -54,14 +51,6 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			.getLogger(CloudFacadeImpl.class);
 
 	private ActionFactory actionFactory;
-
-	private String coinBaseUrl;
-
-	private String serviceTemplatesTemplate = FileUtils
-			.getFileContent("services_set/serviceDescriptions.tpl");
-
-	private String providerTemplate = FileUtils
-			.getFileContent("services_set/provider.tpl");
 
 	@Override
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
@@ -117,62 +106,20 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 	@Override
 	public String getServicesSet() {
-
-		StringBuilder sb = new StringBuilder();
-
-		Action<List<AtomicService>> action = actionFactory
-				.createListAtomicServicesAction();
-
-		List<AtomicService> atomicServices = action.execute();
-		for (AtomicService atomicService : atomicServices) {
-			writeAtomicServiceEndpointIntoServicesSet(sb, atomicService);
-		}
-
-		return String.format(serviceTemplatesTemplate, sb);
-	}
-
-	/**
-	 * @param sb
-	 * @param atomicService
-	 */
-	private void writeAtomicServiceEndpointIntoServicesSet(StringBuilder sb,
-			AtomicService atomicService) {
-		for (Endpoint endpoint : atomicService.getEndpoints()) {
-			logger.debug("endpoint type: {}", endpoint.getType());
-			if (endpoint.getType() == EndpointType.WS) {
-				String descriptorUrl = getDescriptorUrl(
-						atomicService.getName(), endpoint);
-				String providerSection = getProviderServiceSetSection(descriptorUrl);
-				sb.append(providerSection);
-			}
-		}
-	}
-
-	private String getProviderServiceSetSection(String providerDescriptorUrl) {
-		return String.format(providerTemplate, providerDescriptorUrl);
-	}
-
-	private String getDescriptorUrl(String atomicServiceId, Endpoint m) {
-		String descriptorUrl = String.format("%s/as/%s/endpoint/%s/%s",
-				new Object[] { coinBaseUrl, atomicServiceId, m.getPort(),
-						getDecodedInvocationPath(m.getInvocationPath()) });
-		return UrlUtils.convertToURLEscapingIllegalCharacters(descriptorUrl);
-	}
-
-	private String getDecodedInvocationPath(String path) {
-		return path.replaceAll("^/+", "");
+		Action<String> action = actionFactory.createGetServicesSetAction();
+		return action.execute();
 	}
 
 	@Override
 	public String getEndpointDescriptor(String atomicServiceId,
-			int servicePort, String invocationPath)
+			String serviceName, String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
 		logger.debug("Getting endpoint descriptor for {}:{}/{}", new Object[] {
-				atomicServiceId, servicePort, invocationPath });
+				atomicServiceId, serviceName, invocationPath });
 
 		Action<String> action = actionFactory.createGetEndpointPayloadAction(
-				atomicServiceId, servicePort, invocationPath);
+				atomicServiceId, serviceName, invocationPath);
 
 		String descriptor = action.execute();
 
@@ -182,25 +129,17 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public String getAtomicServiceId(String atomicServiceId, int servicePort,
+	public InvocationPathInfo getInvocationPathInfo(String atomicServiceId, String serviceName,
 			String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
 		// check if atomic service with given id is registered in Atmosphere.
-		Action<AtomicService> action = actionFactory
-				.createGetAtomicServiceAction(atomicServiceId);
-		AtomicService atomicService = action.execute();
-		return atomicService.getAtomicServiceId();
+		Action<InvocationPathInfo> action = actionFactory
+				.createGetInvocationPathInfo(atomicServiceId, serviceName);
+		return action.execute();
 	}
 
 	public void setActionFactory(ActionFactory actionFactory) {
 		this.actionFactory = actionFactory;
-	}
-
-	/**
-	 * @param coinBaseUrl the coinBaseUrl to set
-	 */
-	public void setCoinBaseUrl(String coinBaseUrl) {
-		this.coinBaseUrl = coinBaseUrl;
 	}
 }

@@ -26,7 +26,9 @@ public class EndpointNotFoundException extends CloudFacadeException {
 
 	private static final long serialVersionUID = 3805274312799326244L;
 
+	public static final String ERROR_MESSAGE = "Endpoint not found";
+	
 	public EndpointNotFoundException() {
-		super(Response.Status.NOT_FOUND);
+		super(ERROR_MESSAGE, Response.Status.NOT_FOUND);
 	}
 }

@@ -16,12 +16,13 @@
 package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +33,27 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.Endpoint;
+import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
+import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
-import pl.cyfronet.coin.impl.action.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
+import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
+import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
+import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
+import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -66,17 +77,33 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private String host = "host.com";
 
 	private String contextId = "contextId";
-	
+
 	private String asConfigId = "asConfId";
-	
+
 	private String asiId = "asiId";
-	
+
 	private String username = "User123";
-	
-	private String atomicServiceId ="as";
-	private String asName ="asName";
-	private String keyName ="myKey";
-	
+
+	private String atomicServiceId = "as";
+	private String asName = "asName";
+	private String keyName = "myKey";
+
+	private RedirectionType redirectionType = RedirectionType.HTTP;
+	private int redirectionPort = 80;
+	private String redirectionName = "myRedirection";
+
+	private String redirectionId = "redirectionId";
+
+	private List<Endpoint> endpoints;
+
+	private List<Endpoint> givenEndpoints;
+
+	private Endpoint endpoint;
+
+	private String givenId = "id";
+
+	private String endpointId;
+
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
 		givenAsiRedirections(nr);
@@ -105,8 +132,9 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
 		when(action.execute()).thenReturn(asiRedirections);
 
-		when(actionFactory.createGetAsiRedirectionsAction(contextId, asiId))
-				.thenReturn(action);
+		when(
+				actionFactory.createGetAsiRedirectionsAction(contextId,
+						username, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -127,7 +155,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			assertEquals(redirection.getName(), "redirection" + i);
 			assertEquals(redirection.getType(),
 					i % 2 == 0 ? RedirectionType.HTTP : RedirectionType.TCP);
-			assertEquals(redirection.getType() == RedirectionType.HTTP, i % 2 == 0);
+			assertEquals(redirection.getType() == RedirectionType.HTTP,
+					i % 2 == 0);
 
 		}
 	}
@@ -153,8 +182,9 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
 		when(action.execute()).thenThrow(exception);
 
-		when(actionFactory.createGetAsiRedirectionsAction(contextId, asiId))
-				.thenReturn(action);
+		when(
+				actionFactory.createGetAsiRedirectionsAction(contextId,
+						username, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -364,5 +394,275 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void thenAtomicServiceWithKeyAdded() {
 		thenActionExecuted();
+	}
+
+	// redirections
+
+	@Test
+	public void shouldAddNewRedirection() throws Exception {
+		givenAddAsiRedirectionAction();
+		whenAddAsiRedirectionAction();
+		thenRedirectionAdded();
+	}
+
+	private void givenAddAsiRedirectionAction() {
+		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		when(
+				actionFactory.createAddAsiRedirectionAction(username,
+						contextId, asiId, redirectionName, redirectionPort,
+						redirectionType)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenAddAsiRedirectionAction() {
+		workflowManagement.addRedirection(contextId, asiId, redirectionName,
+				redirectionPort, redirectionType);
+	}
+
+	private void thenRedirectionAdded() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldAddRedirectionThrowExceptionWhileWorkflowNotFoud()
+			throws Exception {
+		givenAddAsiRedirectionActionThrowException(new WorkflowNotFoundException());
+		try {
+			whenAddAsiRedirectionAction();
+			fail();
+		} catch (WorkflowNotFoundException e) {
+			// OK should be thrown
+		}
+	}
+
+	private void givenAddAsiRedirectionActionThrowException(
+			CloudFacadeException exception) {
+		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		when(action.execute()).thenThrow(exception);
+		when(
+				actionFactory.createAddAsiRedirectionAction(username,
+						contextId, asiId, redirectionName, redirectionPort,
+						redirectionType)).thenReturn(action);
+	}
+
+	@Test
+	public void shouldAddRedirectionThrowExceptionWhileWorkflowNotInDevelopment()
+			throws Exception {
+		givenAddAsiRedirectionActionThrowException(new WorkflowNotInDevelopmentModeException());
+		try {
+			whenAddAsiRedirectionAction();
+			fail();
+		} catch (WorkflowNotInDevelopmentModeException e) {
+			// OK should be thrown
+		}
+	}
+
+	@Test
+	public void shouldAddRedirectionThrowExceptionWhileAsiNotFound()
+			throws Exception {
+		givenAddAsiRedirectionActionThrowException(new AtomicServiceInstanceNotFoundException());
+		try {
+			whenAddAsiRedirectionAction();
+			fail();
+		} catch (AtomicServiceInstanceNotFoundException e) {
+			// OK should be thrown
+		}
+	}
+
+	@Test
+	public void shouldRemoveRedirection() throws Exception {
+		givenAsiWithRedirection();
+		whenRemoveAsiRedirection();
+		thenAsiRedirectionRemoved();
+	}
+
+	private void givenAsiWithRedirection() {
+		RemoveAsiRedirectionAction action = mock(RemoveAsiRedirectionAction.class);
+		when(
+				actionFactory.createRemoveAsiRedirectionAction(username,
+						contextId, asiId, redirectionId)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenRemoveAsiRedirection() {
+		workflowManagement.deleteRedirection(contextId, asiId, redirectionId);
+	}
+
+	private void thenAsiRedirectionRemoved() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldRemoveRedirectionThrowWorkflowNotInDevelopment()
+			throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new WorkflowNotInDevelopmentModeException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (WorkflowNotInDevelopmentModeException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenRemoveAsiRedirectionActionThrowException(
+			Exception exception) {
+		RemoveAsiRedirectionAction action = mock(RemoveAsiRedirectionAction.class);
+		when(action.execute()).thenThrow(exception);
+		when(
+				actionFactory.createRemoveAsiRedirectionAction(username,
+						contextId, asiId, redirectionId)).thenReturn(action);
+	}
+
+	@Test
+	public void shouldRemoveRedirectionThrowWorkflowNotFound() throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new WorkflowNotFoundException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (WorkflowNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+
+	@Test
+	public void shouldRemoveRedirectionThrowAsiNotFound() throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new AtomicServiceInstanceNotFoundException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (AtomicServiceInstanceNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+
+	@Test
+	public void shouldRemoveRedirectionThrowRedirectionNotFound()
+			throws Exception {
+		givenRemoveAsiRedirectionActionThrowException(new RedirectionNotFoundException());
+		try {
+			whenRemoveAsiRedirection();
+			fail();
+		} catch (RedirectionNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+
+	// endpoints
+	@Test
+	public void shouldGetAsiEndpoints() throws Exception {
+		givenAsiEndpoints();
+		whenGetAsiEndpoints();
+		thenAsiEndpointsReceived();
+	}
+
+	private void givenAsiEndpoints() {
+		Action<List<Endpoint>> action = mock(ListAsiEndpointsAction.class);
+
+		givenEndpoints = Arrays.asList(getEndpoint("e1", EndpointType.REST),
+				getEndpoint("e2", EndpointType.WS),
+				getEndpoint("e3", EndpointType.WEBAPP));
+
+		when(action.execute()).thenReturn(givenEndpoints);
+		when(
+				actionFactory.createListAsiEndpointsAction(username, contextId,
+						asiId)).thenReturn(action);
+	}
+
+	private Endpoint getEndpoint(String name, EndpointType type) {
+		Endpoint endpoint = new Endpoint();
+		endpoint.setId(name + "Id");
+		endpoint.setDescription(name + " description");
+		endpoint.setDescriptor(name + " descriptor");
+		endpoint.setInvocationPath("/" + name);
+		endpoint.setPort(80);
+		endpoint.setType(type);
+
+		return endpoint;
+	}
+
+	private void whenGetAsiEndpoints() {
+		endpoints = workflowManagement.getEndpoints(contextId, asiId);
+	}
+
+	private void thenAsiEndpointsReceived() {
+		assertEquals(endpoints.size(), 3);
+		assertEquals(endpoints.get(0).getId(), "e1Id");
+		assertEquals(endpoints.get(1).getId(), "e2Id");
+		assertEquals(endpoints.get(2).getId(), "e3Id");
+	}
+
+	@Test
+	public void shouldAddNewEndpoint() throws Exception {
+		givenAsiStartedInDevelopmentMode();
+		whenAddNewEndpoint();
+		thenEndpointAdded();
+	}
+
+	private void givenAsiStartedInDevelopmentMode() {
+		endpoint = new Endpoint();
+		endpoint.setDescription("description");
+		endpoint.setDescriptor("descriptor");
+		endpoint.setInvocationPath("/invocation_path");
+		endpoint.setPort(80);
+		endpoint.setType(EndpointType.REST);
+
+		Action<String> action = mock(AddAsiEndpointAction.class);
+		when(action.execute()).thenReturn(givenId);
+
+		when(
+				actionFactory.createAddAsiEndpointAction(username, contextId,
+						asiId, endpoint)).thenReturn(action);
+	}
+
+	private void whenAddNewEndpoint() {
+		endpointId = workflowManagement.addEndpoint(contextId, asiId, endpoint);
+	}
+
+	private void thenEndpointAdded() {
+		thenActionExecuted();
+		assertEquals(endpointId, givenId);
+	}
+
+	@Test
+	public void shouldRemoveAsiEndpoint() throws Exception {
+		givenAsiWithEndpoint();
+		whenRemoveAsiEndpoint();
+		thenAsiRemoved();
+	}
+
+	private void givenAsiWithEndpoint() {
+		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		when(
+				actionFactory.createRemoveAsiEndpointAction(username,
+						contextId, asiId, endpointId)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenRemoveAsiEndpoint() {
+		workflowManagement.deleteEndpoint(contextId, asiId, endpointId);
+	}
+
+	private void thenAsiRemoved() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldThrow404WhenEndpointNotFound() throws Exception {
+		givenAsiWithoutEndpoint();
+		try {
+			whenRemoveAsiEndpoint();
+			fail();
+		} catch (EndpointNotFoundException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenAsiWithoutEndpoint() {
+		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		when(action.execute()).thenThrow(new EndpointNotFoundException());
+		when(
+				actionFactory.createRemoveAsiEndpointAction(username,
+						contextId, asiId, endpointId)).thenReturn(action);
+		currentAction = action;
 	}
 }

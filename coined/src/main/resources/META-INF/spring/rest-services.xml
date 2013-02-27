@@ -100,8 +100,7 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
-	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">
-		<property name="coinBaseUrl" value="${coinBaseUrl}" />
+	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">		
 		<property name="actionFactory" ref="actionFactory" />
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>

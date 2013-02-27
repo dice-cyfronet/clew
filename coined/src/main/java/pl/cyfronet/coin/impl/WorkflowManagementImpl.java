@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -32,6 +33,7 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
@@ -152,48 +154,63 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
 		Action<List<Redirection>> action = actionFactory
-				.createGetAsiRedirectionsAction(contextId, asiId);
+				.createGetAsiRedirectionsAction(contextId, getUsername(), asiId);
 		return action.execute();
 	}
 
 	@Role(values = "developer")
 	@Override
-	public Redirection addRedirection(String contextId, String asiId,
-			String name, int port, RedirectionType type)
+	public String addRedirection(String contextId, String asiId, String name,
+			int port, RedirectionType type) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException {
+		Action<String> action = actionFactory.createAddAsiRedirectionAction(
+				getUsername(), contextId, asiId, name, port, type);
+		return action.execute();
+	}
+
+	@Role(values = "developer")
+	@Override
+	public void deleteRedirection(String contextId, String asiId,
+			String redirectionId) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
+		Action<Class<Void>> action = actionFactory
+				.createRemoveAsiRedirectionAction(getUsername(), contextId,
+						asiId, redirectionId);
+		action.execute();
+	}
+
+	@Override
+	public List<Endpoint> getEndpoints(String contextId, String asiId)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException {
+		Action<List<Endpoint>> action = actionFactory
+				.createListAsiEndpointsAction(getUsername(), contextId, asiId);
+		return action.execute();
+	}
+
+	@Role(values = "developer")
+	@Override
+	public String addEndpoint(String contextId, String asiId, Endpoint endpoint)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Redirection getRedirection(String contextId, String asiId,
-			String redirectionName) throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			RedirectionNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		Action<String> action = actionFactory.createAddAsiEndpointAction(
+				getUsername(), contextId, asiId, endpoint);
+		return action.execute();
 	}
 
 	@Role(values = "developer")
 	@Override
-	public Redirection updateRedirection(String contextId, String asiId,
-			String name, int port, RedirectionType type)
+	public void deleteEndpoint(String contextId, String asiId, String endpointId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
-			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Role(values = "developer")
-	@Override
-	public void deleteRedirection(String contextId, String asiId, String name)
-			throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
-		// TODO Auto-generated method stub
+			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
+		Action<Class<Void>> action = actionFactory
+				.createRemoveAsiEndpointAction(getUsername(), contextId, asiId,
+						endpointId);
+		action.execute();
 	}
 
 	public void setActionFactory(ActionFactory actionFactory) {

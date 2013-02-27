@@ -30,7 +30,7 @@ import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
  */
 public abstract class WorkflowAction<T> extends AtmosphereAndAirAction<T> {
 
-	WorkflowAction(AirClient air, DyReAllaManagerService atmosphere,
+	public WorkflowAction(AirClient air, DyReAllaManagerService atmosphere,
 			String username) {
 		super(air, atmosphere, username);
 	}
