@@ -12,11 +12,13 @@ import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
+import pl.cyfronet.dyrealla.api.dnat.Protocol;
 
 public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
 	private String redirectionId = "redirectionId";
 	private String atId = "applianceTypeId";
+	private String serviceName = "serviceName";
 
 	@Test
 	public void shouldRemoveHttpRedirection() throws Exception {
@@ -34,23 +36,23 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
 		Vms vm = new Vms();
 		vm.setVms_id(asiId);
-		vm.setAppliance_type(atId );
+		vm.setAppliance_type(atId);
 		workflowDetails.setVms(Arrays.asList(vm));
 
 		ApplianceType at = new ApplianceType();
 		at.setId(atId);
 
 		ATPortMapping portMapping = new ATPortMapping();
-		portMapping.setHttp(true);
+		portMapping.setHttp(http);
 		portMapping.setId(redirectionId);
 		portMapping.setPort(port);
-		portMapping.setService_name("at1");
+		portMapping.setService_name(serviceName);
 
 		at.setPort_mappings(Arrays.asList(portMapping));
 
 		when(air.getApplianceTypes()).thenReturn(Arrays.asList(at));
 	}
-	
+
 	private void whenRemoveRedirection() {
 		Action<Class<Void>> action = actionFactory
 				.createRemoveAsiRedirectionAction(username, contextId, asiId,
@@ -61,7 +63,7 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 	private void thenHttpRedirectionRemoved() throws Exception {
 		verify(air).removePortMapping(redirectionId);
 		verify(httpRedirectionService).unregisterHttpService(contextId, asiId,
-				port);
+				serviceName, port);
 	}
 
 	@Test
@@ -77,7 +79,7 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
 	private void thenTCPRedirectionRemoved() throws Exception {
 		verify(air).removePortMapping(redirectionId);
-		verify(httpRedirectionService).unregisterHttpService(contextId, asiId,
-				port);
+		verify(dnatRedirectionService).removePortRedirection(asiId, port,
+				Protocol.TCP);
 	}
 }

@@ -41,11 +41,12 @@ public class RemoveAsiRedirectionAction extends
 	public Class<Void> execute() throws CloudFacadeException {
 		ATPortMapping portMapping = getPortMapping();
 		int port = portMapping.getPort();
-		logger.debug("Removing redirection: {}", portMapping);
+		String serviceName = portMapping.getService_name();
+		logger.debug("Removing redirection: {} -> {}", serviceName, portMapping);
 
 		logger.debug("Removing redirection using DyReAlla");
 		if (portMapping.isHttp()) {
-			removeHttpPortMapping(port);
+			removeHttpPortMapping(serviceName, port);
 		} else {
 			removeDnatPortMapping(port);
 		}
@@ -56,10 +57,10 @@ public class RemoveAsiRedirectionAction extends
 		return Void.TYPE;
 	}
 
-	private void removeHttpPortMapping(int port) {
+	private void removeHttpPortMapping(String serviceName, int port) {
 		try {
 			getHttpRedirectionService().unregisterHttpService(getContextId(),
-					getAsiId(), port);
+					getAsiId(), serviceName, port);
 		} catch (VirtualMachineNotFoundException e) {
 			logger.debug("Error while adding http redirection", e);
 			throw new AtomicServiceInstanceNotFoundException();
