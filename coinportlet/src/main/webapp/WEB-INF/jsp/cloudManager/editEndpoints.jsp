@@ -9,7 +9,7 @@
 
 <div class="coin-content coin-content-no-tabs">
 	<div>
-		<div style="font-size: big; text-align: center;">Redirections</div>
+		<div style="font-size: 1.3em; text-align: center; border-bottom: solid 2px #73726D; font-weight: bold;">Redirections</div>
 		<c:choose>
 			<c:when test="${fn:length(redirections) > 0}">
 				<c:forEach var="redirection" items="${redirections}">
@@ -50,40 +50,46 @@
 				<spring:message code="cloud.manager.portlet.no.redirections.label"/>
 			</c:otherwise>
 		</c:choose>
-		<div style="margin-top: 20px;">
-			<spring:message code="cloud.manager.portlet.define.redirection.form.label"/>
+		<div style="margin-top: 20px; border-top: solid 1px #73726D; display: table; width: 100%;">
+			<div style="width: 30%; display: table-cell; vertical-align: middle; text-align: right; padding-right: 20px; font-size: 1.1em;">
+				<spring:message code="cloud.manager.portlet.define.redirection.form.label"/>
+			</div>
+			<div style="width: 70%; display: table-cell;">
+				<form:form class="coin-form" action='${addRedirection}' modelAttribute='addRedirectionRequest'>
+					<div style="float: left;">
+						<form:hidden path="atomicServiceInstanceId"/>
+						<form:hidden path="workflowId"/>
+						<div class="coin-form-input">
+							<label for="name">
+								<spring:message code="cloud.manager.portlet.add.redirection.name.label"/>
+							</label>
+							<form:input path="name"/>
+							<form:errors path="name" cssClass="coin-error-panel"/>
+						</div>
+						<div class="coin-form-input">
+							<label for="toPort">
+								<spring:message code="cloud.manager.portlet.add.redirection.to.port.label"/>
+							</label>
+							<form:input path="toPort"/>
+							<form:errors path="toPort" cssClass="coin-error-panel"/>
+						</div>
+						<div class="coin-form-input">
+							<label for="type">
+								<spring:message code="cloud.manager.portlet.add.redirection.type.label"/>
+							</label>
+							<form:select path="type" items="${redirectionTypes}"/>
+							<form:errors path="type" cssClass="coin-error-panel"/>
+						</div>
+					</div>
+					<div style="float: left; margin-left: 20px;" class="coin-form-submit">
+						<input type='submit' value='<spring:message code='cloud.manager.portlet.add.redirection.submit.request'/>'/>
+					</div>
+				</form:form>
+			</div>
 		</div>
-		<form:form class="coin-form" action='${addRedirection}' modelAttribute='addRedirectionRequest'>
-			<form:hidden path="atomicServiceInstanceId"/>
-			<form:hidden path="workflowId"/>
-			<div class="coin-form-input">
-				<label for="name">
-					<spring:message code="cloud.manager.portlet.add.redirection.name.label"/>
-				</label>
-				<form:input path="name"/>
-				<form:errors path="name" cssClass="coin-error-panel"/>
-			</div>
-			<div class="coin-form-input">
-				<label for="toPort">
-					<spring:message code="cloud.manager.portlet.add.redirection.to.port.label"/>
-				</label>
-				<form:input path="toPort"/>
-				<form:errors path="toPort" cssClass="coin-error-panel"/>
-			</div>
-			<div class="coin-form-input">
-				<label for="type">
-					<spring:message code="cloud.manager.portlet.add.redirection.type.label"/>
-				</label>
-				<form:select path="type" items="${redirectionTypes}"/>
-				<form:errors path="type" cssClass="coin-error-panel"/>
-			</div>
-			<div class="coin-form-submit">
-				<input type='submit' value='<spring:message code='cloud.manager.portlet.add.redirection.submit.request'/>'/>
-			</div>
-		</form:form>
 	</div>
 	<div>
-		<div style="font-size: big; text-align: center; margin-top: 20px;">Endpoints</div>
+		<div style="font-size: 1.3em; text-align: center; border-bottom: solid 2px #73726D; font-weight: bold;">Endpoints</div>
 		<c:choose>
 			<c:when test="${fn:length(endpoints) > 0}">
 				<c:forEach var="endpoint" items="${endpoints}">
@@ -125,51 +131,57 @@
 		</c:choose>
 		<c:choose>
 			<c:when test="${fn:length(redirectionSelection) > 0}">
-				<div style="margin-top: 20px;">
-					<spring:message code="cloud.manager.portlet.define.endpoint.form.label"/>
+				<div style="margin-top: 20px; border-top: solid 1px #73726D; display: table; width: 100%;">
+					<div style="width: 30%; display: table-cell; vertical-align: middle; text-align: right; padding-right: 20px; font-size: 1.1em;">
+						<spring:message code="cloud.manager.portlet.define.endpoint.form.label"/>
+					</div>
+					<div style="width: 70%; display: table-cell;">
+						<form:form class="coin-form" action='${addEndpoint}' modelAttribute='addEndpointRequest'>
+							<div style="float: left;">
+								<form:hidden path="atomicServiceInstanceId"/>
+								<form:hidden path="workflowId"/>
+								<div class="coin-form-input">
+									<label for="type">
+										<spring:message code="cloud.manager.portlet.add.endpoint.type.label"/>
+									</label>
+									<form:select path="type" items="${endpointTypes}"/>
+									<form:errors path="type" cssClass="coin-error-panel"/>
+								</div>
+								<div class="coin-form-input">
+									<label for="invocationPath">
+										<spring:message code="cloud.manager.portlet.add.endpoint.invocation.path.name.label"/>
+									</label>
+									<form:input path="invocationPath"/>
+									<form:errors path="invocationPath" cssClass="coin-error-panel"/>
+								</div>
+								<div class="coin-form-input">
+									<label for="port">
+										<spring:message code="cloud.manager.portlet.add.endpoint.port.name.label"/>
+									</label>
+									<form:select items="${redirectionSelection}" path="port"/>
+									<form:errors path="port" cssClass="coin-error-panel"/>
+								</div>
+								<div class="coin-form-input">
+									<label for="description">
+										<spring:message code="cloud.manager.portlet.add.endpoint.description.label"/>
+									</label>
+									<form:textarea path="description"/>
+									<form:errors path="description" cssClass="coin-error-panel"/>
+								</div>
+								<div class="coin-form-input">
+									<label for="descriptor">
+										<spring:message code="cloud.manager.portlet.add.endpoint.descriptor.label"/>
+									</label>
+									<form:textarea path="descriptor"/>
+									<form:errors path="descriptor" cssClass="coin-error-panel"/>
+								</div>
+							</div>
+							<div style="float: left; margin-left: 20px;" class="coin-form-submit">
+								<input type='submit' value='<spring:message code='cloud.manager.portlet.add.endpoint.submit.request'/>'/>
+							</div>
+						</form:form>
+					</div>
 				</div>
-				<form:form class="coin-form" action='${addEndpoint}' modelAttribute='addEndpointRequest'>
-					<form:hidden path="atomicServiceInstanceId"/>
-					<form:hidden path="workflowId"/>
-					<div class="coin-form-input">
-						<label for="type">
-							<spring:message code="cloud.manager.portlet.add.endpoint.type.label"/>
-						</label>
-						<form:select path="type" items="${endpointTypes}"/>
-						<form:errors path="type" cssClass="coin-error-panel"/>
-					</div>
-					<div class="coin-form-input">
-						<label for="invocationPath">
-							<spring:message code="cloud.manager.portlet.add.endpoint.invocation.path.name.label"/>
-						</label>
-						<form:input path="invocationPath"/>
-						<form:errors path="invocationPath" cssClass="coin-error-panel"/>
-					</div>
-					<div class="coin-form-input">
-						<label for="port">
-							<spring:message code="cloud.manager.portlet.add.endpoint.port.name.label"/>
-						</label>
-						<form:select items="${redirectionSelection}" path="port"/>
-						<form:errors path="port" cssClass="coin-error-panel"/>
-					</div>
-					<div class="coin-form-input">
-						<label for="description">
-							<spring:message code="cloud.manager.portlet.add.endpoint.description.label"/>
-						</label>
-						<form:textarea path="description"/>
-						<form:errors path="description" cssClass="coin-error-panel"/>
-					</div>
-					<div class="coin-form-input">
-						<label for="descriptor">
-							<spring:message code="cloud.manager.portlet.add.endpoint.descriptor.label"/>
-						</label>
-						<form:textarea path="descriptor"/>
-						<form:errors path="descriptor" cssClass="coin-error-panel"/>
-					</div>
-					<div class="coin-form-submit">
-						<input type='submit' value='<spring:message code='cloud.manager.portlet.add.endpoint.submit.request'/>'/>
-					</div>
-				</form:form>
 			</c:when>
 			<c:otherwise>
 				<div>
