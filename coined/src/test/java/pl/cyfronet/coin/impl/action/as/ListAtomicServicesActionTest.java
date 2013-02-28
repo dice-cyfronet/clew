@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.as;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static pl.cyfronet.coin.impl.CoinedAsserts.assertATAndAs;
 
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
@@ -40,6 +43,8 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	private ApplianceType type1;
 	private ApplianceType type2;
 	private List<AtomicService> asList;
+	private String username = "username";
+	private ApplianceType userDevAS;
 
 	@Test
 	public void shoutGetAtomicServicesList() {
@@ -93,7 +98,12 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		ApplianceType devAS = new ApplianceType();
 		devAS.setDevelopment(true);
 		
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2, devAS));
+		userDevAS = new ApplianceType();
+		userDevAS.setAuthor(username );
+		userDevAS.setDevelopment(true);
+		userDevAS.setName("UserDevelopmentAS");
+		
+		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2, devAS, userDevAS));
 		
 		//descriptor payload
 		when(air.getEndpointDescriptor("1")).thenReturn(null);
@@ -102,20 +112,24 @@ public class ListAtomicServicesActionTest extends ActionTest {
 
 	private void whenGetAtomicServices() {
 		Action<List<AtomicService>> action = actionFactory
-				.createListAtomicServicesAction();
+				.createListAtomicServicesAction(username);
 		asList = action.execute();
 	}
 
 	private void thenValidateReturnedAtomicServices() {
-		assertEquals(asList.size(), 2);
+		assertEquals(asList.size(), 3);
 
 		AtomicService as1 = asList.get(0);
 		AtomicService as2 = asList.get(1);
-
+		AtomicService devAs = asList.get(2);
+		
 		verify(air, times(1)).getApplianceTypes();
 
 		assertATAndAs(type1, as1, null, "GET POST /hello/{name}");
 		assertATAndAs(type2, as2);
+		
+		assertEquals(devAs.getName(), userDevAS.getName());
+		assertTrue(devAs.isDevelopment());
 		
 		thenCheckAirRequestWithEndpoints();
 	}

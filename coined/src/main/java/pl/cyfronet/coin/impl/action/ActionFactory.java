@@ -32,6 +32,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.impl.action.as.GetEndpointPayloadAction;
 import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
 import pl.cyfronet.coin.impl.action.as.GetServicesSetAction;
+import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
@@ -65,8 +66,8 @@ public class ActionFactory {
 	
 	private String coinBaseUrl;
 
-	public Action<List<AtomicService>> createListAtomicServicesAction() {
-		return new ListAtomicServicesAction(air);
+	public Action<List<AtomicService>> createListAtomicServicesAction(String username) {
+		return new ListAtomicServicesAction(air, username);
 	}
 
 	public DeleteAtomicServiceAction createDeleteAtomicServiceAction(

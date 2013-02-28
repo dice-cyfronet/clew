@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.as;
 
 import static pl.cyfronet.coin.impl.BeanConverter.getAtomicService;
 
@@ -22,6 +22,7 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
@@ -30,8 +31,11 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class ListAtomicServicesAction extends AirAction<List<AtomicService>> {
 
-	ListAtomicServicesAction(AirClient air) {
+	private String username;
+
+	public ListAtomicServicesAction(AirClient air, String username) {
 		super(air);
+		this.username = username;
 	}
 
 	/**
@@ -44,7 +48,8 @@ public class ListAtomicServicesAction extends AirAction<List<AtomicService>> {
 		List<ApplianceType> applianceTypes = getApplianceTypes();
 		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
 		for (ApplianceType applianceType : applianceTypes) {
-			if (!applianceType.isDevelopment()) {
+			if (!applianceType.isDevelopment()
+					|| username.equals(applianceType.getAuthor())) {
 				loadEndpointDescriptors(applianceType);
 				AtomicService atomicService = getAtomicService(applianceType);
 				atomicServices.add(atomicService);

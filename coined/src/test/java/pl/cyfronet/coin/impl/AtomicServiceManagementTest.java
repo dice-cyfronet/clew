@@ -44,8 +44,8 @@ import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.CreateAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
+import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -118,7 +118,8 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		currentAction = action;
 
 		when(action.execute()).thenReturn(ases);
-		when(actionFactory.createListAtomicServicesAction()).thenReturn(action);
+		when(actionFactory.createListAtomicServicesAction(username))
+				.thenReturn(action);
 	}
 
 	private List<Endpoint> getEndpoints(int size) {
@@ -213,9 +214,8 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 		when(action.execute()).thenReturn(initialConfigurations);
 		when(
-				actionFactory
-						.createListInitialConfigurationsAction(atomicServiceId, false))
-				.thenReturn(action);
+				actionFactory.createListInitialConfigurationsAction(
+						atomicServiceId, false)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -380,10 +380,9 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		atomicService.setName("New as name");
 		atomicService.setDescription("New as description");
 	}
-	
+
 	private void whenAddNewAtomicService() {
-		createdAsId = asManagementClient.createAtomicService(
-				atomicService);
+		createdAsId = asManagementClient.createAtomicService(atomicService);
 	}
 
 	private void thenAtomicServiceAdded() {

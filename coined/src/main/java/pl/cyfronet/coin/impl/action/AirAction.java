@@ -40,7 +40,7 @@ public abstract class AirAction<T> implements Action<T> {
 		this.air = air;
 	}
 
-	List<ApplianceType> getApplianceTypes() {
+	protected List<ApplianceType> getApplianceTypes() {
 		return air.getApplianceTypes();
 	}
 
