@@ -18,13 +18,13 @@
 	<c:if test="${fn:length(webappEndpoints) > 0}">
 		<span>Web Application endpoints:</span><br/><br/>
 		<c:forEach var="endpoint" items="${webappEndpoints}">
-			<a class="coin-link" target="_blank" href="${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}${additionalQuery}">${invocationBase}${endpoint.serviceName}${endpoint.invocationPath}${additionalQuery}</a><br/>
+			<a class="coin-link" target="_blank" href="${authEndpointLinks[endpoint.id]}${additionalQuery}">${endpointLinks[endpoint.id]}${additionalQuery}</a><br/>
 		</c:forEach>
 	</c:if>
 	<c:if test="${fn:length(wsEndpoints) > 0}">
 		<span style="font-style: italic; margin-top: 10px; display: block;"><spring:message code="cloud.manager.portlet.ws.endpoint.list.label"/></span>
 		<c:forEach var="ws" items="${wsEndpoints}">
-			<span style="margin-left: 20px;">URL: <span style="font-family: monospace; font-size: smaller;">${invocationBase}${ws.serviceName}${ws.invocationPath}</span></span><br/>
+			<span style="margin-left: 20px;">URL: <span style="font-family: monospace; font-size: smaller;">${endpointLinks[ws.id]}</span></span><br/>
 			<div style="margin-left: 20px;" id="accordion">
 				<h5 style="color: #37b2d1; cursor: pointer; margin-top: 0px; margin-bottom: 0px;">Show/Hide descriptor</h5>
 				<div style="font-family: monospace; font-size: smaller; overflow: auto;">
@@ -67,7 +67,9 @@ ${fn:escapeXml(ws.descriptor)}
 			<form:hidden path="configurationId"/>
 			<form:hidden path="atomicServiceId"/>
 			<form:hidden path="invocationPath"/>
-			<form:hidden path="serviceId"/>
+			<form:hidden path="postfix"/>
+			<form:hidden path="port"/>
+			<form:hidden path="host"/>
 			<div class="coin-form-input">
 				<label for="method">
 					<spring:message code="cloud.manager.portlet.submit.atomic.service.method.label"/>

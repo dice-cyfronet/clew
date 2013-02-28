@@ -1,23 +1,27 @@
 <c:forEach var="entry" items="${activeAtomicServices}" varStatus="status">
 	<c:set var="atomicService" value="${entry.key}"/>
 	<div class="coin-panel">
-		<div style="width: 30%; float: left;">
+		<div style="width: 30%; float: left; text-align: right;">
 			<c:choose>
 				<c:when test="${view == 'development'}">
 					<span class="coin-header">
-						${atomicService.name}<br/>
-						<c:choose>
-							<c:when test="${atomicService.published}">
-								<i>(type: atomic service)</i>
-							</c:when>
-							<c:otherwise>
-								<i>(type: template)</i>
-							</c:otherwise>
-						</c:choose>
+						<span style="padding-right: 10px; display: block;">${atomicService.name}</span>
+						<span style="padding-right: 10px; font-style: italic; display: block;">
+							<c:choose>
+								<c:when test="${atomicService.published}">
+									(type: atomic service)
+								</c:when>
+								<c:otherwise>
+									(type: template)
+								</c:otherwise>
+							</c:choose>
+						</span>
 					</span>
 				</c:when>
 				<c:otherwise>
-					<span class="coin-header">${atomicService.name}</span>
+					<span class="coin-header">
+						<span style="padding-right: 10px; display: block;">${atomicService.name}</span>
+					</span>
 				</c:otherwise>
 			</c:choose>
 		</div>

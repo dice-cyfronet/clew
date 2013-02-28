@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
 
 import org.apache.jetspeed.CommonPortletServices;
 import org.apache.jetspeed.administration.PortalAdministration;
@@ -41,7 +40,7 @@ public class Portal {
 		return roles;
 	}
 
-	public String getUserName(RenderRequest request) {
+	public String getUserName(PortletRequest request) {
 		return request.getUserPrincipal().getName();
 	}
 

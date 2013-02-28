@@ -29,7 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
@@ -89,7 +88,6 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_NEGATIVE_MESSAGE = "negativeMessage";
 	static final String MODEL_BEAN_INVOCATION_PATH = "invocationPath";
 	static final String MODEL_BEAN_WEBAPP_ENDPOINTS = "webappEndpoints";
-	static final String MODEL_BEAN_INVOCATION_BASE = "invocationBase";
 	static final String MODEL_BEAN_USER_KEYS = "userKeyList";
 	static final String MODEL_BEAN_UPLOAD_KEY_REQUEST = "uploadKeyRequest";
 	static final String MODEL_BEAN_ASI_REDIRECTIONS = "asiRedirections";
@@ -102,6 +100,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_ADD_REDIRECTION_REQUEST = "addRedirectionRequest";
 	static final String MODEL_BEAN_REDIRECTION_SELECTION = "redirectionSelection";
 	static final String MODEL_BEAN_ENDPOINT_LINKS = "endpointLinks";
+	static final String MODEL_BEAN_AUTH_ENDPOINT_LINKS = "authEndpointLinks";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -134,9 +133,6 @@ public class CloudManagerPortlet {
 	static final String ACTION_REMOVE_ENDPOINT = "removeEndpoint";
 	static final String ACTION_ADD_REDIRECTION = "addRedirection";
 	static final String ACTION_REMOVE_REDIRECTION = "removeRedirection";
-	
-	@Value("${cloud.host.name}")
-	private String cloudHost;
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -423,13 +419,13 @@ public class CloudManagerPortlet {
 		}
 		
 		if(atomicService != null && configurationId != null && workflowId != null) {
-			model.addAttribute(MODEL_BEAN_INVOCATION_BASE, createInvocationPath(workflowId, configurationId));
-			
 			List<Endpoint> webAppEndpoints = new ArrayList<>();
 			List<Endpoint> wsEndpoints = new ArrayList<>();
-			
-			if(atomicService.getEndpoints() != null) {
-				for(Endpoint endpoint : atomicService.getEndpoints()) {
+			List<Endpoint> endpoints = clientFactory.getWorkflowManagement(request).getEndpoints(workflowId, atomicServiceInstanceId);
+			List<Redirection> redirections = clientFactory.getWorkflowManagement(request).getRedirections(workflowId, atomicServiceInstanceId);
+
+			if(endpoints != null) {
+				for(Endpoint endpoint : endpoints) {
 					fixPaths(endpoint);
 					
 					switch(endpoint.getType()) {
@@ -467,6 +463,7 @@ public class CloudManagerPortlet {
 							model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_METHOD_LIST, Arrays.asList(
 									endpoint.getInvocationPath()));
 							InvokeAtomicServiceRequest iasr = null;
+							Redirection redirection = findRedirection(endpoint.getPort(), redirections);
 							
 							if(!model.containsAttribute(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST)) {
 								iasr = new InvokeAtomicServiceRequest();
@@ -475,7 +472,9 @@ public class CloudManagerPortlet {
 								iasr.setConfigurationId(configurationId);
 								iasr.setAtomicServiceId(atomicServiceId);
 								iasr.setFormFields(new ArrayList<FormField>());
-								iasr.setServiceId(endpoint.getInvocationPath());
+								iasr.setPostfix(redirection.getPostfix());
+								iasr.setPort(redirection.getFromPort());
+								iasr.setHost(redirection.getHost());
 								
 								if(endpoint.getInvocationPath() != null) {
 									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
@@ -499,7 +498,10 @@ public class CloudManagerPortlet {
 								iasr = (InvokeAtomicServiceRequest) model.asMap().get(MODEL_BEAN_INVOKE_ATOMIC_SERVICE_REQUEST);
 							}
 							
-							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(findPostfix(workflowId, atomicServiceInstanceId, endpoint.getPort(), request).getPostfix()));
+							
+							
+							model.addAttribute(MODEL_BEAN_INVOCATION_PATH, createInvocationPath(redirection.getHost(), redirection.getFromPort(),
+									redirection.getPostfix()));
 						break;
 						case WS:
 							wsEndpoints.add(endpoint);
@@ -508,21 +510,11 @@ public class CloudManagerPortlet {
 				}
 			}
 			
+			model.addAttribute(MODEL_BEAN_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections, false, null));
+			model.addAttribute(MODEL_BEAN_AUTH_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections, true, request));
 			model.addAttribute(MODEL_BEAN_WEBAPP_ENDPOINTS, webAppEndpoints);
 			model.addAttribute(MODEL_BEAN_WS_ENDPOINTS, wsEndpoints);
-			
-			//attaching redirection information
-			Workflow wf = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
-			
-			if(wf != null && wf.getAtomicServiceInstances() != null) {
-				for(AtomicServiceInstance asi : wf.getAtomicServiceInstances()) {
-					if(asi.getId() != null && asi.getId().equals(atomicServiceInstanceId)) {
-						model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, asi.getRedirections());
-						
-						break;
-					}
-				}
-			}
+			model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, redirections);
 		} else {
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
 			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE,
@@ -909,24 +901,8 @@ public class CloudManagerPortlet {
 		
 		model.addAttribute(MODEL_BEAN_REDIRECTION_SELECTION, redirectionSelection);
 		
-		Map<String, String> endpointLinks = new HashMap<>();
-		
-		for(Endpoint endpoint : endpoints) {
-			Redirection redirection = null;
-			
-			for(Redirection r : redirections) {
-				if(r.getToPort() != null && r.getToPort().equals(endpoint.getPort())) {
-					redirection = r;
-					
-					break;
-				}
-			}
-			
-			if(redirection != null) {
-				endpointLinks.put(endpoint.getId(), "http://" + redirection.getHost() + ":" + redirection.getFromPort() + 
-						"/" + redirection.getPostfix() + (endpoint.getInvocationPath().startsWith("/") ? "" : "/") + endpoint.getInvocationPath());
-			}
-		}
+		Map<String, String> endpointLinks = createEndpointLinks(endpoints,
+				redirections, false, null);
 		
 		model.addAttribute(MODEL_BEAN_ENDPOINT_LINKS, endpointLinks);
 		
@@ -1047,6 +1023,27 @@ public class CloudManagerPortlet {
 			@RequestParam(PARAM_REDIRECTION_ID) String redirectionId, @RequestParam(PARAM_WORKFLOW_ID) String workflowId,
 			PortletRequest request, ActionResponse response) {
 		log.debug("Removing redirection for atomic service instance id [{}] and redirection id [{}]", atomicServiceInstanceId, redirectionId);
+		
+		List<Endpoint> endpoints = clientFactory.getWorkflowManagement(request).getEndpoints(workflowId, atomicServiceInstanceId);
+		List<Redirection> redirections = clientFactory.getWorkflowManagement(request).getRedirections(workflowId, atomicServiceInstanceId);
+		Redirection redirection = null;
+		
+		for(Redirection r : redirections) {
+			if(r.getId().equals(redirectionId)) {
+				redirection = r;
+				
+				break;
+			}
+		}
+		
+		if(redirection != null) {
+			for(Endpoint endpoint : endpoints) {
+				if(endpoint.getPort().equals(redirection.getToPort())) {
+					clientFactory.getWorkflowManagement(request).deleteEndpoint(workflowId, atomicServiceInstanceId, endpoint.getId());
+				}
+			}
+		}
+		
 		clientFactory.getWorkflowManagement(request).deleteRedirection(workflowId, atomicServiceInstanceId, redirectionId);
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, atomicServiceInstanceId);
@@ -1066,8 +1063,8 @@ public class CloudManagerPortlet {
 	}
 
 	private String invokeAtomicService(PortletRequest portletRequest, InvokeAtomicServiceRequest request) throws NoSuchMessageException, IOException {
-		String urlPath = createInvocationPath(request.getWorkflowId(), request.getConfigurationId()) +
-				request.getServiceId() + request.getInvocationPath().trim();
+		String urlPath = createInvocationPath(request.getHost(), request.getPort(), request.getPostfix()) +
+				request.getInvocationPath().trim();
 		
 		for(FormField field : request.getFormFields()) {
 			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
@@ -1110,18 +1107,10 @@ public class CloudManagerPortlet {
 		
 		return String.valueOf(responseCode) + ":" + response.toString();
 	}
-
-	private String createInvocationPath(String workflowId, String configurationId) {
-		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.endpoint.template", null, null).
-				replace("{host}", cloudHost).
-				replace("{workflowId}", workflowId).replace("{configurationId}", configurationId);
-		
-		return urlPath.trim();
-	}
 	
-	private String createInvocationPath(String postfix) {
+	private String createInvocationPath(String host, Integer port, String postfix) {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.postfix.endpoint.template", null, null).
-				replace("{host}", cloudHost).replace("{postfix}", postfix);
+				replace("{host}", host).replace("{port}", String.valueOf(port)).replace("{postfix}", postfix);
 		
 		return urlPath.trim();
 	}
@@ -1172,6 +1161,7 @@ public class CloudManagerPortlet {
 	private AtomicService getAtomicService(String atomicServiceId,
 			List<AtomicService> atomicServices) {
 		for(AtomicService as : atomicServices) {
+			log.info("!!! " + as.getAtomicServiceId() + " ==? " + atomicServiceId);
 			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
 				return as;
 			}
@@ -1218,9 +1208,38 @@ public class CloudManagerPortlet {
 		}
 	}
 	
-	private Redirection findPostfix(String workflowId, String atomicServiceInstanceId, int port, PortletRequest request) {
-		for(Redirection redirection : clientFactory.getWorkflowManagement(request).getRedirections(workflowId, atomicServiceInstanceId)) {
-			if(redirection.getToPort() == port) {
+	private Map<String, String> createEndpointLinks(List<Endpoint> endpoints,
+			List<Redirection> redirections, boolean addAuthentication, PortletRequest request) {
+		Map<String, String> endpointLinks = new HashMap<>();
+		
+		for(Endpoint endpoint : endpoints) {
+			Redirection redirection = null;
+			
+			for(Redirection r : redirections) {
+				if(r.getToPort() != null && r.getToPort().equals(endpoint.getPort())) {
+					redirection = r;
+					
+					break;
+				}
+			}
+			String auth = null;
+			
+			if(addAuthentication) {
+				auth = portal.getUserName(request) + ":" + portal.getUserToken(request) + "@";
+			}
+			
+			if(redirection != null) {
+				endpointLinks.put(endpoint.getId(), "http://" + (addAuthentication ? auth : "") + redirection.getHost() + ":" + redirection.getFromPort() + 
+						"/" + redirection.getPostfix() + (endpoint.getInvocationPath().startsWith("/") ? "" : "/") + endpoint.getInvocationPath());
+			}
+		}
+		
+		return endpointLinks;
+	}
+	
+	private Redirection findRedirection(Integer port, List<Redirection> redirections) {
+		for(Redirection redirection : redirections) {
+			if(redirection.getToPort().equals(port)) {
 				return redirection;
 			}
 		}

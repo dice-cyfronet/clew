@@ -10,8 +10,28 @@ public class InvokeAtomicServiceRequest {
 	private String atomicServiceId;
 	private List<FormField> formFields;
 	private String invocationPath;
-	private String serviceId;
+	private String postfix;
+	private Integer port;
+	private String host;
 	
+	public String getPostfix() {
+		return postfix;
+	}
+	public void setPostfix(String postfix) {
+		this.postfix = postfix;
+	}
+	public Integer getPort() {
+		return port;
+	}
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host) {
+		this.host = host;
+	}
 	public String getMethod() {
 		return method;
 	}
@@ -54,12 +74,6 @@ public class InvokeAtomicServiceRequest {
 	public void setInvocationPath(String invocationPath) {
 		this.invocationPath = invocationPath;
 	}
-	public String getServiceId() {
-		return serviceId;
-	}
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
-	}
 	@Override
 	public String toString() {
 		return "InvokeAtomicServiceRequest [method=" + method
@@ -67,6 +81,7 @@ public class InvokeAtomicServiceRequest {
 				+ ", workflowId=" + workflowId + ", configurationId="
 				+ configurationId + ", atomicServiceId=" + atomicServiceId
 				+ ", formFields=" + formFields + ", invocationPath="
-				+ invocationPath + ", serviceId=" + serviceId + "]";
+				+ invocationPath + ", postfix=" + postfix + ", port=" + port
+				+ ", host=" + host + "]";
 	}
 }
