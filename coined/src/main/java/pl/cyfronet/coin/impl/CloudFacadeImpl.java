@@ -56,7 +56,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	public List<AtomicService> getAtomicServices() throws CloudFacadeException {
 		logger.debug("Get atomic services");
 		Action<List<AtomicService>> action = actionFactory
-				.createListAtomicServicesAction();
+				.createListAtomicServicesAction(getUsername());
 
 		return action.execute();
 	}
