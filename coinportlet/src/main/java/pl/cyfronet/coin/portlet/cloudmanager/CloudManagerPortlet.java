@@ -1161,7 +1161,6 @@ public class CloudManagerPortlet {
 	private AtomicService getAtomicService(String atomicServiceId,
 			List<AtomicService> atomicServices) {
 		for(AtomicService as : atomicServices) {
-			log.info("!!! " + as.getAtomicServiceId() + " ==? " + atomicServiceId);
 			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
 				return as;
 			}
