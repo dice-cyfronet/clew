@@ -101,6 +101,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_REDIRECTION_SELECTION = "redirectionSelection";
 	static final String MODEL_BEAN_ENDPOINT_LINKS = "endpointLinks";
 	static final String MODEL_BEAN_AUTH_ENDPOINT_LINKS = "authEndpointLinks";
+	static final String MODEL_BEAN_BREAKING_ENDPOINT_LINKS = "breakingEndpointLinks";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -510,8 +511,8 @@ public class CloudManagerPortlet {
 				}
 			}
 			
-			model.addAttribute(MODEL_BEAN_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections, false, null));
-			model.addAttribute(MODEL_BEAN_AUTH_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections, true, request));
+			model.addAttribute(MODEL_BEAN_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections, false, null, false));
+			model.addAttribute(MODEL_BEAN_AUTH_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections, true, request, false));
 			model.addAttribute(MODEL_BEAN_WEBAPP_ENDPOINTS, webAppEndpoints);
 			model.addAttribute(MODEL_BEAN_WS_ENDPOINTS, wsEndpoints);
 			model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, redirections);
@@ -902,9 +903,12 @@ public class CloudManagerPortlet {
 		model.addAttribute(MODEL_BEAN_REDIRECTION_SELECTION, redirectionSelection);
 		
 		Map<String, String> endpointLinks = createEndpointLinks(endpoints,
-				redirections, false, null);
+				redirections, false, null, false);
+		Map<String, String> breakingEndpointLinks = createEndpointLinks(endpoints,
+				redirections, false, null, true);
 		
 		model.addAttribute(MODEL_BEAN_ENDPOINT_LINKS, endpointLinks);
+		model.addAttribute(MODEL_BEAN_BREAKING_ENDPOINT_LINKS, breakingEndpointLinks);
 		
 		if(!model.containsAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST)) {
 			AddEndpointRequest addEndpointRequest = new AddEndpointRequest();
@@ -1208,7 +1212,7 @@ public class CloudManagerPortlet {
 	}
 	
 	private Map<String, String> createEndpointLinks(List<Endpoint> endpoints,
-			List<Redirection> redirections, boolean addAuthentication, PortletRequest request) {
+			List<Redirection> redirections, boolean addAuthentication, PortletRequest request, boolean wbr) {
 		Map<String, String> endpointLinks = new HashMap<>();
 		
 		for(Endpoint endpoint : endpoints) {
@@ -1228,8 +1232,16 @@ public class CloudManagerPortlet {
 			}
 			
 			if(redirection != null) {
-				endpointLinks.put(endpoint.getId(), "http://" + (addAuthentication ? auth : "") + redirection.getHost() + ":" + redirection.getFromPort() + 
-						"/" + redirection.getPostfix() + (endpoint.getInvocationPath().startsWith("/") ? "" : "/") + endpoint.getInvocationPath());
+				String link = "http://" + (addAuthentication ? auth : "") + redirection.getHost().trim() + ":" + redirection.getFromPort() + 
+						"/" + redirection.getPostfix().trim() +
+						(!redirection.getPostfix().trim().endsWith("/") && !endpoint.getInvocationPath().trim().startsWith("/") ? "/" : "") +
+						endpoint.getInvocationPath().trim();
+				
+				if(wbr) {
+					link = link.replaceAll("/", "/<wbr/>");
+				}
+				
+				endpointLinks.put(endpoint.getId(), link);
 			}
 		}
 		

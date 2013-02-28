@@ -14,29 +14,35 @@
 			<c:when test="${fn:length(redirections) > 0}">
 				<c:forEach var="redirection" items="${redirections}">
 					<div class="coin-panel">
-						<span class="coin-header">${redirection.name} (${redirection.type})</span>
-						<span class="coin-description">
-							<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort}"/>
-						</span>
-						<span class="coin-actions">
-							<portlet:actionURL var="removeRedirection">
-								<portlet:param name="action" value="removeRedirection"/>
-								<portlet:param name="atomicServiceInstanceId" value="${addRedirectionRequest.atomicServiceInstanceId}"/>
-								<portlet:param name="redirectionId" value="${redirection.id}"/>
-								<portlet:param name="workflowId" value="${addRedirectionRequest.workflowId}"/>
-							</portlet:actionURL>
-							<c:set var="removeConfirmation">removeRedirection-${redirection.id}</c:set>
-							<a id="${removeConfirmation}" class="coin-link" href='${removeRedirection}'><spring:message code='cloud.manager.portlet.remove.redirection.label'/></a>
-							<script type="text/javascript">
-								jQuery(document).ready(function() {
-									jQuery('#${removeConfirmation}').click(function() {
-										if(!confirm("<spring:message code='cloud.manager.portlet.remove.redirection.confirmation.label'/>")) {
-											return false;
-										}
-									});
-		    					});
-							</script>
-						</span>
+						<div style="width: 30%; float: left; text-align: right;">
+							<span class="coin-header">${redirection.name} (${redirection.type})</span>
+						</div>
+						<div style="width: 70%; float: left;">
+							<span class="coin-description">
+								<span style="padding-left: 10px; display: block;">
+									<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort}"/>
+								</span>
+							</span>
+							<span class="coin-actions">
+								<portlet:actionURL var="removeRedirection">
+									<portlet:param name="action" value="removeRedirection"/>
+									<portlet:param name="atomicServiceInstanceId" value="${addRedirectionRequest.atomicServiceInstanceId}"/>
+									<portlet:param name="redirectionId" value="${redirection.id}"/>
+									<portlet:param name="workflowId" value="${addRedirectionRequest.workflowId}"/>
+								</portlet:actionURL>
+								<c:set var="removeConfirmation">removeRedirection-${redirection.id}</c:set>
+								<a id="${removeConfirmation}" class="coin-link" href='${removeRedirection}'><spring:message code='cloud.manager.portlet.remove.redirection.label'/></a>
+								<script type="text/javascript">
+									jQuery(document).ready(function() {
+										jQuery('#${removeConfirmation}').click(function() {
+											if(!confirm("<spring:message code='cloud.manager.portlet.remove.redirection.confirmation.label'/>")) {
+												return false;
+											}
+										});
+			    					});
+								</script>
+							</span>
+						</div>
 					</div>
 				</c:forEach>
 			</c:when>
@@ -82,29 +88,34 @@
 			<c:when test="${fn:length(endpoints) > 0}">
 				<c:forEach var="endpoint" items="${endpoints}">
 					<div class="coin-panel">
-						<span class="coin-header"><a class="coin-link" target="_blank" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a></span>
-						<span class="coin-description">
-							${endpoint.description}
-						</span>
-						<span class="coin-actions">
-							<portlet:actionURL var="removeEndpoint">
-								<portlet:param name="action" value="removeEndpoint"/>
-								<portlet:param name="atomicServiceInstanceId" value="${addEndpointRequest.atomicServiceInstanceId}"/>
-								<portlet:param name="endpointId" value="${endpoint.id}"/>
-								<portlet:param name="workflowId" value="${addEndpointRequest.workflowId}"/>
-							</portlet:actionURL>
-							<c:set var="removeConfirmation">removeEndpoint-${endpoint.id}</c:set>
-							<a id="${removeConfirmation}" class="coin-link" href='${removeEndpoint}'><spring:message code='cloud.manager.portlet.remove.endpoint.label'/></a>
-							<script type="text/javascript">
-								jQuery(document).ready(function() {
-									jQuery('#${removeConfirmation}').click(function() {
-										if(!confirm("<spring:message code='cloud.manager.portlet.remove.endpoint.confirmation.label'/>")) {
-											return false;
-										}
-									});
-		    					});
-							</script>
-						</span>
+						<div style="width: 30%; float: left; text-align: right;">
+							<span class="coin-header"><a class="coin-link" target="_blank" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a></span>
+						</div>
+						<div style="width: 70%; float: left;">
+							<span class="coin-description">
+								<span style="padding-left: 10px; display: block;">${endpoint.description}</span>
+								<span style="padding-left: 10px; display: block; margin-top: 5px;">URL: ${breakingEndpointLinks[endpoint.id]}</span>
+							</span>
+							<span class="coin-actions">
+								<portlet:actionURL var="removeEndpoint">
+									<portlet:param name="action" value="removeEndpoint"/>
+									<portlet:param name="atomicServiceInstanceId" value="${addEndpointRequest.atomicServiceInstanceId}"/>
+									<portlet:param name="endpointId" value="${endpoint.id}"/>
+									<portlet:param name="workflowId" value="${addEndpointRequest.workflowId}"/>
+								</portlet:actionURL>
+								<c:set var="removeConfirmation">removeEndpoint-${endpoint.id}</c:set>
+								<a id="${removeConfirmation}" class="coin-link" href='${removeEndpoint}'><spring:message code='cloud.manager.portlet.remove.endpoint.label'/></a>
+								<script type="text/javascript">
+									jQuery(document).ready(function() {
+										jQuery('#${removeConfirmation}').click(function() {
+											if(!confirm("<spring:message code='cloud.manager.portlet.remove.endpoint.confirmation.label'/>")) {
+												return false;
+											}
+										});
+			    					});
+								</script>
+							</span>
+						</div>
 					</div>
 				</c:forEach>
 			</c:when>
