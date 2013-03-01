@@ -30,7 +30,7 @@
 			<portlet:param name="workflowId" value="${workflowId}"/>
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Edit redirections and endpoints</a>
+		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Redirections and endpoints</a>
 	</span>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -95,7 +95,7 @@
 			    							if(creds[0] == 'ssh') {
 			    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
 			    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
-			    										'monospace; white-space: nowrap;">ssh root@{host} -i {private_key_file}</span>)</span><br/>';
+			    										'monospace; white-space: nowrap;">ssh root@' + creds[1] + ' -P ' + creds[2] + ' -i {private_key_file}</span>)</span><br/>';
 			    							}
 		    							}
 		    							

@@ -10,33 +10,39 @@
 			<div><spring:message code="cloud.manager.portlet.user.keys.label"/></div>
 			<c:forEach var="userKey" items="${userKeyList}">
 				<div class="coin-panel">
-					<span class="coin-header">${userKey.keyName}</span>
-					<span class="coin-description">
-						<spring:message code="cloud.manager.portlet.user.key.fingerprint.label"/>:<br/>
-						(${userKey.fingerprint})
-					</span>
-					<span class="coin-actions">
-						<portlet:resourceURL var="getUserKey" id="getUserKey">
-							<portlet:param name="keyId" value="${userKey.id}"/>
-						</portlet:resourceURL>
-						<portlet:actionURL var="removeUserKey">
-							<portlet:param name="action" value="removeUserKey"/>
-							<portlet:param name="userKeyId" value="${userKey.id}"/>
-						</portlet:actionURL>
-						<a class="coin-link" href='${getUserKey}'><spring:message code='cloud.manager.portlet.download.user.key.label'/></a>
-						<br/>
-						<c:set var="removeConfirmation">removeKey-${userKey.id}</c:set>
-						<a id="${removeConfirmation}" class="coin-link" href='${removeUserKey}'><spring:message code='cloud.manager.portlet.remove.user.key.label'/></a>
-						<script type="text/javascript">
-							jQuery(document).ready(function() {
-								jQuery('#${removeConfirmation}').click(function() {
-									if(!confirm("<spring:message code='cloud.manager.portlet.remove.key.confirmation.label'/>")) {
-										return false;
-									}
-								});
-	    					});
-						</script>
-					</span>
+					<div style="width: 30%; float: left; text-align: right;">
+						<span class="coin-header">${userKey.keyName}</span>
+					</div>
+					<div style="width: 70%; float: left;">
+						<span class="coin-description">
+							<span style="padding-left: 10px; display: block;">
+								<spring:message code="cloud.manager.portlet.user.key.fingerprint.label"/>:<br/>
+								(${userKey.fingerprint})
+							</span>
+						</span>
+						<span class="coin-actions">
+							<portlet:resourceURL var="getUserKey" id="getUserKey">
+								<portlet:param name="keyId" value="${userKey.id}"/>
+							</portlet:resourceURL>
+							<portlet:actionURL var="removeUserKey">
+								<portlet:param name="action" value="removeUserKey"/>
+								<portlet:param name="userKeyId" value="${userKey.id}"/>
+							</portlet:actionURL>
+							<a class="coin-link" href='${getUserKey}'><spring:message code='cloud.manager.portlet.download.user.key.label'/></a>
+							<br/>
+							<c:set var="removeConfirmation">removeKey-${userKey.id}</c:set>
+							<a id="${removeConfirmation}" class="coin-link" href='${removeUserKey}'><spring:message code='cloud.manager.portlet.remove.user.key.label'/></a>
+							<script type="text/javascript">
+								jQuery(document).ready(function() {
+									jQuery('#${removeConfirmation}').click(function() {
+										if(!confirm("<spring:message code='cloud.manager.portlet.remove.key.confirmation.label'/>")) {
+											return false;
+										}
+									});
+		    					});
+							</script>
+						</span>
+					</div>
 				</div>
 			</c:forEach>
 		</c:when>
