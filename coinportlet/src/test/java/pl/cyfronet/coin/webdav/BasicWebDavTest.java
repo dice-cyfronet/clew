@@ -3,14 +3,11 @@ package pl.cyfronet.coin.webdav;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.jackrabbit.webdav.DavConstants;
 import org.apache.jackrabbit.webdav.DavException;
@@ -33,18 +30,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import pl.cyfronet.coin.portlet.util.HttpUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/coinportlet-app-ctx.xml")
 public class BasicWebDavTest {
 	private static final Logger log = LoggerFactory.getLogger(BasicLobcderTest.class);
 
-	@Value("${lobcder.user}") private String webDavUser;
-	@Value("${lobcder.password}") private String webDavPassword;
 	@Value("${lobcder.url}") private String webDavUrl;
+	@Value("${security.token}") private String securityToken;
+	
+	@Autowired private HttpUtil httpUtil;
 
 	private HttpClient client;
 	private String testFolder;
@@ -60,21 +61,20 @@ public class BasicWebDavTest {
 		int maxHostConnections = 20;
 		params.setMaxConnectionsPerHost(hostConfig, maxHostConnections);
 		connectionManager.setParams(params);
-
-		Credentials creds = new UsernamePasswordCredentials(webDavUser, webDavPassword);
 		client = new HttpClient(connectionManager);
-		client.getState().setCredentials(AuthScope.ANY, creds);
 		client.setHostConfiguration(hostConfig);
 		
 		//create test folder
 		testFolder = webDavUrl + "/" + String.valueOf(System.currentTimeMillis());
 		MkColMethod mkdirMethod = new MkColMethod(testFolder);
+		mkdirMethod.addRequestHeader("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
 		client.executeMethod(mkdirMethod);
 	}
 	
 	@After
 	public void clean() throws HttpException, IOException {
 		DeleteMethod deleteMethod = new DeleteMethod(testFolder);
+		deleteMethod.addRequestHeader("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
 		client.executeMethod(deleteMethod);
 	}
 
@@ -91,6 +91,7 @@ public class BasicWebDavTest {
 		
 		DavMethod propPatch = new PropPatchMethod(testFolder, setProperties,
 				new DavPropertyNameSet());
+		propPatch.addRequestHeader("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
 		client.executeMethod(propPatch);
 	}
 
@@ -104,6 +105,7 @@ public class BasicWebDavTest {
 		
 		DavMethod pFind = new PropFindMethod(testFolder,
 				properties, DavConstants.DEPTH_0);
+		pFind.addRequestHeader("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
 		client.executeMethod(pFind);
 
 		MultiStatus multiStatus = pFind.getResponseBodyAsMultiStatus();
