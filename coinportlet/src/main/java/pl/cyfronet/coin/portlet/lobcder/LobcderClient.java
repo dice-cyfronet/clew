@@ -128,21 +128,17 @@ public class LobcderClient {
 		}
 	}
 
-	public InputStream get(String filePath, String securityToken) throws LobcderException {
+	public LobcderInputStream get(String filePath, String securityToken) throws LobcderException {
 		GetMethod getMethod = new GetMethod(createLobcderPath(filePath));
 		
 		try {
 			executeMethod(getMethod, securityToken);
 			
-			return getMethod.getResponseBodyAsStream();
+			return new LobcderInputStream(getMethod);
 		} catch (IOException e) {
 			String msg = "Could not download file from LOBCDER for base URL [" + baseUrl + "] and file path [" + filePath + "]";
 			log.error(msg, e);
 			throw new LobcderException(msg, e);
-		} finally {
-			if(getMethod != null) {
-				getMethod.releaseConnection();
-			}
 		}
 	}
 	

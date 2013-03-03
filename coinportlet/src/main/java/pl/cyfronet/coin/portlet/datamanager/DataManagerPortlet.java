@@ -32,6 +32,7 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import pl.cyfronet.coin.portlet.lobcder.LobcderClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderEntry;
 import pl.cyfronet.coin.portlet.lobcder.LobcderException;
+import pl.cyfronet.coin.portlet.lobcder.LobcderInputStream;
 import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
 import pl.cyfronet.coin.portlet.metadata.Metadata;
 import pl.cyfronet.coin.portlet.portal.Portal;
@@ -161,7 +162,10 @@ public class DataManagerPortlet {
 		response.addProperty("Cache-Control", "must-revalidate");
 		response.setContentLength(size);
 		response.setContentType(contentType);
-		FileCopyUtils.copy(lobcderClient.get(filePath, portal.getUserToken(request)), response.getPortletOutputStream());
+		
+		LobcderInputStream lobcderInputStream = lobcderClient.get(filePath, portal.getUserToken(request));
+		FileCopyUtils.copy(lobcderInputStream.getInputStream(), response.getPortletOutputStream());
+		lobcderInputStream.close();
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_CREATE_DIRECTORY)
