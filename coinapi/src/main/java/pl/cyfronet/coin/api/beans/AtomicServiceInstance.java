@@ -39,6 +39,11 @@ public class AtomicServiceInstance extends StatusBean {
 
 	private String publicKeyId;
 
+	/**
+	 * @see 1407
+	 */
+	private String siteId;
+	
 	public String getAtomicServiceId() {
 		return atomicServiceId;
 	}
@@ -117,12 +122,26 @@ public class AtomicServiceInstance extends StatusBean {
 		this.publicKeyId = publicKeyId;
 	}
 
+	/**
+	 * @return the siteId
+	 */
+	public String getSiteId() {
+		return siteId;
+	}
+
+	/**
+	 * @param siteId the siteId to set
+	 */
+	public void setSiteId(String siteId) {
+		this.siteId = siteId;
+	}
+
 	@Override
 	public String toString() {
 		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
 				+ ", atomicServiceName=" + atomicServiceName
 				+ ", redirections=" + redirections + ", configurationId="
 				+ configurationId + ", instanceId=" + instanceId
-				+ ", publicKeyId=" + publicKeyId + "]";
+				+ ", publicKeyId=" + publicKeyId + ", siteId=" + siteId + "]";
 	}
 }
