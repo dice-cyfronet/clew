@@ -8,6 +8,9 @@
     <portlet:param name="action" value="createDirectory"/>
     <portlet:param name="path" value="${path}"/>
 </portlet:actionURL>
+<portlet:renderURL var="search">
+    <portlet:param name="action" value="search"/>
+</portlet:renderURL>
 
 <div class="coin-content coin-content-no-tabs">
 	<span class="coin-top-dir">LOBCDER files</span>
@@ -81,6 +84,11 @@
 	</script>
 	<div class="coin-menu-bottom">
 		<ul>
+			<li>
+				<a class="coin-link" href="${search}">
+					<spring:message code="data.manager.portlet.search.link.label"/>
+				</a>
+			</li>
 			<li>
 				<a class="coin-link" href="${uploadFile}">
 					<spring:message code="data.manager.portlet.upload.file.link.label"/>

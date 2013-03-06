@@ -41,7 +41,6 @@ import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadataPermissions;
 import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
 import pl.cyfronet.coin.portlet.metadata.Metadata;
 import pl.cyfronet.coin.portlet.portal.Portal;
-import pl.cyfronet.coin.portlet.util.HttpUtil;
 
 @Controller
 @RequestMapping("VIEW")
@@ -52,6 +51,7 @@ public class DataManagerPortlet {
 	private static final String MODEL_BEAN_CREATE_DIRECTORY_REQUEST = "createDirectoryRequest";
 	private static final String MODEL_BEAN_LOBCDER_PARENT_PATH = "parentPath";
 	private static final String MODEL_BEAN_METADATA = "metadata";
+	private static final String MODEL_BEAN_SEARCH_REQUEST = "searchRequest";
 	
 	private static final String PARAM_ACTION = "action";
 	
@@ -60,6 +60,7 @@ public class DataManagerPortlet {
 	private static final String ACTION_DELETE_RESOURCE = "deleteResource";
 	private static final String ACTION_METADATA = "metadata";
 	private static final String ACTION_UPDATE_METADATA = "updateMetadata";
+	private static final String ACTION_SEARCH = "search";
 	
 	@Autowired private LobcderClient lobcderClient;
 	@Autowired private Validator validator;
@@ -237,6 +238,21 @@ public class DataManagerPortlet {
 		response.setRenderParameter(PARAM_ACTION, ACTION_METADATA);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, path);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SEARCH)
+	public String doViewSearch(Model model) {
+		if(!model.containsAttribute(MODEL_BEAN_SEARCH_REQUEST)) {
+			model.addAttribute(MODEL_BEAN_SEARCH_REQUEST, new SearchRequest());
+		}
+		
+		return "dataManager/search";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SEARCH)
+	public void doActionSearch(@ModelAttribute(MODEL_BEAN_SEARCH_REQUEST) SearchRequest searchRequest,
+			BindingResult errors, ActionResponse response) {
+		response.setRenderParameter(PARAM_ACTION, ACTION_SEARCH);
 	}
 	
 	@ExceptionHandler(Exception.class)
