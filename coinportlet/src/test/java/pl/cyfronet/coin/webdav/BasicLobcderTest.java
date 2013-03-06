@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;

@@ -10,7 +10,7 @@ import pl.cyfronet.coin.api.RedirectionType;
 public class AddRedirectionRequest {
 	private String atomicServiceInstanceId;
 	private String workflowId;
-	@NotEmpty @Pattern(regexp = "[a-zA-Z]{1}[a-zA-Z0-9]*", message = "only letters and digits are allowed") private String name;
+	@NotEmpty @Pattern(regexp = "[a-zA-Z]{1}[a-zA-Z0-9_]*", message = "only letters and digits are allowed") private String name;
 	@DecimalMin("1") private int toPort;
 	private RedirectionType type;
 	

@@ -14,6 +14,36 @@
 	<div>
 		<form:form class="coin-form" action='${updateMetadata}' modelAttribute='metadata'>
 			<div class="coin-form-input">
+				<label for="owner">
+					<spring:message code="data.manager.portlet.metadata.permissions.owner.label"/>
+				</label>
+				<form:hidden path="owner"/>
+				<span style="margin-left: 5px;">${metadata.owner}</span>
+				<form:errors path="owner" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="readPermissions">
+					<spring:message code="data.manager.portlet.metadata.read.permissions.label"/>
+				</label>
+				<form:input path="readPermissions"/>
+				<form:errors path="readPermissions" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="writePermissions">
+					<spring:message code="data.manager.portlet.metadata.write.permissions.label"/>
+				</label>
+				<form:input path="writePermissions"/>
+				<form:errors path="writePermissions" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="uid">
+					<spring:message code="data.manager.portlet.metadata.uid.label"/>
+				</label>
+				<form:hidden path="uid"/>
+				<span style="margin-left: 5px;">${metadata.uid}</span>
+				<form:errors path="uid" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
 				<label for="lobcderWebDavMetadata.driSupervised">
 					<spring:message code="data.manager.portlet.metadata.dri.supervised.label"/>
 				</label>

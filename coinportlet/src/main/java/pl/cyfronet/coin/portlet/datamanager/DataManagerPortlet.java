@@ -2,6 +2,7 @@ package pl.cyfronet.coin.portlet.datamanager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,9 @@ import pl.cyfronet.coin.portlet.lobcder.LobcderClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderEntry;
 import pl.cyfronet.coin.portlet.lobcder.LobcderException;
 import pl.cyfronet.coin.portlet.lobcder.LobcderInputStream;
+import pl.cyfronet.coin.portlet.lobcder.LobcderRestClient;
+import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadata;
+import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadataPermissions;
 import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
 import pl.cyfronet.coin.portlet.metadata.Metadata;
 import pl.cyfronet.coin.portlet.portal.Portal;
@@ -59,6 +64,7 @@ public class DataManagerPortlet {
 	@Autowired private LobcderClient lobcderClient;
 	@Autowired private Validator validator;
 	@Autowired private Portal portal;
+	@Autowired private LobcderRestClient lobcderRestClient;
 	
 	@RequestMapping
 	public String doView(@RequestParam(value = MODEL_BEAN_LOBCDER_PATH, defaultValue = "/", required = false) String path, Model model) {
@@ -101,7 +107,11 @@ public class DataManagerPortlet {
 		
 		StringBuilder builder = new StringBuilder();
 		List<String> files = new ArrayList<String>();
-		List<LobcderEntry> entries = lobcderClient.list(path, portal.getUserToken(request));
+		
+		String token = portal.getUserToken(request);
+		log.trace("Listing LOBCDER for path {} and token {}", path, token);
+		
+		List<LobcderEntry> entries = lobcderClient.list(path, token);
 		sortLobcderEntries(entries);
 		
 		//if we are looking at a subdirectory let's generate a back item
@@ -211,7 +221,19 @@ public class DataManagerPortlet {
 			@ModelAttribute(MODEL_BEAN_METADATA) Metadata metadata, BindingResult errors,
 			PortletRequest request, ActionResponse response) throws LobcderException {
 		log.debug("Updating metadata with the following bean: {}", metadata);
-		lobcderClient.updateMetadata(path, metadata.getLobcderWebDavMetadata(), portal.getUserToken(request));
+		
+		String token = portal.getUserToken(request);
+		lobcderClient.updateMetadata(path, metadata.getLobcderWebDavMetadata(), token);
+		
+		LobcderRestMetadata lobcderRestMetadata = new LobcderRestMetadata();
+		lobcderRestMetadata.setUid(metadata.getUid());
+		lobcderRestMetadata.setPermissions(new LobcderRestMetadataPermissions());
+		lobcderRestMetadata.getPermissions().setOwner(metadata.getOwner());
+		lobcderRestMetadata.getPermissions().setReadGroups(
+				Arrays.asList(metadata.getReadPermissions().split(",")));
+		lobcderRestMetadata.getPermissions().setWriteGroups(
+				Arrays.asList(metadata.getWritePermissions().split(",")));
+		lobcderRestClient.updateMetadata(lobcderRestMetadata, token);
 		response.setRenderParameter(PARAM_ACTION, ACTION_METADATA);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, path);
 		response.setRenderParameter(MODEL_BEAN_LOBCDER_PARENT_PATH, parentPath);
@@ -225,10 +247,24 @@ public class DataManagerPortlet {
 	}
 	
 	private Object getMetadata(String path, String securityToken) throws LobcderException {
+		log.debug("Fetching LOBCDER metadata for path {}", path);
+		
 		LobcderWebDavMetadata lobcderWebDavMetadata = lobcderClient.getMetadata(path, securityToken);
+		LobcderRestMetadata lobcderRestMetadata = lobcderRestClient.getMetadata(path, securityToken);
 		
 		Metadata metadata = new Metadata();
 		metadata.setLobcderWebDavMetadata(lobcderWebDavMetadata);
+		metadata.setOwner(lobcderRestMetadata.getPermissions().getOwner());
+		
+		if(lobcderRestMetadata.getPermissions().getReadGroups() != null) {
+			metadata.setReadPermissions(StringUtils.arrayToDelimitedString(lobcderRestMetadata.getPermissions().getReadGroups().toArray(), ","));
+		}
+		
+		if(lobcderRestMetadata.getPermissions().getWriteGroups() != null) {
+			metadata.setWritePermissions(StringUtils.arrayToDelimitedString(lobcderRestMetadata.getPermissions().getWriteGroups().toArray(), ","));
+		}
+		
+		metadata.setUid(lobcderRestMetadata.getUid());
 		
 		return metadata;
 	}
