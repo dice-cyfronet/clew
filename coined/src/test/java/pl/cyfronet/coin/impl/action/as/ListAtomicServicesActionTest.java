@@ -65,7 +65,8 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type1.setShared(true);
 		type1.setVnc(true);
 		type1.setTemplates_count(0);		
-
+		type1.setAuthor("marek");
+		
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
 		type1AsEndpoint.setEndpoint_type("ws");
