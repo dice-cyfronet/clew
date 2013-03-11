@@ -22,14 +22,14 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class ListAtomicServicesAction extends AirAction<List<AtomicService>> {
+public class ListAtomicServicesAction extends ReadOnlyAirAction<List<AtomicService>> {
 
 	private String username;
 
@@ -56,10 +56,5 @@ public class ListAtomicServicesAction extends AirAction<List<AtomicService>> {
 			}
 		}
 		return atomicServices;
-	}
-
-	@Override
-	public void rollback() {
-		// Read only operation, does not require rollback
 	}
 }

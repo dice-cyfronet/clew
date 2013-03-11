@@ -41,6 +41,11 @@ public class AtomicService {
 	private boolean active;
 	private boolean development;
 	
+	/**
+	 * @see #1433
+	 */
+	private String owner;
+	
 	public AtomicService() {
 	}
 
@@ -188,6 +193,20 @@ public class AtomicService {
 		this.development = development;
 	}
 
+	/**
+	 * @return the owner
+	 */
+	public String getOwner() {
+		return owner;
+	}
+
+	/**
+	 * @param owner the owner to set
+	 */
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -198,7 +217,7 @@ public class AtomicService {
 				+ endpoints + ", vnc=" + vnc + ", http=" + http + ", shared="
 				+ shared + ", scalable=" + scalable + ", published="
 				+ published + ", inProxy=" + inProxy + ", active=" + active
-				+ ", development=" + development + "]";
+				+ ", development=" + development + ", owner=" + owner + "]";
 	}
 
 	/* (non-Javadoc)
@@ -219,6 +238,7 @@ public class AtomicService {
 		result = prime * result + (http ? 1231 : 1237);
 		result = prime * result + (inProxy ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
 		result = prime * result + (published ? 1231 : 1237);
 		result = prime * result + (scalable ? 1231 : 1237);
 		result = prime * result + (shared ? 1231 : 1237);
@@ -265,6 +285,11 @@ public class AtomicService {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
 			return false;
 		if (published != other.published)
 			return false;

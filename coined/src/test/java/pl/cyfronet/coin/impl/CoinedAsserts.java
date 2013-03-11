@@ -43,7 +43,8 @@ public class CoinedAsserts {
 		assertEquals(as.isShared(), at.isShared());
 		assertEquals(as.isVnc(), at.isVnc());
 		assertEquals(as.isActive(), at.getTemplates_count() > 0);
-
+		assertEquals(as.getOwner(), at.getAuthor());
+		
 		List<ATEndpoint> atEndpoints = at.getEndpoints();
 		assertEndpoints(as.getEndpoints(), atEndpoints, endpointsPayload);
 	}

@@ -71,6 +71,7 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 				instance.setConfigurationId(vm.getConf_id());
 				instance.setMessage(""); // TODO
 				instance.setPublicKeyId(vm.getUser_key());
+				instance.setSiteId(vm.getSite_id());
 
 				addRedirections(instance, vm);
 

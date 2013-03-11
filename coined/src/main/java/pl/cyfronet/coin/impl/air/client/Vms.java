@@ -41,6 +41,12 @@ public class Vms {
 	private Status state;
 
 	private String user_key;
+	
+	
+	/**
+	 * @see #1407
+	 */
+	private String site_id;
 
 	private List<PortMapping> internal_port_mappings;
 
@@ -157,6 +163,20 @@ public class Vms {
 	}
 
 	/**
+	 * @return the site_id
+	 */
+	public String getSite_id() {
+		return site_id;
+	}
+
+	/**
+	 * @param site_id the site_id to set
+	 */
+	public void setSite_id(String site_id) {
+		this.site_id = site_id;
+	}
+
+	/**
 	 * @return the internal_port_mappings
 	 */
 	public List<PortMapping> getInternal_port_mappings() {
@@ -189,9 +209,10 @@ public class Vms {
 	public String toString() {
 		return "Vms [name=" + name + ", specs=" + specs + ", conf_id="
 				+ conf_id + ", appliance_type=" + appliance_type
-				+ ", source_template=" + source_template
-				+ ", appliance_type_name=" + appliance_type_name + ", vms_id="
-				+ vms_id + ", state=" + state + ", user_key=" + user_key
-				+ ", internal_port_mappings=" + internal_port_mappings + "]";
+				+ ", appliance_type_name=" + appliance_type_name
+				+ ", source_template=" + source_template + ", vms_id=" + vms_id
+				+ ", state=" + state + ", user_key=" + user_key + ", site_id="
+				+ site_id + ", internal_port_mappings="
+				+ internal_port_mappings + "]";
 	}
 }

@@ -64,7 +64,8 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type1.setScalable(true);
 		type1.setShared(true);
 		type1.setVnc(true);
-		type1.setTemplates_count(0);		
+		type1.setTemplates_count(0);
+		type1.setAuthor("marek");
 
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
@@ -94,20 +95,23 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type2.setVnc(false);
 		type2.setTemplates_count(2);
 
-		//this AS should not be returned, because it is in development mode
+		// this AS should not be returned, because it is in 
+		// development mode and it does not belong to the user.
 		ApplianceType devAS = new ApplianceType();
 		devAS.setDevelopment(true);
-		
+
 		userDevAS = new ApplianceType();
-		userDevAS.setAuthor(username );
+		userDevAS.setAuthor(username);
 		userDevAS.setDevelopment(true);
 		userDevAS.setName("UserDevelopmentAS");
-		
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(type1, type2, devAS, userDevAS));
-		
-		//descriptor payload
+
+		when(air.getApplianceTypes()).thenReturn(
+				Arrays.asList(type1, type2, devAS, userDevAS));
+
+		// descriptor payload
 		when(air.getEndpointDescriptor("1")).thenReturn(null);
-		when(air.getEndpointDescriptor("2")).thenReturn("GET POST /hello/{name}");
+		when(air.getEndpointDescriptor("2")).thenReturn(
+				"GET POST /hello/{name}");
 	}
 
 	private void whenGetAtomicServices() {
@@ -122,15 +126,15 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		AtomicService as1 = asList.get(0);
 		AtomicService as2 = asList.get(1);
 		AtomicService devAs = asList.get(2);
-		
+
 		verify(air, times(1)).getApplianceTypes();
 
 		assertATAndAs(type1, as1, null, "GET POST /hello/{name}");
 		assertATAndAs(type2, as2);
-		
+
 		assertEquals(devAs.getName(), userDevAS.getName());
 		assertTrue(devAs.isDevelopment());
-		
+
 		thenCheckAirRequestWithEndpoints();
 	}
 
@@ -138,7 +142,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		thenCheckAirRequest();
 		verify(air, times(2)).getEndpointDescriptor(anyString());
 	}
-	
+
 	private void thenCheckAirRequest() {
 		verify(air, times(1)).getApplianceTypes();
 	}
@@ -154,7 +158,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		when(air.getApplianceTypes())
 				.thenReturn(new ArrayList<ApplianceType>());
 	}
-	
+
 	private void thenCheckReturnedEmptyAtomicServicesList() {
 		assertEquals(asList.size(), 0);
 		thenCheckAirRequest();

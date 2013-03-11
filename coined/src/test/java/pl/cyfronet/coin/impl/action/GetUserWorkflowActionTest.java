@@ -133,6 +133,7 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		vm1.setState(Status.booting);
 		vm1.setVms_id("id1");
 		vm1.setConf_id("initConf1");
+		vm1.setSite_id("cyfronet-folsom");
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
@@ -141,7 +142,8 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		vm2.setState(Status.running);
 		vm2.setVms_id("id2");
 		vm2.setConf_id("initConf2");
-
+		vm2.setSite_id("sheffield-diablo");
+		
 		airWorkflow.setVms(Arrays.asList(vm1, vm2));
 
 		when(air.getWorkflow(contextId)).thenReturn(airWorkflow);
@@ -260,5 +262,6 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		assertEquals(asi.getStatus(), vm.getState());
 		assertEquals(asi.getId(), vm.getVms_id());
 		assertEquals(asi.getConfigurationId(), vm.getConf_id());
+		assertEquals(asi.getSiteId(), vm.getSite_id());
 	}
 }
