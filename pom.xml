@@ -28,9 +28,9 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:ssh://git@dev.cyfronet.pl/coin.git</connection>
-		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/coin.git</developerConnection>
-		<url>http://dev.cyfronet.pl/gitlab/coin</url>
+		<connection>scm:git:ssh://git@dev.cyfronet.pl/atmosphere/coin.git</connection>
+		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/atmosphere/coin.git</developerConnection>
+		<url>http://dev.cyfronet.pl/gitlab/atmosphere/coin</url>
 	</scm>
 
 	<build>
