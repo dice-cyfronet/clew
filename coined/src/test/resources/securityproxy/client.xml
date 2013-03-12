@@ -22,9 +22,9 @@
   	   http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
-	<jaxrs:client id="securityPolicyClient" address="http://localhost:${port}/securitypolicy"		
+	<jaxrs:client id="client" address="http://localhost:${port}/securityproxy"		
 		username="User123" password="notimportant"	    
-		serviceClass="pl.cyfronet.coin.api.SecurityPolicyService"
+		serviceClass="pl.cyfronet.coin.api.OwnedPayloadService"
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
@@ -34,7 +34,7 @@
 	
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
 	
-	<bean id="securitypolicyExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.SecurityPolicyExceptionMapper" />
+	<bean id="securitypolicyExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.OwnedPayloadExceptionMapper" />
 	
 	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />
 	

@@ -165,6 +165,41 @@ public class ActionFactory {
 		return new DeleteSecurityPolicyAction(air, username, name);
 	}
 
+	// security proxy configurations
+	
+	public Action<List<String>> createListSecurityProxyAction() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Action<NamedOwnedPayload> createGetSecurityProxyAction(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Action<String> createGetSecurityProxyPayloadAction(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Action<Class<Void>> createNewSecurityProxyAction(String username,
+			NamedOwnedPayload ownedPayload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Action<Class<Void>> createUpdateSecurityProxyAction(String username,
+			String name, OwnedPayload ownedPayload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Action<Class<Void>> createDeleteSecurityProxyAction(String username,
+			String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	// keys
 
 	public Action<List<PublicKeyInfo>> createListUserKeysAction(String username) {

@@ -37,7 +37,7 @@ import pl.cyfronet.coin.api.exception.NotFoundException;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @Path("/")
-public interface SecurityPolicyService {
+public interface OwnedPayloadService {
 
 	@GET
 	@Path("/")

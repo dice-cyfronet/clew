@@ -3,7 +3,7 @@ package pl.cyfronet.coin.impl.air.client;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import pl.cyfronet.coin.api.SecurityPolicyService;
+import pl.cyfronet.coin.api.OwnedPayloadService;
 
 public class SecurityPolicyClient {
 
@@ -12,7 +12,7 @@ public class SecurityPolicyClient {
 				new String[] { "securitypolicy-client.xml", });
 		BeanFactory factory = (BeanFactory) appContext;
 		
-		SecurityPolicyService client = factory.getBean("client-local", SecurityPolicyService.class);
+		OwnedPayloadService client = factory.getBean("client-local", OwnedPayloadService.class);
 		
 //		client.create("mk", "my content", true);
 	}

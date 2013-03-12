@@ -36,6 +36,22 @@
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
+	<jaxrs:server id="proxy-config-management-rs" address="http://0.0.0.0:${port}/securityproxy">
+		<jaxrs:serviceBeans>
+			<ref bean="proxy-config-management" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
+			<ref bean="authorizationInterceptor" />
+		</jaxrs:providers>
+	</jaxrs:server>	
+
+	<bean name="proxy-config-management" class="pl.cyfronet.coin.impl.SecurityProxyServiceImpl">
+		<property name="actionFactory" ref="actionFactory" />
+		<property name="authenticator" ref="authenticationHandler" />
+	</bean>
+
 	<!-- keys management -->
 	
 	<jaxrs:server id="keys-management-rs" address="http://0.0.0.0:${port}/key">

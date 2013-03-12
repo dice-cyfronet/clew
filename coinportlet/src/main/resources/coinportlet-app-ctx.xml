@@ -92,7 +92,7 @@
 		</jaxrs:providers>		
 	</jaxrs:client>
 	<jaxrs:client id="sps-client" address="${cloud.facade.sps.url}"
-			serviceClass="pl.cyfronet.coin.api.SecurityPolicyService"
+			serviceClass="pl.cyfronet.coin.api.OwnedPayloadService"
 			threadSafe="true"
 			inheritHeaders="true">
 		<jaxrs:providers>

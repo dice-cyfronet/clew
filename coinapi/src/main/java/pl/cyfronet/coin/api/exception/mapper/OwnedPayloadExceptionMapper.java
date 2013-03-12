@@ -30,7 +30,7 @@ import pl.cyfronet.coin.api.exception.NotFoundException;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
  */
-public class SecurityPolicyExceptionMapper extends CloudFacadeExceptionMapper {
+public class OwnedPayloadExceptionMapper extends CloudFacadeExceptionMapper {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(WorkflowServiceExceptionMapper.class);
