@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.securitypolicy;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
@@ -22,31 +22,34 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.ArrayList;
+
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
+import pl.cyfronet.coin.api.exception.NotFoundException;
+import pl.cyfronet.coin.impl.action.Action;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetSecurityPolicyActionTest extends ActionTest {
+public class GetSecurityPolicyPayloadActionTest extends
+		SecurityPolicyActionTest {
 
-	private String policyName = "policyName";
 	private String nonExistingPolicyName = "NonExisting";
-	private String policyPayload = "roles=my_role";
 	private String loadedPolicyPayload;
 
 	@Test
-	public void shouldGetExistingPolicy() throws Exception {
+	public void shouldGetExistingPolicyPayload() throws Exception {
 		givenSecurityProxiesStoredInAir();
 		whenGetExistingPolicyName();
 		thenReceivedPolicyPayload();
 	}
 
 	private void givenSecurityProxiesStoredInAir() {
-		when(air.getSecurityPolicy(policyName)).thenReturn(policyPayload);
-		when(air.getSecurityPolicy(nonExistingPolicyName)).thenThrow(
-				getAirException(400));
+		givenSecurityPolicyStoredInAirOwnerNotImportant();
+		when(air.getSecurityPolicies(null, nonExistingPolicyName)).thenReturn(
+				new ArrayList<NamedOwnedPayload>());
 	}
 
 	private void whenGetExistingPolicyName() {
@@ -55,17 +58,17 @@ public class GetSecurityPolicyActionTest extends ActionTest {
 
 	private void loadSecurityPolicy(String policyName) {
 		Action<String> action = actionFactory
-				.createGetSecurityPolicyAction(policyName);
+				.createGetSecurityPolicyPayloadAction(policyName);
 		loadedPolicyPayload = action.execute();
 	}
 
 	private void thenReceivedPolicyPayload() {
-		assertEquals(loadedPolicyPayload, policyPayload);
+		assertEquals(loadedPolicyPayload, policyText);
 		thenVerifyAirAskedAboutPolicy();
 	}
 
 	private void thenVerifyAirAskedAboutPolicy() {
-		verify(air, times(1)).getSecurityPolicy(anyString());
+		verify(air, times(1)).getSecurityPolicies(anyString(), anyString());
 	}
 
 	@Test
@@ -74,7 +77,7 @@ public class GetSecurityPolicyActionTest extends ActionTest {
 		try {
 			whenGetNonExistingSecurityPolicy();
 			fail("Exception should be thrown when getting non existing security policy");
-		} catch (SecurityPolicyNotFoundException e) {
+		} catch (NotFoundException e) {
 			thenVerifyAirAskedAboutPolicy();
 		}
 	}

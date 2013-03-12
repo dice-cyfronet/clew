@@ -22,8 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyAlreadyExistException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
+import pl.cyfronet.coin.api.exception.AlreadyExistsException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.api.exception.NotFoundException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -41,9 +42,11 @@ public class SecurityPolicyExceptionMapper extends CloudFacadeExceptionMapper {
 		logger.info("Response to be mapped: {} -> {}", status, message);
 		switch (status) {
 		case 404:
-			return new SecurityPolicyNotFoundException();
+			return new NotFoundException(message);
 		case 409:
-			return new SecurityPolicyAlreadyExistException();
+			return new AlreadyExistsException(message);
+		case 403:
+			return new NotAllowedException(message);
 		default:
 			return new CloudFacadeException(message);
 		}

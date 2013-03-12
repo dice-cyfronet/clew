@@ -14,6 +14,6 @@ public class SecurityPolicyClient {
 		
 		SecurityPolicyService client = factory.getBean("client-local", SecurityPolicyService.class);
 		
-		client.updateSecurityPolicy("mk", "my content", true);
+//		client.create("mk", "my content", true);
 	}
 }

@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.impl.air.client;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +33,7 @@ public class AirTest {
 
 		AirClient air = factory.getBean("air-client", AirClient.class);
 
-		System.out.println(air.getApplianceTypes());
+		//air.addSecurityPolicy("my/policy/name4", "policy text", Arrays.asList("marek", "tomek"));
+		air.updateSecurityPolicy("differentUser", "my/policy/name4", "aaaa", Arrays.asList("marek"));		
 	}
 }

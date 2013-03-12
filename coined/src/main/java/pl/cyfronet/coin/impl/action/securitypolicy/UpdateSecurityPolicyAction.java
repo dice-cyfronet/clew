@@ -13,79 +13,76 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.securitypolicy;
+
+import java.util.List;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
+import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyAlreadyExistException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class UploadSecurityPolicyAction extends AirAction<Class<Void>> {
+public class UpdateSecurityPolicyAction extends AirAction<Class<Void>> {
 
+	private String username;
 	private String policyName;
-	private boolean overwrite;
-	private String policyText;
+	private OwnedPayload ownedPayload;
+	private OwnedPayload oldPayload;
 
-	private String oldPolicyPayload = null;
-
-	UploadSecurityPolicyAction(AirClient air, String policyName,
-			String policyText, boolean overwrite) {
+	public UpdateSecurityPolicyAction(AirClient air, String username,
+			String policyName, OwnedPayload ownedPayload) {
 		super(air);
 		this.policyName = policyName;
-		this.overwrite = overwrite;
-		this.policyText = policyText;
+		this.ownedPayload = ownedPayload;
+		this.username = username;
 	}
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		if (overwrite) {
-			loadOldPolicyPayload();
-		}
-
+		loadOldPolicyPayload();
 		try {
-			getAir().uploadSecurityPolicy(policyName, policyText, overwrite);
+			update(ownedPayload);
 		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 400) {
-				throw new SecurityPolicyAlreadyExistException();
+			if (e.getStatus() == 404) {
+				throw new NotAllowedException();
 			}
 			throw new CloudFacadeException(
-					"Error while deleting security policy from Air, response code"
+					"Error while deleting security policy from Air, response code "
 							+ e.getStatus());
 		}
 
 		return Void.TYPE;
 	}
 
+	private void update(OwnedPayload payload) {
+		List<String> owners = payload.getOwners() == null ? oldPayload
+				.getOwners() : payload.getOwners();
+		String payloadToUpdate = payload.getPayload() == null ? oldPayload
+				.getPayload() : payload.getPayload();
+		getAir().updateSecurityPolicy(username, policyName, payloadToUpdate,
+				owners);
+	}
+
 	private void loadOldPolicyPayload() {
 		GetSecurityPolicyAction getPolicyAction = new GetSecurityPolicyAction(
 				getAir(), policyName);
-		try {
-			oldPolicyPayload = getPolicyAction.execute();
-		} catch (SecurityPolicyNotFoundException e) {
-			// ok policy does not exist
-		}
+		oldPayload = getPolicyAction.execute();
 	}
 
 	@Override
 	public void rollback() {
 		try {
-			if (oldPolicyPayload != null) {
-				UploadSecurityPolicyAction action = new UploadSecurityPolicyAction(
-						getAir(), policyName, oldPolicyPayload, true);
-				action.execute();
-			} else {
-				DeleteSecurityPolicyAction action = new DeleteSecurityPolicyAction(
-						getAir(), policyName);
-				action.execute();
+			if (oldPayload != null) {
+				update(oldPayload);
 			}
 		} catch (Exception e) {
 			// best effort.
 		}
 	}
-
 }

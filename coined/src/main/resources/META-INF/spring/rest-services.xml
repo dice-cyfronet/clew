@@ -44,6 +44,7 @@
 
 	<bean name="roles-management" class="pl.cyfronet.coin.impl.SecurityPolicyServiceImpl">
 		<property name="actionFactory" ref="actionFactory" />
+		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
 	<bean name="grants-management" class="pl.cyfronet.coin.impl.GrantServiceImpl">

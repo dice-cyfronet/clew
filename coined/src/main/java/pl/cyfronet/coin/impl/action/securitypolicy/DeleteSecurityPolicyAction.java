@@ -13,12 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.securitypolicy;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.api.exception.NotFoundException;
+import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
@@ -27,10 +30,14 @@ import pl.cyfronet.coin.impl.air.client.AirClient;
 public class DeleteSecurityPolicyAction extends AirAction<Class<Void>> {
 
 	private String policyName;
-	private String policyText;
+	private String username;
 
-	DeleteSecurityPolicyAction(AirClient air, String policyName) {
+	private NamedOwnedPayload payload;
+
+	public DeleteSecurityPolicyAction(AirClient air, String username,
+			String policyName) {
 		super(air);
+		this.username = username;
 		this.policyName = policyName;
 	}
 
@@ -38,10 +45,10 @@ public class DeleteSecurityPolicyAction extends AirAction<Class<Void>> {
 	public Class<Void> execute() throws CloudFacadeException {
 		loadOldPolicyPayload();
 		try {
-			getAir().deleteSecurityPolicy(policyName);
+			getAir().deleteSecurityPolicy(username, policyName);
 		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 400) {
-				throw new SecurityPolicyNotFoundException();
+			if (e.getStatus() == 404) {
+				throw new NotAllowedException();
 			}
 			throw new CloudFacadeException(
 					"Error while deleting security policy from Air, response code"
@@ -54,9 +61,9 @@ public class DeleteSecurityPolicyAction extends AirAction<Class<Void>> {
 	@Override
 	public void rollback() {
 		try {
-			if (policyText != null) {
-				UploadSecurityPolicyAction action = new UploadSecurityPolicyAction(
-						getAir(), policyName, policyText, false);
+			if (payload != null) {
+				NewSecurityPolicyAction action = new NewSecurityPolicyAction(
+						getAir(), username, payload);
 				action.execute();
 			}
 		} catch (Exception e) {
@@ -64,9 +71,9 @@ public class DeleteSecurityPolicyAction extends AirAction<Class<Void>> {
 		}
 	}
 
-	private void loadOldPolicyPayload() throws SecurityPolicyNotFoundException {
+	private void loadOldPolicyPayload() throws NotFoundException {
 		GetSecurityPolicyAction getPolicyAction = new GetSecurityPolicyAction(
-				getAir(), policyName);
-		policyText = getPolicyAction.execute();
+				getAir(), null, policyName);
+		payload = getPolicyAction.execute();
 	}
 }

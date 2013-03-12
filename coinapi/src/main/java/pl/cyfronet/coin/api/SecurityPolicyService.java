@@ -17,41 +17,55 @@ package pl.cyfronet.coin.api;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import pl.cyfronet.coin.api.exception.SecurityPolicyAlreadyExistException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
+import pl.cyfronet.coin.api.beans.OwnedPayload;
+import pl.cyfronet.coin.api.exception.AlreadyExistsException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.api.exception.NotFoundException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @Path("/")
-public interface SecurityPolicyService {	
+public interface SecurityPolicyService {
 
 	@GET
 	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON })
-	List<String> getPoliciesNames();
+	List<String> list();
 
 	@GET
-	@Path("/{policyName : .+}")
-	String getSecurityPolicy(@PathParam("policyName") String policyName);
-	
+	@Path("/{name : .+}")
+	NamedOwnedPayload get(@PathParam("name") String name)
+			throws NotFoundException;
+
+	@GET
+	@Path("/{name : .+}/payload")
+	String getPayload(@PathParam("name") String name) throws NotFoundException;
+
 	@POST
-	@Path("/{policyName : .+}")
-	void updateSecurityPolicy(@PathParam("policyName") String policyName,
-			String policyContent, @QueryParam("overwrite") boolean overwrite)
-			throws SecurityPolicyAlreadyExistException;
+	@Path("/")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	void create(NamedOwnedPayload ownedPayload) throws AlreadyExistsException;
+
+	@PUT
+	@Path("/{name : .+}")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	void update(@PathParam("name") String name, OwnedPayload ownedPayload)
+			throws NotFoundException, NotAllowedException;
 
 	@DELETE
-	@Path("/{policyName : .+}")
-	void deleteSecurityPolicy(@PathParam("policyName") String policyName)
-			throws SecurityPolicyNotFoundException;
+	@Path("/{name : .+}")
+	void delete(@PathParam("name") String name) throws NotFoundException,
+			NotAllowedException;
 }

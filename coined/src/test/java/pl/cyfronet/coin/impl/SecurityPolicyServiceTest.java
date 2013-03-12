@@ -17,7 +17,9 @@
 package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -30,12 +32,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.SecurityPolicyService;
-import pl.cyfronet.coin.api.exception.SecurityPolicyAlreadyExistException;
-import pl.cyfronet.coin.api.exception.SecurityPolicyNotFoundException;
-import pl.cyfronet.coin.impl.action.DeleteSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.GetSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.ListSecurityPoliciesAction;
-import pl.cyfronet.coin.impl.action.UploadSecurityPolicyAction;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
+import pl.cyfronet.coin.api.exception.AlreadyExistsException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.api.exception.NotFoundException;
+import pl.cyfronet.coin.impl.action.securitypolicy.DeleteSecurityPolicyAction;
+import pl.cyfronet.coin.impl.action.securitypolicy.GetSecurityPolicyAction;
+import pl.cyfronet.coin.impl.action.securitypolicy.GetSecurityPolicyPayloadAction;
+import pl.cyfronet.coin.impl.action.securitypolicy.ListSecurityPoliciesAction;
+import pl.cyfronet.coin.impl.action.securitypolicy.NewSecurityPolicyAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -54,14 +59,20 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	@Autowired
 	@Qualifier("securityPolicyClient")
 	private SecurityPolicyService securityPolicyClient;
+
 	private List<String> policies;
 	private List<String> givenPolicies;
 	private String givenSecurityPolicyContent = "security policy content";
 	private String securityPolicyContent;
 	private String policyName = "securityPolicyName";
-	private UploadSecurityPolicyAction uploadAction;
 	private DeleteSecurityPolicyAction deleteAction;
 	private String policyNameWithNamespace = "my/namespace/policyname";
+	private NamedOwnedPayload givenOwnedPayload;
+	private NamedOwnedPayload ownedPayload;
+	private NewSecurityPolicyAction newPolicyAction;
+	private NamedOwnedPayload givenNewPolicy;
+
+	private String username = "User123";
 
 	@Test
 	public void shouldListSecurityPolicies() throws Exception {
@@ -79,7 +90,7 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	}
 
 	private void whenGetSecurityPlicyNames() {
-		policies = securityPolicyClient.getPoliciesNames();
+		policies = securityPolicyClient.list();
 	}
 
 	private void then3SecurityPolicyNamesReturned() {
@@ -90,22 +101,49 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	public void shouldGetExistingSecurityPolicy() throws Exception {
 		givenSecurityPolicy();
 		whenGetSecurityPolicy();
-		thenSecurityPolicyContentReceived();
+		thenSecurityPolicyReceived();
 	}
 
 	private void givenSecurityPolicy() {
 		GetSecurityPolicyAction action = mock(GetSecurityPolicyAction.class);
-		when(action.execute()).thenReturn(givenSecurityPolicyContent);
+		givenOwnedPayload = new NamedOwnedPayload();
+		givenOwnedPayload.setOwners(Arrays.asList("user1", "user2"));
+		givenOwnedPayload.setPayload("payload");
+		givenOwnedPayload.setName(policyName);
+
+		when(action.execute()).thenReturn(givenOwnedPayload);
 		when(actionFactory.createGetSecurityPolicyAction(policyName))
 				.thenReturn(action);
 	}
 
 	private void whenGetSecurityPolicy() {
-		securityPolicyContent = securityPolicyClient
-				.getSecurityPolicy(policyName);
+		ownedPayload = securityPolicyClient.get(policyName);
 	}
 
-	private void thenSecurityPolicyContentReceived() {
+	private void thenSecurityPolicyReceived() {
+		assertEquals(givenOwnedPayload.getOwners(), ownedPayload.getOwners());
+		assertEquals(givenOwnedPayload.getPayload(), ownedPayload.getPayload());
+	}
+
+	@Test
+	public void shouldGetExistingSecurityPolicyPayload() throws Exception {
+		givenSecurityPolicyPayload();
+		whenGetSecurityPolicyPayload();
+		thenSecurityPolicyPayloadReceived();
+	}
+
+	private void givenSecurityPolicyPayload() {
+		GetSecurityPolicyPayloadAction action = mock(GetSecurityPolicyPayloadAction.class);
+		when(action.execute()).thenReturn(givenSecurityPolicyContent);
+		when(actionFactory.createGetSecurityPolicyPayloadAction(policyName))
+				.thenReturn(action);
+	}
+
+	private void whenGetSecurityPolicyPayload() {
+		securityPolicyContent = securityPolicyClient.getPayload(policyName);
+	}
+
+	private void thenSecurityPolicyPayloadReceived() {
 		assertEquals(securityPolicyContent, givenSecurityPolicyContent);
 	}
 
@@ -114,18 +152,18 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 			throws Exception {
 		givenNonExistingSecurityPolicy();
 		try {
-			whenGetSecurityPolicy();
+			whenGetSecurityPolicyPayload();
 			fail("Security policy not found exception should be thrown");
-		} catch (SecurityPolicyNotFoundException e) {
+		} catch (NotFoundException e) {
 			// OK should be thrown
 		}
 
 	}
 
 	private void givenNonExistingSecurityPolicy() {
-		GetSecurityPolicyAction action = mock(GetSecurityPolicyAction.class);
-		when(action.execute()).thenThrow(new SecurityPolicyNotFoundException());
-		when(actionFactory.createGetSecurityPolicyAction(policyName))
+		GetSecurityPolicyPayloadAction action = mock(GetSecurityPolicyPayloadAction.class);
+		when(action.execute()).thenThrow(new NotFoundException());
+		when(actionFactory.createGetSecurityPolicyPayloadAction(policyName))
 				.thenReturn(action);
 	}
 
@@ -137,42 +175,40 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	}
 
 	private void givenNewSecurityPolicy() {
-		uploadAction = mock(UploadSecurityPolicyAction.class);
+		newPolicyAction = mock(NewSecurityPolicyAction.class);
+		givenNewPolicy = new NamedOwnedPayload();
+		givenNewPolicy.setName(policyName);
+		givenNewPolicy.setPayload(securityPolicyContent);
+		givenNewPolicy.setOwners(Arrays.asList("user1", "user2"));
+
 		when(
-				actionFactory.createUploadSecurityPolicyAction(policyName,
-						givenSecurityPolicyContent, false)).thenReturn(
-				uploadAction);
+				actionFactory.createNewSecurityPolicyAction(username,
+						givenNewPolicy)).thenReturn(newPolicyAction);
 	}
 
 	private void whenAddingSecurityPolicy() {
-		securityPolicyClient.updateSecurityPolicy(policyName,
-				givenSecurityPolicyContent, false);
+		securityPolicyClient.create(givenNewPolicy);
 	}
 
 	private void thenNewSecurityPolicyAdded() {
-		verify(uploadAction, times(1)).execute();
+		verify(newPolicyAction, times(1)).execute();
 	}
 
 	@Test
-	public void shouldThrowExceptionWhileAddingSecurityProxyWithNonUniqueNameWithoutForce()
+	public void shouldThrowExceptionWhileAddingSecurityProxyWithoutUniqueName()
 			throws Exception {
 		givenExistingSecurityPolicy();
 		try {
 			whenAddingSecurityPolicyWithNonUniqueName();
 			fail("Security policy already exists exception should be thrown");
-		} catch (SecurityPolicyAlreadyExistException e) {
+		} catch (AlreadyExistsException e) {
 			// Ok should be thrown
 		}
 	}
 
 	private void givenExistingSecurityPolicy() {
-		uploadAction = mock(UploadSecurityPolicyAction.class);
-		when(uploadAction.execute()).thenThrow(
-				new SecurityPolicyAlreadyExistException());
-		when(
-				actionFactory.createUploadSecurityPolicyAction(policyName,
-						givenSecurityPolicyContent, false)).thenReturn(
-				uploadAction);
+		givenNewSecurityPolicy();
+		when(newPolicyAction.execute()).thenThrow(new AlreadyExistsException());
 	}
 
 	private void whenAddingSecurityPolicyWithNonUniqueName() {
@@ -188,12 +224,13 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 
 	private void givenSecurityPolicyToDelete() {
 		deleteAction = mock(DeleteSecurityPolicyAction.class);
-		when(actionFactory.createDeleteSecurityPolicyAction(policyName))
-				.thenReturn(deleteAction);
+		when(
+				actionFactory.createDeleteSecurityPolicyAction(username,
+						policyName)).thenReturn(deleteAction);
 	}
 
 	private void whenDeleteSecurityPolicy() {
-		securityPolicyClient.deleteSecurityPolicy(policyName);
+		securityPolicyClient.delete(policyName);
 	}
 
 	private void thenSecurityPolicyRemoved() {
@@ -205,23 +242,38 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 			throws Exception {
 		givenEmptySecurityPoliciesList();
 		try {
-			whenDeleteNonexistingSecurityPolicy();
+			whenDeleteSecurityPolicy();
 			fail("Security policy not found exception should be thrown");
-		} catch (SecurityPolicyNotFoundException e) {
+		} catch (NotFoundException e) {
 			// OK should be thrown
 		}
 	}
 
 	private void givenEmptySecurityPoliciesList() {
-		deleteAction = mock(DeleteSecurityPolicyAction.class);
-		when(deleteAction.execute()).thenThrow(
-				new SecurityPolicyNotFoundException());
-		when(actionFactory.createDeleteSecurityPolicyAction(policyName))
-				.thenReturn(deleteAction);
+		givenDeleteThrowsException(new NotFoundException());
 	}
 
-	private void whenDeleteNonexistingSecurityPolicy() {
-		whenDeleteSecurityPolicy();
+	private void givenDeleteThrowsException(Exception e) {
+		deleteAction = mock(DeleteSecurityPolicyAction.class);
+		when(deleteAction.execute()).thenThrow(e);
+		when(
+				actionFactory.createDeleteSecurityPolicyAction(username,
+						policyName)).thenReturn(deleteAction);
+	}
+	
+	@Test
+	public void shouldThrow403WhileDeletingNotOwnedSecurityPolicy() throws Exception {
+		givenSecurityPolicyOwnedByOtherUser();
+		try {
+			whenDeleteSecurityPolicy();
+			fail("Security policy not owned by the user, exception should be thrown");
+		} catch (NotAllowedException e) {
+			// OK should be thrown
+		}
+	}
+	
+	private void givenSecurityPolicyOwnedByOtherUser() {
+		givenDeleteThrowsException(new NotAllowedException());		
 	}
 
 	@Test
@@ -232,21 +284,20 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	}
 
 	private void givenEmptySecurityPoliciesWaitingForSecPolicyWithNamespace() {
-		uploadAction = mock(UploadSecurityPolicyAction.class);
+		givenNewSecurityPolicy();
+		givenNewPolicy.setName(policyNameWithNamespace);
 		when(
-				actionFactory.createUploadSecurityPolicyAction(
-						policyNameWithNamespace, givenSecurityPolicyContent,
-						false)).thenReturn(uploadAction);
+				actionFactory.createNewSecurityPolicyAction(username,
+						givenNewPolicy)).thenReturn(newPolicyAction);
 	}
 
 	private void whenAddingSecurityPolicyWithNamespace() {
-		securityPolicyClient.updateSecurityPolicy(policyNameWithNamespace,
-				givenSecurityPolicyContent, false);
+		securityPolicyClient.create(givenNewPolicy);
 	}
 
 	private void thenSecurityPolicyWithNamespaceAdded() {
-		verify(actionFactory, times(1)).createUploadSecurityPolicyAction(
-				policyNameWithNamespace, givenSecurityPolicyContent, false);
+		verify(actionFactory, times(1)).createNewSecurityPolicyAction(username,
+				givenNewPolicy);
 	}
 
 	@Test
@@ -259,18 +310,17 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 	private void givenSecurityPolicyWithNamespaceForDelete() {
 		deleteAction = mock(DeleteSecurityPolicyAction.class);
 		when(
-				actionFactory
-						.createDeleteSecurityPolicyAction(policyNameWithNamespace))
-				.thenReturn(deleteAction);
+				actionFactory.createDeleteSecurityPolicyAction(username,
+						policyNameWithNamespace)).thenReturn(deleteAction);
 	}
 
 	private void whenDeleteSecurityPolicyWithNamespace() {
-		securityPolicyClient.deleteSecurityPolicy(policyNameWithNamespace);
+		securityPolicyClient.delete(policyNameWithNamespace);
 	}
 
 	private void thenSecurityWithNamespaceRemoved() {
 		verify(actionFactory, times(1)).createDeleteSecurityPolicyAction(
-				policyNameWithNamespace);
+				username, policyNameWithNamespace);
 	}
 
 	@Test
@@ -282,17 +332,17 @@ public class SecurityPolicyServiceTest extends AbstractServiceTest {
 
 	private void givenSecurityPolicyWithNamespace() {
 		securityPolicyContent = null;
-		GetSecurityPolicyAction action = mock(GetSecurityPolicyAction.class);
+		GetSecurityPolicyPayloadAction action = mock(GetSecurityPolicyPayloadAction.class);
 		when(action.execute()).thenReturn(givenSecurityPolicyContent);
 		when(
 				actionFactory
-						.createGetSecurityPolicyAction(policyNameWithNamespace))
+						.createGetSecurityPolicyPayloadAction(policyNameWithNamespace))
 				.thenReturn(action);
 	}
 
 	private void whenGetSecurityPolicyWithNamespace() {
 		securityPolicyContent = securityPolicyClient
-				.getSecurityPolicy(policyNameWithNamespace);
+				.getPayload(policyNameWithNamespace);
 	}
 
 	private void thenSecurityPolicyWithNamespacePayloadReceived() {

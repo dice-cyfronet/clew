@@ -13,19 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.securitypolicy;
 
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.impl.air.client.SecurityPolicy;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
+import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionTest;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -33,6 +35,7 @@ import pl.cyfronet.coin.impl.air.client.SecurityPolicy;
 public class ListSecurityPoliciesActionTest extends ActionTest {
 
 	private List<String> policies;
+	private String username = "marek";
 
 	@Test
 	public void shouldGetSecurityPolicies() throws Exception {
@@ -42,17 +45,18 @@ public class ListSecurityPoliciesActionTest extends ActionTest {
 	}
 
 	private void givenAirWith2SecurityPolicies() {
-		SecurityPolicy policy1 = getSecurityPolicy(1);
-		SecurityPolicy policy2 = getSecurityPolicy(2);
+		NamedOwnedPayload policy1 = getSecurityPolicy(1);
+		NamedOwnedPayload policy2 = getSecurityPolicy(2);
 
-		when(air.getSecurityPolicies()).thenReturn(
+		when(air.getSecurityPolicies(null, null)).thenReturn(
 				Arrays.asList(policy1, policy2));
 	}
 
-	private SecurityPolicy getSecurityPolicy(int nr) {
-		SecurityPolicy policy1 = new SecurityPolicy();
-		policy1.setId("id" + nr);
-		policy1.setPolicy_name("name" + nr);
+	private NamedOwnedPayload getSecurityPolicy(int nr) {
+		NamedOwnedPayload policy1 = new NamedOwnedPayload();
+		policy1.setName("name" + nr);
+		policy1.setPayload("payload" + nr);
+		policy1.setOwners(Arrays.asList(username ));
 		return policy1;
 	}
 
@@ -74,8 +78,8 @@ public class ListSecurityPoliciesActionTest extends ActionTest {
 	}
 
 	private void givenEmptySecurityPoliciesStoredInAir() {
-		when(air.getSecurityPolicies()).thenReturn(
-				new ArrayList<SecurityPolicy>());
+		when(air.getSecurityPolicies(null, null)).thenReturn(
+				new ArrayList<NamedOwnedPayload>());
 	}
 
 	private void thenEmptySecurityPoliciesListLoaded() {

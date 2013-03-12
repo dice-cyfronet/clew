@@ -1,6 +1,5 @@
 package pl.cyfronet.coin.portlet.policymanager;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-import pl.cyfronet.coin.api.exception.SecurityPolicyAlreadyExistException;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.portlet.util.ClientFactory;
 
 @Controller
@@ -46,11 +45,11 @@ public class PolicyManagerPortlet {
 	@RequestMapping
 	public String doViewListPolicies(Model model, PortletRequest request) {
 		Map<String, String> policies = new HashMap<>();
-		List<String> policyNames = clientFactory.getSecurityPolicyService(request).getPoliciesNames();
+		List<String> policyNames = clientFactory.getSecurityPolicyService(request).list();
 		
 		for(String policyName : policyNames) {
 			policies.put(policyName,
-					clientFactory.getSecurityPolicyService(request).getSecurityPolicy(policyName));
+					clientFactory.getSecurityPolicyService(request).getPayload(policyName));
 		}
 		
 		model.addAttribute(MODEL_BEAN_POLICIES, policies);
@@ -68,7 +67,7 @@ public class PolicyManagerPortlet {
 		log.debug("Processing upload policy request for key [{}]", uploadPolicyRequest);
 		validator.validate(uploadPolicyRequest, errors);
 		
-		if(clientFactory.getSecurityPolicyService(request).getPoliciesNames().
+		if(clientFactory.getSecurityPolicyService(request).list().
 				contains(uploadPolicyRequest.getPolicyName())) {
 			errors.addError(new FieldError(MODEL_BEAN_UPLOAD_POLICY, "policyName", "Given policy name is already taken"));
 		}
@@ -79,9 +78,12 @@ public class PolicyManagerPortlet {
 		
 		if(!errors.hasErrors()) {
 			try {
-				clientFactory.getSecurityPolicyService(request).
-						updateSecurityPolicy(uploadPolicyRequest.getPolicyName(),
-								new String(uploadPolicyRequest.getPolicyBody().getBytes()), false);
+				NamedOwnedPayload newPolicy = new NamedOwnedPayload();
+				newPolicy.setName(uploadPolicyRequest.getPolicyName());
+				newPolicy.setPayload(new String(uploadPolicyRequest
+						.getPolicyBody().getBytes()));
+				clientFactory.getSecurityPolicyService(request).create(
+						newPolicy);
 			} catch (Exception e) {
 				log.info("Could not upload security policy");
 				errors.addError(new FieldError(MODEL_BEAN_UPLOAD_POLICY, "policyName", "The policy could not be uploaded"));
@@ -98,14 +100,14 @@ public class PolicyManagerPortlet {
 	public void doActionDeletePolicy(@RequestParam("policyName") String policyName,
 			PortletRequest request) {
 		log.debug("Removing policy [{}]", policyName);
-		clientFactory.getSecurityPolicyService(request).deleteSecurityPolicy(policyName);
+		clientFactory.getSecurityPolicyService(request).delete(policyName);
 	}
 	
 	@ResourceMapping("downloadPolicy")
 	public void doResourcePolicyDownload(@RequestParam("policyName") String policyName,
 			PortletRequest request, ResourceResponse response) {
 		if(policyName != null) {
-			String policy = clientFactory.getSecurityPolicyService(request).getSecurityPolicy(policyName);
+			String policy = clientFactory.getSecurityPolicyService(request).getPayload(policyName);
 			response.addProperty("Content-Disposition", "Attachment;Filename=\"policy.txt\"");
 			response.addProperty("Pragma", "public");
 			response.addProperty("Cache-Control", "must-revalidate");

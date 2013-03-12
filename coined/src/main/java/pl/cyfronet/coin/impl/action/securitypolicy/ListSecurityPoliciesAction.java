@@ -13,27 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.securitypolicy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.coin.impl.air.client.SecurityPolicy;
 
+/**
+ * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ */
 public class ListSecurityPoliciesAction extends ReadOnlyAirAction<List<String>> {
 
-	ListSecurityPoliciesAction(AirClient air) {
+	public ListSecurityPoliciesAction(AirClient air) {
 		super(air);
-	}
-
+	}	
+	
 	@Override
 	public List<String> execute() throws CloudFacadeException {
-		List<SecurityPolicy> policies = getAir().getSecurityPolicies();
+		List<NamedOwnedPayload> policies = getAir().getSecurityPolicies(null, null);
 		List<String> policyNames = new ArrayList<String>();
-		for (SecurityPolicy policy : policies) {
-			policyNames.add(policy.getPolicy_name());
+		for (NamedOwnedPayload policy : policies) {
+			policyNames.add(policy.getName());
 		}
 		return policyNames;
 	}

@@ -18,49 +18,67 @@ package pl.cyfronet.coin.impl;
 import java.util.List;
 
 import pl.cyfronet.coin.api.SecurityPolicyService;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
+import pl.cyfronet.coin.api.beans.OwnedPayload;
+import pl.cyfronet.coin.api.exception.AlreadyExistsException;
+import pl.cyfronet.coin.api.exception.NotFoundException;
 import pl.cyfronet.coin.auth.annotation.Public;
-import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class SecurityPolicyServiceImpl implements SecurityPolicyService {
+public class SecurityPolicyServiceImpl extends UsernameAwareService implements
+		SecurityPolicyService {
 
 	private ActionFactory actionFactory;
 
 	@Public
 	@Override
-	public String getSecurityPolicy(String policyName) {
-		Action<String> action = actionFactory
-				.createGetSecurityPolicyAction(policyName);
-		return action.execute();
-	}
-
-	@Public
-	@Override
-	public List<String> getPoliciesNames() {
+	public List<String> list() {
 		Action<List<String>> action = actionFactory
 				.createListSecurityPoliciesAction();
 		return action.execute();
 	}
 
-	@Role(values = "admin")
+	@Public
 	@Override
-	public void updateSecurityPolicy(String policyName, String policyContent,
-			boolean overwrite) {
+	public NamedOwnedPayload get(String name) throws NotFoundException {
+		Action<NamedOwnedPayload> action = actionFactory
+				.createGetSecurityPolicyAction(name);
+		return action.execute();
+	}
+
+	@Public
+	@Override
+	public String getPayload(String name) {
+		Action<String> action = actionFactory
+				.createGetSecurityPolicyPayloadAction(name);
+		return action.execute();
+	}
+
+	@Override
+	public void create(NamedOwnedPayload ownedPayload)
+			throws AlreadyExistsException {
 		Action<Class<Void>> action = actionFactory
-				.createUploadSecurityPolicyAction(policyName, policyContent,
-						overwrite);
+				.createNewSecurityPolicyAction(getUsername(), ownedPayload);
 		action.execute();
 	}
 
-	@Role(values = "admin")
 	@Override
-	public void deleteSecurityPolicy(String policyName) {
+	public void update(String name, OwnedPayload ownedPayload)
+			throws AlreadyExistsException {
 		Action<Class<Void>> action = actionFactory
-				.createDeleteSecurityPolicyAction(policyName);
+				.createUpdateSecurityPolicyAction(getUsername(), name,
+						ownedPayload);
+		action.execute();
+	}
+
+	@Override
+	public void delete(String name) {
+		Action<Class<Void>> action = actionFactory
+				.createDeleteSecurityPolicyAction(getUsername(), name);
 		action.execute();
 	}
 

@@ -16,16 +16,24 @@
 package pl.cyfronet.coin.api.exception;
 
 import javax.ws.rs.core.Response;
+import javax.xml.ws.WebFault;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class SecurityPolicyAlreadyExistException extends CloudFacadeException {
+@WebFault
+public class NotFoundException extends CloudFacadeException {
 
-	private static final long serialVersionUID = 1L;
-	
-	public SecurityPolicyAlreadyExistException() {
-		super(Response.Status.CONFLICT);
+	/**
+	 * Serial version UID
+	 */
+	private static final long serialVersionUID = 6823966272806907966L;
+
+	public NotFoundException() {
+		super(Response.Status.NOT_FOUND);
 	}
 
+	public NotFoundException(String msg) {
+		super(msg, Response.Status.NOT_FOUND);
+	}
 }
