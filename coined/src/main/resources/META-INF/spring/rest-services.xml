@@ -31,27 +31,11 @@
 		</jaxrs:providers>
 	</jaxrs:server>	
 
-	<jaxrs:server id="grants-rs" address="http://0.0.0.0:${port}/grant">
-		<jaxrs:serviceBeans>
-			<ref bean="grants-management" />
-		</jaxrs:serviceBeans>
-		<jaxrs:providers>
-			<ref bean="jsonProvider" />
-			<ref bean="authenticationInterceptor" />
-			<ref bean="authorizationInterceptor" />
-		</jaxrs:providers>
-	</jaxrs:server>
-
 	<bean name="roles-management" class="pl.cyfronet.coin.impl.SecurityPolicyServiceImpl">
 		<property name="actionFactory" ref="actionFactory" />
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
-	<bean name="grants-management" class="pl.cyfronet.coin.impl.GrantServiceImpl">
-		<property name="actionFactory" ref="actionFactory" />
-	</bean>
-	
-	
 	<!-- keys management -->
 	
 	<jaxrs:server id="keys-management-rs" address="http://0.0.0.0:${port}/key">

@@ -24,10 +24,7 @@
 		});
 		$('#securitypolicy-accordion').accordion({
 			autoHeight : false
-		});
-		$('#grant-accordion').accordion({
-			autoHeight : false
-		});
+		});		
 		$('#key-accordion').accordion({
 			autoHeight : false
 		});
@@ -86,8 +83,7 @@ body {
 			<ul>
 				<li><a href="#workflow-accordion">Workflow</a></li>
 				<li><a href="#as-accordion">Atomic Service</a></li>
-				<li><a href="#securitypolicy-accordion">Security Policy</a></li>
-				<li><a href="#grant-accordion">Grant</a></li>
+				<li><a href="#securitypolicy-accordion">Security Policy</a></li>				
 				<li><a href="#key-accordion">Public Key</a></li>
 			</ul>
 			<div id="workflow-accordion">
@@ -732,105 +728,7 @@ body {
 						does not exist, 403 status code is returned 
 						when user tries to update not owned policy. </p>
 				</div>
-			</div>
-			<div id="grant-accordion">
-				<h3>
-					<a href="#"><strong class="method">GET</strong> <strong>/grant</strong>
-						- lists stored grants names</a>
-				</h3>
-				<div>
-					<div class="ui-state-highlight ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> This method is public, no ticket required.
-					</div>
-					<p>The operation returns the 200 status code and the grants
-						names on success.</p>
-				</div>
-				<h3>
-					<a href="#"><strong class="method">GET</strong> <strong>/grant/{grantName}</strong>
-						- gets the grant JSON content</a>
-				</h3>
-				<div>
-					<div class="ui-state-highlight ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> This method is public, no ticket required.
-					</div>
-					<ul>
-						<li>(required) <strong>grantName</strong> - grant name
-							(namespaces are supported, e.g. my/namespace/grant_name)
-						</li>
-					</ul>
-
-					<p>The structure of the JSON request includes:</p>
-					<ul>
-						<li><strong>get</strong> - grant for get methods</li>
-						<li><strong>post</strong> - grant for post methods</li>
-						<li><strong>put</strong> - grant for put methods</li>
-						<li><strong>delete</strong> - grant for delete methods</li>
-					</ul>
-
-					<p>The operation returns the 200 status code and the grant
-						content (for get, post, put, delete) on success. The 404 status
-						code is returned when security policy with given name does not
-						exist.</p>
-				</div>
-				<h3>
-					<a href="#"><strong class="method">POST</strong> <strong>/grant/{grantName}</strong>
-						- uploads or update grant</a>
-				</h3>
-				<div>
-					<div class="ui-state-error ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>admin</i> role is required to perform
-						this action.
-					</div>
-					<ul>
-						<li>(required) path parameter <strong>grantName</strong> -
-							security policy name (namespaces are supported, e.g.
-							my/namespace/grant_name)
-						</li>
-						<li>(optional) query parameter <strong>overwrite</strong> -
-							if <b>true</b> than existing grant will be updated, otherwise if
-							grant exists than 409 code will be returned.
-						</li>
-						<li>(required) <strong>request body</strong> - grant content
-							in following JSON format
-							<ul>
-								<li><strong>get</strong> - grant for get methods</li>
-								<li><strong>post</strong> - grant for post methods</li>
-								<li><strong>put</strong> - grant for put methods</li>
-								<li><strong>delete</strong> - grant for delete methods</li>
-							</ul>
-						</li>
-					</ul>
-
-					<p>
-						The operation returns the 200 status code on success. The 409
-						status code is returned when user tries to update existing grant
-						without query param <i>overwrite</i> set to <b>true</b>.
-					</p>
-				</div>
-				<h3>
-					<a href="#"><strong class="method">DELETE</strong> <strong>/grant/{grantName}</strong>
-						- removes grant</a>
-				</h3>
-				<div>
-					<div class="ui-state-error ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>admin</i> role is required to perform
-						this action.
-					</div>
-					<ul>
-						<li>(required) <strong>grantName</strong> - grant name
-							(namespaces are supported, e.g. my/namespace/grant_name)
-						</li>
-					</ul>
-
-					<p>The operation returns the 200 status code on success. The
-						404 status code is returned when grant with given name does not
-						exist.</p>
-				</div>
-			</div>
+			</div>			
 			<div id="key-accordion">
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/key</strong>
