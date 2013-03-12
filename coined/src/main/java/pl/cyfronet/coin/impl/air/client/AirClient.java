@@ -131,6 +131,34 @@ public interface AirClient {
 	void deleteSecurityPolicy(@QueryParam("vph_username") String username,
 			@QueryParam("name") String policyName);
 
+	// security proxy configurations
+
+	@GET
+	@Path("/security_proxy")
+	@Produces(MediaType.APPLICATION_JSON)
+	List<NamedOwnedPayload> getSecurityProxies(
+			@QueryParam("vph_username") String username,
+			@QueryParam("name") String configurationName);
+
+	@POST
+	@Path("/security_proxy")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	void addSecurityProxy(@FormParam("name") String configurationName,
+			@FormParam("payload") String configurationText,
+			@FormParam("owners[]") List<String> owners);
+
+	@PUT
+	@Path("/security_proxy")
+	void updateSecurityProxy(@QueryParam("vph_username") String username,
+			@QueryParam("name") String configurationName,
+			@FormParam("payload") String configurationText,
+			@FormParam("owners[]") List<String> owners);
+
+	@DELETE
+	@Path("/security_proxy")
+	void deleteSecurityProxy(@QueryParam("vph_username") String username,
+			@QueryParam("name") String configurationName);
+
 	// keys
 
 	@GET
