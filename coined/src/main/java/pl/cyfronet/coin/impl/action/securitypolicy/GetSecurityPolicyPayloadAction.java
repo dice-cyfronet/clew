@@ -15,26 +15,22 @@
  */
 package pl.cyfronet.coin.impl.action.securitypolicy;
 
-import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadPayloadAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetSecurityPolicyPayloadAction extends ReadOnlyAirAction<String> {
+public class GetSecurityPolicyPayloadAction extends
+		GetOwnedPayloadPayloadAction {
 
-	private String policyName;
-
-	public GetSecurityPolicyPayloadAction(AirClient air, String policyName) {
-		super(air);
-		this.policyName = policyName;
+	public GetSecurityPolicyPayloadAction(AirClient air, String ownedPayloadName) {
+		super(air, ownedPayloadName);
 	}
 
 	@Override
-	public String execute() throws CloudFacadeException {
-		GetSecurityPolicyAction action = new GetSecurityPolicyAction(getAir(),
-				policyName);
-		return action.execute().getPayload();
+	protected GetSecurityPolicyAction getOwnedPayloadAction(
+			String ownedPayloadName) {
+		return new GetSecurityPolicyAction(getAir(), ownedPayloadName);
 	}
 }
