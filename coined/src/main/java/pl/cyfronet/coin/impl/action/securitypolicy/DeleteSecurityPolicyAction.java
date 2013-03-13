@@ -15,65 +15,34 @@
  */
 package pl.cyfronet.coin.impl.action.securitypolicy;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
-
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
-import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.api.exception.NotAllowedException;
-import pl.cyfronet.coin.api.exception.NotFoundException;
-import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.DeleteOwnedPayloadAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class DeleteSecurityPolicyAction extends AirAction<Class<Void>> {
-
-	private String policyName;
-	private String username;
-
-	private NamedOwnedPayload payload;
+public class DeleteSecurityPolicyAction extends DeleteOwnedPayloadAction {
 
 	public DeleteSecurityPolicyAction(AirClient air, String username,
 			String policyName) {
-		super(air);
-		this.username = username;
-		this.policyName = policyName;
+		super(air, username, policyName);
 	}
 
 	@Override
-	public Class<Void> execute() throws CloudFacadeException {
-		loadOldPolicyPayload();
-		try {
-			getAir().deleteSecurityPolicy(username, policyName);
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 404) {
-				throw new NotAllowedException();
-			}
-			throw new CloudFacadeException(
-					"Error while deleting security policy from Air, response code"
-							+ e.getStatus());
-		}
-
-		return Void.TYPE;
+	protected void deleteOwnedPayload(String username, String ownedPayloadName) {
+		getAir().deleteSecurityPolicy(username, ownedPayloadName);
 	}
 
 	@Override
-	public void rollback() {
-		try {
-			if (payload != null) {
-				NewSecurityPolicyAction action = new NewSecurityPolicyAction(
-						getAir(), username, payload);
-				action.execute();
-			}
-		} catch (Exception e) {
-			// best effort.
-		}
+	protected NewSecurityPolicyAction getNewOwnedPayloadAction(String username,
+			NamedOwnedPayload ownedPayload) {
+		return new NewSecurityPolicyAction(getAir(), username, ownedPayload);
 	}
-
-	private void loadOldPolicyPayload() throws NotFoundException {
-		GetSecurityPolicyAction getPolicyAction = new GetSecurityPolicyAction(
-				getAir(), null, policyName);
-		payload = getPolicyAction.execute();
+	
+	@Override
+	protected GetSecurityPolicyAction getOwnedPayloadAction(String username, String ownedPolicyName) {
+		return new GetSecurityPolicyAction(
+				getAir(), null, ownedPolicyName);
 	}
 }
