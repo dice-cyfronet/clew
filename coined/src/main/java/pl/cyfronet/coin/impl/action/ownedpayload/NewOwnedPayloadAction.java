@@ -10,26 +10,28 @@ import pl.cyfronet.coin.api.exception.AlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.DeleteSecurityPolicyAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
-public abstract class NewOwnedPayloadAction extends AirAction<Class<Void>> {
+public class NewOwnedPayloadAction extends AirAction<Class<Void>> {
 
 	NamedOwnedPayload newPolicy;
 	private String username;
+	private OwnedPayloadActions actions;
 
 	public NewOwnedPayloadAction(AirClient air, String username,
-			NamedOwnedPayload ownedPayload) {
+			NamedOwnedPayload ownedPayload, OwnedPayloadActions actions) {
 		super(air);
 		this.username = username;
 		this.newPolicy = ownedPayload;
+		this.actions = actions;
 	}
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		addDefaultOwnerIfOwnerListEmpty();
 		try {
-			addOwnedPayload(newPolicy.getName(),
+			actions.addOwnedPayload(newPolicy.getName(),
 					newPolicy.getPayload(), newPolicy.getOwners());
 		} catch (ServerWebApplicationException e) {
 			if (e.getStatus() == 400) {
@@ -42,9 +44,6 @@ public abstract class NewOwnedPayloadAction extends AirAction<Class<Void>> {
 		return Void.TYPE;
 	}
 
-	protected abstract void addOwnedPayload(String name, String payload, List<String> owners);
-	
-	
 	private void addDefaultOwnerIfOwnerListEmpty() {
 		List<String> owners = newPolicy.getOwners();
 		if (owners == null || owners.size() == 0) {
@@ -55,12 +54,11 @@ public abstract class NewOwnedPayloadAction extends AirAction<Class<Void>> {
 	@Override
 	public void rollback() {
 		try {
-			Action<Class<Void>> action = getDeleteAction(username, newPolicy.getName());
+			Action<Class<Void>> action = new DeleteOwnedPayloadAction(getAir(),
+					username, newPolicy.getName(), actions);
 			action.execute();
 		} catch (Exception e) {
 			// Best effort.
 		}
 	}
-
-	protected abstract DeleteSecurityPolicyAction getDeleteAction(String username, String ownedPayloadName);
 }

@@ -20,7 +20,7 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 	@Override
 	public List<String> list() {
 		Action<List<String>> action = actionFactory
-				.createListSecurityProxyAction();
+				.createListSecurityProxiesAction();
 		return action.execute();
 	}
 

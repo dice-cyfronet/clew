@@ -1,6 +1,4 @@
-package pl.cyfronet.coin.impl.action.securitypolicy;
-
-import static org.mockito.Mockito.when;
+package pl.cyfronet.coin.impl.action.ownedpayload;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,27 +6,26 @@ import java.util.Arrays;
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.impl.action.ActionTest;
 
-public class SecurityPolicyActionTest extends ActionTest {
+public abstract class OwnedPayloadActionTest extends ActionTest {
 
 	protected String username = "marek";
 	protected String policyName = "myPolicy";
 	protected String policyText = "roles=my_policy";
-	
+
 	protected void givenSecurityPolicyStoredInAir() {
 		givenSecurityPolicyStoredInAir(username);
 	}
-	
-	protected void givenSecurityPolicyStoredInAirOwnerNotImportant() {
+
+	protected void givenOwnedPayloadStoredInAirOwnerNotImportant() {
 		givenSecurityPolicyStoredInAir(null);
 	}
-	
+
 	private void givenSecurityPolicyStoredInAir(String requestUsername) {
 		NamedOwnedPayload policy = getPayload(username);
-
-		when(air.getSecurityPolicies(requestUsername, policyName)).thenReturn(
+		getMethodProvider().mockGetOwnedPayload(requestUsername, policyName,
 				Arrays.asList(policy));
 	}
-	
+
 	protected NamedOwnedPayload getPayload(String... owners) {
 		NamedOwnedPayload policy = new NamedOwnedPayload();
 		policy.setName(policyName);
@@ -37,9 +34,11 @@ public class SecurityPolicyActionTest extends ActionTest {
 
 		return policy;
 	}
-	
-	protected void givenAirWithoutAskedPolicy(String username) {
-		when(air.getSecurityPolicies(username, policyName)).thenReturn(
+
+	protected void givenAirWithoutAskedOwnedPayload(String username) {
+		getMethodProvider().mockGetOwnedPayload(username, policyName,
 				new ArrayList<NamedOwnedPayload>());
 	}
+
+	protected abstract MethodProvider getMethodProvider();
 }

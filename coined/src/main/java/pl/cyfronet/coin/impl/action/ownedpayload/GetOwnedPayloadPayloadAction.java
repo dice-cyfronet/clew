@@ -1,29 +1,31 @@
 package pl.cyfronet.coin.impl.action.ownedpayload;
 
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.GetSecurityPolicyAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public abstract class GetOwnedPayloadPayloadAction extends
-		ReadOnlyAirAction<String> {
+public class GetOwnedPayloadPayloadAction extends ReadOnlyAirAction<String> {
 
 	private String ownedPayloadName;
+	private OwnedPayloadActions actions;
 
-	public GetOwnedPayloadPayloadAction(AirClient air, String ownedPayloadName) {
+	public GetOwnedPayloadPayloadAction(AirClient air, String ownedPayloadName,
+			OwnedPayloadActions actions) {
 		super(air);
 		this.ownedPayloadName = ownedPayloadName;
+		this.actions = actions;
 	}
 
 	@Override
 	public String execute() throws CloudFacadeException {
-		GetSecurityPolicyAction action = getOwnedPayloadAction(ownedPayloadName);
+		Action<NamedOwnedPayload> action = new GetOwnedPayloadAction(getAir(),
+				ownedPayloadName, actions);
 		return action.execute().getPayload();
 	}
-
-	protected abstract GetSecurityPolicyAction getOwnedPayloadAction(
-			String ownedPayloadName);
 }

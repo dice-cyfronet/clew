@@ -24,7 +24,7 @@ public class SecurityProxyServiceTest extends AbstractOwnedPayloadServiceTest {
 
 	@Override
 	protected void mockListAction(Action<List<String>> action) {
-		when(actionFactory.createListSecurityProxyAction()).thenReturn(
+		when(actionFactory.createListSecurityProxiesAction()).thenReturn(
 				action);
 	}
 

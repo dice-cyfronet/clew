@@ -1,21 +1,21 @@
-package pl.cyfronet.coin.impl.action.securitypolicy;
+package pl.cyfronet.coin.impl.action.ownedpayload;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.testng.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.api.exception.NotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 
-public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
+public abstract class UpdateOwnedPayloadActionTest extends
+		OwnedPayloadActionTest {
 
 	private String newPayload = "newPayload";
 	private String differentUser = "wojtek";
@@ -24,34 +24,34 @@ public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
 
 	@Test
 	public void shouldUpdateExistingSecurityPolicy() throws Exception {
-		givenSecurityPolicyStoredInAirOwnerNotImportant();
+		givenOwnedPayloadStoredInAirOwnerNotImportant();
 		whenUpdatingSecurityPolicy();
 		thenPolicyWasUpdated();
 	}
 
 	private void whenUpdatingSecurityPolicy() {
-		whenUpdatingSecurityPolicy(username);
+		whenUpdatingOwnedPayload(username);
 	}
 
-	private void whenUpdatingSecurityPolicy(String username) {
+	private void whenUpdatingOwnedPayload(String username) {
 		OwnedPayload newPolicy = new OwnedPayload();
 		newPolicy.setPayload(newPayload);
 		newPolicy.setOwners(newOwners);
-		action = actionFactory.createUpdateSecurityPolicyAction(username,
+		action = getMethodProvider().createUpdateOwnedPayloadAction(username,
 				policyName, newPolicy);
 		action.execute();
 	}
 
 	private void thenPolicyWasUpdated() {
 		// data for rollback
-		verify(air, times(1)).getSecurityPolicies(null, policyName);
-		verify(air, times(1)).updateSecurityPolicy(username, policyName,
+		getMethodProvider().verifyGetOwnedPayload(1, null, policyName);
+		getMethodProvider().verifyUpdateOwnedPayload(1, username, policyName,
 				newPayload, newOwners);
 	}
 
 	@Test
 	public void shouldUpdateOnlyPolicyPayload() throws Exception {
-		givenSecurityPolicyStoredInAirOwnerNotImportant();
+		givenOwnedPayloadStoredInAirOwnerNotImportant();
 		whenUpdatingSecurityPolicyPayload();
 		thenPolicyPayloadUpdated();
 	}
@@ -59,21 +59,21 @@ public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
 	private void whenUpdatingSecurityPolicyPayload() {
 		OwnedPayload newPolicy = new OwnedPayload();
 		newPolicy.setPayload(newPayload);
-		action = actionFactory.createUpdateSecurityPolicyAction(username,
+		action = getMethodProvider().createUpdateOwnedPayloadAction(username,
 				policyName, newPolicy);
 		action.execute();
 	}
 
 	private void thenPolicyPayloadUpdated() {
 		// data for rollback
-		verify(air, times(1)).getSecurityPolicies(null, policyName);
-		verify(air, times(1)).updateSecurityPolicy(username, policyName,
+		getMethodProvider().verifyGetOwnedPayload(1, null, policyName);
+		getMethodProvider().verifyUpdateOwnedPayload(1, username, policyName,
 				newPayload, Arrays.asList(username));
 	}
 
 	@Test
 	public void shouldUpdateOnlyOwners() throws Exception {
-		givenSecurityPolicyStoredInAirOwnerNotImportant();
+		givenOwnedPayloadStoredInAirOwnerNotImportant();
 		whenUpdatingSecurityPolicyOwners();
 		thenOnlySecurityPolicyOwnersUpdated();
 	}
@@ -81,21 +81,21 @@ public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
 	private void whenUpdatingSecurityPolicyOwners() {
 		OwnedPayload newPolicy = new OwnedPayload();
 		newPolicy.setOwners(newOwners);
-		action = actionFactory.createUpdateSecurityPolicyAction(username,
+		action = getMethodProvider().createUpdateOwnedPayloadAction(username,
 				policyName, newPolicy);
 		action.execute();
 	}
 
 	private void thenOnlySecurityPolicyOwnersUpdated() {
 		// data for rollback
-		verify(air, times(1)).getSecurityPolicies(null, policyName);
-		verify(air, times(1)).updateSecurityPolicy(username, policyName,
+		getMethodProvider().verifyGetOwnedPayload(1, null, policyName);
+		getMethodProvider().verifyUpdateOwnedPayload(1, username, policyName,
 				policyText, newOwners);
 	}
 
 	@Test
 	public void shouldUpdateAndRollback() throws Exception {
-		givenSecurityPolicyStoredInAirOwnerNotImportant();
+		givenOwnedPayloadStoredInAirOwnerNotImportant();
 		whenUpdatingSecurityPolicyAndRollback();
 		thenPolicyWasUpdatedAndRollbacked();
 	}
@@ -107,7 +107,7 @@ public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
 
 	private void thenPolicyWasUpdatedAndRollbacked() {
 		thenPolicyWasUpdated();
-		verify(air, times(1)).updateSecurityPolicy(username, policyName,
+		getMethodProvider().verifyUpdateOwnedPayload(1, username, policyName,
 				policyText, Arrays.asList(username));
 	}
 
@@ -122,11 +122,16 @@ public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
 		}
 	}
 
+	private void givenAirWithoutAskedPolicy(String username) {
+		getMethodProvider().mockGetOwnedPayload(username, null,
+				new ArrayList<NamedOwnedPayload>());
+	}
+
 	@Test
 	public void shouldThrow403WhenUserIsNotOwnersList() throws Exception {
 		givenPolicyNotBelongingToTheUser();
 		try {
-			whenUpdatingSecurityPolicy(differentUser);
+			whenUpdatingOwnedPayload(differentUser);
 			fail();
 		} catch (NotAllowedException e) {
 			// OK should be thrown.
@@ -134,8 +139,8 @@ public class UpdateSecurityPolicyActionTest extends SecurityPolicyActionTest {
 	}
 
 	private void givenPolicyNotBelongingToTheUser() {
-		givenSecurityPolicyStoredInAirOwnerNotImportant();
-		doThrow(getAirException(404)).when(air).updateSecurityPolicy(
+		givenOwnedPayloadStoredInAirOwnerNotImportant();
+		getMethodProvider().throwUpdateOwnedPayloadException(404,
 				differentUser, policyName, newPayload, newOwners);
 	}
 }

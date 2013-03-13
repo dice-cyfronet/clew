@@ -13,24 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action.securitypolicy;
+package pl.cyfronet.coin.impl.action.ownedpayload.securityproxy;
 
-import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadPayloadAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadPayloadActionTest;
+import pl.cyfronet.coin.impl.action.ownedpayload.MethodProvider;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetSecurityPolicyPayloadAction extends
-		GetOwnedPayloadPayloadAction {
-
-	public GetSecurityPolicyPayloadAction(AirClient air, String ownedPayloadName) {
-		super(air, ownedPayloadName);
-	}
-
+public class GetSecurityProxyPayloadActionTest extends
+		GetOwnedPayloadPayloadActionTest {
+	
 	@Override
-	protected GetSecurityPolicyAction getOwnedPayloadAction(
-			String ownedPayloadName) {
-		return new GetSecurityPolicyAction(getAir(), ownedPayloadName);
+	protected MethodProvider getMethodProvider() {
+		return new SecurityProxyMethodProvider(air, actionFactory);
 	}
 }

@@ -37,15 +37,17 @@ import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.DeleteOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.ListOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.NewOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.UpdateOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityPolicyActions;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.DeleteSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.GetSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.GetSecurityPolicyPayloadAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.ListSecurityPoliciesAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.NewSecurityPolicyAction;
-import pl.cyfronet.coin.impl.action.securitypolicy.UpdateSecurityPolicyAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
@@ -139,67 +141,71 @@ public class ActionFactory {
 	// policy files
 
 	public Action<List<String>> createListSecurityPoliciesAction() {
-		return new ListSecurityPoliciesAction(air);
+		return new ListOwnedPayloadAction(air, new SecurityPolicyActions(air));
 	}
 
 	public Action<NamedOwnedPayload> createGetSecurityPolicyAction(String name) {
-		return new GetSecurityPolicyAction(air, name);
+		return new GetOwnedPayloadAction(air, name, new SecurityPolicyActions(
+				air));
 	}
 
 	public Action<String> createGetSecurityPolicyPayloadAction(String name) {
-		return new GetSecurityPolicyPayloadAction(air, name);
+		return new GetOwnedPayloadPayloadAction(air, name,
+				new SecurityPolicyActions(air));
 	}
 
 	public Action<Class<Void>> createNewSecurityPolicyAction(String username,
 			NamedOwnedPayload securityPolicy) {
-		return new NewSecurityPolicyAction(air, username, securityPolicy);
+		return new NewOwnedPayloadAction(air, username, securityPolicy,
+				new SecurityPolicyActions(air));
 	}
 
-	public Action<Class<Void>> createUpdateSecurityPolicyAction(String username, String name,
-			OwnedPayload ownedPayload) {
-		return new UpdateSecurityPolicyAction(air, username, name, ownedPayload);
+	public Action<Class<Void>> createUpdateSecurityPolicyAction(
+			String username, String name, OwnedPayload ownedPayload) {
+		return new UpdateOwnedPayloadAction(air, username, name, ownedPayload,
+				new SecurityPolicyActions(air));
 	}
 
 	public Action<Class<Void>> createDeleteSecurityPolicyAction(
 			String username, String name) {
-		return new DeleteSecurityPolicyAction(air, username, name);
+		return new DeleteOwnedPayloadAction(air, username, name,
+				new SecurityPolicyActions(air));
 	}
 
 	// security proxy configurations
-	
-	public Action<List<String>> createListSecurityProxyAction() {
-		// TODO Auto-generated method stub
-		return null;
+
+	public Action<List<String>> createListSecurityProxiesAction() {
+		return new ListOwnedPayloadAction(air, new SecurityProxyActions(air));
 	}
 
 	public Action<NamedOwnedPayload> createGetSecurityProxyAction(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetOwnedPayloadAction(air, name, new SecurityProxyActions(
+				air));
 	}
 
 	public Action<String> createGetSecurityProxyPayloadAction(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetOwnedPayloadPayloadAction(air, name,
+				new SecurityProxyActions(air));
 	}
 
 	public Action<Class<Void>> createNewSecurityProxyAction(String username,
 			NamedOwnedPayload ownedPayload) {
-		// TODO Auto-generated method stub
-		return null;
+		return new NewOwnedPayloadAction(air, username, ownedPayload,
+				new SecurityProxyActions(air));
 	}
 
 	public Action<Class<Void>> createUpdateSecurityProxyAction(String username,
 			String name, OwnedPayload ownedPayload) {
-		// TODO Auto-generated method stub
-		return null;
+		return new UpdateOwnedPayloadAction(air, username, name, ownedPayload,
+				new SecurityProxyActions(air));
 	}
 
 	public Action<Class<Void>> createDeleteSecurityProxyAction(String username,
 			String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DeleteOwnedPayloadAction(air, username, name,
+				new SecurityProxyActions(air));
 	}
-	
+
 	// keys
 
 	public Action<List<PublicKeyInfo>> createListUserKeysAction(String username) {

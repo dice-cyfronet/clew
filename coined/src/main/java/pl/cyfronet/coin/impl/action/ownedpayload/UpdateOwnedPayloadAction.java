@@ -4,27 +4,29 @@ import java.util.List;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
-import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
-import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
-public abstract class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
+public class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
 
 	private String username;
 	private String ownedPayloadName;
 	private OwnedPayload ownedPayload;
 	private OwnedPayload oldPayload;
+	private OwnedPayloadActions actions;
 
 	public UpdateOwnedPayloadAction(AirClient air, String username,
-			String ownedPayloadName, OwnedPayload ownedPayload) {
+			String ownedPayloadName, OwnedPayload ownedPayload,
+			OwnedPayloadActions actions) {
 		super(air);
 		this.ownedPayloadName = ownedPayloadName;
 		this.ownedPayload = ownedPayload;
 		this.username = username;
+		this.actions = actions;
 	}
 
 	@Override
@@ -49,19 +51,14 @@ public abstract class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
 				.getOwners() : payload.getOwners();
 		String payloadToUpdate = payload.getPayload() == null ? oldPayload
 				.getPayload() : payload.getPayload();
-		updateOwnedPayload(username, ownedPayloadName, owners, payloadToUpdate);
+		actions.updateOwnedPayload(username, ownedPayloadName, owners,
+				payloadToUpdate);
 	}
-
-	protected abstract void updateOwnedPayload(String username,
-			String ownedPayloadName, List<String> owners,
-			String ownedPayloadToUpdate);
 
 	private void loadOldOwnedPayload() {
-		oldPayload = getOwnedPayloadAction(ownedPayloadName).execute();
+		oldPayload = new GetOwnedPayloadAction(getAir(), ownedPayloadName,
+				actions).execute();
 	}
-
-	protected abstract Action<NamedOwnedPayload> getOwnedPayloadAction(
-			String ownedPolicyName);
 
 	@Override
 	public void rollback() {
