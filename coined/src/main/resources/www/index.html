@@ -24,7 +24,10 @@
 		});
 		$('#securitypolicy-accordion').accordion({
 			autoHeight : false
-		});		
+		});
+		$('#securityproxy-accordion').accordion({
+			autoHeight : false
+		});
 		$('#key-accordion').accordion({
 			autoHeight : false
 		});
@@ -51,6 +54,10 @@ body {
 }
 
 #securitypolicy-accordion {
+	width: 97%;
+}
+
+#securityproxy-accordion {
 	width: 97%;
 }
 
@@ -83,7 +90,8 @@ body {
 			<ul>
 				<li><a href="#workflow-accordion">Workflow</a></li>
 				<li><a href="#as-accordion">Atomic Service</a></li>
-				<li><a href="#securitypolicy-accordion">Security Policy</a></li>				
+				<li><a href="#securitypolicy-accordion">Security Policy</a></li>
+				<li><a href="#securityproxy-accordion">Security Proxy</a></li>
 				<li><a href="#key-accordion">Public Key</a></li>
 			</ul>
 			<div id="workflow-accordion">
@@ -681,10 +689,9 @@ body {
 							this required.</li>
 					</ul>
 
-					<p>
-						The operation returns the 200 status code on success. The 409
-						status code is returned when user tries to add new policy with non unique name.
-					</p>
+					<p>The operation returns the 200 status code on success. The
+						409 status code is returned when user tries to add new policy with
+						non unique name.</p>
 				</div>
 				<h3>
 					<a href="#"><strong class="method">PUT</strong> <strong>/securitypolicy/{policyName}</strong>
@@ -696,27 +703,24 @@ body {
 							name (namespaces are supported, e.g. my/namespace/policy_name)
 						</li>
 					</ul>
-				
+
 					<p>The structure of the request JSON includes:</p>
-					<ul>						
-						<li><strong>payload</strong> - security policy
-							content. If payload is empty than it will not be updated.
-						</li>
+					<ul>
+						<li><strong>payload</strong> - security policy content. If
+							payload is empty than it will not be updated.</li>
 						<li><strong>owners</strong> - List of security policy owners.
 							If this field is empty than list of owners whill not be updated.</li>
 					</ul>
 
-					<p>
-						The operation returns the 200 status code on success. The 404
-						status code is returned when policy is not found, 403 status code is returned 
-						when user tries to update not owned policy.
-					</p>
-				</div>				
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when policy is not found, 403 status
+						code is returned when user tries to update not owned policy.</p>
+				</div>
 				<h3>
 					<a href="#"><strong class="method">DELETE</strong> <strong>/securitypolicy/{policyName}</strong>
 						- removes security policy</a>
 				</h3>
-				<div>					
+				<div>
 					<ul>
 						<li>(required) <strong>policyName</strong> - security policy
 							name (namespaces are supported, e.g. my/namespace/policy_name)
@@ -725,10 +729,148 @@ body {
 
 					<p>The operation returns the 200 status code on success. The
 						404 status code is returned when security policy with given name
-						does not exist, 403 status code is returned 
-						when user tries to update not owned policy. </p>
+						does not exist, 403 status code is returned when user tries to
+						update not owned policy.</p>
 				</div>
-			</div>			
+			</div>
+
+
+			<div id="securityproxy-accordion">
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/securityproxy</strong>
+						- lists stored security proxy configurations names</a>
+				</h3>
+				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.
+					</div>
+
+					<p>The operation returns the 200 status code and the security
+						proxy configurations names on success.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/securityproxy/{proxyName}</strong>
+						- gets security proxy configuration</a>
+				</h3>
+				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.
+					</div>
+
+					<ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+					</ul>
+
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>name</strong> - Security proxy configuration
+							name.</li>
+						<li><strong>payload</strong> - Security proxy configuration
+							content.</li>
+						<li><strong>owners</strong> - List of security proxy
+							configuration owners.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security proxy configuration with
+						given name does not exist.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/securityproxy/{proxyName}/payload</strong>
+						- gets security proxy configuration content</a>
+				</h3>
+				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.
+					</div>
+
+					<ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+					</ul>
+
+					<p>The operation returns the 200 status code and the security
+						proxy configuration content on success. The 404 status code is
+						returned when security proxy configuration with given name does
+						not exist.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/securityproxy</strong>
+						- creates new security proxy configuration</a>
+				</h3>
+				<div>
+					<p>The structure of the request JSON includes:</p>
+					<ul>
+						<li>(required) <strong>name</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+						<li>(required) <strong>payload</strong> - security proxy
+							configuration content.
+						</li>
+						<li><strong>owners</strong> - List of security proxy
+							configuration owners. If this field is empty than owner is set to
+							the user who invokes this required.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						409 status code is returned when user tries to add new security
+						proxy configuration with non unique name.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">PUT</strong> <strong>/securityproxy/{proxyName}</strong>
+						- update security proxy configuration</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+					</ul>
+
+					<p>The structure of the request JSON includes:</p>
+					<ul>
+						<li><strong>payload</strong> - security proxy configuration
+							content. If payload is empty than it will not be updated.</li>
+						<li><strong>owners</strong> - List of security proxy
+							configuration owners. If this field is empty than list of owners
+							whill not be updated.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security proxy configuration is
+						not found, 403 status code is returned when user tries to update
+						not owned security proxy configuration.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/securityproxy/{proxyName}</strong>
+						- removes security proxy configuration</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security proxy configuration with
+						given name does not exist, 403 status code is returned when user
+						tries to update not owned security proxy configuration.</p>
+				</div>
+			</div>
+
+
 			<div id="key-accordion">
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/key</strong>
