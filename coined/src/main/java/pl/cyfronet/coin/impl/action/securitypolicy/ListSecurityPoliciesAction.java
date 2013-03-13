@@ -15,30 +15,24 @@
  */
 package pl.cyfronet.coin.impl.action.securitypolicy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
-import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.ListOwnedPayloadAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class ListSecurityPoliciesAction extends ReadOnlyAirAction<List<String>> {
+public class ListSecurityPoliciesAction extends ListOwnedPayloadAction {
 
 	public ListSecurityPoliciesAction(AirClient air) {
 		super(air);
-	}	
-	
+	}
+
 	@Override
-	public List<String> execute() throws CloudFacadeException {
-		List<NamedOwnedPayload> policies = getAir().getSecurityPolicies(null, null);
-		List<String> policyNames = new ArrayList<String>();
-		for (NamedOwnedPayload policy : policies) {
-			policyNames.add(policy.getName());
-		}
-		return policyNames;
+	protected List<NamedOwnedPayload> getOwnedPayloads(String username,
+			String ownedPayloadName) {
+		return getAir().getSecurityPolicies(username, ownedPayloadName);
 	}
 }
