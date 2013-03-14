@@ -104,12 +104,14 @@ public class LobcderRestClient {
 		log.debug("LOBCDER REST response status and body for a query {} is {}: {}",
 				new String[] {getQueryUrl(lsc), String.valueOf(response.getStatusCode()), response.getBody().toString()});
 		
-		for(LobcderRestMetadata meta : response.getBody().getMetadataList()) {
-			if(meta.getDatatype().equals(LobcderRestMetadata.DATATYPE_FILE)) {
-				LobcderEntry entry = new LobcderEntry(createName(meta.getParent(), meta.getName()));
-				entry.setDirectory(false);
-				entry.setBytes(meta.getSizeBytes());
-				result.add(entry);
+		if(response.getBody() != null && response.getBody().getMetadataList() != null) {
+			for(LobcderRestMetadata meta : response.getBody().getMetadataList()) {
+				if(meta.getDatatype().equals(LobcderRestMetadata.DATATYPE_FILE)) {
+					LobcderEntry entry = new LobcderEntry(createName(meta.getParent(), meta.getName()));
+					entry.setDirectory(false);
+					entry.setBytes(meta.getSizeBytes());
+					result.add(entry);
+				}
 			}
 		}
 		
