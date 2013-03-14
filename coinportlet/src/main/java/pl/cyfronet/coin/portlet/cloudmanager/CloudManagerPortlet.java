@@ -408,10 +408,11 @@ public class CloudManagerPortlet {
 		
 		String configurationId = null;
 		String workflowId = null;
+		List<InitialConfiguration> initialConfigurations = clientFactory.getCloudFacade(request).
+				getInitialConfigurations(atomicServiceId, false);
 		
-		if(clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false) != null &&
-				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false).size() > 0) {
-			configurationId = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false).get(0).getId();
+		if(initialConfigurations != null && initialConfigurations.size() > 0) {
+			configurationId = initialConfigurations.get(0).getId();
 		}
 		
 		if(getWorkflowIds(WorkflowType.portal, request) != null &&
