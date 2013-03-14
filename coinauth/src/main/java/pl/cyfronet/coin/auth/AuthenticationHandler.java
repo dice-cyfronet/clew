@@ -39,4 +39,13 @@ public interface AuthenticationHandler {
 	 * @return User name.
 	 */
 	String getUsername(String username, String password);
+
+	/**
+	 * Check if user has role.
+	 * @param role Role name
+	 * @param username User name from basic authentication field.
+	 * @param password Password from basic authentication field.
+	 * @return True if user contains given role, false otherwise.
+	 */
+	boolean hasRole(String role, String username, String password);
 }

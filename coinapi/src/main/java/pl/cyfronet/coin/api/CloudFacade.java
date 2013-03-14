@@ -18,6 +18,7 @@ package pl.cyfronet.coin.api;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,6 +36,8 @@ import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
+import pl.cyfronet.coin.api.exception.NotAcceptableException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
 
 /**
  * Web service definition of the cloud facade which exposes methods allowing to
@@ -129,4 +132,11 @@ public interface CloudFacade {
 			@PathParam("invocationPath") String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;
+
+	@DELETE
+	@Path("/{atomicServiceId}")
+	void deleteAtomicService(
+			@PathParam("atomicServiceId") String atomicServiceId)
+			throws AtomicServiceNotFoundException, NotAcceptableException,
+			NotAllowedException;
 }

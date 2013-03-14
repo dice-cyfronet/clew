@@ -34,14 +34,30 @@ public class UsernameAwareService {
 	private AuthenticationHandler authenticator;
 
 	protected String getUsername() {
-		String auth = headers.getRequestHeader("authorization").get(0);
-
-		auth = auth.substring("Basic ".length());
-		String[] values = new String(Base64.decode(auth)).split(":");
+		String[] values = getUsernamePassword();
 		String username = values[0];
 		String password = values[1];
 
 		return authenticator.getUsername(username, password);
+	}
+
+	/**
+	 * @return
+	 */
+	private String[] getUsernamePassword() {
+		String auth = headers.getRequestHeader("authorization").get(0);
+
+		auth = auth.substring("Basic ".length());
+		String[] values = new String(Base64.decode(auth)).split(":");
+		return values;
+	}
+
+	protected boolean hasRole(String role) {
+		String[] values = getUsernamePassword();
+		String username = values[0];
+		String password = values[1];
+
+		return authenticator.hasRole(role, username, password);
 	}
 
 	/**
