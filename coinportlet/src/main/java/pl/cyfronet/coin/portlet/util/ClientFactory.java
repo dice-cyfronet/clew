@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.KeyManagement;
-import pl.cyfronet.coin.api.SecurityPolicyService;
+import pl.cyfronet.coin.api.OwnedPayloadService;
 import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.portlet.portal.Portal;
 
@@ -18,7 +18,7 @@ public class ClientFactory {
 	private CloudFacade cloudFacade;
 	private WorkflowManagement workflowManagement;
 	private KeyManagement keyManagement;
-	private SecurityPolicyService securityPolicyService;
+	private OwnedPayloadService securityPolicyService;
 	
 	@Autowired private Portal portal;
 	
@@ -31,7 +31,7 @@ public class ClientFactory {
 	public void setKeyManagement(KeyManagement keyManagement) {
 		this.keyManagement = keyManagement;
 	}
-	public void setSecurityPolicyService(SecurityPolicyService securityPolicyService) {
+	public void setSecurityPolicyService(OwnedPayloadService securityPolicyService) {
 		this.securityPolicyService = securityPolicyService;
 	}
 
@@ -47,7 +47,7 @@ public class ClientFactory {
 		return workflowManagement;
 	}
 	
-	public SecurityPolicyService getSecurityPolicyService(PortletRequest request) {
+	public OwnedPayloadService getSecurityPolicyService(PortletRequest request) {
 		attachBasicAuth(request, workflowManagement);
 		
 		return securityPolicyService;

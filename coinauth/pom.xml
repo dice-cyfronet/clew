@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>pl.cyfronet.coin</groupId>
 		<artifactId>coin</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>coinauth</artifactId>
 	<packaging>bundle</packaging>

@@ -20,10 +20,11 @@ import java.util.List;
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.Grant;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.InvocationPathInfo;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
+import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -36,10 +37,14 @@ import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
-import pl.cyfronet.coin.impl.action.grant.DeleteGrantAction;
-import pl.cyfronet.coin.impl.action.grant.GetGrantAction;
-import pl.cyfronet.coin.impl.action.grant.ListGrantsAction;
-import pl.cyfronet.coin.impl.action.grant.UpdateGrantAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.DeleteOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.GetOwnedPayloadPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.ListOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.NewOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.UpdateOwnedPayloadAction;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityPolicyActions;
+import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -63,10 +68,11 @@ public class ActionFactory {
 
 	private DyReAllaProxyManagerService httpRedirectionService;
 	private DyReAllaDNATManagerService dnatRedirectionService;
-	
+
 	private String coinBaseUrl;
 
-	public Action<List<AtomicService>> createListAtomicServicesAction(String username) {
+	public Action<List<AtomicService>> createListAtomicServicesAction(
+			String username) {
 		return new ListAtomicServicesAction(air, username);
 	}
 
@@ -134,23 +140,70 @@ public class ActionFactory {
 
 	// policy files
 
-	public Action<String> createGetSecurityPolicyAction(String policyName) {
-		return new GetSecurityPolicyAction(air, policyName);
-	}
-
 	public Action<List<String>> createListSecurityPoliciesAction() {
-		return new ListSecurityPoliciesAction(air);
+		return new ListOwnedPayloadAction(air, new SecurityPolicyActions(air));
 	}
 
-	public Action<Class<Void>> createUploadSecurityPolicyAction(
-			String policyName, String policyText, boolean overwrite) {
-		return new UploadSecurityPolicyAction(air, policyName, policyText,
-				overwrite);
+	public Action<NamedOwnedPayload> createGetSecurityPolicyAction(String name) {
+		return new GetOwnedPayloadAction(air, name, new SecurityPolicyActions(
+				air));
+	}
+
+	public Action<String> createGetSecurityPolicyPayloadAction(String name) {
+		return new GetOwnedPayloadPayloadAction(air, name,
+				new SecurityPolicyActions(air));
+	}
+
+	public Action<Class<Void>> createNewSecurityPolicyAction(String username,
+			NamedOwnedPayload securityPolicy) {
+		return new NewOwnedPayloadAction(air, username, securityPolicy,
+				new SecurityPolicyActions(air));
+	}
+
+	public Action<Class<Void>> createUpdateSecurityPolicyAction(
+			String username, String name, OwnedPayload ownedPayload) {
+		return new UpdateOwnedPayloadAction(air, username, name, ownedPayload,
+				new SecurityPolicyActions(air));
 	}
 
 	public Action<Class<Void>> createDeleteSecurityPolicyAction(
-			String policyName) {
-		return new DeleteSecurityPolicyAction(air, policyName);
+			String username, String name) {
+		return new DeleteOwnedPayloadAction(air, username, name,
+				new SecurityPolicyActions(air));
+	}
+
+	// security proxy configurations
+
+	public Action<List<String>> createListSecurityProxiesAction() {
+		return new ListOwnedPayloadAction(air, new SecurityProxyActions(air));
+	}
+
+	public Action<NamedOwnedPayload> createGetSecurityProxyAction(String name) {
+		return new GetOwnedPayloadAction(air, name, new SecurityProxyActions(
+				air));
+	}
+
+	public Action<String> createGetSecurityProxyPayloadAction(String name) {
+		return new GetOwnedPayloadPayloadAction(air, name,
+				new SecurityProxyActions(air));
+	}
+
+	public Action<Class<Void>> createNewSecurityProxyAction(String username,
+			NamedOwnedPayload ownedPayload) {
+		return new NewOwnedPayloadAction(air, username, ownedPayload,
+				new SecurityProxyActions(air));
+	}
+
+	public Action<Class<Void>> createUpdateSecurityProxyAction(String username,
+			String name, OwnedPayload ownedPayload) {
+		return new UpdateOwnedPayloadAction(air, username, name, ownedPayload,
+				new SecurityProxyActions(air));
+	}
+
+	public Action<Class<Void>> createDeleteSecurityProxyAction(String username,
+			String name) {
+		return new DeleteOwnedPayloadAction(air, username, name,
+				new SecurityProxyActions(air));
 	}
 
 	// keys
@@ -232,36 +285,17 @@ public class ActionFactory {
 				endpointId);
 	}
 
-	// grants
-
-	public Action<List<String>> createListGrantsAction() {
-		return new ListGrantsAction(air);
-	}
-
-	public Action<Grant> createGetGrantAction(String name) {
-		return new GetGrantAction(air, name);
-	}
-
-	public Action<Class<Void>> createUpdateGrantAction(String name,
-			Grant grant, boolean overwrite) {
-		return new UpdateGrantAction(air, name, grant, overwrite);
-	}
-
-	public Action<Class<Void>> createDeleteGrantAction(String name) {
-		return new DeleteGrantAction(air, name);
-	}
-
 	// taverna
-	
+
 	public Action<String> createGetServicesSetAction() {
 		return new GetServicesSetAction(air, coinBaseUrl);
 	}
-	
+
 	public Action<InvocationPathInfo> createGetInvocationPathInfo(
 			String atomicServiceId, String serviceName) {
 		return new GetInvocationPathInfo(air, atomicServiceId, serviceName);
 	}
-	
+
 	// setters
 
 	public void setAir(AirClient air) {
@@ -297,7 +331,7 @@ public class ActionFactory {
 	public void setProxyPort(int proxyPort) {
 		this.proxyPort = proxyPort;
 	}
-	
+
 	public void setCoinBaseUrl(String coinBaseUrl) {
 		this.coinBaseUrl = coinBaseUrl;
 	}

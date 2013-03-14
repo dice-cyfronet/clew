@@ -25,7 +25,7 @@
 		$('#securitypolicy-accordion').accordion({
 			autoHeight : false
 		});
-		$('#grant-accordion').accordion({
+		$('#securityproxy-accordion').accordion({
 			autoHeight : false
 		});
 		$('#key-accordion').accordion({
@@ -54,6 +54,10 @@ body {
 }
 
 #securitypolicy-accordion {
+	width: 97%;
+}
+
+#securityproxy-accordion {
 	width: 97%;
 }
 
@@ -87,8 +91,8 @@ body {
 				<li><a href="#workflow-accordion">Workflow</a></li>
 				<li><a href="#as-accordion">Atomic Service</a></li>
 				<li><a href="#securitypolicy-accordion">Security Policy</a></li>
-				<li><a href="#grant-accordion">Grant</a></li>
-				<li><a href="#key-accordion">Public Key</a></li>				
+				<li><a href="#securityproxy-accordion">Security Proxy</a></li>
+				<li><a href="#key-accordion">Public Key</a></li>
 			</ul>
 			<div id="workflow-accordion">
 				<h3>
@@ -138,8 +142,9 @@ body {
 								<li><strong>atomicServiceId</strong> - id of the atomic
 									service used to create this instance</li>
 								<li><strong>atomicServiceName</strong> - name of the atomic
-									service used to create this instance</li>	
-								<li><strong>siteId</strong> - site id where atomic service instance is running</li>
+									service used to create this instance</li>
+								<li><strong>siteId</strong> - site id where atomic service
+									instance is running</li>
 								<li><strong>credential</strong> - credential allowing to
 									login into atomic service instance (not empty only in <i>development</i>
 									workflow)</li>
@@ -255,25 +260,32 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>workflowId</strong> workflow id</li>
-						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asiId</strong> atomic service instance
+							id
+						</li>
 					</ul>
-				
+
 					<p>The structure of the returned JSON includes:</p>
 					<ul>
 						<li><strong>id</strong> - redirection id</li>
 						<li><strong>name</strong> - redirection name</li>
-						<li><strong>toPort</strong> - internal atomic service port this redirection is pointing to</li>
+						<li><strong>toPort</strong> - internal atomic service port
+							this redirection is pointing to</li>
 						<li><strong>fromPort</strong> - public redirection port</li>
 						<li><strong>host</strong> - public redirection host</li>
-						<li><strong>type</strong> - redirection type (<i>HTTP</i> or <i>TCP</i>)</li>						
-						<li><strong>postfix</strong> - if <i>HTTP</i> redirection than combination of <i>host</i>:<i>port</i>/<i>postfix</i> composes redirection link</li>
+						<li><strong>type</strong> - redirection type (<i>HTTP</i> or
+							<i>TCP</i>)</li>
+						<li><strong>postfix</strong> - if <i>HTTP</i> redirection
+							than combination of <i>host</i>:<i>port</i>/<i>postfix</i>
+							composes redirection link</li>
 					</ul>
 					<p>
 						The operation returns the <strong>200</strong> status code on
-						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
-						and the <strong>400</strong> status code and problem
-						explanation when failed.
+						success, <strong>404</strong> when Atomic Service instance or
+						endpoint does not exist and the <strong>400</strong> status code
+						and problem explanation when failed.
 					</p>
 				</div>
 				<h3>
@@ -282,22 +294,28 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>workflowId</strong> workflow id</li>
-						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asiId</strong> atomic service instance
+							id
+						</li>
 					</ul>
-				
+
 					<p>The structure of the JSON request includes:</p>
 					<ul>
-						<li>(required) <strong>name</strong> - workflow name</li>
-						<li>(required) <strong>toPort</strong> - workflow description</li>
-						<li>(required) <strong>type</strong> - workflow priority</li>						
+						<li>(required) <strong>name</strong> - workflow name
+						</li>
+						<li>(required) <strong>toPort</strong> - workflow description
+						</li>
+						<li>(required) <strong>type</strong> - workflow priority
+						</li>
 					</ul>
-				
+
 					<p>
 						The operation returns the <strong>200</strong> status code on
-						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
-						and the <strong>400</strong> status code and problem
-						explanation when failed.
+						success, <strong>404</strong> when Atomic Service instance or
+						endpoint does not exist and the <strong>400</strong> status code
+						and problem explanation when failed.
 					</p>
 				</div>
 				<h3>
@@ -306,16 +324,21 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>workflowId</strong> workflow id</li>
-						<li>(required) <strong>asiId</strong> atomic service instance id</li>
-						<li>(required) <strong>redirectionId</strong> atomic service instance endpoint id</li>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asiId</strong> atomic service instance
+							id
+						</li>
+						<li>(required) <strong>redirectionId</strong> atomic service
+							instance endpoint id
+						</li>
 					</ul>
 
 					<p>
 						The operation returns the <strong>200</strong> status code on
-						success, <strong>404</strong> when Atomic Service instance or redirection does not exist 
-						and the <strong>400</strong> status code and problem
-						explanation when failed.
+						success, <strong>404</strong> when Atomic Service instance or
+						redirection does not exist and the <strong>400</strong> status
+						code and problem explanation when failed.
 					</p>
 				</div>
 				<h3>
@@ -324,25 +347,30 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>workflowId</strong> workflow id</li>
-						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asiId</strong> atomic service instance
+							id
+						</li>
 					</ul>
-				
+
 					<p>The structure of the returned JSON includes:</p>
 					<ul>
 						<li><strong>id</strong> - endpoint id</li>
 						<li><strong>description</strong> - endpoint description</li>
 						<li><strong>descriptor</strong> - endpoint descriptor payload</li>
-						<li><strong>invocationPath</strong> - endpoint invocation path</li>
+						<li><strong>invocationPath</strong> - endpoint invocation
+							path</li>
 						<li><strong>port</strong> - endpoint port</li>
-						<li><strong>type</strong> - endpoint type (<i>REST</i>, <i>WS</i> or <i>WEBAPP</i>)</li>						
+						<li><strong>type</strong> - endpoint type (<i>REST</i>, <i>WS</i>
+							or <i>WEBAPP</i>)</li>
 					</ul>
-				
+
 					<p>
 						The operation returns the <strong>200</strong> status code on
-						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
-						and the <strong>400</strong> status code and problem
-						explanation when failed.
+						success, <strong>404</strong> when Atomic Service instance or
+						endpoint does not exist and the <strong>400</strong> status code
+						and problem explanation when failed.
 					</p>
 				</div>
 				<h3>
@@ -351,24 +379,29 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>workflowId</strong> workflow id</li>
-						<li>(required) <strong>asiId</strong> atomic service instance id</li>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asiId</strong> atomic service instance
+							id
+						</li>
 					</ul>
-					
+
 					<p>The structure of the JSON request includes:</p>
 					<ul>
 						<li><strong>description</strong> - endpoint description</li>
 						<li><strong>descriptor</strong> - endpoint descriptor payload</li>
-						<li><strong>invocationPath</strong> - endpoint invocation path</li>
+						<li><strong>invocationPath</strong> - endpoint invocation
+							path</li>
 						<li><strong>port</strong> - endpoint port</li>
-						<li><strong>type</strong> - endpoint type (<i>REST</i>, <i>WS</i> or <i>WEBAPP</i>)</li>						
+						<li><strong>type</strong> - endpoint type (<i>REST</i>, <i>WS</i>
+							or <i>WEBAPP</i>)</li>
 					</ul>
-				
+
 					<p>
 						The operation returns the <strong>200</strong> status code on
-						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
-						and the <strong>400</strong> status code and problem
-						explanation when failed.
+						success, <strong>404</strong> when Atomic Service instance or
+						endpoint does not exist and the <strong>400</strong> status code
+						and problem explanation when failed.
 					</p>
 				</div>
 				<h3>
@@ -377,16 +410,21 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>workflowId</strong> workflow id</li>
-						<li>(required) <strong>asiId</strong> atomic service instance id</li>
-						<li>(required) <strong>endpointId</strong> atomic service instance endpoint id</li>
+						<li>(required) <strong>workflowId</strong> workflow id
+						</li>
+						<li>(required) <strong>asiId</strong> atomic service instance
+							id
+						</li>
+						<li>(required) <strong>endpointId</strong> atomic service
+							instance endpoint id
+						</li>
 					</ul>
 
 					<p>
 						The operation returns the <strong>200</strong> status code on
-						success, <strong>404</strong> when Atomic Service instance or endpoint does not exist 
-						and the <strong>400</strong> status code and problem
-						explanation when failed.
+						success, <strong>404</strong> when Atomic Service instance or
+						endpoint does not exist and the <strong>400</strong> status code
+						and problem explanation when failed.
 					</p>
 				</div>
 			</div>
@@ -433,25 +471,27 @@ body {
 				<div>
 					<div class="ui-state-error ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>developer</i> role is required to perform this action.	
+						<strong>Note!</strong> <i>developer</i> role is required to
+						perform this action.
 					</div>
-				
+
 					<p>The structure of the JSON request includes:</p>
 					<ul>
-						<li>(required) <strong>sourceAsiId</strong> - New Atomic Service template
-						will be created from this Atomic Service Instance
+						<li>(required) <strong>sourceAsiId</strong> - New Atomic
+							Service template will be created from this Atomic Service
+							Instance
 						</li>
 						<li>(required, unique) <strong>name</strong> - atomic service
 							name
 						</li>
 						<li><strong>description</strong> - atomic service description</li>
-						
+
 					</ul>
 					The operation returns the <strong>200</strong> status code on
-					success, the <strong>404</strong> when source atomic service 
-					instance not found, the <strong>302</strong> status code when AS with given name 
-					already exists, <strong>400</strong> status code and problem
-					explanation when failed.
+					success, the <strong>404</strong> when source atomic service
+					instance not found, the <strong>302</strong> status code when AS
+					with given name already exists, <strong>400</strong> status code
+					and problem explanation when failed.
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong>
@@ -459,15 +499,19 @@ body {
 				</h3>
 				<div>
 					<ul>
-						<li>(required) <strong>atomicServiceId</strong> - Atomic service id</li>
-						<li>(optional) <strong>load_payload</strong> - If true than configuration 
-							payload will be loaded (default <strong>false</strong>)</li>
+						<li>(required) <strong>atomicServiceId</strong> - Atomic
+							service id
+						</li>
+						<li>(optional) <strong>load_payload</strong> - If true than
+							configuration payload will be loaded (default <strong>false</strong>)
+						</li>
 					</ul>
 					<p>The structure of the returned JSON includes:</p>
 					<ul>
 						<li><strong>id</strong> - configuration id</li>
 						<li><strong>name</strong> - configuration name</li>
-						<li><strong>payload</strong> - configuration payload (will be empty if <i>load_payload</i> is false)</li>
+						<li><strong>payload</strong> - configuration payload (will be
+							empty if <i>load_payload</i> is false)</li>
 					</ul>
 				</div>
 				<h3>
@@ -530,7 +574,8 @@ body {
 						<li>(required) <strong>atomicServiceId</strong> - atomic
 							service id
 						</li>
-						<li>(required) <strong>redirectionName</strong> - redirection name
+						<li>(required) <strong>redirectionName</strong> - redirection
+							name
 						</li>
 						<li>(required) <strong>invocationPath</strong> - encoded
 							invocation path (/ should be changed into %2f)
@@ -554,15 +599,17 @@ body {
 
 					<p>The structure of the returned JSON includes:</p>
 					<ul>
-						<li><strong>atomicServiceId</strong> - Endpoint Atomic service id</li>
-						<li><strong>redirectionName</strong> - Redirection used for this endpoint</li>						
+						<li><strong>atomicServiceId</strong> - Endpoint Atomic
+							service id</li>
+						<li><strong>redirectionName</strong> - Redirection used for
+							this endpoint</li>
 					</ul>
 
 					The operation returns the <strong>200</strong> status code and
 					Atomic Service id on success and the <strong>400</strong> status
 					code and problem explanation when failed.
-				</div>				
-			</div>			
+				</div>
+			</div>
 			<div id="securitypolicy-accordion">
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy</strong>
@@ -571,22 +618,49 @@ body {
 				<div>
 					<div class="ui-state-highlight ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> This method is public, no ticket required.	
+						<strong>Note!</strong> This method is public, no ticket required.
 					</div>
-				
+
 					<p>The operation returns the 200 status code and the security
 						policies names on success.</p>
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy/{policyName}</strong>
+						- gets security policy</a>
+				</h3>
+				<div>
+					<div class="ui-state-highlight ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> This method is public, no ticket required.
+					</div>
+
+					<ul>
+						<li>(required) <strong>policyName</strong> - security policy
+							name (namespaces are supported, e.g. my/namespace/policy_name)
+						</li>
+					</ul>
+
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>name</strong> - Policy name</li>
+						<li><strong>payload</strong> - Policy content</li>
+						<li><strong>owners</strong> - List of policy owners</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security policy with given name
+						does not exist.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy/{policyName}/payload</strong>
 						- gets security policy content</a>
 				</h3>
 				<div>
 					<div class="ui-state-highlight ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> This method is public, no ticket required.	
+						<strong>Note!</strong> This method is public, no ticket required.
 					</div>
-				
+
 					<ul>
 						<li>(required) <strong>policyName</strong> - security policy
 							name (namespaces are supported, e.g. my/namespace/policy_name)
@@ -598,46 +672,55 @@ body {
 						security policy with given name does not exist.</p>
 				</div>
 				<h3>
-					<a href="#"><strong class="method">POST</strong> <strong>/securitypolicy/{policyName}</strong>
-						- uploads or update security policy</a>
+					<a href="#"><strong class="method">POST</strong> <strong>/securitypolicy</strong>
+						- creates new security policy</a>
 				</h3>
 				<div>
-					<div class="ui-state-error ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
-					</div>
-				
+					<p>The structure of the request JSON includes:</p>
 					<ul>
-						<li>(required) path parameter <strong>policyName</strong> -
-							security policy name (namespaces are supported, e.g.
-							my/namespace/policy_name)
+						<li>(required) <strong>name</strong> - security policy name
+							(namespaces are supported, e.g. my/namespace/policy_name)
 						</li>
-						<li>(required) query parameter <strong>overwrite</strong> -
-							if <b>true</b> than existing security policy will be updated,
-							otherwise if security policy exist than 409 code will be
-							returned.
+						<li>(required) <strong>payload</strong> - security policy
+							content
 						</li>
-						<li>(required) <strong>request body</strong> - security
-							policy content
+						<li><strong>owners</strong> - List of security policy owners.
+							If this field is empty than owner is set to the user who invokes
+							this required.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						409 status code is returned when user tries to add new policy with
+						non unique name.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">PUT</strong> <strong>/securitypolicy/{policyName}</strong>
+						- update security policy</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>policyName</strong> - security policy
+							name (namespaces are supported, e.g. my/namespace/policy_name)
 						</li>
 					</ul>
 
-					<p>
-						The operation returns the 200 status code on success. The 409
-						status code is returned when user tries to update existing
-						security policy without query param <i>overwrite</i> set to <b>true</b>.
-					</p>
+					<p>The structure of the request JSON includes:</p>
+					<ul>
+						<li><strong>payload</strong> - security policy content. If
+							payload is empty than it will not be updated.</li>
+						<li><strong>owners</strong> - List of security policy owners.
+							If this field is empty than list of owners whill not be updated.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when policy is not found, 403 status
+						code is returned when user tries to update not owned policy.</p>
 				</div>
 				<h3>
 					<a href="#"><strong class="method">DELETE</strong> <strong>/securitypolicy/{policyName}</strong>
-						- removes security policy content</a>
+						- removes security policy</a>
 				</h3>
 				<div>
-					<div class="ui-state-error ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
-					</div>
-				
 					<ul>
 						<li>(required) <strong>policyName</strong> - security policy
 							name (namespaces are supported, e.g. my/namespace/policy_name)
@@ -646,105 +729,148 @@ body {
 
 					<p>The operation returns the 200 status code on success. The
 						404 status code is returned when security policy with given name
-						does not exist.</p>
+						does not exist, 403 status code is returned when user tries to
+						update not owned policy.</p>
 				</div>
 			</div>
-			<div id="grant-accordion">
+
+
+			<div id="securityproxy-accordion">
 				<h3>
-					<a href="#"><strong class="method">GET</strong> <strong>/grant</strong>
-						- lists stored grants names</a>
+					<a href="#"><strong class="method">GET</strong> <strong>/securityproxy</strong>
+						- lists stored security proxy configurations names</a>
 				</h3>
 				<div>
 					<div class="ui-state-highlight ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> This method is public, no ticket required.	
+						<strong>Note!</strong> This method is public, no ticket required.
 					</div>
-					<p>The operation returns the 200 status code and the grants names on success.</p>
+
+					<p>The operation returns the 200 status code and the security
+						proxy configurations names on success.</p>
 				</div>
 				<h3>
-					<a href="#"><strong class="method">GET</strong> <strong>/grant/{grantName}</strong>
-						- gets the grant JSON content</a>
+					<a href="#"><strong class="method">GET</strong> <strong>/securityproxy/{proxyName}</strong>
+						- gets security proxy configuration</a>
 				</h3>
 				<div>
 					<div class="ui-state-highlight ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> This method is public, no ticket required.	
+						<strong>Note!</strong> This method is public, no ticket required.
 					</div>
+
 					<ul>
-						<li>(required) <strong>grantName</strong> - grant
-							name (namespaces are supported, e.g. my/namespace/grant_name)
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
 						</li>
 					</ul>
 
-					<p>The structure of the JSON request includes:</p>
+					<p>The structure of the returned JSON includes:</p>
 					<ul>
-						<li><strong>get</strong> - grant for get methods</li>
-						<li><strong>post</strong> - grant for post methods</li>
-						<li><strong>put</strong> - grant for put methods</li>
-						<li><strong>delete</strong> - grant for delete methods</li>
+						<li><strong>name</strong> - Security proxy configuration
+							name.</li>
+						<li><strong>payload</strong> - Security proxy configuration
+							content.</li>
+						<li><strong>owners</strong> - List of security proxy
+							configuration owners.</li>
 					</ul>
 
-					<p>The operation returns the 200 status code and the grant
-						content (for get, post, put, delete) on success. 
-						The 404 status code is returned when
-						security policy with given name does not exist.</p>
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security proxy configuration with
+						given name does not exist.</p>
 				</div>
 				<h3>
-					<a href="#"><strong class="method">POST</strong> <strong>/grant/{grantName}</strong>
-						- uploads or update grant</a>
+					<a href="#"><strong class="method">GET</strong> <strong>/securityproxy/{proxyName}/payload</strong>
+						- gets security proxy configuration content</a>
 				</h3>
 				<div>
-					<div class="ui-state-error ui-corner-all"
+					<div class="ui-state-highlight ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
+						<strong>Note!</strong> This method is public, no ticket required.
 					</div>
+
 					<ul>
-						<li>(required) path parameter <strong>grantName</strong> -
-							security policy name (namespaces are supported, e.g.
-							my/namespace/grant_name)
-						</li>
-						<li>(optional) query parameter <strong>overwrite</strong> -
-							if <b>true</b> than existing grant will be updated,
-							otherwise if grant exists than 409 code will be
-							returned.
-						</li>
-						<li>(required) <strong>request body</strong> - grant content
-						in following JSON format
-							<ul>
-								<li><strong>get</strong> - grant for get methods</li>
-								<li><strong>post</strong> - grant for post methods</li>
-								<li><strong>put</strong> - grant for put methods</li>
-								<li><strong>delete</strong> - grant for delete methods</li>
-							</ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
 						</li>
 					</ul>
 
-					<p>
-						The operation returns the 200 status code on success. The 409
-						status code is returned when user tries to update existing
-						grant without query param <i>overwrite</i> set to <b>true</b>.
-					</p>
+					<p>The operation returns the 200 status code and the security
+						proxy configuration content on success. The 404 status code is
+						returned when security proxy configuration with given name does
+						not exist.</p>
 				</div>
 				<h3>
-					<a href="#"><strong class="method">DELETE</strong> <strong>/grant/{grantName}</strong>
-						- removes grant</a>
+					<a href="#"><strong class="method">POST</strong> <strong>/securityproxy</strong>
+						- creates new security proxy configuration</a>
 				</h3>
 				<div>
-					<div class="ui-state-error ui-corner-all"
-						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> <i>admin</i> role is required to perform this action.	
-					</div>
+					<p>The structure of the request JSON includes:</p>
 					<ul>
-						<li>(required) <strong>grantName</strong> - grant
-							name (namespaces are supported, e.g. my/namespace/grant_name)
+						<li>(required) <strong>name</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+						<li>(required) <strong>payload</strong> - security proxy
+							configuration content.
+						</li>
+						<li><strong>owners</strong> - List of security proxy
+							configuration owners. If this field is empty than owner is set to
+							the user who invokes this required.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						409 status code is returned when user tries to add new security
+						proxy configuration with non unique name.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">PUT</strong> <strong>/securityproxy/{proxyName}</strong>
+						- update security proxy configuration</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
+						</li>
+					</ul>
+
+					<p>The structure of the request JSON includes:</p>
+					<ul>
+						<li><strong>payload</strong> - security proxy configuration
+							content. If payload is empty than it will not be updated.</li>
+						<li><strong>owners</strong> - List of security proxy
+							configuration owners. If this field is empty than list of owners
+							whill not be updated.</li>
+					</ul>
+
+					<p>The operation returns the 200 status code on success. The
+						404 status code is returned when security proxy configuration is
+						not found, 403 status code is returned when user tries to update
+						not owned security proxy configuration.</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/securityproxy/{proxyName}</strong>
+						- removes security proxy configuration</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>proxyName</strong> - security proxy
+							configuration name (namespaces are supported, e.g.
+							my/namespace/proxy_name)
 						</li>
 					</ul>
 
 					<p>The operation returns the 200 status code on success. The
-						404 status code is returned when grant with given name
-						does not exist.</p>
+						404 status code is returned when security proxy configuration with
+						given name does not exist, 403 status code is returned when user
+						tries to update not owned security proxy configuration.</p>
 				</div>
 			</div>
+
+
 			<div id="key-accordion">
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/key</strong>
@@ -809,9 +935,9 @@ body {
 					</ul>
 					<p>The operation returns the 200 status code on success. When
 						keys is not found for the user than 404 is returned.</p>
-				</div>				
+				</div>
 			</div>
-			
+
 		</div>
 	</div>
 </body>

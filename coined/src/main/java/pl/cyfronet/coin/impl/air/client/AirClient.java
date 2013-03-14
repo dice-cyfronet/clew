@@ -22,6 +22,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,6 +30,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.EndpointType;
+import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 
 /**
@@ -105,22 +107,57 @@ public interface AirClient {
 
 	@GET
 	@Path("/security_policy")
-	String getSecurityPolicy(@QueryParam("policy_name") String policyName);
+	@Produces(MediaType.APPLICATION_JSON)
+	List<NamedOwnedPayload> getSecurityPolicies(
+			@QueryParam("vph_username") String username,
+			@QueryParam("name") String policyName);
 
 	@POST
-	@Path("/upload_security_policy")
-	void uploadSecurityPolicy(@FormParam("policy_name") String policyName,
-			@FormParam("policy_text") String policyText,
-			@FormParam("overwrite") boolean overwrite);
+	@Path("/security_policy")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	void addSecurityPolicy(@FormParam("name") String policyName,
+			@FormParam("payload") String policyText,
+			@FormParam("owners[]") List<String> owners);
+
+	@PUT
+	@Path("/security_policy")
+	void updateSecurityPolicy(@QueryParam("vph_username") String username,
+			@QueryParam("name") String policyName,
+			@FormParam("payload") String policyText,
+			@FormParam("owners[]") List<String> owners);
 
 	@DELETE
 	@Path("/security_policy")
-	void deleteSecurityPolicy(@QueryParam("policy_name") String policyName);
+	void deleteSecurityPolicy(@QueryParam("vph_username") String username,
+			@QueryParam("name") String policyName);
+
+	// security proxy configurations
 
 	@GET
-	@Path("/list_security_policies")
+	@Path("/security_proxy")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<SecurityPolicy> getSecurityPolicies();
+	List<NamedOwnedPayload> getSecurityProxies(
+			@QueryParam("vph_username") String username,
+			@QueryParam("name") String configurationName);
+
+	@POST
+	@Path("/security_proxy")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	void addSecurityProxy(@FormParam("name") String configurationName,
+			@FormParam("payload") String configurationText,
+			@FormParam("owners[]") List<String> owners);
+
+	@PUT
+	@Path("/security_proxy")
+	void updateSecurityProxy(@QueryParam("vph_username") String username,
+			@QueryParam("name") String configurationName,
+			@FormParam("payload") String configurationText,
+			@FormParam("owners[]") List<String> owners);
+
+	@DELETE
+	@Path("/security_proxy")
+	void deleteSecurityProxy(@QueryParam("vph_username") String username,
+			@QueryParam("name") String configurationName);
 
 	// keys
 
