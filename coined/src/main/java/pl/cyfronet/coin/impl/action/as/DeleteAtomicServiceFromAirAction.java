@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.as;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,23 +24,25 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class DeleteAtomicServiceAction extends AirAction<Class<Void>> {
+public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(DeleteAtomicServiceAction.class);
+			.getLogger(DeleteAtomicServiceFromAirAction.class);
 
 	private List<String> atomicServicesIds;
 
-	public DeleteAtomicServiceAction(AirClient air, String atomicServiceName) {
-		this(air, Arrays.asList(atomicServiceName));
+	public DeleteAtomicServiceFromAirAction(AirClient air, String atomicServiceId) {
+		this(air, Arrays.asList(atomicServiceId));
 	}
 
-	public DeleteAtomicServiceAction(AirClient air,
+	public DeleteAtomicServiceFromAirAction(AirClient air,
 			List<String> atomicServicesIds) {
 		super(air);
 		this.atomicServicesIds = atomicServicesIds;
@@ -67,7 +69,5 @@ public class DeleteAtomicServiceAction extends AirAction<Class<Void>> {
 	@Override
 	public void rollback() {
 		// TODO Auto-generated method stub
-
 	}
-
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -68,7 +69,7 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 				asesToRemove.add(vm.getAppliance_type());
 			}
 			logger.debug("Removing following ASes {}", asesToRemove);
-			DeleteAtomicServiceAction deleteASAction = new DeleteAtomicServiceAction(
+			DeleteAtomicServiceFromAirAction deleteASAction = new DeleteAtomicServiceFromAirAction(
 					getAir(), asesToRemove);
 			deleteASAction.execute();
 		}

@@ -14,7 +14,7 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.as;
 
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.times;
@@ -27,10 +27,12 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
-public class DeleteAtomicServiceActionTest extends ActionTest {
+public class DeleteAtomicServiceFromAirActionTest extends ActionTest {
 
 	private String asName = "atName";
 
@@ -58,8 +60,8 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 	}
 
 	private void whenRemovingAtomicService() {
-		DeleteAtomicServiceAction action = actionFactory
-				.createDeleteAtomicServiceAction(asName);
+		Action<Class<Void>> action = actionFactory
+				.createDeleteAtomicServiceFromAirAction(asName);
 		action.execute();
 	}
 
@@ -81,7 +83,7 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 	}
 
 	private void whenRemoving2Ases() {
-		DeleteAtomicServiceAction action = new DeleteAtomicServiceAction(air,
+		DeleteAtomicServiceFromAirAction action = new DeleteAtomicServiceFromAirAction(air,
 				Arrays.asList(asName + "1", asName + "2"));
 		action.execute();
 	}
