@@ -1,11 +1,16 @@
 package pl.cyfronet.coin.portlet.datamanager;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.portlet.ActionResponse;
@@ -28,6 +33,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
@@ -38,22 +44,30 @@ import pl.cyfronet.coin.portlet.lobcder.LobcderInputStream;
 import pl.cyfronet.coin.portlet.lobcder.LobcderRestClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadata;
 import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadataPermissions;
+import pl.cyfronet.coin.portlet.lobcder.LobcderSearchCriteria;
 import pl.cyfronet.coin.portlet.lobcder.LobcderWebDavMetadata;
 import pl.cyfronet.coin.portlet.metadata.Metadata;
 import pl.cyfronet.coin.portlet.portal.Portal;
 
 @Controller
 @RequestMapping("VIEW")
+@SessionAttributes({DataManagerPortlet.MODEL_BEAN_SEARCH_REQUEST, DataManagerPortlet.MODEL_BEAN_MODE,
+	DataManagerPortlet.MODEL_BEAN_FOUND_ENTRIES, DataManagerPortlet.MODEL_BEAN_PARENT_PATHS})
 public class DataManagerPortlet {
 	private final Logger log = LoggerFactory.getLogger(DataManagerPortlet.class);
 	
-	private static final String MODEL_BEAN_LOBCDER_PATH = "path";
-	private static final String MODEL_BEAN_CREATE_DIRECTORY_REQUEST = "createDirectoryRequest";
-	private static final String MODEL_BEAN_LOBCDER_PARENT_PATH = "parentPath";
-	private static final String MODEL_BEAN_METADATA = "metadata";
-	private static final String MODEL_BEAN_SEARCH_REQUEST = "searchRequest";
+	static final String MODEL_BEAN_LOBCDER_PATH = "path";
+	static final String MODEL_BEAN_CREATE_DIRECTORY_REQUEST = "createDirectoryRequest";
+	static final String MODEL_BEAN_LOBCDER_PARENT_PATH = "parentPath";
+	static final String MODEL_BEAN_METADATA = "metadata";
+	static final String MODEL_BEAN_SEARCH_REQUEST = "searchRequest";
+	static final String MODEL_BEAN_FOUND_ENTRIES = "foundEntries";
+	static final String MODEL_BEAN_PARENT_PATHS = "parentPaths";
+	static final String MODEL_BEAN_MODE = "mode";
 	
 	private static final String PARAM_ACTION = "action";
+	private static final String PARAM_MODE_VIEW = "view";
+	private static final String PARAM_MODE_SEARCH = "search";
 	
 	private static final String ACTION_UPLOAD_FILE = "uploadFile";
 	private static final String ACTION_CREATE_DIRECTORY = "createDirectory";
@@ -70,6 +84,7 @@ public class DataManagerPortlet {
 	@RequestMapping
 	public String doView(@RequestParam(value = MODEL_BEAN_LOBCDER_PATH, defaultValue = "/", required = false) String path, Model model) {
 		log.debug("Generating data portlet main view for location [{}]", path);
+		model.addAttribute(MODEL_BEAN_MODE, PARAM_MODE_VIEW);
 		model.addAttribute(MODEL_BEAN_LOBCDER_PATH, path);
 		
 		if(!model.containsAttribute(MODEL_BEAN_CREATE_DIRECTORY_REQUEST)) {
@@ -196,10 +211,25 @@ public class DataManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_DELETE_RESOURCE)
 	public void doActionDeleteLobcderEntry(@RequestParam(MODEL_BEAN_LOBCDER_PATH) String path,
-			PortletRequest request, ActionResponse response) throws LobcderException {
+			PortletRequest request, ActionResponse response, Model model) throws LobcderException {
 		log.debug("LOBCDER delete request processing for path [{}]", path);
 		lobcderClient.delete(path, portal.getUserToken(request));
-		response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, getParentDirectory(path));
+		
+		if(model.asMap().get(MODEL_BEAN_MODE).equals(PARAM_MODE_VIEW)) {
+			response.setRenderParameter(MODEL_BEAN_LOBCDER_PATH, getParentDirectory(path));
+		} else {
+			response.setRenderParameter(PARAM_ACTION, ACTION_SEARCH);
+			
+			//removing the deleted entry from found items
+			List<LobcderEntry> entries = (List<LobcderEntry>) model.asMap().get(MODEL_BEAN_FOUND_ENTRIES);
+			
+			for(Iterator<LobcderEntry> i = entries.iterator(); i.hasNext(); ) {
+				if(i.next().getName().equals(path)) {
+					i.remove();
+					break;
+				}
+			}
+		}
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_METADATA)
@@ -242,24 +272,72 @@ public class DataManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SEARCH)
 	public String doViewSearch(Model model) {
-		if(!model.containsAttribute(MODEL_BEAN_SEARCH_REQUEST)) {
+		if(!model.containsAttribute(MODEL_BEAN_SEARCH_REQUEST) ||
+				model.asMap().get(MODEL_BEAN_MODE).equals(PARAM_MODE_VIEW)) {
 			model.addAttribute(MODEL_BEAN_SEARCH_REQUEST, new SearchRequest());
+			model.asMap().remove(MODEL_BEAN_FOUND_ENTRIES);
 		}
+		
+		model.addAttribute(MODEL_BEAN_MODE, PARAM_MODE_SEARCH);
 		
 		return "dataManager/search";
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SEARCH)
 	public void doActionSearch(@ModelAttribute(MODEL_BEAN_SEARCH_REQUEST) SearchRequest searchRequest,
-			BindingResult errors, ActionResponse response) {
+			BindingResult errors, PortletRequest request, ActionResponse response, Model model) {
+		log.debug("Processing LOBCDER search request for {}", searchRequest);
+		LobcderSearchCriteria lsc = new LobcderSearchCriteria();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+		
+		if(!searchRequest.getStartModificationDate().isEmpty()) {
+			try {
+				lsc.setModificationStartMillis(sdf.parse(searchRequest.getStartModificationDate()).getTime() / 1000);
+			} catch (ParseException e) {
+				//ignoring
+			}
+		}
+		
+		if(!searchRequest.getStopModificationDate().isEmpty()) {
+			try {
+				lsc.setModificationStopMillis(sdf.parse(searchRequest.getStopModificationDate()).getTime() / 1000);
+			} catch (ParseException e) {
+				//ignoring
+			}
+		}
+		
+		List<LobcderEntry> foundItems = lobcderRestClient.search(lsc, portal.getUserToken(request));
+		Collections.sort(foundItems, new Comparator<LobcderEntry>() {
+			@Override
+			public int compare(LobcderEntry e1, LobcderEntry e2) {
+				return e1.getName().compareTo(e2.getName());
+			}
+		});
+		model.addAttribute(MODEL_BEAN_FOUND_ENTRIES, foundItems);
+		model.addAttribute(MODEL_BEAN_PARENT_PATHS, createParentPaths(foundItems));
 		response.setRenderParameter(PARAM_ACTION, ACTION_SEARCH);
 	}
-	
+
 	@ExceptionHandler(Exception.class)
 	public String handleExceptions(Exception e) {
 		log.error("Unexpected exception occurred", e);
 		
 		return "fatal/error";
+	}
+	
+	private Map<String, String> createParentPaths(List<LobcderEntry> entries) {
+		Map<String, String> result = new HashMap<>();
+		
+		for(LobcderEntry entry : entries) {
+			if(entry.getName().contains("/")) {
+				result.put(entry.getName(), "/" + entry.getName().substring(
+						entry.getName().lastIndexOf("/") + 1));
+			} else {
+				result.put(entry.getName(), "/");
+			}
+		}
+		
+		return result;
 	}
 	
 	private Object getMetadata(String path, String securityToken) throws LobcderException {
@@ -303,7 +381,7 @@ public class DataManagerPortlet {
 			@Override
 			public int compare(LobcderEntry le1, LobcderEntry le2) {
 				if(le1.isDirectory() == le2.isDirectory()) {
-					return le1.getName().compareTo(le2.getName());
+					return le1.getName().compareToIgnoreCase(le2.getName());
 				} else {
 					if(le1.isDirectory()) {
 						return -1;

@@ -1,7 +1,10 @@
 package pl.cyfronet.coin.portlet.lobcder;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -88,6 +91,64 @@ public class LobcderRestClient {
 		ResponseEntity<String> response = rest.exchange(getPermissionsUrl(lobcderRestMetadata.getUid()), HttpMethod.PUT, requestEntity, String.class);
 		log.debug("LOBCDER REST response status and body for {} ({}) is {}",
 				new String[] {lobcderRestMetadata.getUid(), getPermissionsUrl(lobcderRestMetadata.getUid()), String.valueOf(response.getStatusCode())});
+	}
+	
+	public List<LobcderEntry> search(LobcderSearchCriteria lsc, String securityToken) {
+		List<LobcderEntry> result = new ArrayList<>();
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.add("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
+		requestHeaders.add("Accept", "application/xml");
+		
+		HttpEntity<?> requestEntity = new HttpEntity(requestHeaders);
+		ResponseEntity<LobcderRestMetadataList> response = rest.exchange(getQueryUrl(lsc), HttpMethod.GET, requestEntity, LobcderRestMetadataList.class);
+		log.debug("LOBCDER REST response status and body for a query {} is {}: {}",
+				new String[] {getQueryUrl(lsc), String.valueOf(response.getStatusCode()), response.getBody().toString()});
+		
+		for(LobcderRestMetadata meta : response.getBody().getMetadataList()) {
+			if(meta.getDatatype().equals(LobcderRestMetadata.DATATYPE_FILE)) {
+				LobcderEntry entry = new LobcderEntry(createName(meta.getParent(), meta.getName()));
+				entry.setDirectory(false);
+				entry.setBytes(meta.getSizeBytes());
+				result.add(entry);
+			}
+		}
+		
+		return result;
+	}
+
+	private String createName(String parent, String name) {
+		String finalName = name;
+		
+		if(parent != null && !parent.trim().isEmpty()) {
+			if(parent.startsWith("/")) {
+				parent = parent.substring(1);
+			}
+			
+			if(!parent.endsWith("/")) {
+				parent = parent + "/";
+			}
+			
+			finalName = parent + finalName;
+		}
+		
+		return finalName;
+	}
+
+	private String getQueryUrl(LobcderSearchCriteria lsc) {
+		String queryUrl = baseUrl + "/items/query?path=/&mStartDate={mStartDate}&mEndDate={mEndDate}";
+		queryUrl = queryUrl.replace("{mStartDate}", String.valueOf(lsc.getModificationStartMillis()));
+		
+		long endDate = lsc.getModificationStopMillis();
+		
+		if(endDate < 1) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+			endDate = calendar.getTime().getTime() / 1000;
+		}
+		
+		queryUrl = queryUrl.replace("{mEndDate}", String.valueOf(endDate));
+		
+		return queryUrl;
 	}
 
 	private String serializePermissions(LobcderRestMetadataPermissions permissions) throws JAXBException {

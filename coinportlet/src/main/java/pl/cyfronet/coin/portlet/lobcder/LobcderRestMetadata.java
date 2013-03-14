@@ -5,6 +5,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "logicalData")
 public class LobcderRestMetadata {
+	public static final String DATATYPE_FILE = "logical.file";
+	public static final String DATATYPE_FOLDER = "logical.folder";
+	
 	private String uid;
 	private String name;
 	private String checksum;
@@ -16,6 +19,7 @@ public class LobcderRestMetadata {
 	private String parent;
 	private boolean supervised;
 	private LobcderRestMetadataPermissions permissions;
+	private String datatype;
 
 	@XmlElement(name = "UID")
 	public String getUid() {
@@ -101,12 +105,18 @@ public class LobcderRestMetadata {
 				+ lastValidationDate + ", sizeBytes=" + sizeBytes
 				+ ", modificationDate=" + modificationDate + ", parent="
 				+ parent + ", supervised=" + supervised + ", permissions="
-				+ permissions + "]";
+				+ permissions + ", datatype=" + datatype + "]";
 	}
 	public LobcderRestMetadataPermissions getPermissions() {
 		return permissions;
 	}
 	public void setPermissions(LobcderRestMetadataPermissions permissions) {
 		this.permissions = permissions;
+	}
+	public String getDatatype() {
+		return datatype;
+	}
+	public void setDatatype(String datatype) {
+		this.datatype = datatype;
 	}
 }

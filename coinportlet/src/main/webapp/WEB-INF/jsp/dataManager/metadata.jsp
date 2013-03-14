@@ -3,6 +3,9 @@
 <portlet:renderURL var="goBack">
 	<portlet:param name="path" value="${parentPath}"/>
 </portlet:renderURL>
+<portlet:renderURL var="goBackToSearch">
+	<portlet:param name="action" value="search"/>
+</portlet:renderURL>
 <portlet:actionURL var="updateMetadata">
 	<portlet:param name="action" value="updateMetadata"/>
 	<portlet:param name="path" value="${path}"/>
@@ -98,9 +101,18 @@
 	<div class="coin-menu-bottom">
 		<ul>
 			<li>
-				<a class="coin-link" href="${goBack}">
-					<spring:message code="data.manager.portlet.return.to.file.list.label"/>
-				</a>
+				<c:choose>
+					<c:when test="${mode == 'search'}">
+						<a class="coin-link" href="${goBackToSearch}">
+							<spring:message code="data.manager.portlet.return.to.file.list.label"/>
+						</a>
+					</c:when>
+					<c:otherwise>
+						<a class="coin-link" href="${goBack}">
+							<spring:message code="data.manager.portlet.return.to.file.list.label"/>
+						</a>
+					</c:otherwise>
+				</c:choose>
 			</li>
 		</ul>
 	</div>
