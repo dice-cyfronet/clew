@@ -51,10 +51,10 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	}
 
 	private void givenWorkflowWithASI() {
-		givenWorkflowWithASIs("otherId", asiId, "yetAnotherId");
+		givenWorkflowWithASIs(true, "otherId", asiId, "yetAnotherId");
 	}
 
-	private void givenWorkflowWithASIs(String... asiIds) {
+	private void givenWorkflowWithASIs(boolean development, String... asiIds) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 		wd.setWorkflow_type(WorkflowType.development);
@@ -67,6 +67,7 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 			vms.add(vm);			
 			
 			ApplianceType at = new ApplianceType();
+			at.setDevelopment(development);
 			at.setId(id + "AS");
 			ApplianceConfiguration ac = new ApplianceConfiguration();
 			ac.setId(id  + "InitConf");
@@ -150,7 +151,7 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	}
 
 	private void givenWorkflowWithoutASI() {
-		givenWorkflowWithASIs("otherId", "yetAnotherId");
+		givenWorkflowWithASIs(true, "otherId", "yetAnotherId");
 	}
 
 	@Test
@@ -178,5 +179,24 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	@Override
 	protected void verifyElementRemovedFromAtmosphere(int times) {
 		verify(atmosphere, times(times)).removeAppliance(asiId);
+	}
+	
+	@Test
+	public void shouldRemoveDevASOnlyWhenIsDevelopment() throws Exception {
+		 givenDevWorkflowWithNotIsDevelopmentAT();
+		 whenRemoveASIFromWorkflow();
+		 thenASIStoppedAndASNotRemoved();
+	}
+
+	private void givenDevWorkflowWithNotIsDevelopmentAT() {
+		givenWorkflowWithASIs(false, "otherId", asiId, "yetAnotherId");
+	}
+
+	private void thenASIStoppedAndASNotRemoved() {
+		verify(air, times(1)).getWorkflow(contextId);
+		verify(air, times(1)).getTypeFromVM(asiId);
+		verify(atmosphere, times(1)).removeAppliance(asiId);		
+		verify(air, times(0)).removeInitialConfiguration(asiId + "InitConf");
+		verify(air, times(0)).deleteAtomicService(asiId  + "AS");	
 	}
 }
