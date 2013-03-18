@@ -495,6 +495,17 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		}
 	}
 
+	@Test
+	public void shouldThrow406WhenASInUse() throws Exception {
+		givenDeleteActionThrows(new NotAcceptableException());
+		try {
+			whenDeleteAtomicService();
+			fail();
+		} catch (NotAcceptableException e) {
+			// Ok should be thrown
+		}
+	}
+
 	private void givenDeleteActionThrows(CloudFacadeException exception) {
 		Action<Class<Void>> action = mock(DeleteAtomicServiceAction.class);
 		when(action.execute()).thenThrow(exception);

@@ -218,10 +218,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	private void thenWorkflowIsStoppedAndDevelopmentASesAreRemoved() {
 		thenCheckWorkflowStopped();
 
-		verify(air, times(1)).removeInitialConfiguration("asi1InitConf");		
-		verify(air, times(1)).removeInitialConfiguration("asi1InitConf");
-		verify(air, times(1)).deleteAtomicService("asi1AS");
-		verify(air, times(1)).deleteAtomicService("asi2AS");
+		verify(air, times(1)).deleteAtomicService("asi1AS", true);
+		verify(air, times(1)).deleteAtomicService("asi2AS", true);
 	}
 
 	private Vms getVm(String vmId) {

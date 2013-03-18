@@ -19,13 +19,14 @@ package pl.cyfronet.coin.impl.action.as;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.api.beans.InitialConfiguration;
+import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
@@ -38,7 +39,8 @@ public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 
 	private List<String> atomicServicesIds;
 
-	public DeleteAtomicServiceFromAirAction(AirClient air, String atomicServiceId) {
+	public DeleteAtomicServiceFromAirAction(AirClient air,
+			String atomicServiceId) {
 		this(air, Arrays.asList(atomicServiceId));
 	}
 
@@ -53,15 +55,19 @@ public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 		logger.debug("Removing {}", atomicServicesIds);
 
 		for (String atomicServiceId : atomicServicesIds) {
-			ListInitialConfigurationsAction initConfsAction = new ListInitialConfigurationsAction(
-					getAir(), atomicServiceId, false);
-			List<InitialConfiguration> initConfs = initConfsAction.execute();
-			for (InitialConfiguration initConf : initConfs) {
-				logger.debug("Removing initial configuration {}", initConf.getId());
-				getAir().removeInitialConfiguration(initConf.getId());
+			logger.debug(
+					"Removing atomic service {} with force_cascade == true",
+					atomicServiceId);
+			try {
+				getAir().deleteAtomicService(atomicServiceId, true);
+			} catch (ServerWebApplicationException e) {
+				if (e.getStatus() == 404) {
+					throw new AtomicServiceNotFoundException();
+				} else if (e.getStatus() == 400) {
+					throw new NotAcceptableException(e.getMessage());
+				}
+				throw new CloudFacadeException(e.getMessage());
 			}
-			logger.debug("Removing atomic service {}", atomicServiceId);
-			getAir().deleteAtomicService(atomicServiceId);
 		}
 		return Void.TYPE;
 	}

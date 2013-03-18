@@ -86,8 +86,9 @@ public interface AirClient {
 	String addAtomicService(AddAtomicServiceRequest addAtomicService);
 
 	@DELETE
-	@Path("/appliance_type/{asName}")
-	void deleteAtomicService(@PathParam("asName") String asName);
+	@Path("/appliance_type/{asId}")
+	void deleteAtomicService(@PathParam("asId") String asId,
+			@QueryParam("force_cascade") boolean force);
 
 	@POST
 	@Path("/appliance_config")
