@@ -29,12 +29,16 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
+import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
+import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -52,6 +56,7 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 
 	private void givenWorkflowWithASI() {
 		givenWorkflowWithASIs(true, "otherId", asiId, "yetAnotherId");
+		givenAirResponse(OperationStatus.SUCCESSFUL);
 	}
 
 	private void givenWorkflowWithASIs(boolean development, String... asiIds) {
@@ -63,16 +68,16 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 		List<ApplianceType> ats = new ArrayList<>();
 
 		for (String id : asiIds) {
-			Vms vm = getVm(id); 
-			vms.add(vm);			
-			
+			Vms vm = getVm(id);
+			vms.add(vm);
+
 			ApplianceType at = new ApplianceType();
 			at.setDevelopment(development);
 			at.setId(id + "AS");
 			ApplianceConfiguration ac = new ApplianceConfiguration();
-			ac.setId(id  + "InitConf");
+			ac.setId(id + "InitConf");
 			at.setConfigurations(Arrays.asList(ac));
-			
+
 			when(air.getTypeFromVM(id)).thenReturn(at);
 			ats.add(at);
 		}
@@ -99,7 +104,7 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 		verify(atmosphere, times(1)).removeAppliance(asiId);
 		verify(air, times(1)).getTypeFromVM(asiId);
 		verify(air, times(1)).removeInitialConfiguration(asiId + "InitConf");
-		verify(air, times(1)).deleteAtomicService(asiId  + "AS");		
+		verify(air, times(1)).deleteAtomicService(asiId + "AS");
 	}
 
 	@Test
@@ -180,23 +185,52 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 	protected void verifyElementRemovedFromAtmosphere(int times) {
 		verify(atmosphere, times(times)).removeAppliance(asiId);
 	}
-	
+
 	@Test
 	public void shouldRemoveDevASOnlyWhenIsDevelopment() throws Exception {
-		 givenDevWorkflowWithNotIsDevelopmentAT();
-		 whenRemoveASIFromWorkflow();
-		 thenASIStoppedAndASNotRemoved();
+		givenDevWorkflowWithNotIsDevelopmentAT();
+		whenRemoveASIFromWorkflow();
+		thenASIStoppedAndASNotRemoved();
 	}
 
 	private void givenDevWorkflowWithNotIsDevelopmentAT() {
 		givenWorkflowWithASIs(false, "otherId", asiId, "yetAnotherId");
+		givenAirResponse(OperationStatus.SUCCESSFUL);
 	}
 
 	private void thenASIStoppedAndASNotRemoved() {
 		verify(air, times(1)).getWorkflow(contextId);
 		verify(air, times(1)).getTypeFromVM(asiId);
-		verify(atmosphere, times(1)).removeAppliance(asiId);		
+		verify(atmosphere, times(1)).removeAppliance(asiId);
 		verify(air, times(0)).removeInitialConfiguration(asiId + "InitConf");
-		verify(air, times(0)).deleteAtomicService(asiId  + "AS");	
+		verify(air, times(0)).deleteAtomicService(asiId + "AS");
+	}
+
+	@Test
+	public void shouldNotRemoveTmpASWhileDyreallaReturnsFailure()
+			throws Exception {
+		givenDyreallaReturningFailure();
+		try {
+			whenRemoveASIFromWorkflow();
+			fail();
+		} catch (CloudFacadeException e) {
+			thenTmpASNotRemoved();
+		}
+	}
+
+	private void givenDyreallaReturningFailure() {
+		givenWorkflowWithASI();
+		givenAirResponse(OperationStatus.FAILED);
+	}
+
+	private void givenAirResponse(OperationStatus status) {
+		ManagerResponse response = new ManagerResponseImpl();
+		response.setOperationStatus(status);
+
+		when(atmosphere.removeAppliance(asiId)).thenReturn(response);
+	}
+
+	private void thenTmpASNotRemoved() {
+		thenASIStoppedAndASNotRemoved();
 	}
 }
