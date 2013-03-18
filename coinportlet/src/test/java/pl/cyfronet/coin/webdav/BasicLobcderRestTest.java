@@ -10,7 +10,9 @@ import javax.xml.bind.JAXBException;
 import junit.framework.Assert;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,6 +40,11 @@ public class BasicLobcderRestTest {
 	@Autowired private LobcderClient client;
 	
 	@Value("${security.token}") private String securityToken;
+	
+	@BeforeClass
+	public static void checkIntegrationTestFlag() {
+		Assume.assumeTrue(Boolean.getBoolean("integration.tests"));
+	}
 	
 	@Before
 	public void prepareTestDirectory() throws LobcderException {

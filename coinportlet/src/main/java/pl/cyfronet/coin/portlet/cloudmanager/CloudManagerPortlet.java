@@ -1054,12 +1054,17 @@ public class CloudManagerPortlet {
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, atomicServiceInstanceId);
 		response.setRenderParameter(PARAM_WORKFLOW_ID, workflowId);
 	}
-	
+
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
-		if(workflowType != WorkflowType.development) {
-			for(Iterator<AtomicService> i = atomicServices.iterator(); i.hasNext();) {
-				AtomicService atomicService = i.next();
-				
+		for(Iterator<AtomicService> i = atomicServices.iterator(); i.hasNext();) {
+			AtomicService atomicService = i.next();
+			
+			if(atomicService.isDevelopment()) {
+				i.remove();
+				continue;
+			}
+			
+			if(workflowType != WorkflowType.development) {
 				if(!atomicService.isPublished()) {
 					i.remove();
 				}
