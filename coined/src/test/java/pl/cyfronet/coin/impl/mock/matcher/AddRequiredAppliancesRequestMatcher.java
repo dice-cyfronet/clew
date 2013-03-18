@@ -60,7 +60,7 @@ public class AddRequiredAppliancesRequestMatcher extends
 	@Override
 	public boolean matches(Object arg0) {
 		AddRequiredAppliancesRequest request = (AddRequiredAppliancesRequest) arg0;
-		return request.getCorrelationId().equals(contextId)
+		return request != null && contextId.equals(request.getCorrelationId())
 				&& username.equals(request.getUsername())
 				&& getRunMode() == request.getRunMode()
 				&& importanceLevel.equals(request.getImportanceLevel())

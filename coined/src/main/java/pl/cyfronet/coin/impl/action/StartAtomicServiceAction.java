@@ -46,6 +46,8 @@ public class StartAtomicServiceAction extends
 	private String keyName;
 	private List<String> initConfigIds;
 	private List<String> asNames;
+	private List<String> developmentASes;
+	private ActionFactory actionFactory;
 
 	/**
 	 * @param air Air client.
@@ -55,11 +57,13 @@ public class StartAtomicServiceAction extends
 	 * @param contextId Context id.
 	 * @param username User name.
 	 */
-	StartAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
-			String username, String initConfigId, String asName,
-			String contextId, Integer priority, String keyName) {
+	StartAtomicServiceAction(ActionFactory actionFactory, AirClient air,
+			DyReAllaManagerService atmosphere, String username,
+			String initConfigId, String asName, String contextId,
+			Integer priority, String keyName) {
 		this(air, atmosphere, username, Arrays.asList(initConfigId), Arrays
 				.asList(asName), contextId, priority, keyName);
+		this.actionFactory = actionFactory;
 	}
 
 	public StartAtomicServiceAction(AirClient air,
@@ -94,30 +98,51 @@ public class StartAtomicServiceAction extends
 			throw new AtomicServiceNotFoundException();
 		}
 
-		if (workflow.getWorkflow_type() == WorkflowType.development) {
-			initConfigIds = createDevelopmentAtomicServices(types);
+		if (isInDevelopmentMode(workflow)) {
+			createDevelopmentAtomicServices(types);
 		}
 
-		registerVms(contextId, initConfigIds, asNames, defaultPriority,
-				workflow.getWorkflow_type(), keyName);
+		try {
+			registerVms(contextId, initConfigIds, asNames, defaultPriority,
+					workflow.getWorkflow_type(), keyName);
+		} catch (CloudFacadeException e) {
+			if (isInDevelopmentMode(workflow)) {
+				removeDevelopmentASes();
+			}
+			throw e;
+		}
 
-		// TODO information from Atmosphere about atomis service instance id
-		// needed!
 		return null;
 	}
 
-	private List<String> createDevelopmentAtomicServices(
-			List<ApplianceType> types) {
+	private void removeDevelopmentASes() {
+		for (String devAsiId : developmentASes) {
+			try {
+				Action<Class<Void>> action = actionFactory
+						.createDeleteAtomicServiceAction(devAsiId);
+				action.execute();
+			} catch (Exception e) {
+				logger.error("Unable to delete development AS");
+			}
+		}
+	}
+
+	private boolean isInDevelopmentMode(WorkflowDetail workflow) {
+		return workflow.getWorkflow_type() == WorkflowType.development;
+	}
+
+	private void createDevelopmentAtomicServices(List<ApplianceType> types) {
 		List<String> newInitConfs = new ArrayList<>();
+		developmentASes = new ArrayList<>();
 
 		for (int i = 0; i < types.size(); i++) {
 			ApplianceType baseAS = types.get(i);
 			String initConfId = initConfigIds.get(i);
-			newInitConfs
-					.add(createDevelopmentAtomicService(baseAS, initConfId));
+			createDevelopmentAtomicService(baseAS, initConfId, developmentASes,
+					newInitConfs);
 		}
 
-		return newInitConfs;
+		initConfigIds = newInitConfs;
 	}
 
 	private List<ApplianceType> getTypes() {
@@ -137,8 +162,9 @@ public class StartAtomicServiceAction extends
 		return false;
 	}
 
-	private String createDevelopmentAtomicService(ApplianceType baseAS,
-			String initConfId) {
+	private void createDevelopmentAtomicService(ApplianceType baseAS,
+			String initConfId, List<String> developmentASes,
+			List<String> developmentInitConfs) {
 		baseAS.setDevelopment(true);
 		baseAS.setName(String.format("%s-%s", baseAS.getName(),
 				System.currentTimeMillis()));
@@ -146,8 +172,8 @@ public class StartAtomicServiceAction extends
 		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
 				getAir(), getUsername(), baseAS, baseAS.getId());
 		String devAsId = createASAction.execute();
-
-		return createInitConfCopy(devAsId, initConfId);
+		developmentASes.add(devAsId);
+		developmentInitConfs.add(createInitConfCopy(devAsId, initConfId));
 	}
 
 	private String createInitConfCopy(String asName, String srcInitConfId) {

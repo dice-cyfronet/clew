@@ -58,7 +58,7 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 	}
 
 	private void whenRemovingAtomicService() {
-		DeleteAtomicServiceAction action = actionFactory
+		Action<Class<Void>> action = actionFactory
 				.createDeleteAtomicServiceAction(asName);
 		action.execute();
 	}

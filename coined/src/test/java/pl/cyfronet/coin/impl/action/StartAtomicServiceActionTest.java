@@ -18,6 +18,7 @@ package pl.cyfronet.coin.impl.action;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,10 +33,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
-import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
-import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
-import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -45,25 +43,28 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private String name = "asIdName";
 
 	private String id;
-	private AddRequiredAppliancesRequestImpl request;
 	private ApplianceType baseAS;
 	private ApplianceType at;
 
 	private AddAtomicServiceMatcher asMatcher;
 
+	private Action<Class<Void>> removeASAction;
+
+	private String devAsId = "devAsId";
+
 	@Test
 	public void shouldStartWithoutKeyWhenProductionWorkflow() throws Exception {
-		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal);
+		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal, OperationStatus.SUCCESSFUL);
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
 	}
 
 	private ApplianceType givenAtomicServiceRequestAndWorkflowAlreadyStarted(
-			WorkflowType workflowType) {		
+			WorkflowType workflowType, OperationStatus status) {
 		givenWorkflowStarted(workflowType);
-		givenAsiRequestMatcher(workflowType);
+		givenAsiRequestMatcher(workflowType, status);
 		ApplianceType at = givenASInAir(initConfigId, false);
-		
+
 		return at;
 	}
 
@@ -72,9 +73,8 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStartAtomicService(String username, String keyId) {
-		Action<String> action = actionFactory
-				.createStartAtomicServiceAction(initConfigId, name, contextId,
-						username, keyId);
+		Action<String> action = actionFactory.createStartAtomicServiceAction(
+				initConfigId, name, contextId, username, keyId);
 		id = action.execute();
 	}
 
@@ -89,7 +89,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	@Test
 	public void shouldStartASWithKeyWhenDevelopmentWorkflow() throws Exception {
-		givenMockedAtmosphereForStartingASInDevMode();
+		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.SUCCESSFUL);
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
 	}
@@ -132,34 +132,29 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		mockGetNonExistingWorkflow(air, contextId);
 	}
 
-	// FIXME
-	@Test(enabled = false)
-	public void shouldCreateExceptionWhileAtmosphereActionFailed()
+	@Test
+	public void shouldThrowExceptionAndRemoveTmpASWhileAtmosphereActionFailed()
 			throws Exception {
 		givenAtmosphereReturnsErrorWhileStartingAtomicService();
 
 		try {
 			whenStartAtomicService();
-			fail();
+			fail("Error should be thrown while dyrealla was not able to stop ASI");
 		} catch (CloudFacadeException e) {
-			// OK
+			thenVerifyRequestSendToAtmosphereAndTmpASRemove();
 		}
-
-		thenVerifyRequestSendToAtmosphere();
 	}
 
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
-		givenASInAir(initConfigId, false);
-		request = new AddRequiredAppliancesRequestImpl();
+		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.FAILED);
 
-		ManagerResponse response = new ManagerResponseImpl();
-		response.setOperationStatus(OperationStatus.FAILED);
-
-		when(atmosphere.addRequiredAppliances(request)).thenReturn(response);
+		removeASAction = mock(DeleteAtomicServiceAction.class);
+		when(actionFactory.createDeleteAtomicServiceAction(devAsId)).thenReturn(
+				removeASAction);
 	}
 
-	private void thenVerifyRequestSendToAtmosphere() {
-		verify(atmosphere, times(1)).addRequiredAppliances(request);
+	private void thenVerifyRequestSendToAtmosphereAndTmpASRemove() {		
+		verify(removeASAction, times(1)).execute();
 	}
 
 	@Test
@@ -179,7 +174,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	public void shouldCreateTmpASWhileStartingASIInDevelopmentMode()
 			throws Exception {
 
-		givenMockedAtmosphereForStartingASInDevMode();		
+		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.SUCCESSFUL);
 
 		whenStartAtomicService();
 
@@ -190,8 +185,8 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 				eq("devAsId"), eq(initConfigPayload));
 	}
 
-	private void givenMockedAtmosphereForStartingASInDevMode() {
-		baseAS = givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development);
+	private void givenMockedAtmosphereForStartingASInDevMode(OperationStatus status) {
+		baseAS = givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development, status);
 
 		at = new ApplianceType();
 		at.setName(baseAS.getName());
@@ -199,16 +194,14 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		at.setDevelopment(true);
 		at.setEndpoints(baseAS.getEndpoints());
 		at.setPort_mappings(baseAS.getPort_mappings());
-		
-		asMatcher = new AddAtomicServiceMatcher(
-				username, at, true);
-		
+
+		asMatcher = new AddAtomicServiceMatcher(username, at, true);
+
 		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
-		when(air.addAtomicService(argThat(asMatcher))).thenReturn("devAsId");
+		when(air.addAtomicService(argThat(asMatcher))).thenReturn(devAsId);
 		when(
-				air.addInitialConfiguration(anyString(),
-						eq("devAsId"), eq(initConfigPayload)))
-				.thenReturn(newConfigId);
-		
+				air.addInitialConfiguration(anyString(), eq("devAsId"),
+						eq(initConfigPayload))).thenReturn(newConfigId);
+
 	}
 }

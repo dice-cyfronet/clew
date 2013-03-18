@@ -76,7 +76,7 @@ public class ActionFactory {
 		return new ListAtomicServicesAction(air, username);
 	}
 
-	public DeleteAtomicServiceAction createDeleteAtomicServiceAction(
+	public Action<Class<Void>> createDeleteAtomicServiceAction(
 			String atomicServiceName) {
 		return new DeleteAtomicServiceAction(air, atomicServiceName);
 	}
@@ -134,7 +134,7 @@ public class ActionFactory {
 	public Action<String> createStartAtomicServiceAction(
 			String atomicServiceId, String asName, String contextId,
 			String username, String keyName) {
-		return new StartAtomicServiceAction(air, atmosphere, username,
+		return new StartAtomicServiceAction(this, air, atmosphere, username,
 				atomicServiceId, asName, contextId, defaultPriority, keyName);
 	}
 
