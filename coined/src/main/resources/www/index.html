@@ -495,6 +495,27 @@ body {
 					and problem explanation when failed.
 				</div>
 				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/as/{atomicServiceId}</strong>
+						- deletes atomic service</a>
+				</h3>
+				<div>
+					
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> Only Atomic Service owner is allowed to delete it.
+					</div>
+					
+					<ul>
+						<li><strong>atomicServiceId</strong> - atomic
+							service id</li>
+					</ul>
+					
+					The operation returns the <strong>200</strong> status code on
+					success and the <strong>404</strong> when atomic service is not found, 
+					<strong>403</strong> when user is not allowed to remove this atomic service,
+					<strong>406</strong> when there are atomic service instances created from this atomic service.
+				</div>
+				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong>
 						- gets atomic service configurations</a>
 				</h3>
