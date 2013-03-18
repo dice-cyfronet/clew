@@ -1,11 +1,18 @@
 package pl.cyfronet.coin.webdav;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 import junit.framework.Assert;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,6 +26,7 @@ import pl.cyfronet.coin.portlet.lobcder.LobcderClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderException;
 import pl.cyfronet.coin.portlet.lobcder.LobcderRestClient;
 import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadata;
+import pl.cyfronet.coin.portlet.lobcder.LobcderRestMetadataPermissions;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/coinportlet-app-ctx.xml")
@@ -33,6 +41,11 @@ public class BasicLobcderRestTest {
 	
 	@Value("${security.token}") private String securityToken;
 	
+	@BeforeClass
+	public static void checkIntegrationTestFlag() {
+		Assume.assumeTrue(Boolean.getBoolean("integration.tests"));
+	}
+	
 	@Before
 	public void prepareTestDirectory() throws LobcderException {
 		client.createDirectory("/", TEST_DIR_NAME, securityToken);
@@ -41,7 +54,7 @@ public class BasicLobcderRestTest {
 	
 	@After
 	public void cleanUp() throws LobcderException {
-//		client.delete("/" + TEST_DIR_NAME, securityToken);
+		client.delete("/" + TEST_DIR_NAME, securityToken);
 	}
 	
 	@Test(expected = LobcderException.class)
@@ -54,5 +67,44 @@ public class BasicLobcderRestTest {
 		LobcderRestMetadata metadata = lobcderRestClient.getMetadata("/" + TEST_DIR_NAME + "/" + TEST_FILE_NAME, securityToken);
 		log.info("Metadata: " + metadata);
 		Assert.assertNotNull(metadata);
+	}
+	
+	@Test
+	public void setPermissions() throws LobcderException {
+		LobcderRestMetadata metadata = lobcderRestClient.getMetadata("/" + TEST_DIR_NAME + "/" + TEST_FILE_NAME, securityToken);
+		metadata.getPermissions().getReadGroups().add("testing_group");
+		lobcderRestClient.updateMetadata(metadata, securityToken);
+		metadata = lobcderRestClient.getMetadata("/" + TEST_DIR_NAME + "/" + TEST_FILE_NAME, securityToken);
+		Assert.assertTrue(metadata.getPermissions().getReadGroups().contains("testing_group"));
+	}
+	
+	@Test
+	public void permissionSerialization() throws JAXBException {
+		LobcderRestMetadataPermissions perms = new LobcderRestMetadataPermissions();
+		perms.setOwner("owner");
+		perms.setReadGroups(Arrays.asList(new String[] {"group1", "group2"}));
+		perms.setWriteGroups(Arrays.asList(new String[] {"group3", "group4"}));
+		
+		JAXBContext jaxb = JAXBContext.newInstance(LobcderRestMetadataPermissions.class);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		jaxb.createMarshaller().marshal(perms, baos);
+		log.info("Serialized permissions: {}", baos.toString());
+	}
+	
+	@Test
+	public void metadataSerialization() throws JAXBException {
+		LobcderRestMetadataPermissions perms = new LobcderRestMetadataPermissions();
+		perms.setOwner("owner");
+		perms.setReadGroups(Arrays.asList(new String[] {"group1", "group2"}));
+		perms.setWriteGroups(Arrays.asList(new String[] {"group3", "group4"}));
+		
+		LobcderRestMetadata metadata = new LobcderRestMetadata();
+		metadata.setPermissions(perms);
+		metadata.setName("name");
+		
+		JAXBContext jaxb = JAXBContext.newInstance(LobcderRestMetadata.class);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		jaxb.createMarshaller().marshal(metadata, baos);
+		log.info("Serialized permissions: {}", baos.toString());
 	}
 }

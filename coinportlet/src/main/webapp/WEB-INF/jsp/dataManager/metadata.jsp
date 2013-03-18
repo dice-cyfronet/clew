@@ -3,6 +3,9 @@
 <portlet:renderURL var="goBack">
 	<portlet:param name="path" value="${parentPath}"/>
 </portlet:renderURL>
+<portlet:renderURL var="goBackToSearch">
+	<portlet:param name="action" value="search"/>
+</portlet:renderURL>
 <portlet:actionURL var="updateMetadata">
 	<portlet:param name="action" value="updateMetadata"/>
 	<portlet:param name="path" value="${path}"/>
@@ -13,6 +16,36 @@
 	<span class="coin-top-dir"><spring:message code="data.manager.portlet.metadata.header" arguments="${path}"/></span>
 	<div>
 		<form:form class="coin-form" action='${updateMetadata}' modelAttribute='metadata'>
+			<div class="coin-form-input">
+				<label for="owner">
+					<spring:message code="data.manager.portlet.metadata.permissions.owner.label"/>
+				</label>
+				<form:hidden path="owner"/>
+				<span style="margin-left: 5px;">${metadata.owner}</span>
+				<form:errors path="owner" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="readPermissions">
+					<spring:message code="data.manager.portlet.metadata.read.permissions.label"/>
+				</label>
+				<form:input path="readPermissions"/>
+				<form:errors path="readPermissions" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="writePermissions">
+					<spring:message code="data.manager.portlet.metadata.write.permissions.label"/>
+				</label>
+				<form:input path="writePermissions"/>
+				<form:errors path="writePermissions" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="uid">
+					<spring:message code="data.manager.portlet.metadata.uid.label"/>
+				</label>
+				<form:hidden path="uid"/>
+				<span style="margin-left: 5px;">${metadata.uid}</span>
+				<form:errors path="uid" cssClass="coin-error-panel"/>
+			</div>
 			<div class="coin-form-input">
 				<label for="lobcderWebDavMetadata.driSupervised">
 					<spring:message code="data.manager.portlet.metadata.dri.supervised.label"/>
@@ -68,9 +101,18 @@
 	<div class="coin-menu-bottom">
 		<ul>
 			<li>
-				<a class="coin-link" href="${goBack}">
-					<spring:message code="data.manager.portlet.return.to.file.list.label"/>
-				</a>
+				<c:choose>
+					<c:when test="${mode == 'search'}">
+						<a class="coin-link" href="${goBackToSearch}">
+							<spring:message code="data.manager.portlet.return.to.file.list.label"/>
+						</a>
+					</c:when>
+					<c:otherwise>
+						<a class="coin-link" href="${goBack}">
+							<spring:message code="data.manager.portlet.return.to.file.list.label"/>
+						</a>
+					</c:otherwise>
+				</c:choose>
 			</li>
 		</ul>
 	</div>

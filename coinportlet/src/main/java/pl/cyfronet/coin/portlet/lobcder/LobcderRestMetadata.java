@@ -1,8 +1,13 @@
 package pl.cyfronet.coin.portlet.lobcder;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "logicalData")
 public class LobcderRestMetadata {
+	public static final String DATATYPE_FILE = "logical.file";
+	public static final String DATATYPE_FOLDER = "logical.folder";
+	
 	private String uid;
 	private String name;
 	private String checksum;
@@ -11,9 +16,10 @@ public class LobcderRestMetadata {
 	private long lastValidationDate;
 	private long sizeBytes;
 	private long modificationDate;
-	private String owner;
 	private String parent;
 	private boolean supervised;
+	private LobcderRestMetadataPermissions permissions;
+	private String datatype;
 
 	@XmlElement(name = "UID")
 	public String getUid() {
@@ -77,14 +83,6 @@ public class LobcderRestMetadata {
 		this.modificationDate = modificationDate;
 	}
 	
-	
-	public String getOwner() {
-		return owner;
-	}
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-	
 	public String getParent() {
 		return parent;
 	}
@@ -105,7 +103,20 @@ public class LobcderRestMetadata {
 				+ ", checksum=" + checksum + ", contentType=" + contentType
 				+ ", creationDate=" + creationDate + ", lastValidationDate="
 				+ lastValidationDate + ", sizeBytes=" + sizeBytes
-				+ ", modificationDate=" + modificationDate + ", owner=" + owner
-				+ ", parent=" + parent + ", supervised=" + supervised + "]";
+				+ ", modificationDate=" + modificationDate + ", parent="
+				+ parent + ", supervised=" + supervised + ", permissions="
+				+ permissions + ", datatype=" + datatype + "]";
+	}
+	public LobcderRestMetadataPermissions getPermissions() {
+		return permissions;
+	}
+	public void setPermissions(LobcderRestMetadataPermissions permissions) {
+		this.permissions = permissions;
+	}
+	public String getDatatype() {
+		return datatype;
+	}
+	public void setDatatype(String datatype) {
+		this.datatype = datatype;
 	}
 }

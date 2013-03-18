@@ -25,7 +25,9 @@ import org.apache.jackrabbit.webdav.property.DavPropertySet;
 import org.apache.jackrabbit.webdav.property.DefaultDavProperty;
 import org.apache.jackrabbit.webdav.xml.Namespace;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ import pl.cyfronet.coin.portlet.util.HttpUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/coinportlet-app-ctx.xml")
 public class BasicWebDavTest {
-	private static final Logger log = LoggerFactory.getLogger(BasicLobcderTest.class);
+	private static final Logger log = LoggerFactory.getLogger(BasicWebDavTest.class);
 
 	@Value("${lobcder.url}") private String webDavUrl;
 	@Value("${security.token}") private String securityToken;
@@ -49,6 +51,11 @@ public class BasicWebDavTest {
 
 	private HttpClient client;
 	private String testFolder;
+	
+	@BeforeClass
+	public static void checkIntegrationTestFlag() {
+		Assume.assumeTrue(Boolean.getBoolean("integration.tests"));
+	}
 
 	@Before
 	public void setup() throws HttpException, IOException {

@@ -95,7 +95,7 @@
 			    							if(creds[0] == 'ssh') {
 			    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
 			    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
-			    										'monospace; white-space: nowrap;">ssh root@' + creds[1] + ' -P ' + creds[2] + ' -i {private_key_file}</span>)</span><br/>';
+			    										'monospace; white-space: nowrap;">ssh root@' + creds[1] + ' -p ' + creds[2] + ' -i {private_key_file}</span>)</span><br/>';
 			    							}
 		    							}
 		    							
