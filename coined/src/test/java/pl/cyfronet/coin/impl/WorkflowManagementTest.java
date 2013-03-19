@@ -45,7 +45,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -64,6 +63,7 @@ import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 		"classpath:rest-test-workflow-management-client.xml",
 		"classpath:META-INF/spring/rest-services.xml"} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class WorkflowManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -553,7 +553,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenAsiEndpointsReceived();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void givenAsiEndpoints() {
 		Action<List<Endpoint>> action = mock(Action.class);
 
@@ -597,7 +596,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenEndpointAdded();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void givenAsiStartedInDevelopmentMode() {
 		endpoint = new Endpoint();
 		endpoint.setDescription("description");
@@ -605,7 +603,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		endpoint.setInvocationPath("/invocation_path");
 		endpoint.setPort(80);
 		endpoint.setType(EndpointType.REST);
-		
+
 		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(givenId);
 
@@ -631,7 +629,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiWithEndpoint() {
-		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(
 				actionFactory.createRemoveAsiEndpointAction(username,
 						contextId, asiId, endpointId)).thenReturn(action);
@@ -658,7 +656,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiWithoutEndpoint() {
-		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(new EndpointNotFoundException());
 		when(
 				actionFactory.createRemoveAsiEndpointAction(username,
