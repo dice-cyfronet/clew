@@ -45,7 +45,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.workflow.RemoveASIFromWorkflowAction;
@@ -404,7 +403,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAddAsiRedirectionAction() {
-		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		Action<String> action = mock(Action.class);
 		when(
 				actionFactory.createAddAsiRedirectionAction(username,
 						contextId, asiId, redirectionName, redirectionPort,
@@ -435,7 +434,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenAddAsiRedirectionActionThrowException(
 			CloudFacadeException exception) {
-		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 		when(
 				actionFactory.createAddAsiRedirectionAction(username,

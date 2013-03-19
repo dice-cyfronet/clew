@@ -20,7 +20,7 @@ public class RemoveAsiRedirectionAction extends
 		AsiRedirectionAction<Class<Void>> {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(AddAsiRedirectionAction.class);
+			.getLogger(RemoveAsiRedirectionAction.class);
 
 	private String redirectionId;
 
