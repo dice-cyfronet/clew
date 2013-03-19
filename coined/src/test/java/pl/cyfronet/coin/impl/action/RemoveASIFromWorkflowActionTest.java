@@ -201,7 +201,6 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 		verify(air, times(1)).getWorkflow(contextId);
 		verify(air, times(1)).getTypeFromVM(asiId);
 		verify(atmosphere, times(1)).removeAppliance(asiId);
-		verify(air, times(0)).removeInitialConfiguration(asiId + "InitConf");
 		verify(air, times(0)).deleteAtomicService(asiId + "AS", true);
 	}
 
