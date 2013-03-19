@@ -48,6 +48,15 @@ public class MasterInterfaceAuthenticationHandler implements
 		return null;
 	}
 
+	@Override
+	public boolean hasRole(String role, String username, String password) {
+		UserDetails userDetails = authService.getUserDetails(password);
+		if (userDetails != null && userDetails.getRole() != null) {
+			return userDetails.getRole().contains(role);
+		}
+		return false;
+	}
+
 	public void setAuthService(AuthService authService) {
 		this.authService = authService;
 	}

@@ -32,6 +32,8 @@ import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
+import pl.cyfronet.coin.api.exception.NotAcceptableException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
@@ -43,6 +45,8 @@ import pl.cyfronet.coin.impl.action.ActionFactory;
  */
 public class CloudFacadeImpl extends UsernameAwareService implements
 		CloudFacade {
+
+	private static final String ADMIN_ROLE = "admin";
 
 	/**
 	 * Logger.
@@ -129,8 +133,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public InvocationPathInfo getInvocationPathInfo(String atomicServiceId, String serviceName,
-			String invocationPath)
+	public InvocationPathInfo getInvocationPathInfo(String atomicServiceId,
+			String serviceName, String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
 		// check if atomic service with given id is registered in Atmosphere.
@@ -141,5 +145,15 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 	public void setActionFactory(ActionFactory actionFactory) {
 		this.actionFactory = actionFactory;
+	}
+
+	@Override
+	public void deleteAtomicService(String atomicServiceId)
+			throws AtomicServiceNotFoundException, NotAcceptableException,
+			NotAllowedException {
+		Action<Class<Void>> action = actionFactory
+				.createDeleteAtomicServiceAction(getUsername(),
+						atomicServiceId, hasRole(ADMIN_ROLE));
+		action.execute();
 	}
 }

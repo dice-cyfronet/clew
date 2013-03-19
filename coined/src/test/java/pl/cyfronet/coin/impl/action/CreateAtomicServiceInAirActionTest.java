@@ -164,7 +164,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 
 	private void thenAtomicServiceCreatedAndRemovedFromAir() {
 		thenCheckRequestSendToAir();
-		verify(air, times(1)).deleteAtomicService(createdAsId);
+		verify(air, times(1)).deleteAtomicService(createdAsId, true);
 	}
 
 	@Test

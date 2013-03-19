@@ -38,7 +38,7 @@ public abstract class AbstractServiceTest extends
 	protected ActionFactory actionFactory;
 
 	@Autowired
-	private MasterInterfaceAuthenticationHandler authenticationHandler;
+	protected MasterInterfaceAuthenticationHandler authenticationHandler;
 
 	protected Action<? extends Object> currentAction;
 

@@ -119,7 +119,7 @@ public class StartAtomicServiceAction extends
 		for (String devAsiId : developmentASes) {
 			try {
 				Action<Class<Void>> action = actionFactory
-						.createDeleteAtomicServiceAction(devAsiId);
+						.createDeleteAtomicServiceFromAirAction(devAsiId);
 				action.execute();
 			} catch (Exception e) {
 				logger.error("Unable to delete development AS");

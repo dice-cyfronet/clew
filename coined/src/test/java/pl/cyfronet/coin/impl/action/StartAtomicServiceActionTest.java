@@ -31,6 +31,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
@@ -54,7 +55,8 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	@Test
 	public void shouldStartWithoutKeyWhenProductionWorkflow() throws Exception {
-		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal, OperationStatus.SUCCESSFUL);
+		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal,
+				OperationStatus.SUCCESSFUL);
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
 	}
@@ -148,12 +150,12 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
 		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.FAILED);
 
-		removeASAction = mock(DeleteAtomicServiceAction.class);
-		when(actionFactory.createDeleteAtomicServiceAction(devAsId)).thenReturn(
-				removeASAction);
+		removeASAction = mock(DeleteAtomicServiceFromAirAction.class);
+		when(actionFactory.createDeleteAtomicServiceFromAirAction(devAsId))
+				.thenReturn(removeASAction);
 	}
 
-	private void thenVerifyRequestSendToAtmosphereAndTmpASRemove() {		
+	private void thenVerifyRequestSendToAtmosphereAndTmpASRemove() {
 		verify(removeASAction, times(1)).execute();
 	}
 
@@ -185,8 +187,10 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 				eq("devAsId"), eq(initConfigPayload));
 	}
 
-	private void givenMockedAtmosphereForStartingASInDevMode(OperationStatus status) {
-		baseAS = givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.development, status);
+	private void givenMockedAtmosphereForStartingASInDevMode(
+			OperationStatus status) {
+		baseAS = givenAtomicServiceRequestAndWorkflowAlreadyStarted(
+				WorkflowType.development, status);
 
 		at = new ApplianceType();
 		at.setName(baseAS.getName());

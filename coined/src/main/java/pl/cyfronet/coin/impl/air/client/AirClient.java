@@ -86,8 +86,9 @@ public interface AirClient {
 	String addAtomicService(AddAtomicServiceRequest addAtomicService);
 
 	@DELETE
-	@Path("/appliance_type/{asName}")
-	void deleteAtomicService(@PathParam("asName") String asName);
+	@Path("/appliance_type/{asId}")
+	void deleteAtomicService(@PathParam("asId") String asId,
+			@QueryParam("force_cascade") boolean force);
 
 	@POST
 	@Path("/appliance_config")
@@ -96,8 +97,8 @@ public interface AirClient {
 			@FormParam("config_text") String configText);
 
 	@DELETE
-	@Path("/appliance_config/{config_name}")
-	void removeInitialConfiguration(@PathParam("config_name") String configName);
+	@Path("/appliance_config/{configId}")
+	void removeInitialConfiguration(@PathParam("configId") String configId);
 
 	@GET
 	@Path("/get_endpoint_descriptor/{endpointId}")

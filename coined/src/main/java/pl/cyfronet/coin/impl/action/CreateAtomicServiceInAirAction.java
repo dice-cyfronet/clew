@@ -134,7 +134,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	@Override
 	public void rollback() {
 		try {
-			air.deleteAtomicService(createdAtomicServiceId);
+			air.deleteAtomicService(createdAtomicServiceId, true);
 		} catch (Exception e) {
 			// best effort
 			logger.warn("Unable to rollback", e);

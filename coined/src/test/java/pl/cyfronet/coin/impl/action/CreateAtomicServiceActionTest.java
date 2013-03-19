@@ -122,7 +122,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 	private void thenAtomicServiceCreatedAndRemoved() throws Exception {
 		thenAtomicServiceCreated();
 
-		verify(air, times(1)).deleteAtomicService(asId);
+		verify(air, times(1)).deleteAtomicService(asId, true);
 	}
 
 	@Test

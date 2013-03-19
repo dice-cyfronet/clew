@@ -30,6 +30,8 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.action.as.GetEndpointPayloadAction;
 import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
 import pl.cyfronet.coin.impl.action.as.GetServicesSetAction;
@@ -76,11 +78,17 @@ public class ActionFactory {
 		return new ListAtomicServicesAction(air, username);
 	}
 
-	public Action<Class<Void>> createDeleteAtomicServiceAction(
-			String atomicServiceName) {
-		return new DeleteAtomicServiceAction(air, atomicServiceName);
+	public Action<Class<Void>> createDeleteAtomicServiceAction(String username,
+			String asId, boolean admin) {
+		return new DeleteAtomicServiceAction(this, atmosphere, username, asId,
+				admin);
 	}
 
+	public Action<Class<Void>> createDeleteAtomicServiceFromAirAction(
+			String atomicServiceId) {
+		return new DeleteAtomicServiceFromAirAction(air, atomicServiceId);
+	}
+	
 	public Action<String> createCreateAtomicServiceAction(String username,
 			NewAtomicService newAtomicService) {
 		return new CreateAtomicServiceAction(air, atmosphere, username,
