@@ -16,7 +16,6 @@
 
 package pl.cyfronet.coin.impl.action.as;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
@@ -38,11 +37,6 @@ public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 			.getLogger(DeleteAtomicServiceFromAirAction.class);
 
 	private List<String> atomicServicesIds;
-
-	public DeleteAtomicServiceFromAirAction(ActionFactory actionFactory,
-			String atomicServiceId) {
-		this(actionFactory, Arrays.asList(atomicServiceId));
-	}
 
 	public DeleteAtomicServiceFromAirAction(ActionFactory actionFactory,
 			List<String> atomicServicesIds) {

@@ -18,6 +18,7 @@ import pl.cyfronet.dyrealla.api.RemoveTemplatesResponse;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.api.impl.RemoveTemplatesResponseImpl;
 
+@SuppressWarnings("unchecked")
 public class DeleteAtomicServiceActionTest extends ActionTest {
 
 	private String asId = "asId";
@@ -34,17 +35,16 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 	private void givenAtomicServiceBelongingToTheUser() throws Exception {
 		givenAtomicServiceBelongingTo(username);
 	}
-
+	
 	private void givenAtomicServiceBelongingTo(String username)
 			throws Exception {
 		givenGetAtomicService(username);
-		deleteAsFromAirAction = mock(DeleteAtomicServiceFromAirAction.class);
+		deleteAsFromAirAction = mock(Action.class);
 		when(actionFactory.createDeleteAtomicServiceFromAirAction(asId))
 				.thenReturn(deleteAsFromAirAction);
 		givenDyreallaResponse(OperationStatus.SUCCESSFUL);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void givenGetAtomicService(String username) {
 		AtomicService as = new AtomicService();
 		as.setOwner(username);

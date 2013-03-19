@@ -15,6 +15,7 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
@@ -102,7 +103,13 @@ public class ActionFactory {
 
 	public Action<Class<Void>> createDeleteAtomicServiceFromAirAction(
 			String atomicServiceId) {
-		return new DeleteAtomicServiceFromAirAction(this, atomicServiceId);
+		return createDeleteAtomicServiceFromAirAction(Arrays
+				.asList(atomicServiceId));
+	}
+
+	public Action<Class<Void>> createDeleteAtomicServiceFromAirAction(
+			List<String> asesToRemove) {
+		return new DeleteAtomicServiceFromAirAction(this, asesToRemove);
 	}
 
 	public Action<String> createCreateAtomicServiceAction(String username,
