@@ -60,6 +60,7 @@ import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityPolicyActions;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
 import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
 import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
+import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -353,6 +354,11 @@ public class ActionFactory {
 	public Action<List<ATPortMapping>> createGetPortMappingsAction(
 			String username, String contextId, String asiId) {
 		return new GetPortMappingsAction(this, username, contextId, asiId);
+	}
+
+	public Action<Class<Void>> createRemovePortMappingAction(
+			String redirectionId) {
+		return new RemovePortMappingAction(this, redirectionId);
 	}
 
 	// setters

@@ -9,7 +9,6 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
 import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
@@ -49,7 +48,7 @@ public class RemoveAsiRedirectionAction extends
 		}
 
 		logger.debug("Removing redirection from air");
-		new RemovePortMappingAction(getActionFactory(), redirectionId)
+		getActionFactory().createRemovePortMappingAction(redirectionId)
 				.execute();
 
 		return Void.TYPE;
