@@ -30,7 +30,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtomicServiceWorkflowAction;
-import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
@@ -173,8 +172,9 @@ public class StartAtomicServiceAction extends
 		baseAS.setName(String.format("%s-%s", baseAS.getName(),
 				System.currentTimeMillis()));
 
-		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
-				getActionFactory(), getUsername(), baseAS, baseAS.getId());
+		Action<String> createASAction = getActionFactory()
+				.createCreateAtomicServiceInAirAction(getUsername(), baseAS,
+						baseAS.getId());
 		String devAsId = createASAction.execute();
 		developmentASes.add(devAsId);
 		developmentInitConfs.add(createInitConfCopy(devAsId, initConfId));

@@ -32,6 +32,7 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.impl.action.as.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.action.as.GetAtomicServiceAction;
@@ -65,6 +66,7 @@ import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.workflow.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StopWorkflowAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
@@ -107,6 +109,16 @@ public class ActionFactory {
 			NewAtomicService newAtomicService) {
 		return new CreateAtomicServiceAction(this, username, defaultSiteId,
 				newAtomicService);
+	}
+
+	public Action<String> createCreateAtomicServiceInAirAction(String username,
+			ApplianceType atomicService) {
+		return new CreateAtomicServiceInAirAction(this, username, atomicService);
+	}
+
+	public Action<String> createCreateAtomicServiceInAirAction(String username,
+			ApplianceType baseAS, String id) {
+		return new CreateAtomicServiceInAirAction(this, username, baseAS, id);
 	}
 
 	public Action<List<InitialConfiguration>> createListInitialConfigurationsAction(
