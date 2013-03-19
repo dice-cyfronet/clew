@@ -39,7 +39,6 @@ import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.key.DeletePublicKeyAction;
 import pl.cyfronet.coin.impl.action.key.GetPublicKeyAction;
 import pl.cyfronet.coin.impl.action.key.ListUserKeysAction;
 import pl.cyfronet.coin.impl.utils.FileUtils;
@@ -191,7 +190,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMockedActionAbleToDeleteKey() {
-		DeletePublicKeyAction action = mock(DeletePublicKeyAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(actionFactory.createDeletePublicKeyAction(username, keyId))
 				.thenReturn(action);
 		currentAction = action;
@@ -220,7 +219,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenDeleteActionThrowingKeyNotFoundException() {
-		DeletePublicKeyAction action = mock(DeletePublicKeyAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(new KeyNotFoundException());
 
 		when(actionFactory.createDeletePublicKeyAction(username, keyId))
