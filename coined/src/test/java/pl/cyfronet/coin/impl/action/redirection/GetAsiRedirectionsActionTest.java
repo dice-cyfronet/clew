@@ -97,7 +97,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		vm1.setVms_id(ASI_ID);
 		vm1.setInternal_port_mappings(Arrays.asList(sshMapping, vncMapping));
 		vm1.setUser_key("userKey1");
-		vm1.setConf_id(INIT_CONF_ID);
+		vm1.setConfiguration_id(INIT_CONF_ID);
 
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");

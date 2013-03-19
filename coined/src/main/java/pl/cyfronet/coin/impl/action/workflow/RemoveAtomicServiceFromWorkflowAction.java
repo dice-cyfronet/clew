@@ -70,7 +70,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 						"Exception was thrown by Atmosphere, plese contact administrator");
 			}
 		} else {
-			logger.warn("Trying to remove AS from workflow in development mode");
+			logger.warn("Trying to remove AS from workflow which does not exist");
 			throw new AtomicServiceNotFoundException();
 		}
 
@@ -85,7 +85,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			throw new WorkflowNotInProductionModeException();
 		} else if (workflowDetails.getVms() != null) {
 			for (Vms vm : workflowDetails.getVms()) {
-				if (asConfigId.equals(vm.getConf_id())) {
+				if (asConfigId.equals(vm.getConfiguration_id())) {
 					return true;
 				}
 			}
