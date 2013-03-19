@@ -45,7 +45,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
@@ -554,8 +553,9 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenAsiEndpointsReceived();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void givenAsiEndpoints() {
-		Action<List<Endpoint>> action = mock(ListAsiEndpointsAction.class);
+		Action<List<Endpoint>> action = mock(Action.class);
 
 		givenEndpoints = Arrays.asList(getEndpoint("e1", EndpointType.REST),
 				getEndpoint("e2", EndpointType.WS),
