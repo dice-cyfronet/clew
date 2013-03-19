@@ -48,6 +48,7 @@ import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.action.as.ListInitialConfigurationsAction;
@@ -120,7 +121,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 			ases.add(as);
 		}
 
-		ListAtomicServicesAction action = mock(ListAtomicServicesAction.class);
+		Action<List<AtomicService>> action = mock(Action.class);
 		currentAction = action;
 
 		when(action.execute()).thenReturn(ases);
