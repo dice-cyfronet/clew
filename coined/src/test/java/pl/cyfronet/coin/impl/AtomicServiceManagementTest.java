@@ -48,6 +48,7 @@ import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
@@ -212,7 +213,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenInitialConfigurationForSelectedAS() {
-		ListInitialConfigurationsAction action = mock(ListInitialConfigurationsAction.class);
+		Action<List<InitialConfiguration>> action = mock(Action.class);
 
 		InitialConfiguration ic1 = getInitialConfiguration(1);
 		InitialConfiguration ic2 = getInitialConfiguration(1);
@@ -271,7 +272,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionThrowingAtomicServiceNotFoundException() {
-		ListInitialConfigurationsAction action = mock(ListInitialConfigurationsAction.class);
+		Action<List<InitialConfiguration>> action = mock(Action.class);
 
 		when(action.execute()).thenThrow(new AtomicServiceNotFoundException());
 		when(
