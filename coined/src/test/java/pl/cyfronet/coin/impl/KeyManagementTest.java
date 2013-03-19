@@ -38,7 +38,7 @@ import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler;
-import pl.cyfronet.coin.impl.action.key.AddPublicKeyAction;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.key.DeletePublicKeyAction;
 import pl.cyfronet.coin.impl.action.key.GetPublicKeyAction;
 import pl.cyfronet.coin.impl.action.key.ListUserKeysAction;
@@ -56,6 +56,7 @@ import pl.cyfronet.coin.impl.utils.FileUtils;
 		"classpath:META-INF/spring/rest-services.xml"
 	} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class KeyManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -143,7 +144,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMockedAddKeyAction() {
-		AddPublicKeyAction action = mock(AddPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(keyId);
 		when(
 				actionFactory.createAddPublicKeyAction(username, keyName,
@@ -172,7 +173,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMockedAddNotUniqueKeyAction() {
-		AddPublicKeyAction action = mock(AddPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute())
 				.thenThrow(new KeyAlreadyExistsException(keyName));
 		when(
