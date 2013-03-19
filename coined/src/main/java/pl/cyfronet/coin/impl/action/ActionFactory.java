@@ -59,6 +59,7 @@ import pl.cyfronet.coin.impl.action.ownedpayload.UpdateOwnedPayloadAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityPolicyActions;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
 import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
+import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -68,6 +69,7 @@ import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowActi
 import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.workflow.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StopWorkflowAction;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
@@ -342,12 +344,17 @@ public class ActionFactory {
 	}
 
 	// port mapping
-	
+
 	public Action<String> createAddPortMappingAction(String asId,
 			String serviceName, int port, boolean http) {
 		return new AddPortMappingAction(this, asId, serviceName, port, http);
 	}
-	
+
+	public Action<List<ATPortMapping>> createGetPortMappingsAction(
+			String username, String contextId, String asiId) {
+		return new GetPortMappingsAction(this, username, contextId, asiId);
+	}
+
 	// setters
 
 	public void setAir(AirClient air) {
@@ -394,5 +401,5 @@ public class ActionFactory {
 
 	public void setCoinBaseUrl(String coinBaseUrl) {
 		this.coinBaseUrl = coinBaseUrl;
-	}	
+	}
 }

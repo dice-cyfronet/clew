@@ -9,7 +9,6 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
 import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
@@ -83,9 +82,9 @@ public class RemoveAsiRedirectionAction extends
 	}
 
 	private ATPortMapping getPortMapping() {
-		List<ATPortMapping> portMappings = new GetPortMappingsAction(
-				getActionFactory(), getUsername(), getContextId(), getAsiId())
-				.execute();
+		List<ATPortMapping> portMappings = getActionFactory()
+				.createGetPortMappingsAction(getUsername(), getContextId(),
+						getAsiId()).execute();
 		for (ATPortMapping portMapping : portMappings) {
 			if (portMapping.getId().equals(redirectionId)) {
 				return portMapping;
