@@ -39,6 +39,7 @@ import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler;
 import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.action.key.GetPublicKeyAction;
 import pl.cyfronet.coin.impl.action.key.ListUserKeysAction;
 import pl.cyfronet.coin.impl.utils.FileUtils;
@@ -236,7 +237,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionReturningUserKey() {
-		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(publicKeyContent);
 
 		when(actionFactory.createGetPublicKeyAction(username, keyId))
@@ -268,7 +269,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenGetPublicKeyThrowingKeyNotFoundException() {
-		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(new KeyNotFoundException());
 
 		when(actionFactory.createGetPublicKeyAction(username, keyId))
@@ -290,7 +291,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenKeyInWrongFormat() {
-		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(
 				new WrongKeyFormatException("error message"));
 

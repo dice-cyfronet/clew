@@ -53,7 +53,7 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 	 */
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		publicKeyContent = new GetPublicKeyAction(getActionFactory(),
+		publicKeyContent = getActionFactory().createGetPublicKeyAction(
 				getUsername(), keyId).execute();
 		keyName = getKeyName();
 		try {
