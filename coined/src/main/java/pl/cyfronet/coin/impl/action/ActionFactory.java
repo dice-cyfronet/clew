@@ -58,6 +58,7 @@ import pl.cyfronet.coin.impl.action.ownedpayload.NewOwnedPayloadAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.UpdateOwnedPayloadAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityPolicyActions;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
+import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -155,7 +156,7 @@ public class ActionFactory {
 	public Action<ApplianceType> createGetASITypeAction(String instanceId) {
 		return new GetASITypeAction(this, instanceId);
 	}
-	
+
 	public Action<List<WorkflowBaseInfo>> createGetUserWorkflowsAction(
 			String username) {
 		return new GetUserWorkflowsAction(this, username);
@@ -340,6 +341,13 @@ public class ActionFactory {
 		return new GetInvocationPathInfo(this, atomicServiceId, serviceName);
 	}
 
+	// port mapping
+	
+	public Action<String> createAddPortMappingAction(String asId,
+			String serviceName, int port, boolean http) {
+		return new AddPortMappingAction(this, asId, serviceName, port, http);
+	}
+	
 	// setters
 
 	public void setAir(AirClient air) {
@@ -386,5 +394,5 @@ public class ActionFactory {
 
 	public void setCoinBaseUrl(String coinBaseUrl) {
 		this.coinBaseUrl = coinBaseUrl;
-	}
+	}	
 }

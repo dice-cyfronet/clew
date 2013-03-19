@@ -34,7 +34,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void whenAddPortMapping() {
-		Action<String> action = new AddPortMappingAction(actionFactory, asId,
+		Action<String> action = actionFactory.createAddPortMappingAction(asId,
 				serviceName, port, http);
 		redirectionId = action.execute();
 	}
