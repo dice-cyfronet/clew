@@ -15,7 +15,7 @@ import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.WorkflowActionTest;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowActionTest;
 import pl.cyfronet.coin.impl.air.client.Vms;
 
 public class RemoveAsiEndpointActionTest extends WorkflowActionTest {

@@ -48,11 +48,11 @@ import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
-import pl.cyfronet.coin.impl.action.CreateAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
+import pl.cyfronet.coin.impl.action.as.AddInitialConfigurationAction;
+import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
+import pl.cyfronet.coin.impl.action.as.ListInitialConfigurationsAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

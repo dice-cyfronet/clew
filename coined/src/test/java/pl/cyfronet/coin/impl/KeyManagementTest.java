@@ -38,10 +38,10 @@ import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler;
-import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
-import pl.cyfronet.coin.impl.action.DeletePublicKeyAction;
-import pl.cyfronet.coin.impl.action.GetPublicKeyAction;
-import pl.cyfronet.coin.impl.action.ListUserKeysAction;
+import pl.cyfronet.coin.impl.action.key.AddPublicKeyAction;
+import pl.cyfronet.coin.impl.action.key.DeletePublicKeyAction;
+import pl.cyfronet.coin.impl.action.key.GetPublicKeyAction;
+import pl.cyfronet.coin.impl.action.key.ListUserKeysAction;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 
 /**

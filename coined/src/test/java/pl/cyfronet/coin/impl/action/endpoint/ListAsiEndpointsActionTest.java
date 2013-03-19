@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.impl.CoinedAsserts;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.WorkflowActionTest;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowActionTest;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;

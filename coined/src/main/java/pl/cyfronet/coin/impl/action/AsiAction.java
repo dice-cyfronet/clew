@@ -2,15 +2,22 @@ package pl.cyfronet.coin.impl.action;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 public abstract class AsiAction<T> extends WorkflowAction<T> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(AsiAction.class);
 
 	private String contextId;
 	private String asiId;
@@ -30,11 +37,11 @@ public abstract class AsiAction<T> extends WorkflowAction<T> {
 	}
 
 	protected void ensureDevelopmentWorklow(WorkflowDetail wd) {
-		if(wd.getWorkflow_type() != WorkflowType.development) {
+		if (wd.getWorkflow_type() != WorkflowType.development) {
 			throw new WorkflowNotInDevelopmentModeException();
-		}		
+		}
 	}
-	
+
 	protected String getAsiApplianceTypeId() {
 		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
 		List<Vms> vms = wd.getVms();
@@ -59,7 +66,7 @@ public abstract class AsiAction<T> extends WorkflowAction<T> {
 		}
 		throw new AtomicServiceInstanceNotFoundException();
 	}
-	
+
 	protected String getContextId() {
 		return contextId;
 	}

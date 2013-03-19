@@ -14,32 +14,30 @@
  * the License.
  */
 
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.workflow;
 
-import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-public abstract class AtmosphereAndAirAction<T> extends AirAction<T> {
+public abstract class RemoveWorkflowElementTest extends WorkflowActionTest {
 
-	private DyReAllaManagerService atmosphere;
-	private String username;
-
-	public AtmosphereAndAirAction(AirClient air, DyReAllaManagerService atmosphere,
-			String username) {
-		super(air);
-		this.atmosphere = atmosphere;
-		this.username = username;
+	protected void givenAiRWithoutWorkflow() {
+		mockGetNonExistingWorkflow(air, contextId);
 	}
-
-	protected DyReAllaManagerService getAtmosphere() {
-		return atmosphere;
+	
+	protected void thenWorkflowElementRemoved() {
+		verify(air, times(1)).getWorkflow(contextId);
+		verifyElementRemovedFromAtmosphere(1);
 	}
-
-	protected String getUsername() {
-		return username;
+	
+	protected void thenOnlyAirActionInvoked() {
+		verify(air, times(1)).getWorkflow(contextId);
+		verifyElementRemovedFromAtmosphere(0);
 	}
-
+	
+	protected abstract void verifyElementRemovedFromAtmosphere(int times);
 }

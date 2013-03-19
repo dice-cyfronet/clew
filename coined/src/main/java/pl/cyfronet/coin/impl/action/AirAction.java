@@ -32,7 +32,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public abstract class AirAction<T> implements Action<T> {
 
-	static final Logger logger = LoggerFactory.getLogger(AirAction.class);
+	private static final Logger logger = LoggerFactory.getLogger(AirAction.class);
 
 	private AirClient air;
 

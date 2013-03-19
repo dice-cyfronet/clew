@@ -45,15 +45,15 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
-import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
-import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
+import pl.cyfronet.coin.impl.action.workflow.RemoveASIFromWorkflowAction;
+import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowAction;
+import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>

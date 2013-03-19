@@ -1,6 +1,6 @@
 package pl.cyfronet.coin.impl.action.redirection;
 
-import pl.cyfronet.coin.impl.action.WorkflowAction;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
