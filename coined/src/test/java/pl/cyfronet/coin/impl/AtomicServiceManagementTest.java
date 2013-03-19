@@ -66,6 +66,7 @@ import pl.cyfronet.coin.impl.action.as.ListInitialConfigurationsAction;
 		"classpath:META-INF/spring/rest-services.xml"
 	} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -288,7 +289,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionAbleToSuccessfullyAddInitialConfiguration() {
-		AddInitialConfigurationAction action = mock(AddInitialConfigurationAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(icId);
 
 		initialConfigurations = Arrays.asList(getInitialConfiguration(1));
@@ -323,7 +324,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionWhichDoesNotKnowGivenAS() {
-		AddInitialConfigurationAction action = mock(AddInitialConfigurationAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(new AtomicServiceNotFoundException());
 
 		initialConfigurations = Arrays.asList(getInitialConfiguration(1));
@@ -350,7 +351,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAirWithConfigurationNameWeWantToAdd() {
-		AddInitialConfigurationAction action = mock(AddInitialConfigurationAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(
 				new InitialConfigurationAlreadyExistException());
 
