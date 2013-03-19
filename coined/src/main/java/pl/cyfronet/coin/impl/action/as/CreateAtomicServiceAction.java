@@ -77,7 +77,7 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 				newAtomicService, newAtomicService.getSourceAsiId(),
 				defaultSiteId });
 
-		ApplianceType at = new GetASITypeAction(getActionFactory(),
+		ApplianceType at = getActionFactory().createGetASITypeAction(
 				asInstanceId).execute();
 
 		at.setName(newAtomicService.getName());

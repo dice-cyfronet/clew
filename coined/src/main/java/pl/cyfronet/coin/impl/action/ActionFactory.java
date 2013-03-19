@@ -36,6 +36,7 @@ import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
+import pl.cyfronet.coin.impl.action.as.GetASITypeAction;
 import pl.cyfronet.coin.impl.action.as.GetAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.GetEndpointPayloadAction;
 import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
@@ -151,6 +152,10 @@ public class ActionFactory {
 		return new GetAtomicServiceAction(this, atomicServiceId);
 	}
 
+	public Action<ApplianceType> createGetASITypeAction(String instanceId) {
+		return new GetASITypeAction(this, instanceId);
+	}
+	
 	public Action<List<WorkflowBaseInfo>> createGetUserWorkflowsAction(
 			String username) {
 		return new GetUserWorkflowsAction(this, username);
