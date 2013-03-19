@@ -468,7 +468,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		when(
 				authenticationHandler.hasRole(eq("admin"), anyString(),
 						anyString())).thenReturn(admin);
-		Action<Class<Void>> action = mock(DeleteAtomicServiceAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(
 				actionFactory.createDeleteAtomicServiceAction(username,
 						atomicServiceId, admin)).thenReturn(action);
@@ -506,7 +506,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenDeleteActionThrows(CloudFacadeException exception) {
-		Action<Class<Void>> action = mock(DeleteAtomicServiceAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 		when(
 				actionFactory.createDeleteAtomicServiceAction(username,
