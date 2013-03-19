@@ -39,9 +39,6 @@ import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.action.key.GetPublicKeyAction;
-import pl.cyfronet.coin.impl.action.key.ListUserKeysAction;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 
 /**
@@ -101,7 +98,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 		key1 = getKey(1);
 		key2 = getKey(2);
 
-		ListUserKeysAction action = mock(ListUserKeysAction.class);
+		Action<List<PublicKeyInfo>> action = mock(Action.class);
 		when(action.execute()).thenReturn(Arrays.asList(key1, key2));
 
 		when(actionFactory.createListUserKeysAction(username)).thenReturn(

@@ -68,7 +68,7 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 	}
 
 	private String getKeyName() {
-		List<PublicKeyInfo> keys = new ListUserKeysAction(getActionFactory(),
+		List<PublicKeyInfo> keys = getActionFactory().createListUserKeysAction(
 				getUsername()).execute();
 		for (PublicKeyInfo userKeyInfo : keys) {
 			if (keyId.equals(userKeyInfo.getId())) {
