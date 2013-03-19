@@ -16,7 +16,7 @@
 package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -45,7 +45,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
@@ -598,6 +597,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenEndpointAdded();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void givenAsiStartedInDevelopmentMode() {
 		endpoint = new Endpoint();
 		endpoint.setDescription("description");
@@ -605,8 +605,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		endpoint.setInvocationPath("/invocation_path");
 		endpoint.setPort(80);
 		endpoint.setType(EndpointType.REST);
-
-		Action<String> action = mock(AddAsiEndpointAction.class);
+		
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(givenId);
 
 		when(
