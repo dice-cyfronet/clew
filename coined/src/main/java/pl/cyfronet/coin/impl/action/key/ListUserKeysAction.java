@@ -23,8 +23,8 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.UserKeyInfo;
 
 /**
@@ -34,8 +34,8 @@ public class ListUserKeysAction extends ReadOnlyAirAction<List<PublicKeyInfo>> {
 
 	private String username;
 
-	public ListUserKeysAction(AirClient air, String username) {
-		super(air);
+	public ListUserKeysAction(ActionFactory actionFactory, String username) {
+		super(actionFactory);
 		this.username = username;
 	}
 

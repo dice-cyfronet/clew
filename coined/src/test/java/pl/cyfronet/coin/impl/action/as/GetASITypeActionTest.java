@@ -34,7 +34,8 @@ public class GetASITypeActionTest extends ActionTest {
 	}
 
 	private void whenGetASIType() {
-		Action<ApplianceType> action = new GetASITypeAction(air, instanceId);
+		Action<ApplianceType> action = new GetASITypeAction(actionFactory,
+				instanceId);
 		type = action.execute();
 	}
 

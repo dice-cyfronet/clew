@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -39,8 +39,9 @@ public class GetPublicKeyAction extends ReadOnlyAirAction<String> {
 	/**
 	 * @param air
 	 */
-	public GetPublicKeyAction(AirClient air, String username, String keyId) {
-		super(air);
+	public GetPublicKeyAction(ActionFactory actionFactory, String username,
+			String keyId) {
+		super(actionFactory);
 		this.username = username;
 		this.keyId = keyId;
 	}

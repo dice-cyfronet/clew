@@ -22,7 +22,7 @@ public class RemovePortMappingActionTest extends ActionTest {
 	}
 
 	private void whenRemovePortMapping() {
-		Action<Class<Void>> action = new RemovePortMappingAction(air,
+		Action<Class<Void>> action = new RemovePortMappingAction(actionFactory,
 				redirectionId);
 		action.execute();
 	}

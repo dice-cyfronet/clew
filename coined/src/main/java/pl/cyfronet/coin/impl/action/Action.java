@@ -16,14 +16,34 @@
 package pl.cyfronet.coin.impl.action;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  * @param <T> Object returned by the action.
  */
-public interface Action<T> {
+public abstract class Action<T> {
 
-	T execute() throws CloudFacadeException;
+	private ActionFactory actionFactory;
+
+	public Action(ActionFactory actionFactory) {
+		this.actionFactory = actionFactory;
+	}
 	
-	void rollback();
+	public abstract T execute() throws CloudFacadeException;
+	
+	public abstract void rollback();
+	
+	protected AirClient getAir() {
+		return actionFactory.getAir();
+	}
+	
+	protected DyReAllaManagerService getAtmosphere() {
+		return actionFactory.getAtmosphere();
+	}
+	
+	protected ActionFactory getActionFactory() {
+		return actionFactory;
+	}
 }

@@ -20,8 +20,8 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
@@ -34,9 +34,9 @@ public class ListInitialConfigurationsAction extends
 	private String atomicServiceId;
 	private boolean loadPayload;
 
-	public ListInitialConfigurationsAction(AirClient air,
+	public ListInitialConfigurationsAction(ActionFactory actionFactory,
 			String atomicServiceId, boolean loadPayload) {
-		super(air);
+		super(actionFactory);
 		this.atomicServiceId = atomicServiceId;
 		this.loadPayload = loadPayload;
 	}

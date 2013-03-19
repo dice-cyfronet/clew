@@ -19,19 +19,17 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 /**
- * Get workflow identified by context id. It also checks if the workflow
- * belongs to current user. If not than exception is thrown.
- * 
+ * Get workflow identified by context id. It also checks if the workflow belongs
+ * to current user. If not than exception is thrown.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail>{
+public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail> {
 
-	
 	private String contextId;
 	private String username;
 
@@ -40,8 +38,9 @@ public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail>{
 	 * @param contextId Workflow context id.
 	 * @param username Workflow owner username.
 	 */
-	public GetWorkflowDetailAction(AirClient air, String contextId, String username) {
-		super(air);
+	public GetWorkflowDetailAction(ActionFactory actionFactory,
+			String contextId, String username) {
+		super(actionFactory);
 		this.contextId = contextId;
 		this.username = username;
 	}

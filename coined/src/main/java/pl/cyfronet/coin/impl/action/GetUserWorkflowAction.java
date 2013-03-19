@@ -24,7 +24,6 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.workflow.GetWorkflowDetailAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -37,9 +36,9 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 	private String contextId;
 	private String username;
 
-	GetUserWorkflowAction(AirClient air,
-			String contextId, String username) {
-		super(air);
+	GetUserWorkflowAction(ActionFactory actionFactory, String contextId,
+			String username) {
+		super(actionFactory);
 		this.contextId = contextId;
 		this.username = username;
 	}
@@ -86,8 +85,8 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 	}
 
 	private WorkflowDetail getUserWorkflow() {
-		return new GetWorkflowDetailAction(getAir(), contextId, username)
-				.execute();
+		return new GetWorkflowDetailAction(getActionFactory(), contextId,
+				username).execute();
 	}
 
 	private void addRedirections(AtomicServiceInstance instance, Vms vm) {

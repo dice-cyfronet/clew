@@ -27,9 +27,8 @@ import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtomicServiceWorkflowAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * Start workflow. There can be many workflow type Workflows but only one portal
@@ -54,10 +53,10 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 	 * @param workflow Workflow start request. It contains information about
 	 *            required Atomic Services.
 	 */
-	public StartWorkflowAction(AirClient air, DyReAllaManagerService atmosphere,
+	public StartWorkflowAction(ActionFactory actionFactory,
 			Integer defaultPriority, String username,
 			WorkflowStartRequest workflow) {
-		super(air, atmosphere, username);
+		super(actionFactory, username);
 		this.workflow = workflow;
 		this.defaultPriority = defaultPriority;
 	}
@@ -114,8 +113,8 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 		if (ids != null && ids.size() > 0) {
 			try {
 				StartAtomicServiceAction startASAction = new StartAtomicServiceAction(
-						getAir(), getAtmosphere(), getUsername(), ids, ids,
-						contextId, priority, workflow.getKeyId());
+						getActionFactory(), getUsername(), ids, ids, contextId,
+						priority, workflow.getKeyId());
 				startASAction.execute();
 			} catch (CloudFacadeException e) {
 				rollback();
@@ -127,8 +126,8 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 	}
 
 	private List<WorkflowBaseInfo> getWorkflows() {
-		GetUserWorkflowsAction action = new GetUserWorkflowsAction(getAir(),
-				getUsername());
+		GetUserWorkflowsAction action = new GetUserWorkflowsAction(
+				getActionFactory(), getUsername());
 		return action.execute();
 	}
 
@@ -142,7 +141,7 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 	}
 
 	private void stopWorkflow() {
-		new StopWorkflowAction(getAir(), getAtmosphere(), contextId,
-				getUsername()).execute();
+		new StopWorkflowAction(getActionFactory(), contextId, getUsername())
+				.execute();
 	}
 }

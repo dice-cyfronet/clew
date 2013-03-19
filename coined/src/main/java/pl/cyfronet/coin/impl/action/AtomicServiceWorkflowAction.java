@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.workflow.WorkflowAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.RunMode;
 import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
@@ -41,9 +39,9 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AtomicServiceWorkflowAction.class);
 
-	public AtomicServiceWorkflowAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username) {
-		super(air, atmosphere, username);
+	public AtomicServiceWorkflowAction(ActionFactory actionFactory,
+			String username) {
+		super(actionFactory, username);
 	}
 
 	/**

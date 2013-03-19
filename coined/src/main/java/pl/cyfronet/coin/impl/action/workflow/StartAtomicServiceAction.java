@@ -32,10 +32,8 @@ import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtomicServiceWorkflowAction;
 import pl.cyfronet.coin.impl.action.as.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * Start atomic service in defined context. If the request is send into
@@ -58,7 +56,6 @@ public class StartAtomicServiceAction extends
 	private List<String> initConfigIds;
 	private List<String> asNames;
 	private List<String> developmentASes;
-	private ActionFactory actionFactory;
 
 	/**
 	 * @param air Air client.
@@ -68,20 +65,17 @@ public class StartAtomicServiceAction extends
 	 * @param contextId Context id.
 	 * @param username User name.
 	 */
-	public StartAtomicServiceAction(ActionFactory actionFactory, AirClient air,
-			DyReAllaManagerService atmosphere, String username,
-			String initConfigId, String asName, String contextId,
-			Integer priority, String keyName) {
-		this(air, atmosphere, username, Arrays.asList(initConfigId), Arrays
+	public StartAtomicServiceAction(ActionFactory actionFactory,
+			String username, String initConfigId, String asName,
+			String contextId, Integer priority, String keyName) {
+		this(actionFactory, username, Arrays.asList(initConfigId), Arrays
 				.asList(asName), contextId, priority, keyName);
-		this.actionFactory = actionFactory;
 	}
 
-	public StartAtomicServiceAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username,
-			List<String> initConfIds, List<String> asNames, String contextId,
-			Integer priority, String keyName) {
-		super(air, atmosphere, username);
+	public StartAtomicServiceAction(ActionFactory actionFactory,
+			String username, List<String> initConfIds, List<String> asNames,
+			String contextId, Integer priority, String keyName) {
+		super(actionFactory, username);
 		this.initConfigIds = initConfIds;
 		this.asNames = asNames;
 		this.contextId = contextId;
@@ -129,7 +123,7 @@ public class StartAtomicServiceAction extends
 	private void removeDevelopmentASes() {
 		for (String devAsiId : developmentASes) {
 			try {
-				Action<Class<Void>> action = actionFactory
+				Action<Class<Void>> action = getActionFactory()
 						.createDeleteAtomicServiceFromAirAction(devAsiId);
 				action.execute();
 			} catch (Exception e) {
@@ -181,7 +175,7 @@ public class StartAtomicServiceAction extends
 				System.currentTimeMillis()));
 
 		CreateAtomicServiceInAirAction createASAction = new CreateAtomicServiceInAirAction(
-				getAir(), getUsername(), baseAS, baseAS.getId());
+				getActionFactory(), getUsername(), baseAS, baseAS.getId());
 		String devAsId = createASAction.execute();
 		developmentASes.add(devAsId);
 		developmentInitConfs.add(createInitConfCopy(devAsId, initConfId));
@@ -194,7 +188,7 @@ public class StartAtomicServiceAction extends
 		initConf.setName(System.currentTimeMillis() + "");
 		initConf.setPayload(initConfPayload);
 		AddInitialConfigurationAction addInitConfAction = new AddInitialConfigurationAction(
-				getAir(), asName, initConf);
+				getActionFactory(), asName, initConf);
 
 		return addInitConfAction.execute();
 	}

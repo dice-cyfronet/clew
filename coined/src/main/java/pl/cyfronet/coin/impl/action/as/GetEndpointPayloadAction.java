@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
@@ -42,9 +42,9 @@ public class GetEndpointPayloadAction extends ReadOnlyAirAction<String> {
 	private String serviceName;
 	private String invocationPath;
 
-	public GetEndpointPayloadAction(AirClient air, String atomicServiceId,
-			String serviceName, String invocationPath) {
-		super(air);
+	public GetEndpointPayloadAction(ActionFactory actionFactory,
+			String atomicServiceId, String serviceName, String invocationPath) {
+		super(actionFactory);
 		this.atomicServiceId = atomicServiceId;
 		this.serviceName = serviceName;
 		this.invocationPath = invocationPath;

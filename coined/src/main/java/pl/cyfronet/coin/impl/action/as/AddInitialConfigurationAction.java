@@ -23,8 +23,8 @@ import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -37,9 +37,9 @@ public class AddInitialConfigurationAction extends AirAction<String> {
 	private String atomicServiceId;
 	private InitialConfiguration initialConfiguration;
 
-	public AddInitialConfigurationAction(AirClient air, String atomicServiceId,
+	public AddInitialConfigurationAction(ActionFactory actionFactory, String atomicServiceId,
 			InitialConfiguration initialConfiguration) {
-		super(air);
+		super(actionFactory);
 		this.atomicServiceId = atomicServiceId;
 		this.initialConfiguration = initialConfiguration;
 	}

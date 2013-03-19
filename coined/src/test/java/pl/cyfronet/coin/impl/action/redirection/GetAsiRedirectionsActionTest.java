@@ -49,10 +49,9 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private static final int SSH_TO_PORT = 22;
 	private static final String SSH_ID2 = "ssh2Id";
 	private static final String VNC_ID = "vncId";
-	
+
 	private List<Redirection> redirections = null;
-	
-	
+
 	@Test
 	public void shouldGetAsiRedirections() {
 		givenAsiRedirectionsInAIR();
@@ -73,7 +72,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		sshMapping.setHeadnode_ip(HEADNODE_IP);
 		sshMapping.setService_name(SSH_SRV_NAME);
 		sshMapping.setHttp(false);
-		
+
 		PortMapping sshMapping2 = new PortMapping();
 		sshMapping2.setId(SSH_ID2);
 		sshMapping2.setVm_port(SSH_TO_PORT);
@@ -88,8 +87,8 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		vncMapping.setHeadnode_port(VNC_FROM_PORT);
 		vncMapping.setHeadnode_ip(HEADNODE_IP);
 		vncMapping.setService_name(VNC_SRV_NAME);
-		vncMapping.setHttp(false);		
-		
+		vncMapping.setHttp(false);
+
 		Vms vm1 = new Vms();
 		vm1.setAppliance_type("type1");
 		vm1.setAppliance_type_name("type1 name");
@@ -127,15 +126,15 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		sshatpm.setPort(SSH_FROM_PORT);
 		sshatpm.setService_name(SSH_SRV_NAME);
 		sshatpm.setHttp(false);
-		List<ATPortMapping> pms =  Arrays.asList(httpMapping, vncatpm, sshatpm);
+		List<ATPortMapping> pms = Arrays.asList(httpMapping, vncatpm, sshatpm);
 		applType.setPort_mappings(pms);
-		
+
 		when(air.getTypeFromVM(ASI_ID)).thenReturn(applType);
 	}
 
 	private void whenGetAsiRedirections() {
-		Action<List<Redirection>> action = new GetAsiRedirectionsAction(CTX_ID, USERNAME, ASI_ID,
-				PROXY_HOST, PROXY_PORT, air);
+		Action<List<Redirection>> action = new GetAsiRedirectionsAction(
+				actionFactory, CTX_ID, USERNAME, ASI_ID, PROXY_HOST, PROXY_PORT);
 		redirections = action.execute();
 	}
 
@@ -150,9 +149,14 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private void checkSshRedirection(List<Redirection> redirections) {
 		Redirection redirection = null;
 		for (Redirection r : redirections) {
-			if (r.getName().equals(SSH_SRV_NAME)) { redirection = r;  break;}
+			if (r.getName().equals(SSH_SRV_NAME)) {
+				redirection = r;
+				break;
+			}
 		}
-		if (redirection == null) { fail("Expected SSH redirection not found"); }
+		if (redirection == null) {
+			fail("Expected SSH redirection not found");
+		}
 		assertEquals(redirection.getId(), SSH_ID);
 		assertEquals(redirection.getFromPort().intValue(), SSH_FROM_PORT);
 		assertEquals(redirection.getHost(), HEADNODE_IP);
@@ -165,14 +169,20 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private void checkHttpRedirection(List<Redirection> redirections) {
 		Redirection redirection = null;
 		for (Redirection r : redirections) {
-			if (r.getName().equals(HTTP_SRV_NAME)) { redirection = r;  break;}
+			if (r.getName().equals(HTTP_SRV_NAME)) {
+				redirection = r;
+				break;
+			}
 		}
-		if (redirection == null) { fail("Expected HTTP redirection not found"); }
+		if (redirection == null) {
+			fail("Expected HTTP redirection not found");
+		}
 		assertEquals(redirection.getId(), WEBAPP_ATPM_ID);
 		assertTrue(redirection.getFromPort() == PROXY_PORT);
 		assertEquals(redirection.getHost(), PROXY_HOST);
 		assertEquals(redirection.getName(), HTTP_SRV_NAME);
-		assertEquals(redirection.getPostfix(), CTX_ID + "/" + ASI_ID + "/" + HTTP_SRV_NAME);
+		assertEquals(redirection.getPostfix(), CTX_ID + "/" + ASI_ID + "/"
+				+ HTTP_SRV_NAME);
 		assertTrue(redirection.getToPort() == HTTP_TO_PORT);
 		assertTrue(redirection.getType() == RedirectionType.HTTP);
 	}
@@ -180,9 +190,14 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private void checkVncRedirection(List<Redirection> redirections) {
 		Redirection redirection = null;
 		for (Redirection r : redirections) {
-			if (r.getName().equals(VNC_SRV_NAME)) { redirection = r;  break;}
+			if (r.getName().equals(VNC_SRV_NAME)) {
+				redirection = r;
+				break;
+			}
 		}
-		if (redirection == null) { fail("Expected VNC redirection not found"); }
+		if (redirection == null) {
+			fail("Expected VNC redirection not found");
+		}
 		assertEquals(redirection.getId(), VNC_ID);
 		assertTrue(redirection.getFromPort() == VNC_FROM_PORT);
 		assertEquals(redirection.getHost(), HEADNODE_IP);

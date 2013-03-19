@@ -9,7 +9,6 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.workflow.WorkflowAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -22,9 +21,9 @@ public abstract class AsiAction<T> extends WorkflowAction<T> {
 	private String contextId;
 	private String asiId;
 
-	public AsiAction(AirClient air, String username, String contextId,
-			String asiId) {
-		super(air, null, username);
+	public AsiAction(ActionFactory actionFactory, String username,
+			String contextId, String asiId) {
+		super(actionFactory, username);
 		this.contextId = contextId;
 		this.asiId = asiId;
 	}

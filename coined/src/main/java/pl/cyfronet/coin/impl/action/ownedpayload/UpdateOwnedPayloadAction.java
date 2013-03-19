@@ -7,9 +7,9 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 public class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
 
@@ -19,10 +19,10 @@ public class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
 	private OwnedPayload oldPayload;
 	private OwnedPayloadActions actions;
 
-	public UpdateOwnedPayloadAction(AirClient air, String username,
-			String ownedPayloadName, OwnedPayload ownedPayload,
-			OwnedPayloadActions actions) {
-		super(air);
+	public UpdateOwnedPayloadAction(ActionFactory actionFactory,
+			String username, String ownedPayloadName,
+			OwnedPayload ownedPayload, OwnedPayloadActions actions) {
+		super(actionFactory);
 		this.ownedPayloadName = ownedPayloadName;
 		this.ownedPayload = ownedPayload;
 		this.username = username;
@@ -56,8 +56,8 @@ public class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
 	}
 
 	private void loadOldOwnedPayload() {
-		oldPayload = new GetOwnedPayloadAction(getAir(), ownedPayloadName,
-				actions).execute();
+		oldPayload = new GetOwnedPayloadAction(getActionFactory(),
+				ownedPayloadName, actions).execute();
 	}
 
 	@Override

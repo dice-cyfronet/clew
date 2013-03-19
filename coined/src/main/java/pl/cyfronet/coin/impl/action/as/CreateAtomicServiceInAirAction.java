@@ -25,21 +25,20 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class CreateAtomicServiceInAirAction implements Action<String> {
+public class CreateAtomicServiceInAirAction extends Action<String> {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(CreateAtomicServiceInAirAction.class);
 
-	private AirClient air;
 	private ApplianceType applianceType;
 	private String createdAtomicServiceId;
 
@@ -51,14 +50,14 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 
 	private String parentId;
 
-	public CreateAtomicServiceInAirAction(AirClient air, String username,
-			ApplianceType atomicService) {
-		this(air, username, atomicService, null);
+	public CreateAtomicServiceInAirAction(ActionFactory actionFactory,
+			String username, ApplianceType atomicService) {
+		this(actionFactory, username, atomicService, null);
 	}
 
-	public CreateAtomicServiceInAirAction(AirClient air, String username,
-			ApplianceType applianceType, String parentId) {
-		this.air = air;
+	public CreateAtomicServiceInAirAction(ActionFactory actionFactory,
+			String username, ApplianceType applianceType, String parentId) {
+		super(actionFactory);
 		this.username = username;
 		this.applianceType = applianceType;
 		this.parentId = parentId;
@@ -70,7 +69,8 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 		addASRequest.setClient("rest");
 		addASRequest.setDescription(applianceType.getDescription());
 		addASRequest.setEndpoints(getEndpoints(applianceType.getEndpoints()));
-		addASRequest.setPort_mappings(getPortMapping(applianceType.getPort_mappings()));
+		addASRequest.setPort_mappings(getPortMapping(applianceType
+				.getPort_mappings()));
 		addASRequest.setHttp(applianceType.isHttp());
 		addASRequest.setIn_proxy(applianceType.isIn_proxy());
 		addASRequest.setName(applianceType.getName());
@@ -85,9 +85,9 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 
 		try {
 			logger.debug("Creating new appliance type in AIR {}", addASRequest);
-			createdAtomicServiceId = air.addAtomicService(addASRequest);
+			createdAtomicServiceId = getAir().addAtomicService(addASRequest);
 			logger.debug("New appliance type created {}",
-					createdAtomicServiceId);			
+					createdAtomicServiceId);
 			return createdAtomicServiceId;
 		} catch (ServerWebApplicationException e) {
 			if (e.getStatus() == 302) {
@@ -108,7 +108,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 				asEndpoint.setInvocation_path(endpoint.getInvocation_path());
 				asEndpoint.setPort(endpoint.getPort());
 				asEndpoint.setEndpoint_type(endpoint.getEndpoint_type());
-				
+
 				asEndpoints.add(asEndpoint);
 			}
 			return asEndpoints;
@@ -117,7 +117,7 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 	}
 
 	private List<ATPortMapping> getPortMapping(List<ATPortMapping> portMappings) {
-		if(portMappings != null) {
+		if (portMappings != null) {
 			List<ATPortMapping> asPortMapping = new ArrayList<>();
 			for (ATPortMapping atPortMapping : portMappings) {
 				ATPortMapping portMapping = new ATPortMapping();
@@ -128,14 +128,14 @@ public class CreateAtomicServiceInAirAction implements Action<String> {
 			}
 			return asPortMapping;
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public void rollback() {
 		try {
-			air.deleteAtomicService(createdAtomicServiceId, true);
+			getAir().deleteAtomicService(createdAtomicServiceId, true);
 		} catch (Exception e) {
 			// best effort
 			logger.warn("Unable to rollback", e);

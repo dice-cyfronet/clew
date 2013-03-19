@@ -22,19 +22,20 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class ListAtomicServicesAction extends ReadOnlyAirAction<List<AtomicService>> {
+public class ListAtomicServicesAction extends
+		ReadOnlyAirAction<List<AtomicService>> {
 
 	private String username;
 
-	public ListAtomicServicesAction(AirClient air, String username) {
-		super(air);
+	public ListAtomicServicesAction(ActionFactory actionFactory, String username) {
+		super(actionFactory);
 		this.username = username;
 	}
 

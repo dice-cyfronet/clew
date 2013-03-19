@@ -22,12 +22,11 @@ import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtmosphereAndAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.ApplianceNotFoundException;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -50,10 +49,10 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 	 * @param atomicServiceInstanceId Atomic Service Instance id.
 	 * @param newAtomicService Information about new Atomic Service.
 	 */
-	public CreateAtomicServiceAction(AirClient air, DyReAllaManagerService atmosphere,
+	public CreateAtomicServiceAction(ActionFactory actionFactory,
 			String username, String defaultSiteId,
 			NewAtomicService newAtomicService) {
-		super(air, atmosphere, username);
+		super(actionFactory, username);
 
 		this.defaultSiteId = defaultSiteId;
 		this.newAtomicService = newAtomicService;
@@ -77,16 +76,16 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 				newAtomicService, newAtomicService.getSourceAsiId(),
 				defaultSiteId });
 
-		ApplianceType at = new GetASITypeAction(getAir(), asInstanceId)
-				.execute();
+		ApplianceType at = new GetASITypeAction(getActionFactory(),
+				asInstanceId).execute();
 
 		at.setName(newAtomicService.getName());
 		at.setDescription(newAtomicService.getDescription());
 		at.setDevelopment(false);
 		at.setPublished(true);
-		
-		addASToAirAction = new CreateAtomicServiceInAirAction(getAir(),
-				getUsername(), at);
+
+		addASToAirAction = new CreateAtomicServiceInAirAction(
+				getActionFactory(), getUsername(), at);
 
 		String atomicServiceId = addASToAirAction.execute();
 

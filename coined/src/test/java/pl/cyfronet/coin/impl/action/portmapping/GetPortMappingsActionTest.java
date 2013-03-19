@@ -62,8 +62,8 @@ public class GetPortMappingsActionTest extends WorkflowActionTest {
 	}
 
 	private void whenGetAsiRedirections() {
-		Action<List<ATPortMapping>> action = new GetPortMappingsAction(air,
-				username, contextId, asiId);
+		Action<List<ATPortMapping>> action = new GetPortMappingsAction(
+				actionFactory, username, contextId, asiId);
 		portMapping = action.execute();
 	}
 

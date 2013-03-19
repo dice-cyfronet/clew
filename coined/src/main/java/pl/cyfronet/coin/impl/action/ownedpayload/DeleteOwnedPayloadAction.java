@@ -7,9 +7,9 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.api.exception.NotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 public class DeleteOwnedPayloadAction extends AirAction<Class<Void>> {
 
@@ -19,9 +19,10 @@ public class DeleteOwnedPayloadAction extends AirAction<Class<Void>> {
 	private NamedOwnedPayload payload;
 	private OwnedPayloadActions actions;
 
-	public DeleteOwnedPayloadAction(AirClient air, String username,
-			String ownedPayloadName, OwnedPayloadActions actions) {
-		super(air);
+	public DeleteOwnedPayloadAction(ActionFactory actionFactory,
+			String username, String ownedPayloadName,
+			OwnedPayloadActions actions) {
+		super(actionFactory);
 		this.username = username;
 		this.ownedPayloadName = ownedPayloadName;
 		this.actions = actions;
@@ -49,7 +50,7 @@ public class DeleteOwnedPayloadAction extends AirAction<Class<Void>> {
 		try {
 			if (payload != null) {
 				Action<Class<Void>> action = new NewOwnedPayloadAction(
-						getAir(), username, payload, actions);
+						getActionFactory(), username, payload, actions);
 				action.execute();
 			}
 		} catch (Exception e) {
@@ -59,7 +60,7 @@ public class DeleteOwnedPayloadAction extends AirAction<Class<Void>> {
 
 	private void loadOldPolicyPayload() throws NotFoundException {
 		Action<NamedOwnedPayload> getPolicyAction = new GetOwnedPayloadAction(
-				getAir(), null, ownedPayloadName, actions);
+				getActionFactory(), null, ownedPayloadName, actions);
 		payload = getPolicyAction.execute();
 	}
 }

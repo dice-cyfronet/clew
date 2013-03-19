@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAcceptableException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -39,14 +39,14 @@ public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 
 	private List<String> atomicServicesIds;
 
-	public DeleteAtomicServiceFromAirAction(AirClient air,
+	public DeleteAtomicServiceFromAirAction(ActionFactory actionFactory,
 			String atomicServiceId) {
-		this(air, Arrays.asList(atomicServiceId));
+		this(actionFactory, Arrays.asList(atomicServiceId));
 	}
 
-	public DeleteAtomicServiceFromAirAction(AirClient air,
+	public DeleteAtomicServiceFromAirAction(ActionFactory actionFactory,
 			List<String> atomicServicesIds) {
-		super(air);
+		super(actionFactory);
 		this.atomicServicesIds = atomicServicesIds;
 	}
 

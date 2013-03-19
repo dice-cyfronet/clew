@@ -25,10 +25,9 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
-import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.allocation.impl.RemoveRequiredAppliancesRequestImpl;
 
 /**
@@ -43,10 +42,9 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 	private String contextId;
 	private String asConfigId;
 
-	public RemoveAtomicServiceFromWorkflowAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username,
-			String contextId, String asConfigId) {
-		super(air, atmosphere, username);
+	public RemoveAtomicServiceFromWorkflowAction(ActionFactory actionFactory,
+			String username, String contextId, String asConfigId) {
+		super(actionFactory, username);
 		this.contextId = contextId;
 		this.asConfigId = asConfigId;
 	}

@@ -16,7 +16,6 @@
 
 package pl.cyfronet.coin.impl.action;
 
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -27,8 +26,8 @@ public abstract class ReadOnlyAirAction<T> extends AirAction<T> {
 	/**
 	 * @param air
 	 */
-	public ReadOnlyAirAction(AirClient air) {
-		super(air);
+	public ReadOnlyAirAction(ActionFactory actionFactory) {
+		super(actionFactory);
 	}
 
 	@Override

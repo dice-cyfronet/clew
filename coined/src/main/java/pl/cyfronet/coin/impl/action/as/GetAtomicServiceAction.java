@@ -19,8 +19,8 @@ import static pl.cyfronet.coin.impl.BeanConverter.getAtomicService;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
@@ -35,8 +35,9 @@ public class GetAtomicServiceAction extends AirAction<AtomicService> {
 	 * @param atomicServiceId Atomic service instance. Right now it is equals
 	 *            into atomic service name.
 	 */
-	public GetAtomicServiceAction(AirClient air, String atomicServiceId) {
-		super(air);
+	public GetAtomicServiceAction(ActionFactory actionFactory,
+			String atomicServiceId) {
+		super(actionFactory);
 		this.atomicServiceId = atomicServiceId;
 	}
 

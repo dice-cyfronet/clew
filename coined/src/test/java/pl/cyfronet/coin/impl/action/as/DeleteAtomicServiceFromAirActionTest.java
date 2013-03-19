@@ -60,7 +60,7 @@ public class DeleteAtomicServiceFromAirActionTest extends ActionTest {
 
 	private void whenRemoving2Ases() {
 		DeleteAtomicServiceFromAirAction action = new DeleteAtomicServiceFromAirAction(
-				air, Arrays.asList(asName + "1", asName + "2"));
+				actionFactory, Arrays.asList(asName + "1", asName + "2"));
 		action.execute();
 	}
 

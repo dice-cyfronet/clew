@@ -76,6 +76,7 @@ public class ActionFactory {
 
 	private AirClient air;
 	private DyReAllaManagerService atmosphere;
+
 	private String defaultSiteId;
 	private Integer defaultPriority;
 
@@ -89,193 +90,190 @@ public class ActionFactory {
 
 	public Action<List<AtomicService>> createListAtomicServicesAction(
 			String username) {
-		return new ListAtomicServicesAction(air, username);
+		return new ListAtomicServicesAction(this, username);
 	}
 
 	public Action<Class<Void>> createDeleteAtomicServiceAction(String username,
 			String asId, boolean admin) {
-		return new DeleteAtomicServiceAction(this, atmosphere, username, asId,
-				admin);
+		return new DeleteAtomicServiceAction(this, username, asId, admin);
 	}
 
 	public Action<Class<Void>> createDeleteAtomicServiceFromAirAction(
 			String atomicServiceId) {
-		return new DeleteAtomicServiceFromAirAction(air, atomicServiceId);
+		return new DeleteAtomicServiceFromAirAction(this, atomicServiceId);
 	}
-	
+
 	public Action<String> createCreateAtomicServiceAction(String username,
 			NewAtomicService newAtomicService) {
-		return new CreateAtomicServiceAction(air, atmosphere, username,
-				defaultSiteId, newAtomicService);
+		return new CreateAtomicServiceAction(this, username, defaultSiteId,
+				newAtomicService);
 	}
 
 	public Action<List<InitialConfiguration>> createListInitialConfigurationsAction(
 			String atomicServiceId, boolean loadPayload) {
-		return new ListInitialConfigurationsAction(air, atomicServiceId,
+		return new ListInitialConfigurationsAction(this, atomicServiceId,
 				loadPayload);
 	}
 
 	public Action<String> createAddInitialConfiguration(String atomicServiceId,
 			InitialConfiguration initialConfiguration) {
-		return new AddInitialConfigurationAction(air, atomicServiceId,
+		return new AddInitialConfigurationAction(this, atomicServiceId,
 				initialConfiguration);
 	}
 
 	public Action<String> createGetEndpointPayloadAction(
 			String atomicServiceId, String serviceName, String invocationPath) {
-		return new GetEndpointPayloadAction(air, atomicServiceId, serviceName,
+		return new GetEndpointPayloadAction(this, atomicServiceId, serviceName,
 				invocationPath);
 	}
 
 	public Action<AtomicService> createGetAtomicServiceAction(
 			String atomicServiceId) {
-		return new GetAtomicServiceAction(air, atomicServiceId);
+		return new GetAtomicServiceAction(this, atomicServiceId);
 	}
 
 	public Action<List<WorkflowBaseInfo>> createGetUserWorkflowsAction(
 			String username) {
-		return new GetUserWorkflowsAction(air, username);
+		return new GetUserWorkflowsAction(this, username);
 	}
 
 	public Action<Class<Void>> createStopWorkflowAction(String contextId,
 			String username) {
-		return new StopWorkflowAction(air, atmosphere, contextId, username);
+		return new StopWorkflowAction(this, contextId, username);
 	}
 
 	public Action<String> createStartWorkflowAction(
 			WorkflowStartRequest startRequest, String username) {
-		return new StartWorkflowAction(air, atmosphere, defaultPriority,
-				username, startRequest);
+		return new StartWorkflowAction(this, defaultPriority, username,
+				startRequest);
 	}
 
 	public Action<Workflow> createGetUserWorkflowAction(String workflowId,
 			String username) {
-		return new GetUserWorkflowAction(air, workflowId, username);
+		return new GetUserWorkflowAction(this, workflowId, username);
 	}
 
 	public Action<String> createStartAtomicServiceAction(
 			String atomicServiceId, String asName, String contextId,
 			String username, String keyName) {
-		return new StartAtomicServiceAction(this, air, atmosphere, username,
-				atomicServiceId, asName, contextId, defaultPriority, keyName);
+		return new StartAtomicServiceAction(this, username, atomicServiceId,
+				asName, contextId, defaultPriority, keyName);
 	}
 
 	// policy files
 
 	public Action<List<String>> createListSecurityPoliciesAction() {
-		return new ListOwnedPayloadAction(air, new SecurityPolicyActions(air));
+		return new ListOwnedPayloadAction(this, new SecurityPolicyActions(air));
 	}
 
 	public Action<NamedOwnedPayload> createGetSecurityPolicyAction(String name) {
-		return new GetOwnedPayloadAction(air, name, new SecurityPolicyActions(
+		return new GetOwnedPayloadAction(this, name, new SecurityPolicyActions(
 				air));
 	}
 
 	public Action<String> createGetSecurityPolicyPayloadAction(String name) {
-		return new GetOwnedPayloadPayloadAction(air, name,
+		return new GetOwnedPayloadPayloadAction(this, name,
 				new SecurityPolicyActions(air));
 	}
 
 	public Action<Class<Void>> createNewSecurityPolicyAction(String username,
 			NamedOwnedPayload securityPolicy) {
-		return new NewOwnedPayloadAction(air, username, securityPolicy,
+		return new NewOwnedPayloadAction(this, username, securityPolicy,
 				new SecurityPolicyActions(air));
 	}
 
 	public Action<Class<Void>> createUpdateSecurityPolicyAction(
 			String username, String name, OwnedPayload ownedPayload) {
-		return new UpdateOwnedPayloadAction(air, username, name, ownedPayload,
+		return new UpdateOwnedPayloadAction(this, username, name, ownedPayload,
 				new SecurityPolicyActions(air));
 	}
 
 	public Action<Class<Void>> createDeleteSecurityPolicyAction(
 			String username, String name) {
-		return new DeleteOwnedPayloadAction(air, username, name,
+		return new DeleteOwnedPayloadAction(this, username, name,
 				new SecurityPolicyActions(air));
 	}
 
 	// security proxy configurations
 
 	public Action<List<String>> createListSecurityProxiesAction() {
-		return new ListOwnedPayloadAction(air, new SecurityProxyActions(air));
+		return new ListOwnedPayloadAction(this, new SecurityProxyActions(air));
 	}
 
 	public Action<NamedOwnedPayload> createGetSecurityProxyAction(String name) {
-		return new GetOwnedPayloadAction(air, name, new SecurityProxyActions(
+		return new GetOwnedPayloadAction(this, name, new SecurityProxyActions(
 				air));
 	}
 
 	public Action<String> createGetSecurityProxyPayloadAction(String name) {
-		return new GetOwnedPayloadPayloadAction(air, name,
+		return new GetOwnedPayloadPayloadAction(this, name,
 				new SecurityProxyActions(air));
 	}
 
 	public Action<Class<Void>> createNewSecurityProxyAction(String username,
 			NamedOwnedPayload ownedPayload) {
-		return new NewOwnedPayloadAction(air, username, ownedPayload,
+		return new NewOwnedPayloadAction(this, username, ownedPayload,
 				new SecurityProxyActions(air));
 	}
 
 	public Action<Class<Void>> createUpdateSecurityProxyAction(String username,
 			String name, OwnedPayload ownedPayload) {
-		return new UpdateOwnedPayloadAction(air, username, name, ownedPayload,
+		return new UpdateOwnedPayloadAction(this, username, name, ownedPayload,
 				new SecurityProxyActions(air));
 	}
 
 	public Action<Class<Void>> createDeleteSecurityProxyAction(String username,
 			String name) {
-		return new DeleteOwnedPayloadAction(air, username, name,
+		return new DeleteOwnedPayloadAction(this, username, name,
 				new SecurityProxyActions(air));
 	}
 
 	// keys
 
 	public Action<List<PublicKeyInfo>> createListUserKeysAction(String username) {
-		return new ListUserKeysAction(air, username);
+		return new ListUserKeysAction(this, username);
 	}
 
 	public Action<String> createGetPublicKeyAction(String vphUsername,
 			String keyId) {
-		return new GetPublicKeyAction(air, vphUsername, keyId);
+		return new GetPublicKeyAction(this, vphUsername, keyId);
 	}
 
 	public Action<Class<Void>> createDeletePublicKeyAction(String username,
 			String keyId) {
-		return new DeletePublicKeyAction(air, atmosphere, username, keyId);
+		return new DeletePublicKeyAction(this, username, keyId);
 	}
 
 	public Action<String> createAddPublicKeyAction(String username,
 			String keyName, String publicKeyContent) {
-		return new AddPublicKeyAction(air, atmosphere, username, keyName,
-				publicKeyContent);
+		return new AddPublicKeyAction(this, username, keyName, publicKeyContent);
 	}
 
 	public Action<Class<Void>> createRemoveAtomicServiceFromWorkflowAction(
 			String username, String contextId, String asConfId) {
-		return new RemoveAtomicServiceFromWorkflowAction(air, atmosphere,
-				username, contextId, asConfId);
+		return new RemoveAtomicServiceFromWorkflowAction(this, username,
+				contextId, asConfId);
 	}
 
 	public Action<Class<Void>> createRemoveASIFromWorkflowAction(
 			String username, String contextId, String asiId) {
-		return new RemoveASIFromWorkflowAction(air, atmosphere, username,
-				contextId, asiId);
+		return new RemoveASIFromWorkflowAction(this, username, contextId, asiId);
 	}
 
 	// redirections
 
 	public Action<List<Redirection>> createGetAsiRedirectionsAction(
 			String contextId, String username, String asiId) {
-		return new GetAsiRedirectionsAction(contextId, username, asiId,
-				proxyHost, proxyPort, air);
+		return new GetAsiRedirectionsAction(this, contextId, username, asiId,
+				proxyHost, proxyPort);
 	}
 
 	public Action<String> createAddAsiRedirectionAction(String username,
 			String contextId, String asiId, String serviceName, int port,
 			RedirectionType type) {
-		AddAsiRedirectionAction action = new AddAsiRedirectionAction(air,
-				atmosphere, httpRedirectionService, dnatRedirectionService,
-				username, contextId, asiId);
+		AddAsiRedirectionAction action = new AddAsiRedirectionAction(this,
+				httpRedirectionService, dnatRedirectionService, username,
+				contextId, asiId);
 		action.setRedirectionDetails(serviceName, port,
 				type == RedirectionType.HTTP);
 		return action;
@@ -284,38 +282,38 @@ public class ActionFactory {
 	public Action<Class<Void>> createRemoveAsiRedirectionAction(
 			String username, String contextId, String asiId,
 			String redirectionId) {
-		return new RemoveAsiRedirectionAction(air, atmosphere,
-				httpRedirectionService, dnatRedirectionService, username,
-				contextId, asiId, redirectionId);
+		return new RemoveAsiRedirectionAction(this, httpRedirectionService,
+				dnatRedirectionService, username, contextId, asiId,
+				redirectionId);
 	}
 
 	// endpoints
 	public Action<List<Endpoint>> createListAsiEndpointsAction(String username,
 			String contextId, String asiId) {
-		return new ListAsiEndpointsAction(air, username, contextId, asiId);
+		return new ListAsiEndpointsAction(this, username, contextId, asiId);
 	}
 
 	public Action<String> createAddAsiEndpointAction(String username,
 			String contextId, String asiId, Endpoint endpoint) {
-		return new AddAsiEndpointAction(air, username, contextId, asiId,
+		return new AddAsiEndpointAction(this, username, contextId, asiId,
 				endpoint);
 	}
 
 	public Action<Class<Void>> createRemoveAsiEndpointAction(String username,
 			String contextId, String asiId, String endpointId) {
-		return new RemoveAsiEndpointAction(air, username, contextId, asiId,
+		return new RemoveAsiEndpointAction(this, username, contextId, asiId,
 				endpointId);
 	}
 
 	// taverna
 
 	public Action<String> createGetServicesSetAction() {
-		return new GetServicesSetAction(air, coinBaseUrl);
+		return new GetServicesSetAction(this, coinBaseUrl);
 	}
 
 	public Action<InvocationPathInfo> createGetInvocationPathInfo(
 			String atomicServiceId, String serviceName) {
-		return new GetInvocationPathInfo(air, atomicServiceId, serviceName);
+		return new GetInvocationPathInfo(this, atomicServiceId, serviceName);
 	}
 
 	// setters
@@ -326,6 +324,14 @@ public class ActionFactory {
 
 	public void setAtmosphere(DyReAllaManagerService atmosphere) {
 		this.atmosphere = atmosphere;
+	}
+
+	public AirClient getAir() {
+		return air;
+	}
+
+	public DyReAllaManagerService getAtmosphere() {
+		return atmosphere;
 	}
 
 	public void setDefaultSiteId(String defaultSiteId) {

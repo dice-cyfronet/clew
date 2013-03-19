@@ -23,9 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtmosphereAndAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -41,9 +40,9 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 
 	private String keyName;
 
-	public DeletePublicKeyAction(AirClient air, DyReAllaManagerService atmosphere,
-			String username, String keyId) {
-		super(air, atmosphere, username);
+	public DeletePublicKeyAction(ActionFactory actionFactory, String username,
+			String keyId) {
+		super(actionFactory, username);
 		this.keyId = keyId;
 	}
 
@@ -53,8 +52,8 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 	 */
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		publicKeyContent = new GetPublicKeyAction(getAir(), getUsername(),
-				keyId).execute();
+		publicKeyContent = new GetPublicKeyAction(getActionFactory(),
+				getUsername(), keyId).execute();
 		keyName = getKeyName();
 		try {
 			getAtmosphere().removeKeyPair(keyId);
@@ -68,7 +67,7 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 	}
 
 	private String getKeyName() {
-		List<PublicKeyInfo> keys = new ListUserKeysAction(getAir(),
+		List<PublicKeyInfo> keys = new ListUserKeysAction(getActionFactory(),
 				getUsername()).execute();
 		for (PublicKeyInfo userKeyInfo : keys) {
 			if (keyId.equals(userKeyInfo.getId())) {
@@ -86,8 +85,8 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 	public void rollback() {
 		if (keyName != null) {
 			try {
-				AddPublicKeyAction action = new AddPublicKeyAction(getAir(),
-						getAtmosphere(), getUsername(), keyName,
+				AddPublicKeyAction action = new AddPublicKeyAction(
+						getActionFactory(), getUsername(), keyName,
 						publicKeyContent);
 				action.execute();
 			} catch (Exception e) {

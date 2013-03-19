@@ -9,12 +9,11 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
@@ -30,12 +29,11 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 	private boolean http;
 	private WorkflowDetail wd;
 
-	public AddAsiRedirectionAction(AirClient air,
-			DyReAllaManagerService atmosphere,
+	public AddAsiRedirectionAction(ActionFactory actionFactory,
 			DyReAllaProxyManagerService httpRedirectionService,
 			DyReAllaDNATManagerService dnatRedirectionService, String username,
 			String contextId, String asiId) {
-		super(air, atmosphere, httpRedirectionService, dnatRedirectionService,
+		super(actionFactory, httpRedirectionService, dnatRedirectionService,
 				username, contextId, asiId);
 	}
 
@@ -54,8 +52,8 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 		String atId = getAsiApplianceType();
 		logger.debug("Adding port mapping into {} AT: {} port {} http {}",
 				new Object[] { atId, serviceName, port, http });
-		String redirectionId = new AddPortMappingAction(getAir(), atId,
-				serviceName, port, http).execute();
+		String redirectionId = new AddPortMappingAction(getActionFactory(),
+				atId, serviceName, port, http).execute();
 
 		logger.debug("Added redirection id {}", redirectionId);
 

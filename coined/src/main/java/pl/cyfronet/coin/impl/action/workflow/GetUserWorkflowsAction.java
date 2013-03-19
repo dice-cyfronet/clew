@@ -21,8 +21,8 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 /**
@@ -33,8 +33,8 @@ public class GetUserWorkflowsAction extends AirAction<List<WorkflowBaseInfo>> {
 
 	private String username;
 
-	public GetUserWorkflowsAction(AirClient air, String username) {
-		super(air);
+	public GetUserWorkflowsAction(ActionFactory actionFactory, String username) {
+		super(actionFactory);
 		this.username = username;
 	}
 

@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 public class GetInvocationPathInfo extends
@@ -20,8 +20,9 @@ public class GetInvocationPathInfo extends
 	private String asIs;
 	private String serviceName;
 
-	public GetInvocationPathInfo(AirClient air, String asId, String serviceName) {
-		super(air);
+	public GetInvocationPathInfo(ActionFactory actionFactory, String asId,
+			String serviceName) {
+		super(actionFactory);
 		this.asIs = asId;
 		this.serviceName = serviceName;
 	}

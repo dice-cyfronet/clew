@@ -22,10 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtmosphereAndAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.utils.PublicKeyUtils;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -40,9 +39,9 @@ public class AddPublicKeyAction extends AtmosphereAndAirAction<String> {
 
 	private String addedKeyId;
 
-	public AddPublicKeyAction(AirClient air, DyReAllaManagerService atmosphere,
-			String username, String keyName, String publicKeyContent) {
-		super(air, atmosphere, username);
+	public AddPublicKeyAction(ActionFactory actionFactory, String username,
+			String keyName, String publicKeyContent) {
+		super(actionFactory, username);
 		this.keyName = keyName;
 		this.publicKeyContent = publicKeyContent.trim();
 	}
@@ -72,7 +71,7 @@ public class AddPublicKeyAction extends AtmosphereAndAirAction<String> {
 		if (addedKeyId != null) {
 			try {
 				DeletePublicKeyAction action = new DeletePublicKeyAction(
-						getAir(), getAtmosphere(), getUsername(), addedKeyId);
+						getActionFactory(), getUsername(), addedKeyId);
 				action.execute();
 			} catch (Exception e) {
 				logger.warn("Unable to rollback", e);

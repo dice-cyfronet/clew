@@ -24,11 +24,10 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * Stop workflow action.
@@ -47,9 +46,9 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 	 * @param contextId Workflow id.
 	 * @param username User which wants to stop the workflow.
 	 */
-	public StopWorkflowAction(AirClient air, DyReAllaManagerService atmosphere,
-			String contextId, String username) {
-		super(air, atmosphere, username);
+	public StopWorkflowAction(ActionFactory actionFactory, String contextId,
+			String username) {
+		super(actionFactory, username);
 		this.contextId = contextId;
 	}
 
@@ -76,7 +75,7 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 			}
 			logger.debug("Removing following ASes {}", asesToRemove);
 			DeleteAtomicServiceFromAirAction deleteASAction = new DeleteAtomicServiceFromAirAction(
-					getAir(), asesToRemove);
+					getActionFactory(), asesToRemove);
 			deleteASAction.execute();
 		}
 

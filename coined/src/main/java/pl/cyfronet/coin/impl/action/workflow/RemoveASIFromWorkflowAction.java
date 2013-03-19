@@ -20,13 +20,12 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.action.as.GetASITypeAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 
 /**
@@ -42,10 +41,9 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 	 * @param atmosphere
 	 * @param username
 	 */
-	public RemoveASIFromWorkflowAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username,
-			String contextId, String asiId) {
-		super(air, atmosphere, username);
+	public RemoveASIFromWorkflowAction(ActionFactory actionFactory,
+			String username, String contextId, String asiId) {
+		super(actionFactory, username);
 		this.contextId = contextId;
 		this.asiId = asiId;
 	}
@@ -53,14 +51,15 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		if (workflowInDevelopmentModeHasASI()) {
-			ApplianceType at = new GetASITypeAction(getAir(), asiId).execute();
+			ApplianceType at = new GetASITypeAction(getActionFactory(), asiId)
+					.execute();
 
 			ManagerResponse response = getAtmosphere().removeAppliance(asiId);
 			parseResponseAndThrowExceptionsWhenNeeded(response);
-			
+
 			if (at.isDevelopment()) {
 				DeleteAtomicServiceFromAirAction deleteASAction = new DeleteAtomicServiceFromAirAction(
-						getAir(), at.getId());
+						getActionFactory(), at.getId());
 				deleteASAction.execute();
 			}
 		} else {

@@ -9,23 +9,20 @@ import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.RemoveTemplatesResponse;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 
-public class DeleteAtomicServiceAction implements Action<Class<Void>> {
+public class DeleteAtomicServiceAction extends Action<Class<Void>> {
 
 	ActionFactory actionFactory;
-	private DyReAllaManagerService atmosphere;
 	private String asId;
 	private String username;
 	private boolean admin;
 
 	public DeleteAtomicServiceAction(ActionFactory actionFactory,
-			DyReAllaManagerService atmosphere, String username, String asId,
-			boolean admin) {
+			String username, String asId, boolean admin) {
+		super(actionFactory);
 		this.actionFactory = actionFactory;
-		this.atmosphere = atmosphere;
 		this.username = username;
 		this.asId = asId;
 		this.admin = admin;
@@ -35,7 +32,7 @@ public class DeleteAtomicServiceAction implements Action<Class<Void>> {
 	public Class<Void> execute() throws CloudFacadeException {
 		checkIfCanRemoveAS();
 		try {
-			RemoveTemplatesResponse response = atmosphere
+			RemoveTemplatesResponse response = getAtmosphere()
 					.removeTemplatesOfApplianceType(asId);
 			if (response.getOperationStatus() == OperationStatus.SUCCESSFUL) {
 				actionFactory.createDeleteAtomicServiceFromAirAction(asId)

@@ -115,17 +115,17 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	}
 
 	private void whenAddAtomicServiceToAir() {
-		action = new CreateAtomicServiceInAirAction(air, username, at);
+		action = new CreateAtomicServiceInAirAction(actionFactory, username, at);
 		createdAsId = action.execute();
 	}
 
 	private void thenCheckASWithEndpointsAndPortMappingsAdded() {
 		thenCheckRequestSendToAir();
 	}
-	
+
 	private void thenCheckRequestSendToAir() {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
-		
+
 		assertEquals(createdAsId, asAirId);
 	}
 
