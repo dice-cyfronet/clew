@@ -5,26 +5,26 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotFoundException;
-import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class GetOwnedPayloadAction extends ReadOnlyAirAction<NamedOwnedPayload> {
+public class GetOwnedPayloadAction extends
+		OwnedPayloadAction<NamedOwnedPayload> {
 
 	private String ownedPayloadName;
 	private String username;
 	private OwnedPayloadActions actions;
 
-	public GetOwnedPayloadAction(ActionFactory actionFactory,
+	public GetOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
 			String ownedPayloadName, OwnedPayloadActions actions) {
 		this(actionFactory, null, ownedPayloadName, actions);
 	}
 
-	public GetOwnedPayloadAction(ActionFactory actionFactory, String username,
-			String ownedPayloadName, OwnedPayloadActions actions) {
+	public GetOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
+			String username, String ownedPayloadName,
+			OwnedPayloadActions actions) {
 		super(actionFactory);
 		this.ownedPayloadName = ownedPayloadName;
 		this.username = username;

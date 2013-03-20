@@ -7,11 +7,9 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
-import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
-public class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
+public class UpdateOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 
 	private String username;
 	private String ownedPayloadName;
@@ -19,7 +17,7 @@ public class UpdateOwnedPayloadAction extends AirAction<Class<Void>> {
 	private OwnedPayload oldPayload;
 	private OwnedPayloadActions actions;
 
-	public UpdateOwnedPayloadAction(ActionFactory actionFactory,
+	public UpdateOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
 			String username, String ownedPayloadName,
 			OwnedPayload ownedPayload, OwnedPayloadActions actions) {
 		super(actionFactory);

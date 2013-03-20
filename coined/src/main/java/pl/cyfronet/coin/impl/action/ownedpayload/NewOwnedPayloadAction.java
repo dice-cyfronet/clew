@@ -9,18 +9,17 @@ import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.AlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
-public class NewOwnedPayloadAction extends AirAction<Class<Void>> {
+public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 
 	NamedOwnedPayload newPolicy;
 	private String username;
 	private OwnedPayloadActions actions;
 
-	public NewOwnedPayloadAction(ActionFactory actionFactory, String username,
-			NamedOwnedPayload ownedPayload, OwnedPayloadActions actions) {
+	public NewOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
+			String username, NamedOwnedPayload ownedPayload,
+			OwnedPayloadActions actions) {
 		super(actionFactory);
 		this.username = username;
 		this.newPolicy = ownedPayload;

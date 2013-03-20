@@ -7,11 +7,9 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.api.exception.NotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
-public class DeleteOwnedPayloadAction extends AirAction<Class<Void>> {
+public class DeleteOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 
 	private String ownedPayloadName;
 	private String username;
@@ -19,7 +17,7 @@ public class DeleteOwnedPayloadAction extends AirAction<Class<Void>> {
 	private NamedOwnedPayload payload;
 	private OwnedPayloadActions actions;
 
-	public DeleteOwnedPayloadAction(ActionFactory actionFactory,
+	public DeleteOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
 			String username, String ownedPayloadName,
 			OwnedPayloadActions actions) {
 		super(actionFactory);
