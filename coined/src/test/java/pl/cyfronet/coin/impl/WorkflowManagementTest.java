@@ -51,7 +51,6 @@ import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
-import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 
 /**
@@ -211,12 +210,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASFromWorkflowSuccess() {
-		RemoveAtomicServiceFromWorkflowAction action = mock(RemoveAtomicServiceFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		givenRemoveASAction(action);
 	}
 
-	private void givenRemoveASAction(
-			RemoveAtomicServiceFromWorkflowAction action) {
+	private void givenRemoveASAction(Action<Class<Void>> action) {
 		when(
 				actionFactory.createRemoveAtomicServiceFromWorkflowAction(
 						username, contextId, asConfigId)).thenReturn(action);
@@ -248,7 +246,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASError(CloudFacadeException exception) {
-		RemoveAtomicServiceFromWorkflowAction action = mock(RemoveAtomicServiceFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 
 		givenRemoveASAction(action);
