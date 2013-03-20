@@ -9,19 +9,18 @@ import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.AlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.AirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
-public class NewOwnedPayloadAction extends AirAction<Class<Void>> {
+public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 
 	NamedOwnedPayload newPolicy;
 	private String username;
 	private OwnedPayloadActions actions;
 
-	public NewOwnedPayloadAction(AirClient air, String username,
-			NamedOwnedPayload ownedPayload, OwnedPayloadActions actions) {
-		super(air);
+	public NewOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
+			String username, NamedOwnedPayload ownedPayload,
+			OwnedPayloadActions actions) {
+		super(actionFactory);
 		this.username = username;
 		this.newPolicy = ownedPayload;
 		this.actions = actions;
@@ -54,8 +53,8 @@ public class NewOwnedPayloadAction extends AirAction<Class<Void>> {
 	@Override
 	public void rollback() {
 		try {
-			Action<Class<Void>> action = new DeleteOwnedPayloadAction(getAir(),
-					username, newPolicy.getName(), actions);
+			Action<Class<Void>> action = new DeleteOwnedPayloadAction(
+					getActionFactory(), username, newPolicy.getName(), actions);
 			action.execute();
 		} catch (Exception e) {
 			// Best effort.

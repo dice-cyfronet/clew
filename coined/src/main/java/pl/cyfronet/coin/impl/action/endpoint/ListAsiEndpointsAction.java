@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAsiAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 public class ListAsiEndpointsAction extends ReadOnlyAsiAction<List<Endpoint>> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ListAsiEndpointsAction.class);
 
-	public ListAsiEndpointsAction(AirClient air, String username,
+	public ListAsiEndpointsAction(ActionFactory actionFactory, String username,
 			String contextId, String asiId) {
-		super(air, username, contextId, asiId);
+		super(actionFactory, username, contextId, asiId);
 	}
 
 	@Override

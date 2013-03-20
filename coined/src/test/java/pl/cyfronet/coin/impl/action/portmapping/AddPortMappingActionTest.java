@@ -29,18 +29,19 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenExistingAS() {
-		when(air.addPortMapping("rest", asId, serviceName, port, http)).thenReturn(
-				givenRedirectionId);
+		when(air.addPortMapping("rest", asId, serviceName, port, http))
+				.thenReturn(givenRedirectionId);
 	}
 
 	private void whenAddPortMapping() {
-		Action<String> action = new AddPortMappingAction(air, asId,
+		Action<String> action = actionFactory.createAddPortMappingAction(asId,
 				serviceName, port, http);
 		redirectionId = action.execute();
 	}
 
 	private void thenRedirectionAdded() {
-		verify(air, times(1)).addPortMapping("rest", asId, serviceName, port, http);
+		verify(air, times(1)).addPortMapping("rest", asId, serviceName, port,
+				http);
 		assertEquals(redirectionId, givenRedirectionId);
 	}
 
@@ -56,7 +57,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenNonExistingAS() {
-		when(air.addPortMapping("rest", asId, serviceName, port, http)).thenThrow(
-				getAirException(404));
+		when(air.addPortMapping("rest", asId, serviceName, port, http))
+				.thenThrow(getAirException(404));
 	}
 }

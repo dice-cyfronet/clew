@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AsiAction;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 public class RemoveAsiEndpointAction extends AsiAction<Class<Void>> {
@@ -17,9 +17,9 @@ public class RemoveAsiEndpointAction extends AsiAction<Class<Void>> {
 
 	private String endpointId;
 
-	public RemoveAsiEndpointAction(AirClient air, String username,
-			String contextId, String asiId, String endpointId) {
-		super(air, username, contextId, asiId);
+	public RemoveAsiEndpointAction(ActionFactory actionFactory,
+			String username, String contextId, String asiId, String endpointId) {
+		super(actionFactory, username, contextId, asiId);
 		this.endpointId = endpointId;
 	}
 

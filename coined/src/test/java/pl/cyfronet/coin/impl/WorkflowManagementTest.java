@@ -16,7 +16,7 @@
 package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -45,15 +45,6 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.RemoveASIFromWorkflowAction;
-import pl.cyfronet.coin.impl.action.RemoveAtomicServiceFromWorkflowAction;
-import pl.cyfronet.coin.impl.action.StartAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
-import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
-import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
-import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
-import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
-import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -66,6 +57,7 @@ import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 		"classpath:rest-test-workflow-management-client.xml",
 		"classpath:META-INF/spring/rest-services.xml"} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class WorkflowManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -129,7 +121,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			asiRedirections.add(redirection);
 		}
 
-		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
+		Action<List<Redirection>> action = mock(Action.class);
 		when(action.execute()).thenReturn(asiRedirections);
 
 		when(
@@ -179,7 +171,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenExceptionThrownByGetAsiRedirectionsAction(
 			CloudFacadeException exception) {
-		GetAsiRedirectionsAction action = mock(GetAsiRedirectionsAction.class);
+		Action<List<Redirection>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 
 		when(
@@ -211,12 +203,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASFromWorkflowSuccess() {
-		RemoveAtomicServiceFromWorkflowAction action = mock(RemoveAtomicServiceFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		givenRemoveASAction(action);
 	}
 
-	private void givenRemoveASAction(
-			RemoveAtomicServiceFromWorkflowAction action) {
+	private void givenRemoveASAction(Action<Class<Void>> action) {
 		when(
 				actionFactory.createRemoveAtomicServiceFromWorkflowAction(
 						username, contextId, asConfigId)).thenReturn(action);
@@ -248,7 +239,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASError(CloudFacadeException exception) {
-		RemoveAtomicServiceFromWorkflowAction action = mock(RemoveAtomicServiceFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 
 		givenRemoveASAction(action);
@@ -298,11 +289,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASIFromWorkflowSuccess() {
-		RemoveASIFromWorkflowAction action = mock(RemoveASIFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		givenRemoveASIAction(action);
 	}
 
-	private void givenRemoveASIAction(RemoveASIFromWorkflowAction action) {
+	private void givenRemoveASIAction(Action<Class<Void>> action) {
 		when(
 				actionFactory.createRemoveASIFromWorkflowAction(username,
 						contextId, asiId)).thenReturn(action);
@@ -332,7 +323,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASIError(CloudFacadeException exception) {
-		RemoveASIFromWorkflowAction action = mock(RemoveASIFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 		givenRemoveASIAction(action);
 	}
@@ -379,11 +370,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMocketAddAtomicServiceToWorkflowAction() {
-		StartAtomicServiceAction action = mock(StartAtomicServiceAction.class);
+		Action<String> action = mock(Action.class);
 		when(
-				actionFactory.createStartAtomicServiceAction(atomicServiceId,
-						asName, contextId, username, keyName)).thenReturn(
-				action);
+				actionFactory.createStartAtomicServiceAction(username,
+						atomicServiceId, asName, contextId, keyName))
+				.thenReturn(action);
 		currentAction = action;
 	}
 
@@ -406,7 +397,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAddAsiRedirectionAction() {
-		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		Action<String> action = mock(Action.class);
 		when(
 				actionFactory.createAddAsiRedirectionAction(username,
 						contextId, asiId, redirectionName, redirectionPort,
@@ -437,7 +428,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenAddAsiRedirectionActionThrowException(
 			CloudFacadeException exception) {
-		AddAsiRedirectionAction action = mock(AddAsiRedirectionAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 		when(
 				actionFactory.createAddAsiRedirectionAction(username,
@@ -477,7 +468,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiWithRedirection() {
-		RemoveAsiRedirectionAction action = mock(RemoveAsiRedirectionAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(
 				actionFactory.createRemoveAsiRedirectionAction(username,
 						contextId, asiId, redirectionId)).thenReturn(action);
@@ -506,7 +497,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenRemoveAsiRedirectionActionThrowException(
 			Exception exception) {
-		RemoveAsiRedirectionAction action = mock(RemoveAsiRedirectionAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 		when(
 				actionFactory.createRemoveAsiRedirectionAction(username,
@@ -556,7 +547,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiEndpoints() {
-		Action<List<Endpoint>> action = mock(ListAsiEndpointsAction.class);
+		Action<List<Endpoint>> action = mock(Action.class);
 
 		givenEndpoints = Arrays.asList(getEndpoint("e1", EndpointType.REST),
 				getEndpoint("e2", EndpointType.WS),
@@ -606,7 +597,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		endpoint.setPort(80);
 		endpoint.setType(EndpointType.REST);
 
-		Action<String> action = mock(AddAsiEndpointAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(givenId);
 
 		when(
@@ -631,7 +622,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiWithEndpoint() {
-		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(
 				actionFactory.createRemoveAsiEndpointAction(username,
 						contextId, asiId, endpointId)).thenReturn(action);
@@ -658,7 +649,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiWithoutEndpoint() {
-		Action<Class<Void>> action = mock(RemoveAsiEndpointAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(new EndpointNotFoundException());
 		when(
 				actionFactory.createRemoveAsiEndpointAction(username,

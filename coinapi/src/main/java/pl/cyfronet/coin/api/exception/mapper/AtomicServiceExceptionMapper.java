@@ -26,6 +26,8 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
+import pl.cyfronet.coin.api.exception.NotAcceptableException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -47,13 +49,17 @@ public class AtomicServiceExceptionMapper extends CloudFacadeExceptionMapper {
 			} else {
 				return new AtomicServiceInstanceNotFoundException();
 			}
+		case 403:
+			return new NotAllowedException(message);
+		case 406:
+			return new NotAcceptableException(message);
 		case 409:
 			if (AtomicServiceAlreadyExistsException.ERROR_MESSAGE
 					.equals(message)) {
 				return new AtomicServiceAlreadyExistsException();
 			} else {
 				return new InitialConfigurationAlreadyExistException();
-			}
+			}		
 		default:
 			return new CloudFacadeException();
 		}

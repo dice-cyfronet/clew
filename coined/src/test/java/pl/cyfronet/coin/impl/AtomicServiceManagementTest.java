@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.impl;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -40,12 +42,17 @@ import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
+import pl.cyfronet.coin.api.exception.NotAcceptableException;
+import pl.cyfronet.coin.api.exception.NotAllowedException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AddInitialConfigurationAction;
-import pl.cyfronet.coin.impl.action.CreateAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.ListInitialConfigurationsAction;
+import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
+import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
+import pl.cyfronet.coin.impl.action.as.ListInitialConfigurationsAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -59,6 +66,7 @@ import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 		"classpath:META-INF/spring/rest-services.xml"
 	} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -114,7 +122,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 			ases.add(as);
 		}
 
-		ListAtomicServicesAction action = mock(ListAtomicServicesAction.class);
+		Action<List<AtomicService>> action = mock(Action.class);
 		currentAction = action;
 
 		when(action.execute()).thenReturn(ases);
@@ -205,7 +213,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenInitialConfigurationForSelectedAS() {
-		ListInitialConfigurationsAction action = mock(ListInitialConfigurationsAction.class);
+		Action<List<InitialConfiguration>> action = mock(Action.class);
 
 		InitialConfiguration ic1 = getInitialConfiguration(1);
 		InitialConfiguration ic2 = getInitialConfiguration(1);
@@ -264,7 +272,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionThrowingAtomicServiceNotFoundException() {
-		ListInitialConfigurationsAction action = mock(ListInitialConfigurationsAction.class);
+		Action<List<InitialConfiguration>> action = mock(Action.class);
 
 		when(action.execute()).thenThrow(new AtomicServiceNotFoundException());
 		when(
@@ -281,7 +289,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionAbleToSuccessfullyAddInitialConfiguration() {
-		AddInitialConfigurationAction action = mock(AddInitialConfigurationAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(icId);
 
 		initialConfigurations = Arrays.asList(getInitialConfiguration(1));
@@ -316,7 +324,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionWhichDoesNotKnowGivenAS() {
-		AddInitialConfigurationAction action = mock(AddInitialConfigurationAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(new AtomicServiceNotFoundException());
 
 		initialConfigurations = Arrays.asList(getInitialConfiguration(1));
@@ -343,7 +351,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAirWithConfigurationNameWeWantToAdd() {
-		AddInitialConfigurationAction action = mock(AddInitialConfigurationAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(
 				new InitialConfigurationAlreadyExistException());
 
@@ -365,7 +373,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	private void givenMocketAddAtomicServiceAction() {
 		createNewAs();
 
-		CreateAtomicServiceAction action = mock(CreateAtomicServiceAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn("newASId");
 
 		when(
@@ -407,7 +415,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private void givenActionWhichDoesNotKnowAsi() {
 		createNewAs();
-		CreateAtomicServiceAction action = mock(CreateAtomicServiceAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(
 				new AtomicServiceInstanceNotFoundException());
 
@@ -433,7 +441,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private void givenActionWhichReceivesASNonUniqueException() {
 		createNewAs();
-		CreateAtomicServiceAction action = mock(CreateAtomicServiceAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(
 				new AtomicServiceAlreadyExistsException());
 
@@ -441,5 +449,91 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 				actionFactory.createCreateAtomicServiceAction(username,
 						atomicService)).thenReturn(action);
 		currentAction = action;
+	}
+
+	// delete AS
+
+	@DataProvider
+	protected Object[][] deleteASRoleProvider() {
+		// admin = true, not admin = false
+		return new Object[][] { { true }, { false } };
+	}
+
+	@Test(dataProvider = "deleteASRoleProvider")
+	public void shouldDeleteAtomicService(boolean admin) throws Exception {
+		givenAtomicServiceDeletedAction(admin);
+		whenDeleteAtomicService();
+		thenAtomicServiceRemoved();
+	}
+
+	private void givenAtomicServiceDeletedAction(boolean admin) {
+		when(
+				authenticationHandler.hasRole(eq("admin"), anyString(),
+						anyString())).thenReturn(admin);
+		Action<Class<Void>> action = mock(Action.class);
+		when(
+				actionFactory.createDeleteAtomicServiceAction(username,
+						atomicServiceId, admin)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenDeleteAtomicService() {
+		asManagementClient.deleteAtomicService(atomicServiceId);
+	}
+
+	private void thenAtomicServiceRemoved() {
+		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldThrow404WhenASNotFound() throws Exception {
+		givenDeleteActionThrows(new AtomicServiceNotFoundException());
+		try {
+			whenDeleteAtomicService();
+			fail();
+		} catch (AtomicServiceNotFoundException e) {
+			// Ok should be thrown
+		}
+	}
+
+	@Test
+	public void shouldThrow406WhenASInUse() throws Exception {
+		givenDeleteActionThrows(new NotAcceptableException());
+		try {
+			whenDeleteAtomicService();
+			fail();
+		} catch (NotAcceptableException e) {
+			// Ok should be thrown
+		}
+	}
+
+	private void givenDeleteActionThrows(CloudFacadeException exception) {
+		Action<Class<Void>> action = mock(Action.class);
+		when(action.execute()).thenThrow(exception);
+		when(
+				actionFactory.createDeleteAtomicServiceAction(username,
+						atomicServiceId, false)).thenReturn(action);
+	}
+
+	@Test
+	public void shouldThrow403WhenDeletingNotOwnedAS() throws Exception {
+		givenDeleteActionThrows(new NotAllowedException());
+		try {
+			whenDeleteAtomicService();
+			fail();
+		} catch (NotAllowedException e) {
+			// Ok should be thrown
+		}
+	}
+
+	@Test
+	public void shouldThrow406WhenDeletingASWithRunningASI() throws Exception {
+		givenDeleteActionThrows(new NotAcceptableException());
+		try {
+			whenDeleteAtomicService();
+			fail();
+		} catch (NotAcceptableException e) {
+			// Ok should be thrown
+		}
 	}
 }

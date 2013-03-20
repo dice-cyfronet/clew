@@ -8,12 +8,9 @@ import org.slf4j.LoggerFactory;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
-import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
-import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
@@ -23,16 +20,15 @@ public class RemoveAsiRedirectionAction extends
 		AsiRedirectionAction<Class<Void>> {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(AddAsiRedirectionAction.class);
+			.getLogger(RemoveAsiRedirectionAction.class);
 
 	private String redirectionId;
 
-	public RemoveAsiRedirectionAction(AirClient air,
-			DyReAllaManagerService atmosphere,
+	public RemoveAsiRedirectionAction(ActionFactory actionFactory,
 			DyReAllaProxyManagerService httpRedirectionService,
 			DyReAllaDNATManagerService dnatRedirectionService, String username,
 			String contextId, String asiId, String redirectionId) {
-		super(air, atmosphere, httpRedirectionService, dnatRedirectionService,
+		super(actionFactory, httpRedirectionService, dnatRedirectionService,
 				username, contextId, asiId);
 		this.redirectionId = redirectionId;
 	}
@@ -52,7 +48,8 @@ public class RemoveAsiRedirectionAction extends
 		}
 
 		logger.debug("Removing redirection from air");
-		new RemovePortMappingAction(getAir(), redirectionId).execute();
+		getActionFactory().createRemovePortMappingAction(redirectionId)
+				.execute();
 
 		return Void.TYPE;
 	}
@@ -84,8 +81,9 @@ public class RemoveAsiRedirectionAction extends
 	}
 
 	private ATPortMapping getPortMapping() {
-		List<ATPortMapping> portMappings = new GetPortMappingsAction(getAir(),
-				getUsername(), getContextId(), getAsiId()).execute();
+		List<ATPortMapping> portMappings = getActionFactory()
+				.createGetPortMappingsAction(getUsername(), getContextId(),
+						getAsiId()).execute();
 		for (ATPortMapping portMapping : portMappings) {
 			if (portMapping.getId().equals(redirectionId)) {
 				return portMapping;
@@ -96,6 +94,6 @@ public class RemoveAsiRedirectionAction extends
 
 	@Override
 	public void rollback() {
-		//TODO
+		// TODO
 	}
 }

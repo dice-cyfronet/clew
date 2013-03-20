@@ -20,10 +20,12 @@ import pl.cyfronet.coin.api.exception.AlreadyExistsException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.api.exception.NotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.action.ownedpayload.OwnedPayloadActionFactory;
 
 @SuppressWarnings("unchecked")
-public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTest {
-	
+public abstract class AbstractOwnedPayloadServiceTest extends
+		AbstractServiceTest {
+
 	@Autowired
 	@Qualifier("client")
 	private OwnedPayloadService client;
@@ -43,6 +45,15 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 
 	private String username = "User123";
 
+	@Override
+	protected void postSetUp() {
+		OwnedPayloadActionFactory ownedPayloadActionFactory = mock(OwnedPayloadActionFactory.class);
+		when(actionFactory.getPoliciesActionFactory()).thenReturn(
+				ownedPayloadActionFactory);
+		when(actionFactory.getProxiesActionFactory()).thenReturn(
+				ownedPayloadActionFactory);
+	}
+
 	@Test
 	public void shouldListNames() throws Exception {
 		given3OwnedPayloads();
@@ -58,7 +69,7 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 	}
 
 	protected abstract void mockListAction(Action<List<String>> action);
-	
+
 	private void whenGetOwnedPayloadNames() {
 		names = client.list();
 	}
@@ -82,11 +93,12 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 		givenOwnedPayload.setName(policyName);
 
 		when(action.execute()).thenReturn(givenOwnedPayload);
-		mockGetAction(policyName, action);		
+		mockGetAction(policyName, action);
 	}
 
-	protected abstract void mockGetAction(String policyName, Action<NamedOwnedPayload> action);
-	
+	protected abstract void mockGetAction(String policyName,
+			Action<NamedOwnedPayload> action);
+
 	private void whenGetOwnedPayload() {
 		ownedPayload = client.get(policyName);
 	}
@@ -106,11 +118,12 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 	private void givenOwnedPayloadPayload() {
 		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(givenSecurityPolicyContent);
-		mockGetPayloadAction(policyName, action);		
+		mockGetPayloadAction(policyName, action);
 	}
 
-	protected abstract void mockGetPayloadAction(String name, Action<String> action);
-	
+	protected abstract void mockGetPayloadAction(String name,
+			Action<String> action);
+
 	private void whenGetOwnedPayloadPayload() {
 		securityPolicyContent = client.getPayload(policyName);
 	}
@@ -135,7 +148,7 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 	private void givenNonExistingOwnedPayload() {
 		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(new NotFoundException());
-		mockGetPayloadAction(policyName, action);		
+		mockGetPayloadAction(policyName, action);
 	}
 
 	@Test
@@ -152,11 +165,12 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 		givenNewOwnedPayload.setPayload(securityPolicyContent);
 		givenNewOwnedPayload.setOwners(Arrays.asList("user1", "user2"));
 
-		mockNewAction(username, givenNewOwnedPayload, newOwnedPayloadAction);		
+		mockNewAction(username, givenNewOwnedPayload, newOwnedPayloadAction);
 	}
 
-	protected abstract void mockNewAction(String username, NamedOwnedPayload payload, Action<Class<Void>> action);
-	
+	protected abstract void mockNewAction(String username,
+			NamedOwnedPayload payload, Action<Class<Void>> action);
+
 	private void whenAddingOwnedPayload() {
 		client.create(givenNewOwnedPayload);
 	}
@@ -196,7 +210,7 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 
 	private void givenOwnedPayloadToDelete() {
 		deleteAction = mock(Action.class);
-		mockDeleteAction(username, policyName, deleteAction);		
+		mockDeleteAction(username, policyName, deleteAction);
 	}
 
 	protected abstract void mockDeleteAction(String username, String name,
@@ -266,10 +280,9 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 	}
 
 	private void thenOwnedPayloadWithNamespaceAdded() {
-		verifyNewAction(username,
-				givenNewOwnedPayload);
+		verifyNewAction(username, givenNewOwnedPayload);
 	}
-	
+
 	protected abstract void verifyNewAction(String username,
 			NamedOwnedPayload payload);
 
@@ -290,11 +303,10 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 	}
 
 	private void thenOwnedPayloadWithNamespaceRemoved() {
-		verifyDeleteAction(username, policyNameWithNamespace);	
+		verifyDeleteAction(username, policyNameWithNamespace);
 	}
 
-	protected abstract void verifyDeleteAction(String username,
-			String name);
+	protected abstract void verifyDeleteAction(String username, String name);
 
 	@Test
 	public void shouldOwnedPayloadPolicyWithNamespace() throws Exception {
@@ -311,8 +323,7 @@ public abstract class AbstractOwnedPayloadServiceTest extends AbstractServiceTes
 	}
 
 	private void whenGetOwnedPayloadWithNamespace() {
-		securityPolicyContent = client
-				.getPayload(policyNameWithNamespace);
+		securityPolicyContent = client.getPayload(policyNameWithNamespace);
 	}
 
 	private void thenOwnedPayloadWithNamespacePayloadReceived() {

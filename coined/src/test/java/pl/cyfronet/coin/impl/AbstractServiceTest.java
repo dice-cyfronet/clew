@@ -38,7 +38,7 @@ public abstract class AbstractServiceTest extends
 	protected ActionFactory actionFactory;
 
 	@Autowired
-	private MasterInterfaceAuthenticationHandler authenticationHandler;
+	protected MasterInterfaceAuthenticationHandler authenticationHandler;
 
 	protected Action<? extends Object> currentAction;
 
@@ -46,6 +46,12 @@ public abstract class AbstractServiceTest extends
 	protected void setUp() {
 		when(authenticationHandler.getUsername("User123", "notimportant"))
 				.thenReturn("User123");
+		
+		postSetUp();
+	}
+
+	protected void postSetUp() {
+		
 	}
 
 	protected void thenActionExecuted() {

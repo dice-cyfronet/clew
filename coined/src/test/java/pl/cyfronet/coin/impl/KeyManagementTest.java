@@ -38,10 +38,7 @@ import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
 import pl.cyfronet.coin.auth.mi.MasterInterfaceAuthenticationHandler;
-import pl.cyfronet.coin.impl.action.AddPublicKeyAction;
-import pl.cyfronet.coin.impl.action.DeletePublicKeyAction;
-import pl.cyfronet.coin.impl.action.GetPublicKeyAction;
-import pl.cyfronet.coin.impl.action.ListUserKeysAction;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 
 /**
@@ -56,6 +53,7 @@ import pl.cyfronet.coin.impl.utils.FileUtils;
 		"classpath:META-INF/spring/rest-services.xml"
 	} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class KeyManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -100,7 +98,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 		key1 = getKey(1);
 		key2 = getKey(2);
 
-		ListUserKeysAction action = mock(ListUserKeysAction.class);
+		Action<List<PublicKeyInfo>> action = mock(Action.class);
 		when(action.execute()).thenReturn(Arrays.asList(key1, key2));
 
 		when(actionFactory.createListUserKeysAction(username)).thenReturn(
@@ -143,7 +141,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMockedAddKeyAction() {
-		AddPublicKeyAction action = mock(AddPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(keyId);
 		when(
 				actionFactory.createAddPublicKeyAction(username, keyName,
@@ -172,7 +170,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMockedAddNotUniqueKeyAction() {
-		AddPublicKeyAction action = mock(AddPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute())
 				.thenThrow(new KeyAlreadyExistsException(keyName));
 		when(
@@ -190,7 +188,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMockedActionAbleToDeleteKey() {
-		DeletePublicKeyAction action = mock(DeletePublicKeyAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(actionFactory.createDeletePublicKeyAction(username, keyId))
 				.thenReturn(action);
 		currentAction = action;
@@ -219,7 +217,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenDeleteActionThrowingKeyNotFoundException() {
-		DeletePublicKeyAction action = mock(DeletePublicKeyAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(new KeyNotFoundException());
 
 		when(actionFactory.createDeletePublicKeyAction(username, keyId))
@@ -236,7 +234,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenActionReturningUserKey() {
-		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenReturn(publicKeyContent);
 
 		when(actionFactory.createGetPublicKeyAction(username, keyId))
@@ -268,7 +266,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenGetPublicKeyThrowingKeyNotFoundException() {
-		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(new KeyNotFoundException());
 
 		when(actionFactory.createGetPublicKeyAction(username, keyId))
@@ -290,7 +288,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenKeyInWrongFormat() {
-		GetPublicKeyAction action = mock(GetPublicKeyAction.class);
+		Action<String> action = mock(Action.class);
 		when(action.execute()).thenThrow(
 				new WrongKeyFormatException("error message"));
 

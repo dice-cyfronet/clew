@@ -5,20 +5,18 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class ListOwnedPayloadAction extends
-		ReadOnlyAirAction<List<String>> {
+public class ListOwnedPayloadAction extends OwnedPayloadAction<List<String>> {
 
 	private OwnedPayloadActions actions;
 
-	public ListOwnedPayloadAction(AirClient air, OwnedPayloadActions actions) {
-		super(air);
+	public ListOwnedPayloadAction(OwnedPayloadActionFactory actionFactory,
+			OwnedPayloadActions actions) {
+		super(actionFactory);
 		this.actions = actions;
 	}
 

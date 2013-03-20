@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
-import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.utils.FileUtils;
 import pl.cyfronet.coin.impl.utils.UrlUtils;
@@ -23,8 +23,8 @@ public class GetServicesSetAction extends ReadOnlyAirAction<String> {
 	private static final String providerTemplate = FileUtils
 			.getFileContent("services_set/provider.tpl");
 	
-	public GetServicesSetAction(AirClient air, String coinBaseUrl) {
-		super(air);
+	public GetServicesSetAction(ActionFactory actionFactory, String coinBaseUrl) {
+		super(actionFactory);
 		this.coinBaseUrl = coinBaseUrl;
 	}
 

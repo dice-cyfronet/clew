@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.WorkflowActionTest;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowActionTest;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
@@ -62,8 +62,8 @@ public class GetPortMappingsActionTest extends WorkflowActionTest {
 	}
 
 	private void whenGetAsiRedirections() {
-		Action<List<ATPortMapping>> action = new GetPortMappingsAction(air,
-				username, contextId, asiId);
+		Action<List<ATPortMapping>> action = actionFactory
+				.createGetPortMappingsAction(username, contextId, asiId);
 		portMapping = action.execute();
 	}
 

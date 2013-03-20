@@ -16,6 +16,7 @@
 package pl.cyfronet.coin.impl.action;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import javax.ws.rs.core.Response;
 
@@ -50,6 +51,8 @@ public abstract class ActionTest {
 		actionFactory.setAtmosphere(atmosphere);
 		actionFactory.setDefaultSiteId(cloudSiteId);
 		actionFactory.setDefaultPriority(defaultPriority);
+		
+		actionFactory = spy(actionFactory);
 		
 		postSetUp();
 	}

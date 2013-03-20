@@ -142,9 +142,10 @@ body {
 								<li><strong>atomicServiceId</strong> - id of the atomic
 									service used to create this instance</li>
 								<li><strong>atomicServiceName</strong> - name of the atomic
-									service used to create this instance</li>
-								<li><strong>siteId</strong> - site id where atomic service
-									instance is running</li>
+									service used to create this instance</li>	
+								<li><strong>configurationId</strong> - id of the initial configuration
+								used to start this atomic service instance</li>
+								<li><strong>siteId</strong> - site id where atomic service instance is running</li>
 								<li><strong>credential</strong> - credential allowing to
 									login into atomic service instance (not empty only in <i>development</i>
 									workflow)</li>
@@ -492,6 +493,27 @@ body {
 					instance not found, the <strong>302</strong> status code when AS
 					with given name already exists, <strong>400</strong> status code
 					and problem explanation when failed.
+				</div>
+				<h3>
+					<a href="#"><strong class="method">DELETE</strong> <strong>/as/{atomicServiceId}</strong>
+						- deletes atomic service</a>
+				</h3>
+				<div>
+					
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> Only Atomic Service owner is allowed to delete it.
+					</div>
+					
+					<ul>
+						<li><strong>atomicServiceId</strong> - atomic
+							service id</li>
+					</ul>
+					
+					The operation returns the <strong>200</strong> status code on
+					success and the <strong>404</strong> when atomic service is not found, 
+					<strong>403</strong> when user is not allowed to remove this atomic service,
+					<strong>406</strong> when there are atomic service instances created from this atomic service.
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong>

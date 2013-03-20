@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowAction;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.RunMode;
 import pl.cyfronet.dyrealla.api.allocation.impl.AddRequiredAppliancesRequestImpl;
@@ -34,9 +36,12 @@ import pl.cyfronet.dyrealla.api.allocation.impl.ApplianceIdentityImpl;
  */
 public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 
-	AtomicServiceWorkflowAction(AirClient air,
-			DyReAllaManagerService atmosphere, String username) {
-		super(air, atmosphere, username);
+	private static final Logger logger = LoggerFactory
+			.getLogger(AtomicServiceWorkflowAction.class);
+
+	public AtomicServiceWorkflowAction(ActionFactory actionFactory,
+			String username) {
+		super(actionFactory, username);
 	}
 
 	/**
@@ -49,8 +54,7 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 			List<String> names, Integer priority, WorkflowType workflowType,
 			String keyId) throws CloudFacadeException {
 		if (configIds != null && configIds.size() > 0) {
-			
-			
+
 			String[] ids = configIds.toArray(new String[0]);
 			logger.debug(
 					"Registering required atomic services in atmosphere {} with key {}",
@@ -67,7 +71,7 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 			request.setKeyPairId(getKeyPairId(runMode, keyId));
 
 			logger.debug("Request sent do atmosphere: {}", request);
-			
+
 			ManagerResponse response = getAtmosphere().addRequiredAppliances(
 					request);
 			parseResponseAndThrowExceptionsWhenNeeded(response);

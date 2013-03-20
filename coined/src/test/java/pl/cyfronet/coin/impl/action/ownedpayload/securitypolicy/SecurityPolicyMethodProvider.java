@@ -95,30 +95,32 @@ public class SecurityPolicyMethodProvider implements MethodProvider {
 	@Override
 	public Action<Class<Void>> getDeleteOwnedPayloadAction(String username,
 			String payloadName) {
-		return actionFactory.createDeleteSecurityPolicyAction(username,
-				payloadName);
+		return actionFactory.getPoliciesActionFactory().createDeleteAction(
+				username, payloadName);
 	}
 
 	@Override
 	public Action<NamedOwnedPayload> getGetOwnedPayloadAction(String payloadName) {
-		return actionFactory.createGetSecurityPolicyAction(payloadName);
+		return actionFactory.getPoliciesActionFactory().createGetAction(
+				payloadName);
 	}
 
 	@Override
 	public Action<String> getOwnedPayloadPayloadAction(String payloadName) {
-		return actionFactory.createGetSecurityPolicyPayloadAction(payloadName);
+		return actionFactory.getPoliciesActionFactory().createGetPayloadAction(
+				payloadName);
 	}
 
 	@Override
 	public Action<List<String>> getListOwnedPayloadAction() {
-		return actionFactory.createListSecurityPoliciesAction();
+		return actionFactory.getPoliciesActionFactory().createListAction();
 	}
 
 	@Override
 	public Action<Class<Void>> getNewOwnedPayloadAction(String username,
 			NamedOwnedPayload newPayload) {
-		return actionFactory
-				.createNewSecurityPolicyAction(username, newPayload);
+		return actionFactory.getPoliciesActionFactory().createNewAction(
+				username, newPayload);
 	}
 
 	private ServerWebApplicationException getAirException(int status) {
@@ -127,23 +129,23 @@ public class SecurityPolicyMethodProvider implements MethodProvider {
 	}
 
 	@Override
-	public Action<Class<Void>> createUpdateOwnedPayloadAction(
-			String username, String payloadName, OwnedPayload newPayload) {
-		return actionFactory.createUpdateSecurityPolicyAction(username,
-				payloadName, newPayload);
+	public Action<Class<Void>> createUpdateOwnedPayloadAction(String username,
+			String payloadName, OwnedPayload newPayload) {
+		return actionFactory.getPoliciesActionFactory().createUpdateAction(
+				username, payloadName, newPayload);
 	}
 
 	@Override
 	public void verifyUpdateOwnedPayload(int times, String username,
 			String payloadName, String newPayload, List<String> newOwners) {
 		verify(air, times(times)).updateSecurityPolicy(username, payloadName,
-				newPayload, newOwners);		
+				newPayload, newOwners);
 	}
 
 	@Override
 	public void throwUpdateOwnedPayloadException(int i, String differentUser,
 			String policyName, String newPayload, List<String> newOwners) {
 		doThrow(getAirException(404)).when(air).updateSecurityPolicy(
-				differentUser, policyName, newPayload, newOwners);		
+				differentUser, policyName, newPayload, newOwners);
 	}
 }

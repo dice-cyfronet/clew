@@ -15,7 +15,7 @@ import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.WorkflowActionTest;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowActionTest;
 import pl.cyfronet.coin.impl.air.client.Vms;
 
 public class AddAsiEndpointActionTest extends WorkflowActionTest {

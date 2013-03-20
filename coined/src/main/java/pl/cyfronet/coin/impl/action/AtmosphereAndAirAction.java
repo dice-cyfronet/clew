@@ -16,26 +16,18 @@
 
 package pl.cyfronet.coin.impl.action;
 
-import pl.cyfronet.coin.impl.air.client.AirClient;
-import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public abstract class AtmosphereAndAirAction<T> extends AirAction<T> {
 
-	private DyReAllaManagerService atmosphere;
 	private String username;
 
-	AtmosphereAndAirAction(AirClient air, DyReAllaManagerService atmosphere,
+	public AtmosphereAndAirAction(ActionFactory actionFactory, 
 			String username) {
-		super(air);
-		this.atmosphere = atmosphere;
+		super(actionFactory);
 		this.username = username;
-	}
-
-	protected DyReAllaManagerService getAtmosphere() {
-		return atmosphere;
 	}
 
 	protected String getUsername() {

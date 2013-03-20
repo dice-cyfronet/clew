@@ -1,7 +1,7 @@
 package pl.cyfronet.coin.impl.action.redirection;
 
 import static org.mockito.Mockito.mock;
-import pl.cyfronet.coin.impl.action.WorkflowActionTest;
+import pl.cyfronet.coin.impl.action.workflow.WorkflowActionTest;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
 

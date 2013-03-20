@@ -23,7 +23,7 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
  */
 public interface Action<T> {
 
-	T execute() throws CloudFacadeException;
+	public abstract T execute() throws CloudFacadeException;
 	
-	void rollback();
+	public abstract void rollback();
 }

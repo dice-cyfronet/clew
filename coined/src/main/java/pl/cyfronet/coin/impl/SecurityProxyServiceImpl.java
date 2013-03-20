@@ -15,12 +15,12 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 		OwnedPayloadService {
 
 	private ActionFactory actionFactory;
-	
+
 	@Public
 	@Override
 	public List<String> list() {
-		Action<List<String>> action = actionFactory
-				.createListSecurityProxiesAction();
+		Action<List<String>> action = actionFactory.getProxiesActionFactory()
+				.createListAction();
 		return action.execute();
 	}
 
@@ -28,39 +28,38 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 	@Override
 	public NamedOwnedPayload get(String name) throws NotFoundException {
 		Action<NamedOwnedPayload> action = actionFactory
-				.createGetSecurityProxyAction(name);
+				.getProxiesActionFactory().createGetAction(name);
 		return action.execute();
 	}
 
 	@Public
 	@Override
 	public String getPayload(String name) {
-		Action<String> action = actionFactory
-				.createGetSecurityProxyPayloadAction(name);
+		Action<String> action = actionFactory.getProxiesActionFactory()
+				.createGetPayloadAction(name);
 		return action.execute();
 	}
 
 	@Override
 	public void create(NamedOwnedPayload ownedPayload)
 			throws AlreadyExistsException {
-		Action<Class<Void>> action = actionFactory
-				.createNewSecurityProxyAction(getUsername(), ownedPayload);
+		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
+				.createNewAction(getUsername(), ownedPayload);
 		action.execute();
 	}
 
 	@Override
 	public void update(String name, OwnedPayload ownedPayload)
 			throws AlreadyExistsException {
-		Action<Class<Void>> action = actionFactory
-				.createUpdateSecurityProxyAction(getUsername(), name,
-						ownedPayload);
+		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
+				.createUpdateAction(getUsername(), name, ownedPayload);
 		action.execute();
 	}
 
 	@Override
 	public void delete(String name) {
-		Action<Class<Void>> action = actionFactory
-				.createDeleteSecurityProxyAction(getUsername(), name);
+		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
+				.createDeleteAction(getUsername(), name);
 		action.execute();
 	}
 
