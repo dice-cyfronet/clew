@@ -43,46 +43,50 @@ public class SecurityPolicyServiceTest extends AbstractOwnedPayloadServiceTest {
 
 	@Override
 	protected void mockListAction(Action<List<String>> action) {
-		when(actionFactory.createListSecurityPoliciesAction()).thenReturn(
-				action);
+		when(actionFactory.getPoliciesActionFactory().createListAction())
+				.thenReturn(action);
 	}
 
 	@Override
 	protected void mockGetAction(String policyName,
 			Action<NamedOwnedPayload> action) {
-		when(actionFactory.createGetSecurityPolicyAction(policyName))
-				.thenReturn(action);
+		when(
+				actionFactory.getPoliciesActionFactory().createGetAction(
+						policyName)).thenReturn(action);
 	}
 
 	@Override
 	protected void mockGetPayloadAction(String name, Action<String> action) {
-		when(actionFactory.createGetSecurityPolicyPayloadAction(name))
-				.thenReturn(action);
+		when(
+				actionFactory.getPoliciesActionFactory()
+						.createGetPayloadAction(name)).thenReturn(action);
 	}
 
 	@Override
 	protected void mockNewAction(String username, NamedOwnedPayload payload,
 			Action<Class<Void>> action) {
-		when(actionFactory.createNewSecurityPolicyAction(username, payload))
-				.thenReturn(action);
+		when(
+				actionFactory.getPoliciesActionFactory().createNewAction(
+						username, payload)).thenReturn(action);
 	}
 
 	@Override
 	protected void mockDeleteAction(String username, String name,
 			Action<Class<Void>> action) {
-		when(actionFactory.createDeleteSecurityPolicyAction(username, name))
-				.thenReturn(action);
+		when(
+				actionFactory.getPoliciesActionFactory().createDeleteAction(
+						username, name)).thenReturn(action);
 	}
 
 	@Override
 	protected void verifyNewAction(String username, NamedOwnedPayload payload) {
-		verify(actionFactory, times(1)).createNewSecurityPolicyAction(username,
-				payload);
+		verify(actionFactory.getPoliciesActionFactory(), times(1))
+				.createNewAction(username, payload);
 	}
 
 	@Override
 	protected void verifyDeleteAction(String username, String name) {
-		verify(actionFactory, times(1)).createDeleteSecurityPolicyAction(
-				username, name);
+		verify(actionFactory.getPoliciesActionFactory(), times(1))
+				.createDeleteAction(username, name);
 	}
 }

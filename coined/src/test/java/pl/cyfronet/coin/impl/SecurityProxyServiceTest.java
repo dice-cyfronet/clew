@@ -24,46 +24,50 @@ public class SecurityProxyServiceTest extends AbstractOwnedPayloadServiceTest {
 
 	@Override
 	protected void mockListAction(Action<List<String>> action) {
-		when(actionFactory.createListSecurityProxiesAction()).thenReturn(
-				action);
+		when(actionFactory.getProxiesActionFactory().createListAction())
+				.thenReturn(action);
 	}
 
 	@Override
 	protected void mockGetAction(String policyName,
 			Action<NamedOwnedPayload> action) {
-		when(actionFactory.createGetSecurityProxyAction(policyName))
-				.thenReturn(action);
+		when(
+				actionFactory.getProxiesActionFactory().createGetAction(
+						policyName)).thenReturn(action);
 	}
 
 	@Override
 	protected void mockGetPayloadAction(String name, Action<String> action) {
-		when(actionFactory.createGetSecurityProxyPayloadAction(name))
-				.thenReturn(action);
+		when(
+				actionFactory.getProxiesActionFactory().createGetPayloadAction(
+						name)).thenReturn(action);
 	}
 
 	@Override
 	protected void mockNewAction(String username, NamedOwnedPayload payload,
 			Action<Class<Void>> action) {
-		when(actionFactory.createNewSecurityProxyAction(username, payload))
-				.thenReturn(action);
+		when(
+				actionFactory.getProxiesActionFactory().createNewAction(
+						username, payload)).thenReturn(action);
 	}
 
 	@Override
 	protected void mockDeleteAction(String username, String name,
 			Action<Class<Void>> action) {
-		when(actionFactory.createDeleteSecurityProxyAction(username, name))
-				.thenReturn(action);
+		when(
+				actionFactory.getProxiesActionFactory().createDeleteAction(
+						username, name)).thenReturn(action);
 	}
 
 	@Override
 	protected void verifyNewAction(String username, NamedOwnedPayload payload) {
-		verify(actionFactory, times(1)).createNewSecurityProxyAction(username,
-				payload);
+		verify(actionFactory.getProxiesActionFactory(), times(1))
+				.createNewAction(username, payload);
 	}
 
 	@Override
 	protected void verifyDeleteAction(String username, String name) {
-		verify(actionFactory, times(1)).createDeleteSecurityProxyAction(
-				username, name);
+		verify(actionFactory.getProxiesActionFactory(), times(1))
+				.createDeleteAction(username, name);
 	}
 }

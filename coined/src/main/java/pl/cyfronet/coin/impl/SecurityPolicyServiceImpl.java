@@ -37,8 +37,8 @@ public class SecurityPolicyServiceImpl extends UsernameAwareService implements
 	@Public
 	@Override
 	public List<String> list() {
-		Action<List<String>> action = actionFactory
-				.createListSecurityPoliciesAction();
+		Action<List<String>> action = actionFactory.getPoliciesActionFactory()
+				.createListAction();
 		return action.execute();
 	}
 
@@ -46,39 +46,38 @@ public class SecurityPolicyServiceImpl extends UsernameAwareService implements
 	@Override
 	public NamedOwnedPayload get(String name) throws NotFoundException {
 		Action<NamedOwnedPayload> action = actionFactory
-				.createGetSecurityPolicyAction(name);
+				.getPoliciesActionFactory().createGetAction(name);
 		return action.execute();
 	}
 
 	@Public
 	@Override
 	public String getPayload(String name) {
-		Action<String> action = actionFactory
-				.createGetSecurityPolicyPayloadAction(name);
+		Action<String> action = actionFactory.getPoliciesActionFactory()
+				.createGetPayloadAction(name);
 		return action.execute();
 	}
 
 	@Override
 	public void create(NamedOwnedPayload ownedPayload)
 			throws AlreadyExistsException {
-		Action<Class<Void>> action = actionFactory
-				.createNewSecurityPolicyAction(getUsername(), ownedPayload);
+		Action<Class<Void>> action = actionFactory.getPoliciesActionFactory()
+				.createNewAction(getUsername(), ownedPayload);
 		action.execute();
 	}
 
 	@Override
 	public void update(String name, OwnedPayload ownedPayload)
 			throws AlreadyExistsException {
-		Action<Class<Void>> action = actionFactory
-				.createUpdateSecurityPolicyAction(getUsername(), name,
-						ownedPayload);
+		Action<Class<Void>> action = actionFactory.getPoliciesActionFactory()
+				.createUpdateAction(getUsername(), name, ownedPayload);
 		action.execute();
 	}
 
 	@Override
 	public void delete(String name) {
-		Action<Class<Void>> action = actionFactory
-				.createDeleteSecurityPolicyAction(getUsername(), name);
+		Action<Class<Void>> action = actionFactory.getPoliciesActionFactory()
+				.createDeleteAction(getUsername(), name);
 		action.execute();
 	}
 

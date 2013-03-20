@@ -22,9 +22,7 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.InvocationPathInfo;
-import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
-import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -171,71 +169,14 @@ public class ActionFactory {
 	}
 
 	// policy files
-	private OwnedPayloadActionFactory getPoliciesActionFactory() {
+	public OwnedPayloadActionFactory getPoliciesActionFactory() {
 		return new OwnedPayloadActionFactory(new SecurityPolicyActions(air));
 	}
 
-	public Action<List<String>> createListSecurityPoliciesAction() {
-		return getPoliciesActionFactory().createListAction();
-	}
-
-	public Action<NamedOwnedPayload> createGetSecurityPolicyAction(String name) {
-		return getPoliciesActionFactory().createGetAction(name);
-	}
-
-	public Action<String> createGetSecurityPolicyPayloadAction(String name) {
-		return getPoliciesActionFactory().createGetPayloadAction(name);
-	}
-
-	public Action<Class<Void>> createNewSecurityPolicyAction(String username,
-			NamedOwnedPayload securityPolicy) {
-		return getPoliciesActionFactory().createNewAction(username,
-				securityPolicy);
-	}
-
-	public Action<Class<Void>> createUpdateSecurityPolicyAction(
-			String username, String name, OwnedPayload ownedPayload) {
-		return getPoliciesActionFactory().createUpdateAction(username, name,
-				ownedPayload);
-	}
-
-	public Action<Class<Void>> createDeleteSecurityPolicyAction(
-			String username, String name) {
-		return getPoliciesActionFactory().createDeleteAction(username, name);
-	}
-
 	// security proxy configurations
-	private OwnedPayloadActionFactory getProxiesActionFactory() {
+	
+	public OwnedPayloadActionFactory getProxiesActionFactory() {
 		return new OwnedPayloadActionFactory(new SecurityProxyActions(air));
-	}
-
-	public Action<List<String>> createListSecurityProxiesAction() {
-		return getProxiesActionFactory().createListAction();
-	}
-
-	public Action<NamedOwnedPayload> createGetSecurityProxyAction(String name) {
-		return getProxiesActionFactory().createGetAction(name);
-	}
-
-	public Action<String> createGetSecurityProxyPayloadAction(String name) {
-		return getProxiesActionFactory().createGetPayloadAction(name);
-	}
-
-	public Action<Class<Void>> createNewSecurityProxyAction(String username,
-			NamedOwnedPayload ownedPayload) {
-		return getProxiesActionFactory()
-				.createNewAction(username, ownedPayload);
-	}
-
-	public Action<Class<Void>> createUpdateSecurityProxyAction(String username,
-			String name, OwnedPayload ownedPayload) {
-		return getProxiesActionFactory().createUpdateAction(username, name,
-				ownedPayload);
-	}
-
-	public Action<Class<Void>> createDeleteSecurityProxyAction(String username,
-			String name) {
-		return getProxiesActionFactory().createDeleteAction(username, name);
 	}
 
 	// keys
