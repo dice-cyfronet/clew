@@ -142,7 +142,7 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 	}
 
 	private void stopWorkflow() {
-		new StopWorkflowAction(getActionFactory(), contextId, getUsername())
+		getActionFactory().createStopWorkflowAction(contextId, getUsername())
 				.execute();
 	}
 }
