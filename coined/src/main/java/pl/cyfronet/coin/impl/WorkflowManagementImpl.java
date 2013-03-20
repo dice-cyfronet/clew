@@ -85,7 +85,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 				"Adding atomic service {} to worklow {} with given name {} and key id {}",
 				new Object[] { asId, contextId, name, keyId });
 		Action<String> action = actionFactory.createStartAtomicServiceAction(
-				asId, name, contextId, getUsername(), keyId);
+				getUsername(), asId, name, contextId, keyId);
 		action.execute();
 	}
 

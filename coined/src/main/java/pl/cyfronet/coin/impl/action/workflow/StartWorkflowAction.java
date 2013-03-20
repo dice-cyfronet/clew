@@ -27,6 +27,7 @@ import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtomicServiceWorkflowAction;
 
@@ -112,9 +113,9 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 
 		if (ids != null && ids.size() > 0) {
 			try {
-				StartAtomicServiceAction startASAction = new StartAtomicServiceAction(
-						getActionFactory(), getUsername(), ids, ids, contextId,
-						priority, workflow.getKeyId());
+				Action<String> startASAction = getActionFactory()
+						.createStartAtomicServiceAction(getUsername(), ids,
+								ids, contextId, priority, workflow.getKeyId());
 				startASAction.execute();
 			} catch (CloudFacadeException e) {
 				rollback();

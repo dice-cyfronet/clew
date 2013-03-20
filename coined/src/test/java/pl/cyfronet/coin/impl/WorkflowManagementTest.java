@@ -51,7 +51,6 @@ import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
-import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -377,11 +376,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenMocketAddAtomicServiceToWorkflowAction() {
-		StartAtomicServiceAction action = mock(StartAtomicServiceAction.class);
+		Action<String> action = mock(Action.class);
 		when(
-				actionFactory.createStartAtomicServiceAction(atomicServiceId,
-						asName, contextId, username, keyName)).thenReturn(
-				action);
+				actionFactory.createStartAtomicServiceAction(username,
+						atomicServiceId, asName, contextId, keyName))
+				.thenReturn(action);
 		currentAction = action;
 	}
 

@@ -161,11 +161,18 @@ public class ActionFactory {
 		return new GetUserWorkflowAction(this, workflowId, username);
 	}
 
-	public Action<String> createStartAtomicServiceAction(
+	public Action<String> createStartAtomicServiceAction(String username,
 			String atomicServiceId, String asName, String contextId,
-			String username, String keyName) {
+			String keyName) {
 		return new StartAtomicServiceAction(this, username, atomicServiceId,
 				asName, contextId, defaultPriority, keyName);
+	}
+
+	public Action<String> createStartAtomicServiceAction(
+			String username, List<String> ids, List<String> names,
+			String contextId, Integer priority, String keyId) {
+		return new StartAtomicServiceAction(this, username, ids, names,
+				contextId, priority, keyId);
 	}
 
 	// policy files
