@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.BaseAction;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
@@ -34,7 +34,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public class CreateAtomicServiceInAirAction extends Action<String> {
+public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(CreateAtomicServiceInAirAction.class);

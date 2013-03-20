@@ -6,13 +6,13 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
-import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.BaseAction;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
 import pl.cyfronet.dyrealla.api.RemoveTemplatesResponse;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 
-public class DeleteAtomicServiceAction extends Action<Class<Void>> {
+public class DeleteAtomicServiceAction extends BaseAction<Class<Void>> {
 
 	ActionFactory actionFactory;
 	private String asId;
