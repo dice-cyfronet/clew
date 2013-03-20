@@ -40,7 +40,7 @@ public abstract class WorkflowAction<T> extends AtmosphereAndAirAction<T> {
 	}
 
 	protected WorkflowDetail getUserWorkflow(String contextId, String username) {
-		return new GetWorkflowDetailAction(getActionFactory(), contextId,
+		return getActionFactory().createGetWorkflowDetailAction(contextId,
 				username).execute();
 	}
 

@@ -26,7 +26,6 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.action.workflow.GetWorkflowDetailAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
@@ -60,8 +59,8 @@ public class GetAsiRedirectionsAction extends
 	@Override
 	public List<Redirection> execute() throws CloudFacadeException {
 		List<Redirection> redirections = new ArrayList<>();
-		Action<WorkflowDetail> getWfDetailAct = new GetWorkflowDetailAction(
-				getActionFactory(), contextId, username);
+		Action<WorkflowDetail> getWfDetailAct = getActionFactory()
+				.createGetWorkflowDetailAction(contextId, username);
 		WorkflowDetail wfd = getWfDetailAct.execute();
 		if (wfd.getVms() == null || wfd.getVms().isEmpty()) {
 			return redirections;

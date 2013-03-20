@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.impl.action;
+package pl.cyfronet.coin.impl.action.workflow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,8 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.workflow.GetWorkflowDetailAction;
+import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -36,7 +37,7 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 	private String contextId;
 	private String username;
 
-	GetUserWorkflowAction(ActionFactory actionFactory, String contextId,
+	public GetUserWorkflowAction(ActionFactory actionFactory, String contextId,
 			String username) {
 		super(actionFactory);
 		this.contextId = contextId;
@@ -85,7 +86,7 @@ public class GetUserWorkflowAction extends ReadOnlyAirAction<Workflow> {
 	}
 
 	private WorkflowDetail getUserWorkflow() {
-		return new GetWorkflowDetailAction(getActionFactory(), contextId,
+		return getActionFactory().createGetWorkflowDetailAction(contextId,
 				username).execute();
 	}
 

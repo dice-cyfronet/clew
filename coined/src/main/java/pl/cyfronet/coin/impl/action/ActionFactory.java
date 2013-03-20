@@ -58,13 +58,16 @@ import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
+import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowsAction;
+import pl.cyfronet.coin.impl.action.workflow.GetWorkflowDetailAction;
 import pl.cyfronet.coin.impl.action.workflow.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.workflow.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StopWorkflowAction;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
@@ -135,6 +138,11 @@ public class ActionFactory {
 	public Action<List<WorkflowBaseInfo>> createGetUserWorkflowsAction(
 			String username) {
 		return new GetUserWorkflowsAction(this, username);
+	}
+
+	public Action<WorkflowDetail> createGetWorkflowDetailAction(
+			String contextId, String username) {
+		return new GetWorkflowDetailAction(this, contextId, username);
 	}
 
 	public Action<Class<Void>> createStopWorkflowAction(String contextId,
