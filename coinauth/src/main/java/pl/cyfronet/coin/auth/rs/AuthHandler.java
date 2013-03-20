@@ -23,24 +23,29 @@ public abstract class AuthHandler implements RequestHandler {
 
 	@Override
 	public Response handleRequest(Message m, ClassResourceInfo resourceClass) {
-		Method method = getTargetMethod(m);
+		try {
+			Method method = getTargetMethod(m);
 
-		logger.debug(
-				"trying to {} user for {} method with following annotations {}",
-				new Object[] {getPhaseName(), method, method.getAnnotations()});
+			logger.debug(
+					"trying to {} user for {} method with following annotations {}",
+					new Object[] { getPhaseName(), method,
+							method.getAnnotations() });
 
-		if (isPublic(method)) {
-			return null;
+			if (isPublic(method)) {
+				return null;
+			}
+
+			return internalHandleRequest(m, resourceClass, method);
+		} catch (AccessDeniedException e) {
+			return Response.status(404).build();
 		}
-
-		return internalHandleRequest(m, resourceClass, method);
 	}
 
 	protected abstract Response internalHandleRequest(Message m,
 			ClassResourceInfo resourceClass, Method method);
 
 	protected abstract String getPhaseName();
-	
+
 	private Method getTargetMethod(Message m) {
 		BindingOperationInfo bop = m.getExchange().get(
 				BindingOperationInfo.class);

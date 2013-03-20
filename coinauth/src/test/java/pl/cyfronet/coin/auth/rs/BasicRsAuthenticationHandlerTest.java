@@ -6,7 +6,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
+import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.BeforeMethod;
@@ -65,5 +67,18 @@ public class BasicRsAuthenticationHandlerTest extends AuthHandlerTest {
 	private void thenAuthenticationInvoked() {
 		verify(authentication, times(2)).isAuthenticated(eq("User123"),
 				eq("password"));
+	}
+	
+	@Test
+	public void shouldThrow404WhenMethodNotFound() throws Exception {
+		try {
+			whenInvokeNonExistingMethod();
+		} catch (ServerWebApplicationException e) {
+			assertEquals(e.getStatus(), 404);
+		}
+	}
+
+	private void whenInvokeNonExistingMethod() {
+		client.nonExisting();
 	}
 }

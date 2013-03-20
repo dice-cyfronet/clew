@@ -31,7 +31,7 @@
 	<mockito:mock id="authService" class="pl.cyfronet.coin.auth.AuthService" />
 	
 	<jaxrs:client id="client" address="http://0.0.0.0:10002/service"
-		serviceClass="pl.cyfronet.coin.auth.RestService"
+		serviceClass="pl.cyfronet.coin.auth.RestServiceExt"
 		username="User123" password="ticket"
 		inheritHeaders="true">				
 	</jaxrs:client>
