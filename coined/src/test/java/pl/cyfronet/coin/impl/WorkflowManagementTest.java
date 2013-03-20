@@ -16,7 +16,7 @@
 package pl.cyfronet.coin.impl;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -51,7 +51,6 @@ import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
-import pl.cyfronet.coin.impl.action.workflow.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 
@@ -66,6 +65,7 @@ import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 		"classpath:rest-test-workflow-management-client.xml",
 		"classpath:META-INF/spring/rest-services.xml"} )
 //@formatter:on
+@SuppressWarnings("unchecked")
 public class WorkflowManagementTest extends AbstractServiceTest {
 
 	@Autowired
@@ -298,11 +298,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASIFromWorkflowSuccess() {
-		RemoveASIFromWorkflowAction action = mock(RemoveASIFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		givenRemoveASIAction(action);
 	}
 
-	private void givenRemoveASIAction(RemoveASIFromWorkflowAction action) {
+	private void givenRemoveASIAction(Action<Class<Void>> action) {
 		when(
 				actionFactory.createRemoveASIFromWorkflowAction(username,
 						contextId, asiId)).thenReturn(action);
@@ -332,7 +332,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenRemoveASIError(CloudFacadeException exception) {
-		RemoveASIFromWorkflowAction action = mock(RemoveASIFromWorkflowAction.class);
+		Action<Class<Void>> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 		givenRemoveASIAction(action);
 	}
