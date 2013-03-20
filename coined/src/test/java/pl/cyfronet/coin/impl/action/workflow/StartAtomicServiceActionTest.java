@@ -32,7 +32,6 @@ import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
@@ -40,6 +39,7 @@ import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
+@SuppressWarnings("unchecked")
 public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	private String name = "asIdName";
@@ -147,11 +147,11 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 			thenVerifyRequestSendToAtmosphereAndTmpASRemove();
 		}
 	}
-
+	
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
 		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.FAILED);
 
-		removeASAction = mock(DeleteAtomicServiceFromAirAction.class);
+		removeASAction = mock(Action.class);
 		when(actionFactory.createDeleteAtomicServiceFromAirAction(devAsId))
 				.thenReturn(removeASAction);
 	}

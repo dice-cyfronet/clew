@@ -15,6 +15,7 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
@@ -30,8 +31,10 @@ import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.impl.action.as.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceAction;
+import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
+import pl.cyfronet.coin.impl.action.as.GetASITypeAction;
 import pl.cyfronet.coin.impl.action.as.GetAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.GetEndpointPayloadAction;
 import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
@@ -48,6 +51,9 @@ import pl.cyfronet.coin.impl.action.key.ListUserKeysAction;
 import pl.cyfronet.coin.impl.action.ownedpayload.OwnedPayloadActionFactory;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityPolicyActions;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.SecurityProxyActions;
+import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
+import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
+import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
@@ -59,7 +65,9 @@ import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowActi
 import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.workflow.StartWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StopWorkflowAction;
+import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AirClient;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaManagerService;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
@@ -96,13 +104,29 @@ public class ActionFactory {
 
 	public Action<Class<Void>> createDeleteAtomicServiceFromAirAction(
 			String atomicServiceId) {
-		return new DeleteAtomicServiceFromAirAction(this, atomicServiceId);
+		return createDeleteAtomicServiceFromAirAction(Arrays
+				.asList(atomicServiceId));
+	}
+
+	public Action<Class<Void>> createDeleteAtomicServiceFromAirAction(
+			List<String> asesToRemove) {
+		return new DeleteAtomicServiceFromAirAction(this, asesToRemove);
 	}
 
 	public Action<String> createCreateAtomicServiceAction(String username,
 			NewAtomicService newAtomicService) {
 		return new CreateAtomicServiceAction(this, username, defaultSiteId,
 				newAtomicService);
+	}
+
+	public Action<String> createCreateAtomicServiceInAirAction(String username,
+			ApplianceType atomicService) {
+		return new CreateAtomicServiceInAirAction(this, username, atomicService);
+	}
+
+	public Action<String> createCreateAtomicServiceInAirAction(String username,
+			ApplianceType baseAS, String id) {
+		return new CreateAtomicServiceInAirAction(this, username, baseAS, id);
 	}
 
 	public Action<List<InitialConfiguration>> createListInitialConfigurationsAction(
@@ -126,6 +150,10 @@ public class ActionFactory {
 	public Action<AtomicService> createGetAtomicServiceAction(
 			String atomicServiceId) {
 		return new GetAtomicServiceAction(this, atomicServiceId);
+	}
+
+	public Action<ApplianceType> createGetASITypeAction(String instanceId) {
+		return new GetASITypeAction(this, instanceId);
 	}
 
 	public Action<List<WorkflowBaseInfo>> createGetUserWorkflowsAction(
@@ -265,6 +293,23 @@ public class ActionFactory {
 	public Action<InvocationPathInfo> createGetInvocationPathInfo(
 			String atomicServiceId, String serviceName) {
 		return new GetInvocationPathInfo(this, atomicServiceId, serviceName);
+	}
+
+	// port mapping
+
+	public Action<String> createAddPortMappingAction(String asId,
+			String serviceName, int port, boolean http) {
+		return new AddPortMappingAction(this, asId, serviceName, port, http);
+	}
+
+	public Action<List<ATPortMapping>> createGetPortMappingsAction(
+			String username, String contextId, String asiId) {
+		return new GetPortMappingsAction(this, username, contextId, asiId);
+	}
+
+	public Action<Class<Void>> createRemovePortMappingAction(
+			String redirectionId) {
+		return new RemovePortMappingAction(this, redirectionId);
 	}
 
 	// setters

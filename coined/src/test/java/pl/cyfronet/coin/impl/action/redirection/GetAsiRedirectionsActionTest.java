@@ -52,6 +52,12 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 
 	private List<Redirection> redirections = null;
 
+	@Override
+	protected void postSetUp() {
+		actionFactory.setProxyHost(PROXY_HOST);
+		actionFactory.setProxyPort(PROXY_PORT);
+	}
+
 	@Test
 	public void shouldGetAsiRedirections() {
 		givenAsiRedirectionsInAIR();
@@ -133,8 +139,8 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	}
 
 	private void whenGetAsiRedirections() {
-		Action<List<Redirection>> action = new GetAsiRedirectionsAction(
-				actionFactory, CTX_ID, USERNAME, ASI_ID, PROXY_HOST, PROXY_PORT);
+		Action<List<Redirection>> action = actionFactory
+				.createGetAsiRedirectionsAction(CTX_ID, USERNAME, ASI_ID);
 		redirections = action.execute();
 	}
 

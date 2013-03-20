@@ -22,8 +22,8 @@ public class RemovePortMappingActionTest extends ActionTest {
 	}
 
 	private void whenRemovePortMapping() {
-		Action<Class<Void>> action = new RemovePortMappingAction(actionFactory,
-				redirectionId);
+		Action<Class<Void>> action = actionFactory
+				.createRemovePortMappingAction(redirectionId);
 		action.execute();
 	}
 

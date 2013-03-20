@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtmosphereAndAirAction;
 import pl.cyfronet.coin.impl.utils.PublicKeyUtils;
@@ -70,8 +71,8 @@ public class AddPublicKeyAction extends AtmosphereAndAirAction<String> {
 	public void rollback() {
 		if (addedKeyId != null) {
 			try {
-				DeletePublicKeyAction action = new DeletePublicKeyAction(
-						getActionFactory(), getUsername(), addedKeyId);
+				Action<Class<Void>> action = getActionFactory()
+						.createDeletePublicKeyAction(getUsername(), addedKeyId);
 				action.execute();
 			} catch (Exception e) {
 				logger.warn("Unable to rollback", e);

@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
@@ -43,7 +44,7 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	private String createdAsId;
 	private String asAirId = "as123";
 	private AddAtomicServiceMatcher matcher;
-	private CreateAtomicServiceInAirAction action;
+	private Action<String> action;
 
 	/**
 	 * #1021
@@ -115,7 +116,8 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 	}
 
 	private void whenAddAtomicServiceToAir() {
-		action = new CreateAtomicServiceInAirAction(actionFactory, username, at);
+		action = actionFactory.createCreateAtomicServiceInAirAction(username,
+				at);
 		createdAsId = action.execute();
 	}
 

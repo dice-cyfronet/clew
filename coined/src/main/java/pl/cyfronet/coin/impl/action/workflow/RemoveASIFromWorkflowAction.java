@@ -20,8 +20,8 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceFromAirAction;
 import pl.cyfronet.coin.impl.action.as.GetASITypeAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
@@ -51,15 +51,15 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		if (workflowInDevelopmentModeHasASI()) {
-			ApplianceType at = new GetASITypeAction(getActionFactory(), asiId)
+			ApplianceType at = getActionFactory().createGetASITypeAction(asiId)
 					.execute();
 
 			ManagerResponse response = getAtmosphere().removeAppliance(asiId);
 			parseResponseAndThrowExceptionsWhenNeeded(response);
 
 			if (at.isDevelopment()) {
-				DeleteAtomicServiceFromAirAction deleteASAction = new DeleteAtomicServiceFromAirAction(
-						getActionFactory(), at.getId());
+				Action<Class<Void>> deleteASAction = getActionFactory()
+						.createDeleteAtomicServiceFromAirAction(at.getId());
 				deleteASAction.execute();
 			}
 		} else {

@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionTest;
-import pl.cyfronet.coin.impl.action.as.GetASITypeAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 public class GetASITypeActionTest extends ActionTest {
@@ -34,8 +33,8 @@ public class GetASITypeActionTest extends ActionTest {
 	}
 
 	private void whenGetASIType() {
-		Action<ApplianceType> action = new GetASITypeAction(actionFactory,
-				instanceId);
+		Action<ApplianceType> action = actionFactory
+				.createGetASITypeAction(instanceId);
 		type = action.execute();
 	}
 

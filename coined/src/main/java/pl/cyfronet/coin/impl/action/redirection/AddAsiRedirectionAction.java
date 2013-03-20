@@ -10,7 +10,6 @@ import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.portmapping.AddPortMappingAction;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
@@ -52,7 +51,7 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 		String atId = getAsiApplianceType();
 		logger.debug("Adding port mapping into {} AT: {} port {} http {}",
 				new Object[] { atId, serviceName, port, http });
-		String redirectionId = new AddPortMappingAction(getActionFactory(),
+		String redirectionId = getActionFactory().createAddPortMappingAction(
 				atId, serviceName, port, http).execute();
 
 		logger.debug("Added redirection id {}", redirectionId);

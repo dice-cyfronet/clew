@@ -22,6 +22,7 @@ import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtmosphereAndAirAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -38,7 +39,7 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 
 	private String defaultSiteId;
 	private NewAtomicService newAtomicService;
-	private CreateAtomicServiceInAirAction addASToAirAction;
+	private Action<String> addASToAirAction;
 
 	// private String templateId;
 
@@ -76,7 +77,7 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 				newAtomicService, newAtomicService.getSourceAsiId(),
 				defaultSiteId });
 
-		ApplianceType at = new GetASITypeAction(getActionFactory(),
+		ApplianceType at = getActionFactory().createGetASITypeAction(
 				asInstanceId).execute();
 
 		at.setName(newAtomicService.getName());
@@ -84,8 +85,8 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		at.setDevelopment(false);
 		at.setPublished(true);
 
-		addASToAirAction = new CreateAtomicServiceInAirAction(
-				getActionFactory(), getUsername(), at);
+		addASToAirAction = getActionFactory()
+				.createCreateAtomicServiceInAirAction(getUsername(), at);
 
 		String atomicServiceId = addASToAirAction.execute();
 
