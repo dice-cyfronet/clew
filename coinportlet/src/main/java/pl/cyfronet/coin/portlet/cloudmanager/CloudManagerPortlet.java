@@ -435,22 +435,9 @@ public class CloudManagerPortlet {
 							webAppEndpoints.add(endpoint);
 
 							//temporary fix to pass NoMachine port
-							if(endpoint.getInvocationPath().equals("/nx")) {
-								Workflow wf = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
-								List<Redirection> redirects = null;
-								
-								if(wf != null && wf.getAtomicServiceInstances() != null) {
-									for(AtomicServiceInstance asi : wf.getAtomicServiceInstances()) {
-										if(asi.getId() != null && asi.getId().equals(atomicServiceInstanceId)) {
-											redirects = asi.getRedirections();
-											
-											break;
-										}
-									}
-								}
-								
-								if(redirects != null) {
-									for(Redirection redirect : redirects) {
+							if(endpoint.getInvocationPath().contains("/plugin")) {
+								if(redirections != null) {
+									for(Redirection redirect : redirections) {
 										if(redirect.getName().equalsIgnoreCase("ssh")) {
 											model.addAttribute("additionalQuery", "?nxport=" + redirect.getFromPort() +
 													"&nxhost=" + redirect.getHost());
