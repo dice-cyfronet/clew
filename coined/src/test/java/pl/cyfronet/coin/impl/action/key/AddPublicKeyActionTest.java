@@ -16,11 +16,13 @@
 
 package pl.cyfronet.coin.impl.action.key;
 
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
-import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -98,9 +100,7 @@ public class AddPublicKeyActionTest extends ActionTest {
 	private void givenAirThrown409WhenAddingKeyWithExistingName() {
 		when(
 				air.addKey(username, keyName, publicKeyContent.trim(),
-						fingerprint)).thenThrow(
-				new ServerWebApplicationException(new ResponseBuilderImpl()
-						.status(409).build()));
+						fingerprint)).thenThrow(getAirException(409));
 	}
 
 	@Test

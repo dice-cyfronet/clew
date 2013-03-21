@@ -18,7 +18,8 @@ package pl.cyfronet.coin.impl.action.as;
 
 import java.util.List;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,10 +55,10 @@ public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 					atomicServiceId);
 			try {
 				getAir().deleteAtomicService(atomicServiceId, true);
-			} catch (ServerWebApplicationException e) {
-				if (e.getStatus() == 404) {
+			} catch (WebApplicationException e) {
+				if (e.getResponse().getStatus() == 404) {
 					throw new AtomicServiceNotFoundException();
-				} else if (e.getStatus() == 400) {
+				} else if (e.getResponse().getStatus() == 400) {
 					throw new NotAcceptableException(e.getMessage());
 				}
 				throw new CloudFacadeException(e.getMessage());

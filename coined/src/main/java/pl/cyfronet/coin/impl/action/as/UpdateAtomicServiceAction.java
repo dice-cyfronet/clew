@@ -1,6 +1,6 @@
 package pl.cyfronet.coin.impl.action.as;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
 
 import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -49,8 +49,8 @@ public class UpdateAtomicServiceAction extends AirAction<Class<Void>> {
 					updatedAs.getShared()));
 			try {
 				getAir().updateAtomicService(asId, updatedAsRequest);
-			} catch (ServerWebApplicationException e) {
-				if (e.getStatus() == 400) {
+			} catch (WebApplicationException e) {
+				if (e.getResponse().getStatus() == 400) {
 					throw new NotAllowedException(e.getMessage());
 				}
 				throw new CloudFacadeException(e.getMessage());

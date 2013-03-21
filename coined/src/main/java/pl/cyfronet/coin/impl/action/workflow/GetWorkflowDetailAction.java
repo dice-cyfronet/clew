@@ -15,7 +15,7 @@
  */
 package pl.cyfronet.coin.impl.action.workflow;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
@@ -55,7 +55,7 @@ public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail> {
 				// workflow is not found or it depends to other user.
 				throw new WorkflowNotFoundException();
 			}
-		} catch (ServerWebApplicationException e) {
+		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
 				throw new WorkflowNotFoundException();
 			} else {

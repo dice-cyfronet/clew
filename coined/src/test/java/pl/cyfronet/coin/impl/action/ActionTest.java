@@ -18,9 +18,9 @@ package pl.cyfronet.coin.impl.action;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.testng.annotations.BeforeMethod;
 
 import pl.cyfronet.coin.impl.air.client.AirClient;
@@ -36,33 +36,32 @@ public abstract class ActionTest {
 	protected DyReAllaManagerService atmosphere;
 
 	protected ActionFactory actionFactory;
-	
+
 	protected String cloudSiteId = "siteId";
-	
+
 	protected Integer defaultPriority = 40;
-	
+
 	@BeforeMethod
 	protected void setUp() {
 		air = mock(AirClient.class);
 		atmosphere = mock(DyReAllaManagerService.class);
-		
+
 		actionFactory = new ActionFactory();
 		actionFactory.setAir(air);
 		actionFactory.setAtmosphere(atmosphere);
 		actionFactory.setDefaultSiteId(cloudSiteId);
 		actionFactory.setDefaultPriority(defaultPriority);
-		
+
 		actionFactory = spy(actionFactory);
-		
+
 		postSetUp();
 	}
-	
+
 	protected void postSetUp() {
-		
+
 	}
-	
-	protected ServerWebApplicationException getAirException(int status) {
-		return new ServerWebApplicationException(Response.status(status)
-				.build());
+
+	protected WebApplicationException getAirException(int status) {
+		return new WebApplicationException(Response.status(status).build());
 	}
 }

@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
-import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
@@ -117,8 +115,6 @@ public class ListUserKeysActionTest extends ActionTest {
 	}
 
 	private void givenAirWithoutUser() {
-		when(air.getUserKeys(vphUsername)).thenThrow(
-				new ServerWebApplicationException(new ResponseBuilderImpl()
-						.status(400).build()));
+		when(air.getUserKeys(vphUsername)).thenThrow(getAirException(400));
 	}
 }

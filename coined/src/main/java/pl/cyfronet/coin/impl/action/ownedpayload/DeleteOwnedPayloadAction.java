@@ -1,6 +1,6 @@
 package pl.cyfronet.coin.impl.action.ownedpayload;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
 
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -31,13 +31,13 @@ public class DeleteOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 		loadOldPolicyPayload();
 		try {
 			actions.deleteOwnedPayload(username, ownedPayloadName);
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 404) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 404) {
 				throw new NotAllowedException();
 			}
 			throw new CloudFacadeException(
 					"Error while deleting security policy from Air, response code"
-							+ e.getStatus());
+							+ e.getResponse().getStatus());
 		}
 
 		return Void.TYPE;
