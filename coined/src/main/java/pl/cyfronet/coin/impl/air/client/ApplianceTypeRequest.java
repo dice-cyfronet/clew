@@ -1,7 +1,7 @@
 package pl.cyfronet.coin.impl.air.client;
 
 
-public class AtomicServiceRequest {
+public class ApplianceTypeRequest {
 
 private String client;
 	

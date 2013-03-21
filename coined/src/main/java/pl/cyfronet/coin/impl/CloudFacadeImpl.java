@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
@@ -150,10 +151,24 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	@Override
 	public void deleteAtomicService(String atomicServiceId)
 			throws AtomicServiceNotFoundException, NotAcceptableException,
-			NotAllowedException {
+			NotAllowedException {		
 		Action<Class<Void>> action = actionFactory
 				.createDeleteAtomicServiceAction(getUsername(),
 						atomicServiceId, hasRole(ADMIN_ROLE));
+		action.execute();
+	}
+
+	@Override
+	public void updateAtomicService(String atomicServiceId,
+			AtomicServiceRequest updateRequest)
+			throws AtomicServiceNotFoundException, NotAcceptableException,
+			NotAllowedException {
+		logger.debug("Updating atomic service %s %s", atomicServiceId,
+				updateRequest);
+		
+		Action<Class<Void>> action = actionFactory
+				.createUpdateAtomicServiceAction(getUsername(),
+						atomicServiceId, updateRequest, hasRole(ADMIN_ROLE));
 		action.execute();
 	}
 }

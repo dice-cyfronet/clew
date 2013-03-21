@@ -20,6 +20,7 @@ import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.InvocationPathInfo;
@@ -41,6 +42,7 @@ import pl.cyfronet.coin.impl.action.as.GetInvocationPathInfo;
 import pl.cyfronet.coin.impl.action.as.GetServicesSetAction;
 import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
 import pl.cyfronet.coin.impl.action.as.ListInitialConfigurationsAction;
+import pl.cyfronet.coin.impl.action.as.UpdateAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.endpoint.AddAsiEndpointAction;
 import pl.cyfronet.coin.impl.action.endpoint.ListAsiEndpointsAction;
 import pl.cyfronet.coin.impl.action.endpoint.RemoveAsiEndpointAction;
@@ -117,6 +119,13 @@ public class ActionFactory {
 			NewAtomicService newAtomicService) {
 		return new CreateAtomicServiceAction(this, username, defaultSiteId,
 				newAtomicService);
+	}
+
+	public Action<Class<Void>> createUpdateAtomicServiceAction(
+			String username, String asId, AtomicServiceRequest updatedAs,
+			boolean admin) {
+		return new UpdateAtomicServiceAction(this, username, asId, updatedAs,
+				admin);
 	}
 
 	public Action<String> createCreateAtomicServiceInAirAction(String username,
@@ -202,7 +211,7 @@ public class ActionFactory {
 	}
 
 	// security proxy configurations
-	
+
 	public OwnedPayloadActionFactory getProxiesActionFactory() {
 		return new OwnedPayloadActionFactory(new SecurityProxyActions(air));
 	}

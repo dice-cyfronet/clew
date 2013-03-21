@@ -21,6 +21,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,6 +29,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.InvocationPathInfo;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
@@ -75,6 +77,22 @@ public interface CloudFacade {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	String createAtomicService(NewAtomicService newAtomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException;
+
+	@PUT
+	@Path("/{atomicServiceId}")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	void updateAtomicService(
+			@PathParam("atomicServiceId") String atomicServiceId,
+			AtomicServiceRequest updateRequest)
+			throws AtomicServiceNotFoundException, NotAcceptableException,
+			NotAllowedException;
+	
+	@DELETE
+	@Path("/{atomicServiceId}")
+	void deleteAtomicService(
+			@PathParam("atomicServiceId") String atomicServiceId)
+			throws AtomicServiceNotFoundException, NotAcceptableException,
+			NotAllowedException;
 
 	/**
 	 * Create new initial configuration for atomic service. The initial
@@ -132,11 +150,4 @@ public interface CloudFacade {
 			@PathParam("invocationPath") String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException;
-
-	@DELETE
-	@Path("/{atomicServiceId}")
-	void deleteAtomicService(
-			@PathParam("atomicServiceId") String atomicServiceId)
-			throws AtomicServiceNotFoundException, NotAcceptableException,
-			NotAllowedException;
 }

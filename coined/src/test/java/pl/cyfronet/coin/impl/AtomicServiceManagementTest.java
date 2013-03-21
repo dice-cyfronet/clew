@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
+import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -48,11 +49,6 @@ import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AirAction;
-import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
-import pl.cyfronet.coin.impl.action.as.DeleteAtomicServiceAction;
-import pl.cyfronet.coin.impl.action.as.ListAtomicServicesAction;
-import pl.cyfronet.coin.impl.action.as.ListInitialConfigurationsAction;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -77,7 +73,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private List<AtomicService> atomicServices;
 
-	private String atomicServiceId = "as";
+	private String atomicServiceId = "asId";
 
 	private List<InitialConfiguration> initialConfigurations;
 	private List<InitialConfiguration> receivedInitialConfigurations;
@@ -97,6 +93,8 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	 * @since 1.1.0
 	 */
 	private String username = "User123";
+
+	private AtomicServiceRequest updateRequest;
 
 	@DataProvider(name = "getAtomicServicesSizes")
 	protected Object[][] getAtomicServicesSizes() {
@@ -535,5 +533,37 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		} catch (NotAcceptableException e) {
 			// Ok should be thrown
 		}
+	}
+
+	@Test
+	public void shouldUpdateAtomicService() throws Exception {
+		givenASUpdateAction();
+		whenUpdateAtomicService();
+		thenASUpdated();
+	}
+
+	private void givenASUpdateAction() {
+		Action<Class<Void>> action = mock(Action.class);
+
+		updateRequest = new AtomicServiceRequest();
+		updateRequest.setName("name");
+		updateRequest.setDescription("description");
+		updateRequest.setProxyConfigurationName("proxy/name");
+		updateRequest.setScalable(true);
+		updateRequest.setPublished(false);
+
+		when(
+				actionFactory.createUpdateAtomicServiceAction(username,
+						atomicServiceId, updateRequest, false)).thenReturn(
+				action);
+		currentAction = action;
+	}
+
+	private void whenUpdateAtomicService() {
+		asManagementClient.updateAtomicService(atomicServiceId, updateRequest);
+	}
+
+	private void thenASUpdated() {
+		thenActionExecuted();
 	}
 }

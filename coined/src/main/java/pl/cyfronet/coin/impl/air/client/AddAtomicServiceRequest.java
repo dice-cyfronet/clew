@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 @XmlRootElement
-public class AddAtomicServiceRequest extends AtomicServiceRequest {
+public class AddAtomicServiceRequest extends ApplianceTypeRequest {
 
 	private String client;
 
