@@ -50,6 +50,8 @@ public class ApplianceType {
 
 	private int templates_count;
 
+	private String proxy_conf_name;
+	
 	private List<ApplianceConfiguration> configurations;
 
 	private List<ATEndpoint> endpoints;
@@ -136,6 +138,20 @@ public class ApplianceType {
 		this.templates_count = templates_count;
 	}
 
+	/**
+	 * @return the proxy_conf_name
+	 */
+	public String getProxy_conf_name() {
+		return proxy_conf_name;
+	}
+
+	/**
+	 * @param proxy_conf_name the proxy_conf_name to set
+	 */
+	public void setProxy_conf_name(String proxy_conf_name) {
+		this.proxy_conf_name = proxy_conf_name;
+	}
+
 	public List<ApplianceConfiguration> getConfigurations() {
 		return configurations;
 	}
@@ -189,8 +205,9 @@ public class ApplianceType {
 				+ ", published=" + published + ", scalable=" + scalable
 				+ ", shared=" + shared + ", http=" + http + ", development="
 				+ development + ", description=" + description
-				+ ", templates_count=" + templates_count + ", configurations="
-				+ configurations + ", endpoints=" + endpoints
-				+ ", port_mappings=" + port_mappings + "]";
+				+ ", templates_count=" + templates_count + ", proxy_conf_name="
+				+ proxy_conf_name + ", configurations=" + configurations
+				+ ", endpoints=" + endpoints + ", port_mappings="
+				+ port_mappings + "]";
 	}
 }

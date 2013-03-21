@@ -83,7 +83,10 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		at.setName(newAtomicService.getName());
 		at.setDescription(newAtomicService.getDescription());
 		at.setDevelopment(false);
-		at.setPublished(true);
+		at.setPublished(newAtomicService.getPublished());
+		at.setScalable(newAtomicService.getScalable());
+		at.setShared(newAtomicService.getShared());
+		at.setProxy_conf_name(newAtomicService.getProxyConfigurationName());
 
 		addASToAirAction = getActionFactory()
 				.createCreateAtomicServiceInAirAction(getUsername(), at);

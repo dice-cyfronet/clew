@@ -85,6 +85,10 @@ public interface AirClient {
 	@Consumes(MediaType.APPLICATION_JSON)
 	String addAtomicService(AddAtomicServiceRequest addAtomicService);
 
+	@PUT
+	@Path("/appliance_type/{asId}")
+	void updateAtomicService(@PathParam("asId") String asId, @FormParam("") AtomicServiceRequest updatedAs);
+	
 	@DELETE
 	@Path("/appliance_type/{asId}")
 	void deleteAtomicService(@PathParam("asId") String asId,

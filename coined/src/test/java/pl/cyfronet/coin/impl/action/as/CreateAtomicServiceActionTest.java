@@ -77,17 +77,22 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		newAtomicService.setSourceAsiId(instanceId);
 		newAtomicService.setName(asName);
 		newAtomicService.setDescription(asDescription);
-
+		newAtomicService.setProxyConfigurationName("proxy/configuration/name");
+		newAtomicService.setPublished(true);
+		newAtomicService.setShared(true);
+		newAtomicService.setScalable(true);
+		
 		sourceAtomicService = new ApplianceType();
 		sourceAtomicService.setName("sourceASName");
-		sourceAtomicService.setHttp(true);
-		sourceAtomicService.setScalable(true);
+		sourceAtomicService.setScalable(false);
 		sourceAtomicService.setId("sourceAsId");
 
 		atomicService = new ApplianceType();
 		atomicService.setName(newAtomicService.getName());
 		atomicService.setDescription(newAtomicService.getDescription());
-		atomicService.setHttp(true);
+		atomicService.setProxy_conf_name(newAtomicService.getProxyConfigurationName());
+		atomicService.setPublished(true);
+		atomicService.setShared(true);
 		atomicService.setScalable(true);
 
 		matcher = new AddAtomicServiceMatcher(username, atomicService);
