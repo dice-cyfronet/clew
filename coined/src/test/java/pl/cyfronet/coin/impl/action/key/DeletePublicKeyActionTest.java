@@ -23,8 +23,6 @@ import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
-import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
@@ -74,8 +72,7 @@ public class DeletePublicKeyActionTest extends ActionTest {
 
 	private void givenAirWithKeyNotBelongingToTheRequestUser() {
 		when(air.getPublicKey(vphUsername, keyId)).thenThrow(
-				new ServerWebApplicationException(new ResponseBuilderImpl()
-						.status(400).build()));
+				getAirException(400));
 	}
 
 	@Test

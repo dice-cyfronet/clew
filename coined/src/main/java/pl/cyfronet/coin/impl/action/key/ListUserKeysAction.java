@@ -19,7 +19,7 @@ package pl.cyfronet.coin.impl.action.key;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
 
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -54,7 +54,7 @@ public class ListUserKeysAction extends ReadOnlyAirAction<List<PublicKeyInfo>> {
 	private List<UserKeyInfo> getUserKeys() {
 		try {
 			return getAir().getUserKeys(username);
-		} catch (ServerWebApplicationException e) {
+		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 400) {
 				return new ArrayList<UserKeyInfo>();
 			}

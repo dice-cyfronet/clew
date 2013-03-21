@@ -18,7 +18,8 @@ package pl.cyfronet.coin.impl.action.as;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,8 +91,8 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 			logger.debug("New appliance type created {}",
 					createdAtomicServiceId);
 			return createdAtomicServiceId;
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 302) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 302) {
 				throw new AtomicServiceAlreadyExistsException();
 			}
 			logger.warn("Error received from AiR", e);

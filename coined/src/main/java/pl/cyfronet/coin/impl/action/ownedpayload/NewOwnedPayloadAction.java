@@ -3,7 +3,7 @@ package pl.cyfronet.coin.impl.action.ownedpayload;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
 
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.AlreadyExistsException;
@@ -32,8 +32,8 @@ public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 		try {
 			actions.addOwnedPayload(newPolicy.getName(),
 					newPolicy.getPayload(), newPolicy.getOwners());
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 400) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 400) {
 				throw new AlreadyExistsException(e.getMessage());
 			} else {
 				throw new CloudFacadeException(e.getMessage());

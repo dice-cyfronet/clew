@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.impl.action.endpoint;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,8 @@ public class RemoveAsiEndpointAction extends AsiAction<Class<Void>> {
 			logger.debug("Removing endpoint {} for {} {}", new Object[] {
 					endpointId, getContextId(), getAsiId() });
 			getAir().removeEndpoint(endpointId);
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 400) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 400) {
 				throw new EndpointNotFoundException();
 			}
 			throw new CloudFacadeException(e.getMessage());

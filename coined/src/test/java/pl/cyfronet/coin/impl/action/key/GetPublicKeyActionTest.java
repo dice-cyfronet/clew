@@ -19,10 +19,9 @@ package pl.cyfronet.coin.impl.action.key;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
-import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
@@ -83,7 +82,6 @@ public class GetPublicKeyActionTest extends ActionTest {
 
 	private void givenAirWithKeyNotBelongingToTheUser() {
 		when(air.getPublicKey(vphUsername, keyId)).thenThrow(
-				new ServerWebApplicationException(new ResponseBuilderImpl()
-						.status(400).build()));
+				getAirException(400));
 	}
 }

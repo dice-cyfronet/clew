@@ -1,6 +1,6 @@
 package pl.cyfronet.coin.impl.action.portmapping;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
 
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
@@ -21,8 +21,8 @@ public class RemovePortMappingAction extends AirAction<Class<Void>> {
 	public Class<Void> execute() throws CloudFacadeException {
 		try {
 			getAir().removePortMapping(redirectionId);
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 404) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 404) {
 				throw new RedirectionNotFoundException();
 			}
 			throw new CloudFacadeException(e.getMessage());

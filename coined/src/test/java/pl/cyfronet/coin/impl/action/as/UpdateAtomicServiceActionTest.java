@@ -112,7 +112,7 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 
 	private void givenAirThrow400Exception() {
 		givenAtomicServiceToUpdate();
-		doThrow(new NotAllowedException()).when(air).updateAtomicService(
+		doThrow(getAirException(400)).when(air).updateAtomicService(
 				eq(asId), argThat(matcher));
 	}
 }
