@@ -36,7 +36,8 @@ public class NewAtomicService extends AtomicServiceRequest {
 
 	@Override
 	public String toString() {
-		return "NewAtomicService [sourceAsiId=" + sourceAsiId + "]";
+		return "NewAtomicService [sourceAsiId=" + sourceAsiId + ", toString()="
+				+ super.toString() + "]";
 	}
 
 	@Override

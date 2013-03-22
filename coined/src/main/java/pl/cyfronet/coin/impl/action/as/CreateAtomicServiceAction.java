@@ -74,7 +74,7 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		String asInstanceId = newAtomicService.getSourceAsiId();
 
 		logger.debug("Creating {} from {} on {}", new Object[] {
-				newAtomicService, newAtomicService.getSourceAsiId(),
+				newAtomicService, newAtomicService,
 				defaultSiteId });
 
 		ApplianceType at = getActionFactory().createGetASITypeAction(
@@ -83,9 +83,9 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		at.setName(newAtomicService.getName());
 		at.setDescription(newAtomicService.getDescription());
 		at.setDevelopment(false);
-		at.setPublished(newAtomicService.getPublished());
-		at.setScalable(newAtomicService.getScalable());
-		at.setShared(newAtomicService.getShared());
+		at.setPublished(getRawBoolean(newAtomicService.getPublished()));
+		at.setScalable(getRawBoolean(newAtomicService.getScalable()));
+		at.setShared(getRawBoolean(newAtomicService.getShared()));
 		at.setProxy_conf_name(newAtomicService.getProxyConfigurationName());
 
 		addASToAirAction = getActionFactory()
@@ -110,6 +110,10 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		}
 	}
 
+	private boolean getRawBoolean(Boolean b) {
+		return b == null ? false : b.booleanValue();
+	}
+	
 	@Override
 	public void rollback() {
 		// atmosphere.deleteTemplate(templateId);

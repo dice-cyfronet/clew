@@ -79,7 +79,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		newAtomicService.setDescription(asDescription);
 		newAtomicService.setProxyConfigurationName("proxy/configuration/name");
 		newAtomicService.setPublished(true);
-		newAtomicService.setShared(true);
+		newAtomicService.setShared(null);
 		newAtomicService.setScalable(true);
 		
 		sourceAtomicService = new ApplianceType();
@@ -92,7 +92,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		atomicService.setDescription(newAtomicService.getDescription());
 		atomicService.setProxy_conf_name(newAtomicService.getProxyConfigurationName());
 		atomicService.setPublished(true);
-		atomicService.setShared(true);
+		atomicService.setShared(false);
 		atomicService.setScalable(true);
 
 		matcher = new AddAtomicServiceMatcher(username, atomicService);
