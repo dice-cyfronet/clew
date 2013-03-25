@@ -318,6 +318,14 @@ public class CloudManagerPortlet {
 		List<InitialConfiguration> initialconfigurations =
 				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false);
 		
+		if(initialconfigurations != null && initialconfigurations.size() == 0) {
+			//no initial configurations available, creating default one
+			clientFactory.getCloudFacade(request).addInitialConfiguration(atomicServiceId,
+					createDefaultInitialConfiguration(atomicServiceId));
+			//fetching the list again
+			initialconfigurations = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false);
+		}
+		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
 				initialconfigurations.get(0).getId() != null) {
 			log.info("Starting atomic service instance for workflow [{}], configuration [{}]" +
@@ -366,9 +374,7 @@ public class CloudManagerPortlet {
 			if(atomicServiceId != null) {
 				log.debug("Successfully retrieved new atomic service id of value [{}]", atomicServiceId);
 				
-				InitialConfiguration ic = new InitialConfiguration();
-				ic.setName(atomicServiceId + " initial configuration");
-				ic.setPayload("<initialConfiguration/>");
+				InitialConfiguration ic = createDefaultInitialConfiguration(atomicServiceId);
 				
 				try {
 					clientFactory.getCloudFacade(request).addInitialConfiguration(atomicServiceId, ic);
@@ -1249,5 +1255,13 @@ public class CloudManagerPortlet {
 		}
 		
 		return null;
+	}
+	
+	private InitialConfiguration createDefaultInitialConfiguration(String atomicServiceId) {
+		InitialConfiguration ic = new InitialConfiguration();
+		ic.setName(atomicServiceId + " initial configuration");
+		ic.setPayload("<initialConfiguration/>");
+		
+		return ic;
 	}
 }
