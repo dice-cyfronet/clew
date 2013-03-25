@@ -4,6 +4,7 @@
 		<c:set var="statusId">status-${atomicServiceInstance.id}</c:set>
 		Name: ${atomicServiceInstance.name}<br/>
 		Development Id: ${atomicServiceInstance.id}<br/>
+		Site: ${atomicServiceInstance.siteId}<br/>
 		Status: <span id="${statusId}" style="font-weight: bold; color: #db7024;">${atomicServiceInstance.status}</span>
 	</span>
 	<span class="coin-actions">
