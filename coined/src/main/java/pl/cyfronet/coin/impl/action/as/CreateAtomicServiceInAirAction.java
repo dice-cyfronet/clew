@@ -18,7 +18,8 @@ package pl.cyfronet.coin.impl.action.as;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,13 +72,14 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 		addASRequest.setEndpoints(getEndpoints(applianceType.getEndpoints()));
 		addASRequest.setPort_mappings(getPortMapping(applianceType
 				.getPort_mappings()));
+		addASRequest.setProxy_conf_name(applianceType.getProxy_conf_name());
 		addASRequest.setHttp(applianceType.isHttp());
 		addASRequest.setIn_proxy(applianceType.isIn_proxy());
 		addASRequest.setName(applianceType.getName());
 		addASRequest.setPublished(applianceType.isPublished());
 		addASRequest.setScalable(applianceType.isScalable());
 		addASRequest.setShared(applianceType.isShared());
-		addASRequest.setVnc(applianceType.isShared());
+		addASRequest.setVnc(applianceType.isVnc());
 		addASRequest.setDevelopment(applianceType.isDevelopment());
 
 		addASRequest.setAuthor(username);
@@ -89,8 +91,8 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 			logger.debug("New appliance type created {}",
 					createdAtomicServiceId);
 			return createdAtomicServiceId;
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 302) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 302) {
 				throw new AtomicServiceAlreadyExistsException();
 			}
 			logger.warn("Error received from AiR", e);

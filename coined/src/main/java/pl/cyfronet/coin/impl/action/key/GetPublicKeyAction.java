@@ -16,7 +16,8 @@
 
 package pl.cyfronet.coin.impl.action.key;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class GetPublicKeyAction extends ReadOnlyAirAction<String> {
 	public String execute() throws CloudFacadeException {
 		try {
 			return getAir().getPublicKey(username, keyId);
-		} catch (ServerWebApplicationException e) {
+		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 400) {
 				throw new KeyNotFoundException();
 			}

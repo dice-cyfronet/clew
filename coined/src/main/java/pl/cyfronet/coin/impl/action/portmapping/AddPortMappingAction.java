@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.impl.action.portmapping;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +36,8 @@ public class AddPortMappingAction extends AirAction<String> {
 					new Object[] { serviceName, port, http, asId });
 			return getAir().addPortMapping("rest", asId, serviceName, port,
 					http);
-		} catch (ServerWebApplicationException e) {
-			if (e.getStatus() == 404) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getStatus() == 404) {
 				throw new AtomicServiceNotFoundException();
 			}
 			throw new CloudFacadeException(e.getMessage());

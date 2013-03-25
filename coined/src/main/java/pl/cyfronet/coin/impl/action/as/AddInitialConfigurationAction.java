@@ -15,7 +15,8 @@
  */
 package pl.cyfronet.coin.impl.action.as;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
+import javax.ws.rs.WebApplicationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +56,12 @@ public class AddInitialConfigurationAction extends AirAction<String> {
 					initialConfiguration.getPayload());
 
 			return addedConfigurationId;
-		} catch (ServerWebApplicationException e) {
-			if (e.getMessage() != null) {
-				if (e.getMessage().contains("not found in AIR")) {
+		} catch (WebApplicationException e) {
+			if (e.getResponse().getEntity() != null) {
+				String msg = e.getResponse().getEntity().toString();
+				if (msg.contains("not found in AIR")) {
 					throw new AtomicServiceNotFoundException();
-				} else if (e.getMessage().contains("duplicated configuration")) {
+				} else if (msg.contains("duplicated configuration")) {
 					throw new InitialConfigurationAlreadyExistException();
 				}
 			}

@@ -10,9 +10,8 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
@@ -86,10 +85,8 @@ public class SecurityProxyMethodProvider implements MethodProvider {
 	@Override
 	public void throwExceptionWhileAddingOwnedPayload(int status,
 			String payloadName, String payloadText, List<String> owners) {
-		doThrow(
-				new ServerWebApplicationException(Response.status(status)
-						.build())).when(air).addSecurityProxy(payloadName,
-				payloadText, owners);
+		doThrow(getAirException(status)).when(air).addSecurityProxy(
+				payloadName, payloadText, owners);
 	}
 
 	@Override
@@ -123,9 +120,8 @@ public class SecurityProxyMethodProvider implements MethodProvider {
 				username, newPayload);
 	}
 
-	private ServerWebApplicationException getAirException(int status) {
-		return new ServerWebApplicationException(Response.status(status)
-				.build());
+	private WebApplicationException getAirException(int status) {
+		return new WebApplicationException(Response.status(status).build());
 	}
 
 	@Override

@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
-import pl.cyfronet.coin.auth.RestService;
+import pl.cyfronet.coin.auth.RestServiceExt;
 
 public class AuthHandlerTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
 	@Qualifier("client")
-	protected RestService client;
+	protected RestServiceExt client;
 }

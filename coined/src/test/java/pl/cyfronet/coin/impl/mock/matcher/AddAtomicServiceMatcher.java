@@ -66,12 +66,21 @@ public class AddAtomicServiceMatcher extends
 				&& equals(request.getEndpoints(), as.getEndpoints())
 				&& portMappingsEquals(request.getPort_mappings(),
 						as.getPort_mappings())
-				&& request.isHttp() == as.isHttp()
-				&& request.isIn_proxy() == as.isIn_proxy()
-				&& request.isScalable() == as.isScalable()
-				&& request.isShared() == as.isShared()
-				&& request.isVnc() == as.isVnc()
-				&& correctPublishedState(request);
+				&& request.getHttp() == as.isHttp()
+				&& request.getIn_proxy() == as.isIn_proxy()
+				&& request.getScalable() == as.isScalable()
+				&& request.getShared() == as.isShared()
+				&& request.getVnc() == as.isVnc()
+				&& correctPublishedState(request)
+				&& securityProxyNameEquals(request);
+	}
+
+	private boolean securityProxyNameEquals(AddAtomicServiceRequest request) {
+		if (as.getProxy_conf_name() == null) {
+			return request.getProxy_conf_name() == null;
+		} else {
+			return as.getProxy_conf_name().equals(request.getProxy_conf_name());
+		}
 	}
 
 	private boolean nameEquals(AddAtomicServiceRequest request) {
@@ -83,12 +92,14 @@ public class AddAtomicServiceMatcher extends
 	}
 
 	private boolean correctPublishedState(AddAtomicServiceRequest request) {
-		if (creatingNewAS) {
-			return request.isPublished() && !as.isDevelopment();
-		} else {
-			return request.isPublished() == as.isPublished()
-					&& request.isDevelopment() == as.isDevelopment();
+		if (request.getPublished() == as.isPublished()) {
+			if (creatingNewAS) {
+				return !as.isDevelopment();
+			} else {
+				return request.getDevelopment() == as.isDevelopment();
+			}
 		}
+		return false;
 	}
 
 	/**

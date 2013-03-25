@@ -21,9 +21,9 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -100,7 +100,7 @@ public class AddInitialConfigurationActionTest extends ActionTest {
 				atomicServiceId);
 		int errorStatus = 400;
 
-		ServerWebApplicationException exception = new ServerWebApplicationException(
+		WebApplicationException exception = new WebApplicationException(
 				Response.status(errorStatus).entity(exceptionMessage).build());
 
 		when(
@@ -136,7 +136,7 @@ public class AddInitialConfigurationActionTest extends ActionTest {
 						initialConfiguration.getName());
 		int errorStatus = 400;
 
-		ServerWebApplicationException exception = new ServerWebApplicationException(
+		WebApplicationException exception = new WebApplicationException(
 				Response.status(errorStatus).entity(exceptionMessage).build());
 
 		when(

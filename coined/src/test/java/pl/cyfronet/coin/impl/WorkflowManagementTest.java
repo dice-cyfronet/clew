@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.Redirection;
@@ -95,6 +96,10 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private String givenId = "id";
 
 	private String endpointId;
+
+	private AtomicServiceInstance asInstance;
+
+	private AtomicServiceInstance givenAsInstance;
 
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
@@ -655,5 +660,39 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 				actionFactory.createRemoveAsiEndpointAction(username,
 						contextId, asiId, endpointId)).thenReturn(action);
 		currentAction = action;
+	}
+
+	@Test
+	public void shouldGetWroflowAtomicServiceInstance() throws Exception {
+		givenWorkflowWithAtomicServiceInstance();
+		whenGetWorkflowAtomicServiceInstance();
+		thenAtomicServiceReceived();
+	}
+
+	private void givenWorkflowWithAtomicServiceInstance() {
+		givenAsInstance = new AtomicServiceInstance();
+		givenAsInstance.setAtomicServiceId("asId");
+		givenAsInstance.setAtomicServiceName("name");
+		givenAsInstance.setConfigurationId("configurationId");
+		givenAsInstance.setInstanceId(asiId);		
+		
+		Action<AtomicServiceInstance> action = mock(Action.class);		
+		when(action.execute()).thenReturn(givenAsInstance);
+		when(
+				actionFactory.createGetWorkflowAtomicServiceInstanceAction(
+						username, contextId, asiId)).thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenGetWorkflowAtomicServiceInstance() {
+		asInstance = workflowManagement.getWorkflowAtomicServiceInstance(contextId, asiId);
+	}
+
+	private void thenAtomicServiceReceived() {
+		thenActionExecuted();
+		assertEquals(asInstance.getAtomicServiceId(), givenAsInstance.getAtomicServiceId());
+		assertEquals(asInstance.getAtomicServiceName(), givenAsInstance.getAtomicServiceName());
+		assertEquals(asInstance.getConfigurationId(), givenAsInstance.getConfigurationId());
+		assertEquals(asInstance.getInstanceId(), givenAsInstance.getInstanceId());
 	}
 }

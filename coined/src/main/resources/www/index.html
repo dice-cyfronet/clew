@@ -142,10 +142,11 @@ body {
 								<li><strong>atomicServiceId</strong> - id of the atomic
 									service used to create this instance</li>
 								<li><strong>atomicServiceName</strong> - name of the atomic
-									service used to create this instance</li>	
-								<li><strong>configurationId</strong> - id of the initial configuration
-								used to start this atomic service instance</li>
-								<li><strong>siteId</strong> - site id where atomic service instance is running</li>
+									service used to create this instance</li>
+								<li><strong>configurationId</strong> - id of the initial
+									configuration used to start this atomic service instance</li>
+								<li><strong>siteId</strong> - site id where atomic service
+									instance is running</li>
 								<li><strong>credential</strong> - credential allowing to
 									login into atomic service instance (not empty only in <i>development</i>
 									workflow)</li>
@@ -163,6 +164,54 @@ body {
 											public entry point will be forwarded in atomic service
 											instance</li>
 									</ul></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/instance/{asiId}</strong>
+						- gets the JSON structure workflow atomic service instance identified by workflowId and asiId</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> - workflow id
+							(acquired when starting the workflow)
+						</li>
+						<li>(required) <strong>asiId</strong> - atomic service instance id
+						</li>
+					</ul>
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>id</strong> - atomic service instance id</li>
+						<li><strong>name</strong> - atomic service instance name</li>
+						<li><strong>status</strong> - atomic service instance
+							status (<i>running</i>, <i>paused</i>, <i>booting</i>, <i>stopping</i>
+							or <i>stopped</i>)</li>
+						<li><strong>message</strong> - diagnostic message ()</li>
+						<li><strong>atomicServiceId</strong> - id of the atomic
+							service used to create this instance</li>
+						<li><strong>atomicServiceName</strong> - name of the atomic
+							service used to create this instance</li>
+						<li><strong>configurationId</strong> - id of the initial
+							configuration used to start this atomic service instance</li>
+						<li><strong>siteId</strong> - site id where atomic service
+							instance is running</li>
+						<li><strong>credential</strong> - credential allowing to
+							login into atomic service instance (not empty only in <i>development</i>
+							workflow)</li>
+						<li><strong>redirections</strong> - list of redirections
+							created for this atomic service instance:
+							<ul>
+								<li><strong>name</strong> - redirection name</li>
+								<li><strong>http</strong> - if <i>true</i> than http
+									traffic is redirected, TCP/UDP otherwise</li>
+								<li><strong>host</strong> - public entry point host for
+									the redirection. Full redirection is <i>host:fromPort</i></li>
+								<li><strong>fromPort</strong> - public entry point port
+									for the redirection. Full redirection is <i>host:fromPort</i></li>
+								<li><strong>toPort</strong> - port where traffic from
+									public entry point will be forwarded in atomic service
+									instance</li>
 							</ul></li>
 					</ul>
 				</div>
@@ -486,34 +535,80 @@ body {
 							name
 						</li>
 						<li><strong>description</strong> - atomic service description</li>
+						<li><strong>proxyConfigurationName</strong> security proxy
+							configuration name used in this atomic service</li>
+						<li><strong>published</strong> - if true than atomic service
+							will be presented to all users</li>
+						<li><strong>share</strong> - if true than one atomic service
+							can be shared among many users workflow</li>
+						<li><strong>scalable</strong> - if true than Atmosphere can
+							multiply number of machines running for a workflow</li>
 
 					</ul>
 					The operation returns the <strong>200</strong> status code on
 					success, the <strong>404</strong> when source atomic service
 					instance not found, the <strong>302</strong> status code when AS
 					with given name already exists, <strong>400</strong> status code
-					and problem explanation when failed.
+					and problem explanation when failed, <strong>406</strong> when
+					updated information are not correct (e.g. <i>proxyConfigurationName</i>
+					does not exist).
+				</div>
+				<h3>
+					<a href="#"><strong class="method">PUT</strong> <strong>/as/{atomicServiceId}</strong>
+						- updates information about atomic service</a>
+				</h3>
+				<div>
+					<div class="ui-state-error ui-corner-all"
+						style="padding: 8px; margin-bottom: 6px">
+						<strong>Note!</strong> Only Atomic Service owner and administrator
+						is allowed to update information about atomic service.
+					</div>
+
+					<ul>
+						<li><strong>atomicServiceId</strong> - atomic service id</li>
+					</ul>
+
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li><strong>name</strong> - atomic service name</li>
+						<li><strong>description</strong> - atomic service description</li>
+						<li><strong>proxyConfigurationName</strong> security proxy
+							configuration name used in this atomic service</li>
+						<li><strong>published</strong> - if true than atomic service
+							will be presented to all users</li>
+						<li><strong>share</strong> - if true than one atomic service
+							can be shared among many users workflow</li>
+						<li><strong>scalable</strong> - if true than Atmosphere can
+							multiply number of machines running for a workflow</li>
+					</ul>
+
+					The operation returns the <strong>204</strong> status code on
+					success and the <strong>404</strong> when atomic service is not
+					found, <strong>403</strong> when user is not allowed to update this
+					atomic service, <strong>406</strong> when updated information are
+					not correct (e.g. <i>proxyConfigurationName</i> does not exist).
 				</div>
 				<h3>
 					<a href="#"><strong class="method">DELETE</strong> <strong>/as/{atomicServiceId}</strong>
 						- deletes atomic service</a>
 				</h3>
 				<div>
-					
+
 					<div class="ui-state-error ui-corner-all"
 						style="padding: 8px; margin-bottom: 6px">
-						<strong>Note!</strong> Only Atomic Service owner is allowed to delete it.
+						<strong>Note!</strong> Only Atomic Service owner and administrator
+						is allowed to delete it.
 					</div>
-					
+
 					<ul>
-						<li><strong>atomicServiceId</strong> - atomic
-							service id</li>
+						<li><strong>atomicServiceId</strong> - atomic service id</li>
 					</ul>
-					
-					The operation returns the <strong>200</strong> status code on
-					success and the <strong>404</strong> when atomic service is not found, 
-					<strong>403</strong> when user is not allowed to remove this atomic service,
-					<strong>406</strong> when there are atomic service instances created from this atomic service.
+
+					The operation returns the <strong>204</strong> status code on
+					success and the <strong>404</strong> when atomic service is not
+					found, <strong>403</strong> when user is not allowed to remove this
+					atomic service, <strong>406</strong> when there are atomic service
+					instances created from this atomic service.
 				</div>
 				<h3>
 					<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong>

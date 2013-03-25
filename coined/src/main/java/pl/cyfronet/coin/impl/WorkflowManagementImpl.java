@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
@@ -147,6 +148,16 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
+	}
+
+	@Override
+	public AtomicServiceInstance getWorkflowAtomicServiceInstance(
+			String workflowId, String asiId) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException {
+		Action<AtomicServiceInstance> action = actionFactory
+				.createGetWorkflowAtomicServiceInstanceAction(getUsername(),
+						workflowId, asiId);
+		return action.execute();
 	}
 
 	@Override
