@@ -17,10 +17,13 @@ package pl.cyfronet.coin.impl.action.workflow;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.AirClient;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
+import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.mock.atmosphere.ManagerResponseTestImpl;
 import pl.cyfronet.coin.impl.mock.matcher.AddRequiredAppliancesRequestMatcher;
@@ -103,5 +106,15 @@ public class WorkflowActionTest extends ActionTest {
 		} else {
 			return configIds;
 		}
+	}
+	
+	protected void equals(Vms vm, AtomicServiceInstance asi) {
+		assertEquals(asi.getAtomicServiceId(), vm.getAppliance_type());
+		assertEquals(asi.getAtomicServiceName(), vm.getAppliance_type_name());
+		assertEquals(asi.getName(), vm.getName());
+		assertEquals(asi.getStatus(), vm.getState());
+		assertEquals(asi.getId(), vm.getVms_id());
+		assertEquals(asi.getConfigurationId(), vm.getConfiguration_id());
+		assertEquals(asi.getSiteId(), vm.getSite_id());
 	}
 }

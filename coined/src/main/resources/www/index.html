@@ -164,6 +164,54 @@ body {
 											public entry point will be forwarded in atomic service
 											instance</li>
 									</ul></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/instance/{asiId}</strong>
+						- gets the JSON structure workflow atomic service instance identified by workflowId and asiId</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> - workflow id
+							(acquired when starting the workflow)
+						</li>
+						<li>(required) <strong>asiId</strong> - atomic service instance id
+						</li>
+					</ul>
+					<p>The structure of the returned JSON includes:</p>
+					<ul>
+						<li><strong>id</strong> - atomic service instance id</li>
+						<li><strong>name</strong> - atomic service instance name</li>
+						<li><strong>status</strong> - atomic service instance
+							status (<i>running</i>, <i>paused</i>, <i>booting</i>, <i>stopping</i>
+							or <i>stopped</i>)</li>
+						<li><strong>message</strong> - diagnostic message ()</li>
+						<li><strong>atomicServiceId</strong> - id of the atomic
+							service used to create this instance</li>
+						<li><strong>atomicServiceName</strong> - name of the atomic
+							service used to create this instance</li>
+						<li><strong>configurationId</strong> - id of the initial
+							configuration used to start this atomic service instance</li>
+						<li><strong>siteId</strong> - site id where atomic service
+							instance is running</li>
+						<li><strong>credential</strong> - credential allowing to
+							login into atomic service instance (not empty only in <i>development</i>
+							workflow)</li>
+						<li><strong>redirections</strong> - list of redirections
+							created for this atomic service instance:
+							<ul>
+								<li><strong>name</strong> - redirection name</li>
+								<li><strong>http</strong> - if <i>true</i> than http
+									traffic is redirected, TCP/UDP otherwise</li>
+								<li><strong>host</strong> - public entry point host for
+									the redirection. Full redirection is <i>host:fromPort</i></li>
+								<li><strong>fromPort</strong> - public entry point port
+									for the redirection. Full redirection is <i>host:fromPort</i></li>
+								<li><strong>toPort</strong> - port where traffic from
+									public entry point will be forwarded in atomic service
+									instance</li>
 							</ul></li>
 					</ul>
 				</div>

@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
@@ -147,6 +148,13 @@ public interface WorkflowManagement {
 	Workflow getWorkflow(@PathParam("workflowId") String workflowId)
 			throws WorkflowNotFoundException;
 
+	@GET
+	@Path("/{workflowId}/instance/{asiId}")
+	AtomicServiceInstance getWorkflowAtomicServiceInstance(
+			@PathParam("workflowId") String workflowId,
+			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException;
+
 	// redirections
 
 	@DELETE
@@ -157,7 +165,7 @@ public interface WorkflowManagement {
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException;
-	
+
 	@GET
 	@Path("/{contextId}/asi/{asiId}/redirection")
 	@Produces({ MediaType.APPLICATION_JSON })

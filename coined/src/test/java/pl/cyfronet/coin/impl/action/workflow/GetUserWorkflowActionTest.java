@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.Workflow;
@@ -254,15 +253,5 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		assertEquals(vm1PortMapping.get(1).getName(), "vnc");
 
 		assertEquals(vm2PortMapping.size(), 0);
-	}
-
-	private void equals(Vms vm, AtomicServiceInstance asi) {
-		assertEquals(asi.getAtomicServiceId(), vm.getAppliance_type());
-		assertEquals(asi.getAtomicServiceName(), vm.getAppliance_type_name());
-		assertEquals(asi.getName(), vm.getName());
-		assertEquals(asi.getStatus(), vm.getState());
-		assertEquals(asi.getId(), vm.getVms_id());
-		assertEquals(asi.getConfigurationId(), vm.getConfiguration_id());
-		assertEquals(asi.getSiteId(), vm.getSite_id());
 	}
 }
