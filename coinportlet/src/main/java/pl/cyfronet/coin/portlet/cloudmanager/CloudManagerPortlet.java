@@ -374,6 +374,10 @@ public class CloudManagerPortlet {
 			atomicService.setSourceAsiId(saveAtomicServiceRequest.getAtomicServiceInstanceId());
 			atomicService.setName(saveAtomicServiceRequest.getName());
 			atomicService.setDescription(saveAtomicServiceRequest.getDescription());
+			atomicService.setProxyConfigurationName(saveAtomicServiceRequest.getProxyConfiguration());
+			atomicService.setPublished(saveAtomicServiceRequest.isPublished());
+			atomicService.setScalable(saveAtomicServiceRequest.isScalable());
+			atomicService.setShared(saveAtomicServiceRequest.isShared());
 			
 			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());				
 			
