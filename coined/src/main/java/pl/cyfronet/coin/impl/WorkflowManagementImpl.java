@@ -104,7 +104,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		logger.debug(
 				"Remove atomic service [{}] from workflow [{}] for user {}",
 				new Object[] { asConfigId, workflowId, username });
-		validateId(workflowId, asConfigId);
+		validateId(workflowId);
 		Action<Class<Void>> action = actionFactory
 				.createRemoveAtomicServiceFromWorkflowAction(getUsername(),
 						workflowId, asConfigId);
@@ -119,7 +119,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		logger.debug(
 				"Remove atomic service instance [{}] from workflow [{}] for user {}",
 				new Object[] { asInstanceId, workflowId, username });
-		validateId(workflowId, asInstanceId);
+		validateId(workflowId);
 		Action<Class<Void>> action = actionFactory
 				.createRemoveASIFromWorkflowAction(username, workflowId,
 						asInstanceId);
