@@ -21,6 +21,34 @@
 			<form:textarea path="description"/>
 			<form:errors path="description" cssClass="coin-error-panel"/>
 		</div>
+		<div class="coin-form-input">
+			<label for="shared">
+				<spring:message code="cloud.manager.portlet.save.atomic.service.shared.flag.label"/>
+			</label>
+			<form:checkbox path="shared"/>
+			<form:errors path="shared" cssClass="coin-error-panel"/>
+		</div>
+		<div class="coin-form-input">
+			<label for="scalable">
+				<spring:message code="cloud.manager.portlet.save.atomic.service.scalable.flag.label"/>
+			</label>
+			<form:checkbox path="scalable"/>
+			<form:errors path="scalable" cssClass="coin-error-panel"/>
+		</div>
+		<div class="coin-form-input">
+			<label for="published">
+				<spring:message code="cloud.manager.portlet.save.atomic.service.published.flag.label"/>
+			</label>
+			<form:checkbox path="published"/>
+			<form:errors path="published" cssClass="coin-error-panel"/>
+		</div>
+		<div class="coin-form-input">
+			<label for="proxyConfiguration">
+				<spring:message code="cloud.manager.portlet.save.atomic.service.proxy.configuration.label"/>
+			</label>
+			<form:input path="proxyConfiguration"/>
+			<form:errors path="proxyConfiguration" cssClass="coin-error-panel"/>
+		</div>
 		<div class="coin-form-submit">
 			<input type='submit' value='<spring:message code='cloud.manager.portlet.submit.atomic.service.save.request'/>'/>
 		</div>
