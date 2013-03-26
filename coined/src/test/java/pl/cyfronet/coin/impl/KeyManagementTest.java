@@ -26,6 +26,8 @@ import static org.testng.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,7 +73,7 @@ public class KeyManagementTest extends AbstractServiceTest {
 
 	private PublicKeyInfo key2;
 
-	private String keyId = "keyId";
+	private String keyId = "50b70f252a9524132a04cae5";
 
 	private String keyName = "keyName";
 
@@ -295,5 +297,22 @@ public class KeyManagementTest extends AbstractServiceTest {
 		when(actionFactory.createGetPublicKeyAction(username, keyId))
 				.thenReturn(action);
 		currentAction = action;
+	}
+	
+	@Test
+	public void shouldThrow400WhenKeyIdIsNotValid() throws Exception {
+		try {
+			keyManagement.get("keyIdInvalid");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+		
+		try {
+			keyManagement.delete("keyIdInvalid");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
 	}
 }

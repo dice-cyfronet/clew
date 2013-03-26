@@ -44,6 +44,9 @@ public class WorkflowServiceExceptionMapper extends CloudFacadeExceptionMapper {
 		int status = r.getStatus();
 		logger.info("Response to be mapped: {} -> {}", status, message);
 		switch (status) {
+		case 400:
+			return new CloudFacadeException(message,
+					Response.Status.BAD_REQUEST);
 		case 403:
 			if (WorkflowNotInDevelopmentModeException.ERROR_MESSAGE
 					.equals(message)) {

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.DataProvider;
@@ -73,7 +75,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private List<AtomicService> atomicServices;
 
-	private String atomicServiceId = "asId";
+	private String atomicServiceId = "50b70f252a9524132a04cae5";
 
 	private List<InitialConfiguration> initialConfigurations;
 	private List<InitialConfiguration> receivedInitialConfigurations;
@@ -565,5 +567,53 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private void thenASUpdated() {
 		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldThrow400WhenASIdNotValid() throws Exception {
+		String wrongASId = "wrongAsId";
+		try {
+			asManagementClient.getInitialConfigurations(wrongASId, false);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			asManagementClient.addInitialConfiguration(wrongASId,
+					getInitialConfiguration(1));
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			asManagementClient.getEndpointDescriptor(wrongASId, "80", "path");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			asManagementClient.getInvocationPathInfo(wrongASId, "80", "path");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			asManagementClient.deleteAtomicService(wrongASId);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			asManagementClient.updateAtomicService(wrongASId,
+					new AtomicServiceRequest());
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
 	}
 }

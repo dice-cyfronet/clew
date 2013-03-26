@@ -27,6 +27,7 @@ import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.KeyNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import static pl.cyfronet.coin.impl.utils.Validator.validateId;;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -65,6 +66,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	public void delete(String keyId) throws KeyNotFoundException {
 		String username = getUsername();
 		logger.debug("Adding key {} for {}", keyId, username);
+		validateId(keyId);
 		Action<Class<Void>> action = actionFactory.createDeletePublicKeyAction(
 				username, keyId);
 		action.execute();
@@ -74,6 +76,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	public String get(String keyId) throws KeyNotFoundException {
 		String username = getUsername();
 		logger.debug("Getting key {} for {}", keyId, username);
+		validateId(keyId);
 		Action<String> action = actionFactory.createGetPublicKeyAction(
 				username, keyId);
 		return action.execute();

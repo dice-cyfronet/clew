@@ -39,6 +39,9 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import static pl.cyfronet.coin.impl.utils.Validator.validateId;
+
+;
 
 /**
  * Web service which exposes functionality given by the cloud manager.
@@ -87,6 +90,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			String atomicServiceId, boolean loadPayload)
 			throws AtomicServiceNotFoundException {
 		logger.debug("Get initial configurations for: {}", atomicServiceId);
+		validateId(atomicServiceId);
 		Action<List<InitialConfiguration>> action = actionFactory
 				.createListInitialConfigurationsAction(atomicServiceId,
 						loadPayload);
@@ -102,6 +106,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 
 		logger.debug("Creating new atomic service from {}, metadata: {}",
 				atomicServiceId, initialConfiguration);
+		validateId(atomicServiceId);
 
 		Action<String> action = actionFactory.createAddInitialConfiguration(
 				atomicServiceId, initialConfiguration);
@@ -123,6 +128,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 		logger.debug("Getting endpoint descriptor for {}:{}/{}", new Object[] {
 				atomicServiceId, serviceName, invocationPath });
 
+		validateId(atomicServiceId);
 		Action<String> action = actionFactory.createGetEndpointPayloadAction(
 				atomicServiceId, serviceName, invocationPath);
 
@@ -138,6 +144,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			String serviceName, String invocationPath)
 			throws AtomicServiceInstanceNotFoundException,
 			EndpointNotFoundException {
+		validateId(atomicServiceId);
 		// check if atomic service with given id is registered in Atmosphere.
 		Action<InvocationPathInfo> action = actionFactory
 				.createGetInvocationPathInfo(atomicServiceId, serviceName);
@@ -151,7 +158,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	@Override
 	public void deleteAtomicService(String atomicServiceId)
 			throws AtomicServiceNotFoundException, NotAcceptableException,
-			NotAllowedException {		
+			NotAllowedException {
+		validateId(atomicServiceId);
 		Action<Class<Void>> action = actionFactory
 				.createDeleteAtomicServiceAction(getUsername(),
 						atomicServiceId, hasRole(ADMIN_ROLE));
@@ -165,7 +173,8 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			NotAllowedException {
 		logger.debug("Updating atomic service %s %s", atomicServiceId,
 				updateRequest);
-		
+
+		validateId(atomicServiceId);
 		Action<Class<Void>> action = actionFactory
 				.createUpdateAtomicServiceAction(getUsername(),
 						atomicServiceId, updateRequest, hasRole(ADMIN_ROLE));
