@@ -44,7 +44,8 @@ public class CoinedAsserts {
 		assertEquals(as.isVnc(), at.isVnc());
 		assertEquals(as.isActive(), at.getTemplates_count() > 0);
 		assertEquals(as.getOwner(), at.getAuthor());
-		
+		assertEquals(as.getProxyConfigurationName(), at.getProxy_conf_name());
+
 		List<ATEndpoint> atEndpoints = at.getEndpoints();
 		assertEndpoints(as.getEndpoints(), atEndpoints, endpointsPayload);
 	}

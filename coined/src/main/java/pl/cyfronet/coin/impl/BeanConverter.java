@@ -44,10 +44,12 @@ public class BeanConverter {
 		atomicService.setActive(applianceType.getTemplates_count() > 0);
 		atomicService.setEndpoints(getEndpoints(applianceType));
 		atomicService.setDevelopment(applianceType.isDevelopment());
-		
-		//#1433
+		atomicService.setProxyConfigurationName(applianceType
+				.getProxy_conf_name());
+
+		// #1433
 		atomicService.setOwner(applianceType.getAuthor());
-		
+
 		return atomicService;
 	}
 

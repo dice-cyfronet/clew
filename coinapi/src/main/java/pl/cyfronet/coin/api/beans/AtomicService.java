@@ -41,6 +41,8 @@ public class AtomicService {
 	private boolean active;
 	private boolean development;
 	
+	private String proxyConfigurationName;
+	
 	/**
 	 * @see #1433
 	 */
@@ -207,9 +209,20 @@ public class AtomicService {
 		this.owner = owner;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return the proxyConfigurationName
 	 */
+	public String getProxyConfigurationName() {
+		return proxyConfigurationName;
+	}
+
+	/**
+	 * @param proxyConfigurationName the proxyConfigurationName to set
+	 */
+	public void setProxyConfigurationName(String proxyConfigurationName) {
+		this.proxyConfigurationName = proxyConfigurationName;
+	}
+
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
@@ -217,12 +230,10 @@ public class AtomicService {
 				+ endpoints + ", vnc=" + vnc + ", http=" + http + ", shared="
 				+ shared + ", scalable=" + scalable + ", published="
 				+ published + ", inProxy=" + inProxy + ", active=" + active
-				+ ", development=" + development + ", owner=" + owner + "]";
+				+ ", development=" + development + ", proxyConfigurationName="
+				+ proxyConfigurationName + ", owner=" + owner + "]";
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -239,6 +250,10 @@ public class AtomicService {
 		result = prime * result + (inProxy ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime
+				* result
+				+ ((proxyConfigurationName == null) ? 0
+						: proxyConfigurationName.hashCode());
 		result = prime * result + (published ? 1231 : 1237);
 		result = prime * result + (scalable ? 1231 : 1237);
 		result = prime * result + (shared ? 1231 : 1237);
@@ -246,9 +261,6 @@ public class AtomicService {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -290,6 +302,11 @@ public class AtomicService {
 			if (other.owner != null)
 				return false;
 		} else if (!owner.equals(other.owner))
+			return false;
+		if (proxyConfigurationName == null) {
+			if (other.proxyConfigurationName != null)
+				return false;
+		} else if (!proxyConfigurationName.equals(other.proxyConfigurationName))
 			return false;
 		if (published != other.published)
 			return false;

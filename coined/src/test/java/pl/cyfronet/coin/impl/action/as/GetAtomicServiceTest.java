@@ -61,7 +61,8 @@ public class GetAtomicServiceTest extends ActionTest {
 		asType.setVnc(true);
 		asType.setDevelopment(true);
 		asType.setTemplates_count(0);
-
+		asType.setProxy_conf_name("proxy/conf/name");
+		
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
 		type1AsEndpoint.setDescriptor(null);
