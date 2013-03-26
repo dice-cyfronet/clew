@@ -55,7 +55,7 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 		updatedAs.setScalable(false);
 
 		matcher = new UpdateAtomicServiceMatcher(at, updatedAs);
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(at));
+		when(air.getApplianceTypes(false)).thenReturn(Arrays.asList(at));
 	}
 
 	private void whenUpdateOwnedAtomicService() {
@@ -85,7 +85,7 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 	}
 
 	@Test
-	public void shouldThrow() throws Exception {
+	public void shouldThrowExceptionWhileAtomicServiceIsNotOwned() throws Exception {
 		givenAtomicServiceToUpdate();
 		try {
 			whenUpdateNotOwnedAtomicService();

@@ -17,6 +17,6 @@ public class GetPortMappingsAction extends
 
 	@Override
 	public List<ATPortMapping> execute() throws CloudFacadeException {
-		return getApplianceType().getPort_mappings();
+		return getApplianceType(false).getPort_mappings();
 	}
 }

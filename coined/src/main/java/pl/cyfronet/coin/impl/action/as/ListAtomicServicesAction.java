@@ -46,12 +46,11 @@ public class ListAtomicServicesAction extends
 	 */
 	@Override
 	public List<AtomicService> execute() {
-		List<ApplianceType> applianceTypes = getApplianceTypes();
+		List<ApplianceType> applianceTypes = getApplianceTypes(true);
 		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
 		for (ApplianceType applianceType : applianceTypes) {
 			if (!applianceType.isDevelopment()
-					|| username.equals(applianceType.getAuthor())) {
-				loadEndpointDescriptors(applianceType);
+					|| username.equals(applianceType.getAuthor())) {				
 				AtomicService atomicService = getAtomicService(applianceType);
 				atomicServices.add(atomicService);
 			}

@@ -66,7 +66,8 @@ public interface AirClient {
 	@GET
 	@Path("/get_appliance_types")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<ApplianceType> getApplianceTypes();
+	List<ApplianceType> getApplianceTypes(
+			@QueryParam("load_descriptors") boolean loadDescriptors);
 
 	@GET
 	@Path("/get_appliance_config/{conf_id}")
@@ -87,8 +88,9 @@ public interface AirClient {
 
 	@PUT
 	@Path("/appliance_type/{asId}")
-	void updateAtomicService(@PathParam("asId") String asId, @FormParam("") ApplianceTypeRequest updatedAs);
-	
+	void updateAtomicService(@PathParam("asId") String asId,
+			@FormParam("") ApplianceTypeRequest updatedAs);
+
 	@DELETE
 	@Path("/appliance_type/{asId}")
 	void deleteAtomicService(@PathParam("asId") String asId,

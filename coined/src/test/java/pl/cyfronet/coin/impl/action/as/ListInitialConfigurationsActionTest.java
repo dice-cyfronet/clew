@@ -78,7 +78,7 @@ public class ListInitialConfigurationsActionTest extends ActionTest {
 
 		applianceTypes = Arrays.asList(type1, type2);
 		
-		when(air.getApplianceTypes()).thenReturn(applianceTypes);
+		when(air.getApplianceTypes(false)).thenReturn(applianceTypes);
 		when(air.getApplianceConfig("1")).thenReturn("payload1");
 		when(air.getApplianceConfig("2")).thenReturn("payload2");
 	}
@@ -104,7 +104,7 @@ public class ListInitialConfigurationsActionTest extends ActionTest {
 	}
 
 	private void thanCheckIfAirWasInvoked() {
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(false);
 	}
 
 	private void checkInitialConfiguration(InitialConfiguration initConf,

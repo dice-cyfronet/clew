@@ -80,7 +80,7 @@ public class GetAtomicServiceTest extends ActionTest {
 
 		asType.setEndpoints(Arrays.asList(type1AsEndpoint, type2AsEndpoint));
 
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(asType));
+		when(air.getApplianceTypes(true)).thenReturn(Arrays.asList(asType));
 	}
 
 	private void whenGetAtomicService(String asId) {
@@ -95,7 +95,7 @@ public class GetAtomicServiceTest extends ActionTest {
 	}
 
 	private void thenCheckAirRequest() {
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(true);
 	}
 
 	@Test

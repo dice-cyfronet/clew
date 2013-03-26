@@ -97,12 +97,11 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 	}
 
 	private void thanVerifyGetPayloadAirInvocations() {
-		thanVerifyGetASAirInvocation();
-		verify(air, times(1)).getEndpointDescriptor(endpointId);
+		thanVerifyGetASAirInvocation();		
 	}
 
 	private void thanVerifyGetASAirInvocation() {
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(true);
 	}
 
 	private void whenGetExistingDescriptorValueFor(String asName,
@@ -122,7 +121,8 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 		endpoint1.setPort(81);
 		endpoint1.setInvocation_path(existingInvocationPath);
 		endpoint1.setId(endpointId);
-
+		endpoint1.setDescriptor(descriptorValue);
+		
 		ATEndpoint endpoint2 = new ATEndpoint();
 		endpoint2.setPort(80);
 		endpoint2.setInvocation_path("other/path");
@@ -138,8 +138,6 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 
 		ApplianceType at2 = new ApplianceType();
 
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(at1, at2));
-		when(air.getEndpointDescriptor(endpointId)).thenReturn(descriptorValue);
-
+		when(air.getApplianceTypes(true)).thenReturn(Arrays.asList(at1, at2));
 	}
 }

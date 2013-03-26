@@ -47,7 +47,7 @@ public class ListInitialConfigurationsAction extends
 	 */
 	@Override
 	public List<InitialConfiguration> execute() throws CloudFacadeException {
-		ApplianceType type = getApplianceType(atomicServiceId);
+		ApplianceType type = getApplianceType(atomicServiceId, false);
 		List<ApplianceConfiguration> typeConfigurations = type
 				.getConfigurations();
 		List<InitialConfiguration> configurations = new ArrayList<InitialConfiguration>();

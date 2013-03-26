@@ -50,7 +50,7 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
 		at.setPort_mappings(Arrays.asList(portMapping));
 
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(at));
+		when(air.getApplianceTypes(false)).thenReturn(Arrays.asList(at));
 	}
 
 	private void whenRemoveRedirection() {

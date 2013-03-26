@@ -32,7 +32,7 @@ public class GetServicesSetAction extends ReadOnlyAirAction<String> {
 	public String execute() throws CloudFacadeException {
 		StringBuilder sb = new StringBuilder();
 
-		List<ApplianceType> applianceTypes = getAir().getApplianceTypes();
+		List<ApplianceType> applianceTypes = getAir().getApplianceTypes(false);
 
 		for (ApplianceType applianceType : applianceTypes) {
 			writeAtomicServiceEndpointIntoServicesSet(sb, applianceType);

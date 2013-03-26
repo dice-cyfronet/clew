@@ -54,8 +54,7 @@ public class GetEndpointPayloadAction extends ReadOnlyAirAction<String> {
 	public String execute() throws CloudFacadeException {
 		ATEndpoint endpoint = getEndpoint(atomicServiceId, serviceName,
 				invocationPath);
-		String endpointId = endpoint.getId();
-		String descriptor = getAir().getEndpointDescriptor(endpointId);
+		String descriptor = endpoint.getDescriptor();
 		return descriptor != null ? descriptor.trim() : descriptor;
 	}
 
@@ -63,7 +62,7 @@ public class GetEndpointPayloadAction extends ReadOnlyAirAction<String> {
 			String invocationPath) throws AtomicServiceNotFoundException,
 			EndpointNotFoundException {
 
-		ApplianceType type = getApplianceType(atomicServiceId);
+		ApplianceType type = getApplianceType(atomicServiceId, true);
 
 		Map<String, Integer> name2port = new HashMap<>();
 		for (ATPortMapping portMapping : type.getPort_mappings()) {

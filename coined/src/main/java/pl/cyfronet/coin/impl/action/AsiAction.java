@@ -28,9 +28,10 @@ public abstract class AsiAction<T> extends WorkflowAction<T> {
 		this.asiId = asiId;
 	}
 
-	protected ApplianceType getApplianceType() {
+	protected ApplianceType getApplianceType(boolean loadDescriptor) {
 		logger.debug("Getting AT for {} ASI", getAsiId());
-		ApplianceType at = getApplianceType(getAsiApplianceTypeId());
+		ApplianceType at = getApplianceType(getAsiApplianceTypeId(),
+				loadDescriptor);
 		logger.debug("Following AT {} received for {} ASI", at, getAsiId());
 		return at;
 	}

@@ -25,6 +25,6 @@ public class ListAsiEndpointsAction extends ReadOnlyAsiAction<List<Endpoint>> {
 	@Override
 	public List<Endpoint> execute() throws CloudFacadeException {
 		logger.debug("Getting endpoints for {} {}", getContextId(), getAsiId());
-		return getEndpoints(getApplianceType());
+		return getEndpoints(getApplianceType(true));
 	}
 }
