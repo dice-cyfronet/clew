@@ -64,13 +64,14 @@ public class WorkflowServiceExceptionMapper extends CloudFacadeExceptionMapper {
 			} else if (AtomicServiceInstanceNotFoundException.ERROR_MESSAGE
 					.equals(message)) {
 				throw new AtomicServiceInstanceNotFoundException();
-			} else if(RedirectionNotFoundException.ERROR_MESSAGE.equals(message)) {
+			} else if (RedirectionNotFoundException.ERROR_MESSAGE
+					.equals(message)) {
 				throw new RedirectionNotFoundException();
-			} else if(EndpointNotFoundException.ERROR_MESSAGE.equals(message)) {
+			} else if (EndpointNotFoundException.ERROR_MESSAGE.equals(message)) {
 				throw new EndpointNotFoundException();
 			}
 		default:
-			return new CloudFacadeException();
+			return new CloudFacadeException(message);
 		}
 
 	}
