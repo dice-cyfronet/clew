@@ -51,7 +51,7 @@ public class KeyServiceExceptionMapper extends CloudFacadeExceptionMapper {
 			}
 			return new WrongKeyFormatException(message);
 		default:
-			return new CloudFacadeException();
+			return new CloudFacadeException(message);
 		}
 	}
 }

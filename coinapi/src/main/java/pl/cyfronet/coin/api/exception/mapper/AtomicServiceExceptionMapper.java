@@ -64,7 +64,7 @@ public class AtomicServiceExceptionMapper extends CloudFacadeExceptionMapper {
 				return new InitialConfigurationAlreadyExistException();
 			}
 		default:
-			return new CloudFacadeException();
+			return new CloudFacadeException(message);
 		}
 	}
 
