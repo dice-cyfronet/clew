@@ -102,6 +102,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_ENDPOINT_LINKS = "endpointLinks";
 	static final String MODEL_BEAN_AUTH_ENDPOINT_LINKS = "authEndpointLinks";
 	static final String MODEL_BEAN_BREAKING_ENDPOINT_LINKS = "breakingEndpointLinks";
+	static final String MODEL_BEAN_USER_NAME = "userName";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -114,6 +115,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_USER_KEY_ID = "userKeyId";
 	static final String PARAM_ENDPOINT_ID = "endpointId";
 	static final String PARAM_REDIRECTION_ID = "redirectionId";
+	static final String PARAM_AS_REMOVAL_ERROR = "asRemovalError";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -134,6 +136,7 @@ public class CloudManagerPortlet {
 	static final String ACTION_REMOVE_ENDPOINT = "removeEndpoint";
 	static final String ACTION_ADD_REDIRECTION = "addRedirection";
 	static final String ACTION_REMOVE_REDIRECTION = "removeRedirection";
+	static final String ACTION_REMOVE_AS = "removeAs";
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -264,16 +267,21 @@ public class CloudManagerPortlet {
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
 	public String doViewStartAtomicService(@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
-			Model model, PortletRequest request) {
+			@RequestParam(value = PARAM_AS_REMOVAL_ERROR, required = false) String asRemovalError, Model model, PortletRequest request) {
 		log.debug("Generating the atomic service startup parameters view for workflow type [{}]", workflowType);
 		
 		List<AtomicService> atomicServices = getSortedAtomicServices(request);
 		filterAtomicService(atomicServices, workflowType);
 		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES, atomicServices);
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
+		model.addAttribute(MODEL_BEAN_USER_NAME, portal.getUserName(request));
 		
 		if(!model.containsAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST)) {
 			model.addAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST, new StartAtomicServiceRequest());
+		}
+		
+		if(asRemovalError != null) {
+			model.addAttribute(PARAM_AS_REMOVAL_ERROR, asRemovalError);
 		}
 		
 		return "cloudManager/atomicServiceStartupParams";
@@ -1046,6 +1054,23 @@ public class CloudManagerPortlet {
 		response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_ENDPOINTS);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID, atomicServiceInstanceId);
 		response.setRenderParameter(PARAM_WORKFLOW_ID, workflowId);
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_REMOVE_AS)
+	public void doActionRemoveAs(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType, PortletRequest request,
+			ActionResponse response) {
+		log.debug("Processing atomic service removal action for {}", atomicServiceId);
+		
+		try {
+			clientFactory.getCloudFacade(request).deleteAtomicService(atomicServiceId);
+		} catch(Exception e) {
+			log.warn("Could not remove atomic service with id {}", atomicServiceId);
+			response.setRenderParameter(PARAM_AS_REMOVAL_ERROR, "true");
+		}
+		
+		response.setRenderParameter(PARAM_ACTION, ACTION_START_ATOMIC_SERVICE);
+		response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
 	}
 
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {
