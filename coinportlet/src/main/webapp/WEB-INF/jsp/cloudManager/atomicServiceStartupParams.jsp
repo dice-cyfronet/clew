@@ -77,6 +77,13 @@
 							</c:otherwise>
 						</c:choose>
 						<c:if test="${atomicService.owner == userName}">
+							<portlet:renderURL var="editAs">
+								<portlet:param name="action" value="editAs"/>
+								<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+								<portlet:param name="workflowType" value="${workflowType}"/>
+							</portlet:renderURL>
+							<br/><a class="coin-link" href="${editAs}">Edit</a>
+							
 							<c:set var="removeAsLink">removeAS-link-${atomicService.atomicServiceId}</c:set>
 							<portlet:actionURL var="removeAs">
 								<portlet:param name="action" value="removeAs"/>

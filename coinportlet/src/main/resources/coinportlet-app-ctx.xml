@@ -63,6 +63,7 @@
     	<property name="cloudFacade" ref="cf-client"/>
     	<property name="keyManagement" ref="km-client"/>
     	<property name="securityPolicyService" ref="sps-client"/>
+    	<property name="securityConfigurationService" ref="scs-client"/>
     </bean>
     <jaxrs:client id="wm-client" address="${cloud.facade.wm.url}"
 			serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
@@ -92,6 +93,14 @@
 		</jaxrs:providers>		
 	</jaxrs:client>
 	<jaxrs:client id="sps-client" address="${cloud.facade.sps.url}"
+			serviceClass="pl.cyfronet.coin.api.OwnedPayloadService"
+			threadSafe="true"
+			inheritHeaders="true">
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>		
+	</jaxrs:client>
+	<jaxrs:client id="scs-client" address="${cloud.facade.scs.url}"
 			serviceClass="pl.cyfronet.coin.api.OwnedPayloadService"
 			threadSafe="true"
 			inheritHeaders="true">

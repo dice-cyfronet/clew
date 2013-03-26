@@ -11,6 +11,7 @@ public class SaveAtomicServiceRequest {
 	private boolean published;
 	private boolean scalable;
 	private String proxyConfiguration;
+	private String atomicServiceId;
 	
 	public boolean isShared() {
 		return shared;
@@ -53,5 +54,11 @@ public class SaveAtomicServiceRequest {
 	}
 	public void setProxyConfiguration(String proxyConfiguration) {
 		this.proxyConfiguration = proxyConfiguration;
+	}
+	public String getAtomicServiceId() {
+		return atomicServiceId;
+	}
+	public void setAtomicServiceId(String atomicServiceId) {
+		this.atomicServiceId = atomicServiceId;
 	}
 }

@@ -19,6 +19,7 @@ public class ClientFactory {
 	private WorkflowManagement workflowManagement;
 	private KeyManagement keyManagement;
 	private OwnedPayloadService securityPolicyService;
+	private OwnedPayloadService securityConfigurationService;
 	
 	@Autowired private Portal portal;
 	
@@ -34,6 +35,9 @@ public class ClientFactory {
 	public void setSecurityPolicyService(OwnedPayloadService securityPolicyService) {
 		this.securityPolicyService = securityPolicyService;
 	}
+	public void setSecurityConfigurationService(OwnedPayloadService securityConfigurationService) {
+		this.securityConfigurationService = securityConfigurationService;
+	}
 
 	public CloudFacade getCloudFacade(PortletRequest request) {
 		attachBasicAuth(request, cloudFacade);
@@ -48,9 +52,15 @@ public class ClientFactory {
 	}
 	
 	public OwnedPayloadService getSecurityPolicyService(PortletRequest request) {
-		attachBasicAuth(request, workflowManagement);
+		attachBasicAuth(request, securityPolicyService);
 		
 		return securityPolicyService;
+	}
+	
+	public OwnedPayloadService getSecurityConfigurationService(PortletRequest request) {
+		attachBasicAuth(request, securityConfigurationService);
+		
+		return securityConfigurationService;
 	}
 	
 	private String createBasicAuthHeader(PortletRequest request) {

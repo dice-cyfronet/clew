@@ -48,6 +48,7 @@ import org.springframework.web.util.HtmlUtils;
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
+import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
@@ -137,6 +138,7 @@ public class CloudManagerPortlet {
 	static final String ACTION_ADD_REDIRECTION = "addRedirection";
 	static final String ACTION_REMOVE_REDIRECTION = "removeRedirection";
 	static final String ACTION_REMOVE_AS = "removeAs";
+	static final String ACTION_EDIT_AS = "editAs";
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -1075,6 +1077,68 @@ public class CloudManagerPortlet {
 		
 		response.setRenderParameter(PARAM_ACTION, ACTION_START_ATOMIC_SERVICE);
 		response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_EDIT_AS)
+	public String doViewEditAs(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
+			Model model, PortletRequest request) {
+		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
+		
+		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
+			AtomicService as = getAtomicService(atomicServiceId, clientFactory.getCloudFacade(request).getAtomicServices());
+			SaveAtomicServiceRequest sasr = new SaveAtomicServiceRequest();
+			sasr.setName(as.getName());
+			sasr.setDescription(as.getDescription());
+			sasr.setProxyConfiguration(as.getProxyConfigurationName());
+			sasr.setPublished(as.isPublished());
+			sasr.setScalable(as.isScalable());
+			sasr.setShared(as.isShared());
+			sasr.setAtomicServiceId(atomicServiceId);
+			sasr.setAtomicServiceInstanceId(" ");
+			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
+		}
+		
+		return "cloudManager/saveAtomicService";
+	}
+	
+	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_EDIT_AS)
+	public void doActionEditAs(@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
+			@ModelAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST) SaveAtomicServiceRequest editAs,
+			BindingResult errors, PortletRequest request, ActionResponse response) {
+		validator.validate(editAs, errors);
+		
+		if(!validateProxyConfiguration(editAs, request)) {
+			errors.addError(new FieldError(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, "proxyConfiguration",
+					messages.getMessage("cloud.manager.portlet.wrong.proxy.configuration.name.message", null, null)));
+		}
+		
+		if(!errors.hasErrors()) {
+			AtomicServiceRequest asr = new AtomicServiceRequest();
+			asr.setName(editAs.getName());
+			asr.setDescription(editAs.getDescription());
+			asr.setProxyConfigurationName(editAs.getProxyConfiguration());
+			asr.setPublished(editAs.isPublished());
+			asr.setScalable(editAs.isScalable());
+			asr.setShared(editAs.isShared());
+			clientFactory.getCloudFacade(request).updateAtomicService(editAs.getAtomicServiceId(), asr);
+			response.setRenderParameter(PARAM_ACTION, ACTION_START_ATOMIC_SERVICE);
+			response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
+		} else {
+			response.setRenderParameter(PARAM_ACTION, ACTION_EDIT_AS);
+			response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, editAs.getAtomicServiceId());
+			response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
+		}
+	}
+
+	private boolean validateProxyConfiguration(SaveAtomicServiceRequest editAs, PortletRequest request) {
+		List<String> securityConfigurations = clientFactory.getSecurityConfigurationService(request).list();
+		
+		if(securityConfigurations.contains(editAs.getProxyConfiguration())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private void filterAtomicService(List<AtomicService> atomicServices, WorkflowType workflowType) {

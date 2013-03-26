@@ -1,12 +1,23 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<portlet:actionURL var="saveAtomicService">
-	<portlet:param name="action" value="saveAtomicService"/>
-</portlet:actionURL>
+<c:choose>
+	<c:when test="${saveAtomicServiceRequest.atomicServiceId != null}">
+		<portlet:actionURL var="formAction">
+			<portlet:param name="action" value="editAs"/>
+			<portlet:param name="workflowType" value="${workflowType}"/>
+		</portlet:actionURL>
+	</c:when>
+	<c:otherwise>
+		<portlet:actionURL var="formAction">
+			<portlet:param name="action" value="saveAtomicService"/>
+		</portlet:actionURL>
+	</c:otherwise>
+</c:choose>
 
 <div class="coin-content coin-content-no-tabs">
-	<form:form class="coin-form" action='${saveAtomicService}' modelAttribute='saveAtomicServiceRequest'>
+	<form:form class="coin-form" action='${formAction}' modelAttribute='saveAtomicServiceRequest'>
 		<form:hidden path="atomicServiceInstanceId"/>
+		<form:hidden path="atomicServiceId"/>
 		<div class="coin-form-input">
 			<label for="name">
 				<spring:message code="cloud.manager.portlet.save.atomic.service.name.label"/>
