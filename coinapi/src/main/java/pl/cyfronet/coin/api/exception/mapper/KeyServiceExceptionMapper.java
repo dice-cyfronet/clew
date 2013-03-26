@@ -45,10 +45,13 @@ public class KeyServiceExceptionMapper extends CloudFacadeExceptionMapper {
 		case 404:
 			return new KeyNotFoundException();
 		case 400:
+			if (message.endsWith("is not a valid id")) {
+				return new CloudFacadeException(message,
+						Response.Status.BAD_REQUEST);
+			}
 			return new WrongKeyFormatException(message);
 		default:
 			return new CloudFacadeException();
 		}
 	}
-
 }

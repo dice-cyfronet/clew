@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,23 +71,23 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private String host = "host.com";
 
-	private String contextId = "contextId";
+	private String contextId = "50b70f252a9524132a04cae5";
 
-	private String asConfigId = "asConfId";
+	private String asConfigId = "50b70f252a9524132a04cae6";
 
-	private String asiId = "asiId";
+	private String asiId = "50b70f252a9524132a04cae7";
 
 	private String username = "User123";
 
-	private String atomicServiceId = "as";
+	private String atomicServiceId = "50b70f252a9524132a04cae8";
 	private String asName = "asName";
-	private String keyName = "myKey";
+	private String keyId = "50b70f252a9524132a04cae9";
 
 	private RedirectionType redirectionType = RedirectionType.HTTP;
 	private int redirectionPort = 80;
 	private String redirectionName = "myRedirection";
 
-	private String redirectionId = "redirectionId";
+	private String redirectionId = "50b70f252a9524132a04caf9";
 
 	private List<Endpoint> endpoints;
 
@@ -100,6 +102,10 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private AtomicServiceInstance asInstance;
 
 	private AtomicServiceInstance givenAsInstance;
+
+	private String invalidId = "invalidId";
+
+	private String validId = "50b70f252a9524132a04cae0";
 
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
@@ -378,14 +384,14 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		Action<String> action = mock(Action.class);
 		when(
 				actionFactory.createStartAtomicServiceAction(username,
-						atomicServiceId, asName, contextId, keyName))
-				.thenReturn(action);
+						atomicServiceId, asName, contextId, keyId)).thenReturn(
+				action);
 		currentAction = action;
 	}
 
 	private void whenAddAtomicServiceWithKeyToWorkflow() {
 		workflowManagement.addAtomicServiceToWorkflow(contextId,
-				atomicServiceId, asName, keyName);
+				atomicServiceId, asName, keyId);
 	}
 
 	private void thenAtomicServiceWithKeyAdded() {
@@ -627,6 +633,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiWithEndpoint() {
+		endpointId = "50b70f252a9524132a04cae9";
 		Action<Class<Void>> action = mock(Action.class);
 		when(
 				actionFactory.createRemoveAsiEndpointAction(username,
@@ -674,9 +681,9 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		givenAsInstance.setAtomicServiceId("asId");
 		givenAsInstance.setAtomicServiceName("name");
 		givenAsInstance.setConfigurationId("configurationId");
-		givenAsInstance.setInstanceId(asiId);		
-		
-		Action<AtomicServiceInstance> action = mock(Action.class);		
+		givenAsInstance.setInstanceId(asiId);
+
+		Action<AtomicServiceInstance> action = mock(Action.class);
 		when(action.execute()).thenReturn(givenAsInstance);
 		when(
 				actionFactory.createGetWorkflowAtomicServiceInstanceAction(
@@ -685,14 +692,130 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void whenGetWorkflowAtomicServiceInstance() {
-		asInstance = workflowManagement.getWorkflowAtomicServiceInstance(contextId, asiId);
+		asInstance = workflowManagement.getWorkflowAtomicServiceInstance(
+				contextId, asiId);
 	}
 
 	private void thenAtomicServiceReceived() {
 		thenActionExecuted();
-		assertEquals(asInstance.getAtomicServiceId(), givenAsInstance.getAtomicServiceId());
-		assertEquals(asInstance.getAtomicServiceName(), givenAsInstance.getAtomicServiceName());
-		assertEquals(asInstance.getConfigurationId(), givenAsInstance.getConfigurationId());
-		assertEquals(asInstance.getInstanceId(), givenAsInstance.getInstanceId());
+		assertEquals(asInstance.getAtomicServiceId(),
+				givenAsInstance.getAtomicServiceId());
+		assertEquals(asInstance.getAtomicServiceName(),
+				givenAsInstance.getAtomicServiceName());
+		assertEquals(asInstance.getConfigurationId(),
+				givenAsInstance.getConfigurationId());
+		assertEquals(asInstance.getInstanceId(),
+				givenAsInstance.getInstanceId());
+	}
+
+	@Test
+	public void shouldThrow400WhenIdIsNotValid() throws Exception {
+		try {
+			workflowManagement.stopWorkflow(invalidId);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.getWorkflow(invalidId);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+	}
+
+	@DataProvider
+	protected Object[][] get2Ids() {
+		return new Object[][] { { invalidId, invalidId },
+				{ validId, invalidId } };
+	}
+
+	@Test(dataProvider = "get2Ids")
+	public void shouldThrow400WhenIdNotValid2Ids(String id1, String id2)
+			throws Exception {
+		try {
+			workflowManagement.removeAtomicServiceFromWorkflow(id1, id2);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement
+					.removeAtomicServiceInstanceFromWorkflow(id1, id2);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.getWorkflowAtomicServiceInstance(id1, id2);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.getRedirections(id1, id2);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.addRedirection(id1, id2, "name", 80,
+					RedirectionType.HTTP);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.getEndpoints(id1, id2);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.addEndpoint(id1, id2, new Endpoint());
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+	}
+
+	@DataProvider
+	protected Object[][] get3Ids() {
+		return new Object[][] { { invalidId, invalidId, invalidId },
+				{ validId, invalidId, invalidId },
+				{ validId, validId, invalidId }, };
+	}
+
+	@Test(dataProvider = "get3Ids")
+	public void shouldThrow400WhenIdNotValid3Ids(String id1, String id2,
+			String id3) throws Exception {
+		try {
+			workflowManagement
+					.addAtomicServiceToWorkflow(id1, id2, "name", id3);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.deleteRedirection(id1, id2, id3);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+		
+		try {
+			workflowManagement.deleteEndpoint(id1, id2, id3);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
 	}
 }

@@ -36,13 +36,16 @@ public class AtomicServiceExceptionMapper extends CloudFacadeExceptionMapper {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AtomicServiceExceptionMapper.class);
-	
+
 	@Override
 	public Throwable fromResponse(Response r) {
 		String message = getMessage(r);
 		int status = r.getStatus();
 		logger.info("Response to be mapped: {} -> {}", status, message);
 		switch (status) {
+		case 400:
+			return new CloudFacadeException(message,
+					Response.Status.BAD_REQUEST);
 		case 404:
 			if (AtomicServiceNotFoundException.ERROR_MESSAGE.equals(message)) {
 				return new AtomicServiceNotFoundException();
@@ -59,7 +62,7 @@ public class AtomicServiceExceptionMapper extends CloudFacadeExceptionMapper {
 				return new AtomicServiceAlreadyExistsException();
 			} else {
 				return new InitialConfigurationAlreadyExistException();
-			}		
+			}
 		default:
 			return new CloudFacadeException();
 		}
