@@ -76,11 +76,36 @@
 			    				</script>
 							</c:otherwise>
 						</c:choose>
+						<c:if test="${atomicService.owner == userName}">
+							<c:set var="removeAsLink">removeAS-link-${atomicService.atomicServiceId}</c:set>
+							<portlet:actionURL var="removeAs">
+								<portlet:param name="action" value="removeAs"/>
+								<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+								<portlet:param name="workflowType" value="${workflowType}"/>
+							</portlet:actionURL>
+							<br/><a id="${removeAsLink}" style="color: #EFC09F;" class="coin-link" href="${removeAs}">Remove</a>
+							<script type="text/javascript">
+								jQuery(document).ready(function() {
+									jQuery('#${removeAsLink}').click(function() {
+										if(!confirm("<spring:message code='cloud.manager.portlet.remove.as.confirmation.message'/>")) {
+											return false;
+										}
+									});
+								});
+							</script>
+						</c:if>
 					</span>
 				</div>
 			</div>
 		</c:if>
 	</c:forEach>
+	<c:if test="${asRemovalError != null}">
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				alert('<spring:message code="cloud.manager.portlet.as.removal.error.message"/>');
+			});
+		</script>
+	</c:if>
 	<div class="coin-menu-bottom">
 		<ul>
 			<li>
