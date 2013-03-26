@@ -48,7 +48,7 @@ public class ListAsiEndpointsActionTest extends WorkflowActionTest {
 		at = new ApplianceType();
 		at.setId(atId);
 
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(at));
+		when(air.getApplianceTypes(atId, true)).thenReturn(Arrays.asList(at));
 	}
 
 	private ATEndpoint getATEndpoint(String name, String type) {

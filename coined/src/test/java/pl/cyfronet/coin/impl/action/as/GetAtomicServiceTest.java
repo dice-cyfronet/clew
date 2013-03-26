@@ -37,20 +37,21 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  */
 public class GetAtomicServiceTest extends ActionTest {
 
+	private static final String AS_ID = "asId";
 	private ApplianceType asType;
 	private AtomicService atomicService;
 
 	@Test
 	public void shouldGetAtomicService() throws Exception {
 		givenAtomicServiceInAir();
-		whenGetAtomicService("asId");
+		whenGetAtomicService(AS_ID);
 		thenCheckReceivedAtomicService();
 
 	}
 
 	private void givenAtomicServiceInAir() {
 		asType = new ApplianceType();
-		asType.setId("asId");
+		asType.setId(AS_ID);
 		asType.setName("as");
 		asType.setDescription("type1 description");
 		asType.setHttp(true);
@@ -62,7 +63,7 @@ public class GetAtomicServiceTest extends ActionTest {
 		asType.setDevelopment(true);
 		asType.setTemplates_count(0);
 		asType.setProxy_conf_name("proxy/conf/name");
-		
+
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
 		type1AsEndpoint.setDescriptor(null);
@@ -80,7 +81,8 @@ public class GetAtomicServiceTest extends ActionTest {
 
 		asType.setEndpoints(Arrays.asList(type1AsEndpoint, type2AsEndpoint));
 
-		when(air.getApplianceTypes()).thenReturn(Arrays.asList(asType));
+		when(air.getApplianceTypes(AS_ID, true)).thenReturn(
+				Arrays.asList(asType));
 	}
 
 	private void whenGetAtomicService(String asId) {
@@ -95,7 +97,7 @@ public class GetAtomicServiceTest extends ActionTest {
 	}
 
 	private void thenCheckAirRequest() {
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(AS_ID, true);
 	}
 
 	@Test
@@ -107,7 +109,5 @@ public class GetAtomicServiceTest extends ActionTest {
 		} catch (AtomicServiceNotFoundException e) {
 			// OK
 		}
-		thenCheckAirRequest();
-
 	}
 }

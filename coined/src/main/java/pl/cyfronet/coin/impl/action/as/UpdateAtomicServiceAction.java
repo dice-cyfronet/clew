@@ -33,7 +33,7 @@ public class UpdateAtomicServiceAction extends AirAction<Class<Void>> {
 
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		oldAS = getApplianceType(asId);
+		oldAS = getApplianceType(asId, false);
 
 		if (canUpdate()) {
 			ApplianceTypeRequest updatedAsRequest = new ApplianceTypeRequest();

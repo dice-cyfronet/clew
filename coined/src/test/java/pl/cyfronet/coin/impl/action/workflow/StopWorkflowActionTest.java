@@ -29,8 +29,6 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
-import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
-import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
@@ -200,20 +198,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		Vms vm1 = getVm("asi1");
 		Vms vm2 = getVm("asi2");
 
-		when(air.getApplianceTypes()).thenReturn(
-				Arrays.asList(getAT("asi1"), getAT("asi2")));
-
 		workflowDetails.setVms(Arrays.asList(vm1, vm2));
-	}
-
-	private ApplianceType getAT(String vmId) {
-		ApplianceType at = new ApplianceType();
-		at.setId(vmId + "AS");
-		ApplianceConfiguration ac = new ApplianceConfiguration();
-		ac.setId(vmId + "InitConf");
-		at.setConfigurations(Arrays.asList(ac));
-
-		return at;
 	}
 
 	private void thenWorkflowIsStoppedAndDevelopmentASesAreRemoved() {

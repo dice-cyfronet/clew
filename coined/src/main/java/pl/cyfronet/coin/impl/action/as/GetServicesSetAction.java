@@ -22,7 +22,7 @@ public class GetServicesSetAction extends ReadOnlyAirAction<String> {
 
 	private static final String providerTemplate = FileUtils
 			.getFileContent("services_set/provider.tpl");
-	
+
 	public GetServicesSetAction(ActionFactory actionFactory, String coinBaseUrl) {
 		super(actionFactory);
 		this.coinBaseUrl = coinBaseUrl;
@@ -32,7 +32,8 @@ public class GetServicesSetAction extends ReadOnlyAirAction<String> {
 	public String execute() throws CloudFacadeException {
 		StringBuilder sb = new StringBuilder();
 
-		List<ApplianceType> applianceTypes = getAir().getApplianceTypes();
+		List<ApplianceType> applianceTypes = getAir().getApplianceTypes(null,
+				false);
 
 		for (ApplianceType applianceType : applianceTypes) {
 			writeAtomicServiceEndpointIntoServicesSet(sb, applianceType);

@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.impl.action.as;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,7 +43,6 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 public class ListInitialConfigurationsActionTest extends ActionTest {
 
 	private List<InitialConfiguration> initialConfigurations;
-	private List<ApplianceType> applianceTypes;
 
 	@DataProvider
 	protected Object[][] getLoadPayload() {
@@ -76,9 +77,8 @@ public class ListInitialConfigurationsActionTest extends ActionTest {
 
 		type2.setConfigurations(Arrays.asList(config1, config2));
 
-		applianceTypes = Arrays.asList(type1, type2);
-		
-		when(air.getApplianceTypes()).thenReturn(applianceTypes);
+		when(air.getApplianceTypes(type1.getId(), false)).thenReturn(Arrays.asList(type1));
+		when(air.getApplianceTypes(type2.getId(), false)).thenReturn(Arrays.asList(type2));
 		when(air.getApplianceConfig("1")).thenReturn("payload1");
 		when(air.getApplianceConfig("2")).thenReturn("payload2");
 	}
@@ -104,7 +104,7 @@ public class ListInitialConfigurationsActionTest extends ActionTest {
 	}
 
 	private void thanCheckIfAirWasInvoked() {
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(anyString(), eq(false));
 	}
 
 	private void checkInitialConfiguration(InitialConfiguration initConf,

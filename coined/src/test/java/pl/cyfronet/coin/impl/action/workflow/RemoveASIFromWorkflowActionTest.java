@@ -66,7 +66,6 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 		wd.setWorkflow_type(WorkflowType.development);
 
 		List<Vms> vms = new ArrayList<Vms>();
-		List<ApplianceType> ats = new ArrayList<>();
 
 		for (String id : asiIds) {
 			Vms vm = getVm(id);
@@ -80,12 +79,10 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 			at.setConfigurations(Arrays.asList(ac));
 
 			when(air.getTypeFromVM(id)).thenReturn(at);
-			ats.add(at);
 		}
 
 		wd.setVms(vms);
 		when(air.getWorkflow(contextId)).thenReturn(wd);
-		when(air.getApplianceTypes()).thenReturn(ats);
 	}
 
 	private Vms getVm(String vmId) {

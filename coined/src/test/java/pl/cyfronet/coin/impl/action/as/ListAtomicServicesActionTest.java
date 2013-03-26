@@ -15,7 +15,6 @@
  */
 package pl.cyfronet.coin.impl.action.as;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,6 +78,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type2AsEndpoint.setId("2");
 		type2AsEndpoint.setInvocation_path("path");
 		type2AsEndpoint.setPort(9090);
+		type2AsEndpoint.setDescriptor("GET POST /hello/{name}");
 
 		type1.setEndpoints(Arrays.asList(type1AsEndpoint, type2AsEndpoint));
 
@@ -105,13 +105,8 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		userDevAS.setDevelopment(true);
 		userDevAS.setName("UserDevelopmentAS");
 
-		when(air.getApplianceTypes()).thenReturn(
-				Arrays.asList(type1, type2, devAS, userDevAS));
-
-		// descriptor payload
-		when(air.getEndpointDescriptor("1")).thenReturn(null);
-		when(air.getEndpointDescriptor("2")).thenReturn(
-				"GET POST /hello/{name}");
+		when(air.getApplianceTypes(null, true)).thenReturn(
+				Arrays.asList(type1, type2, devAS, userDevAS));		
 	}
 
 	private void whenGetAtomicServices() {
@@ -127,7 +122,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		AtomicService as2 = asList.get(1);
 		AtomicService devAs = asList.get(2);
 
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(null, true);
 
 		assertATAndAs(type1, as1, null, "GET POST /hello/{name}");
 		assertATAndAs(type2, as2);
@@ -140,11 +135,10 @@ public class ListAtomicServicesActionTest extends ActionTest {
 
 	private void thenCheckAirRequestWithEndpoints() {
 		thenCheckAirRequest();
-		verify(air, times(2)).getEndpointDescriptor(anyString());
 	}
 
 	private void thenCheckAirRequest() {
-		verify(air, times(1)).getApplianceTypes();
+		verify(air, times(1)).getApplianceTypes(null, true);
 	}
 
 	@Test
@@ -155,7 +149,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	}
 
 	private void givenEmptyAirAtomicServicesList() {
-		when(air.getApplianceTypes())
+		when(air.getApplianceTypes(null, true))
 				.thenReturn(new ArrayList<ApplianceType>());
 	}
 

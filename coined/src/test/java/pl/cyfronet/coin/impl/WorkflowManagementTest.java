@@ -723,6 +723,21 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
+		
+		try {
+			workflowManagement.removeAtomicServiceFromWorkflow(invalidId, "asiId");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement
+					.removeAtomicServiceInstanceFromWorkflow(invalidId, "asiId");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
 	}
 
 	@DataProvider
@@ -734,20 +749,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	@Test(dataProvider = "get2Ids")
 	public void shouldThrow400WhenIdNotValid2Ids(String id1, String id2)
 			throws Exception {
-		try {
-			workflowManagement.removeAtomicServiceFromWorkflow(id1, id2);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
-		try {
-			workflowManagement
-					.removeAtomicServiceInstanceFromWorkflow(id1, id2);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
 
 		try {
 			workflowManagement.getWorkflowAtomicServiceInstance(id1, id2);
