@@ -58,7 +58,7 @@ public class GetPortMappingsActionTest extends WorkflowActionTest {
 
 		at.setPort_mappings(Arrays.asList(at1, at2));
 
-		when(air.getApplianceTypes(false)).thenReturn(Arrays.asList(at));
+		when(air.getApplianceTypes(atId, false)).thenReturn(Arrays.asList(at));
 	}
 
 	private void whenGetAsiRedirections() {

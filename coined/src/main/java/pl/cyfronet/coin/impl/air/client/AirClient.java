@@ -67,6 +67,7 @@ public interface AirClient {
 	@Path("/get_appliance_types")
 	@Produces(MediaType.APPLICATION_JSON)
 	List<ApplianceType> getApplianceTypes(
+			@QueryParam("appliance_type_id") String atId,
 			@QueryParam("load_descriptors") boolean loadDescriptors);
 
 	@GET

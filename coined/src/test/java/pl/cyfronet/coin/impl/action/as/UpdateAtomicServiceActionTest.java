@@ -55,7 +55,7 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 		updatedAs.setScalable(false);
 
 		matcher = new UpdateAtomicServiceMatcher(at, updatedAs);
-		when(air.getApplianceTypes(false)).thenReturn(Arrays.asList(at));
+		when(air.getApplianceTypes(asId, false)).thenReturn(Arrays.asList(at));
 	}
 
 	private void whenUpdateOwnedAtomicService() {

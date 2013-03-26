@@ -105,7 +105,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		userDevAS.setDevelopment(true);
 		userDevAS.setName("UserDevelopmentAS");
 
-		when(air.getApplianceTypes(true)).thenReturn(
+		when(air.getApplianceTypes(null, true)).thenReturn(
 				Arrays.asList(type1, type2, devAS, userDevAS));		
 	}
 
@@ -122,7 +122,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		AtomicService as2 = asList.get(1);
 		AtomicService devAs = asList.get(2);
 
-		verify(air, times(1)).getApplianceTypes(true);
+		verify(air, times(1)).getApplianceTypes(null, true);
 
 		assertATAndAs(type1, as1, null, "GET POST /hello/{name}");
 		assertATAndAs(type2, as2);
@@ -138,7 +138,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	}
 
 	private void thenCheckAirRequest() {
-		verify(air, times(1)).getApplianceTypes(true);
+		verify(air, times(1)).getApplianceTypes(null, true);
 	}
 
 	@Test
@@ -149,7 +149,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	}
 
 	private void givenEmptyAirAtomicServicesList() {
-		when(air.getApplianceTypes(true))
+		when(air.getApplianceTypes(null, true))
 				.thenReturn(new ArrayList<ApplianceType>());
 	}
 

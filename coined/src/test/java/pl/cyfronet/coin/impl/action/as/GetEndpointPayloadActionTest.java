@@ -67,7 +67,6 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 		} catch (AtomicServiceNotFoundException e) {
 			// should be thrown
 		}
-		thanVerifyGetASAirInvocation();
 	}
 
 	@DataProvider(name = "getNonExistingEndpointIdentificationPortAndPath")
@@ -88,20 +87,15 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 		} catch (EndpointNotFoundException e) {
 			// should be thrown
 		}
-		thanVerifyGetASAirInvocation();
 	}
 
 	private void thanDescriptorValueIsEqual(String receivedDescriptorValue) {
-		thanVerifyGetPayloadAirInvocations();
+		thanVerifyGetASAirInvocation();
 		assertEquals(receivedDescriptorValue, descriptorValue);
 	}
 
-	private void thanVerifyGetPayloadAirInvocations() {
-		thanVerifyGetASAirInvocation();		
-	}
-
 	private void thanVerifyGetASAirInvocation() {
-		verify(air, times(1)).getApplianceTypes(true);
+		verify(air, times(1)).getApplianceTypes(asId, true);
 	}
 
 	private void whenGetExistingDescriptorValueFor(String asName,
@@ -138,6 +132,6 @@ public class GetEndpointPayloadActionTest extends ActionTest {
 
 		ApplianceType at2 = new ApplianceType();
 
-		when(air.getApplianceTypes(true)).thenReturn(Arrays.asList(at1, at2));
+		when(air.getApplianceTypes(asId, true)).thenReturn(Arrays.asList(at1, at2));
 	}
 }

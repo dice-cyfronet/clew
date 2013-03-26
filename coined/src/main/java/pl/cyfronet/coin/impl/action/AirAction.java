@@ -38,7 +38,7 @@ public abstract class AirAction<T> extends BaseAction<T> {
 	}
 
 	protected List<ApplianceType> getApplianceTypes(boolean loadDescriptors) {
-		return getAir().getApplianceTypes(loadDescriptors);
+		return getAir().getApplianceTypes(null, loadDescriptors);
 	}
 
 	protected ApplianceType getApplianceType(String applianceTypeId)
@@ -48,7 +48,8 @@ public abstract class AirAction<T> extends BaseAction<T> {
 
 	protected ApplianceType getApplianceType(String applianceTypeId,
 			boolean loadDescriptors) throws AtomicServiceNotFoundException {
-		List<ApplianceType> applianceTypes = getApplianceTypes(loadDescriptors);
+		List<ApplianceType> applianceTypes = getAir().getApplianceTypes(
+				applianceTypeId, loadDescriptors);
 
 		for (ApplianceType applianceType : applianceTypes) {
 			String id = applianceType.getId();
