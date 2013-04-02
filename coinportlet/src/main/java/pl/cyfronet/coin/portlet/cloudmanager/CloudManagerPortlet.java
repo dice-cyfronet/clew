@@ -961,7 +961,8 @@ public class CloudManagerPortlet {
 					getEndpoints(addEndpointRequest.getWorkflowId(), addEndpointRequest.getAtomicServiceInstanceId());
 			
 			for(Endpoint endpoint : endpoints) {
-				if(endpoint.getInvocationPath().equals(addEndpointRequest.getInvocationPath())) {
+				if(endpoint.getInvocationPath().equals(addEndpointRequest.getInvocationPath()) &&
+						endpoint.getPort().equals(addEndpointRequest.getPort())) {
 					errors.addError(new FieldError(MODEL_BEAN_ADD_ENDPOINT_REQUEST, "invocationPath",
 							messages.getMessage("cloud.manager.portlet.endpoint.invocation.path.taken.error.message", null, null)));
 				}
@@ -974,13 +975,22 @@ public class CloudManagerPortlet {
 				endpoint.setDescriptor(addEndpointRequest.getDescriptor());
 				endpoint.setPort(addEndpointRequest.getPort());
 				endpoint.setType(addEndpointRequest.getType());
-				clientFactory.getWorkflowManagement(request).addEndpoint(addEndpointRequest.getWorkflowId(),
-						addEndpointRequest.getAtomicServiceInstanceId(), endpoint);
 				
-				AddEndpointRequest newEndpointRequest = new AddEndpointRequest();
-				newEndpointRequest.setAtomicServiceInstanceId(addEndpointRequest.getAtomicServiceInstanceId());
-				newEndpointRequest.setWorkflowId(addEndpointRequest.getWorkflowId());
-				model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, newEndpointRequest);
+				try {
+					clientFactory.getWorkflowManagement(request).addEndpoint(addEndpointRequest.getWorkflowId(),
+						addEndpointRequest.getAtomicServiceInstanceId(), endpoint);
+				} catch (Exception e) {
+					errors.addError(new FieldError(MODEL_BEAN_ADD_ENDPOINT_REQUEST, "invocationPath",
+							messages.getMessage("cloud.manager.portlet.endpoint.invocation.path.unknown.error.message", new Object[] {e.getMessage()}, null)));
+					
+				}
+				
+				if(!errors.hasErrors()) {
+					AddEndpointRequest newEndpointRequest = new AddEndpointRequest();
+					newEndpointRequest.setAtomicServiceInstanceId(addEndpointRequest.getAtomicServiceInstanceId());
+					newEndpointRequest.setWorkflowId(addEndpointRequest.getWorkflowId());
+					model.addAttribute(MODEL_BEAN_ADD_ENDPOINT_REQUEST, newEndpointRequest);
+				}
 			}
 		}
 		
