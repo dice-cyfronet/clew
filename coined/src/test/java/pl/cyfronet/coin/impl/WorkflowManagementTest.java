@@ -738,6 +738,35 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
+		
+		try {
+			workflowManagement.getRedirections(invalidId, "asiId");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.addRedirection(invalidId, "asiId", "name", 80,
+					RedirectionType.HTTP);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.getEndpoints(invalidId, "asiId");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
+			workflowManagement.addEndpoint(invalidId, "asiId", new Endpoint());
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
 	}
 
 	@DataProvider
@@ -756,31 +785,16 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
-
+		
 		try {
-			workflowManagement.getRedirections(id1, id2);
+			workflowManagement.deleteRedirection(id1, "asiId", id2);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
-
+		
 		try {
-			workflowManagement.addRedirection(id1, id2, "name", 80,
-					RedirectionType.HTTP);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
-		try {
-			workflowManagement.getEndpoints(id1, id2);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
-		try {
-			workflowManagement.addEndpoint(id1, id2, new Endpoint());
+			workflowManagement.deleteEndpoint(id1, "asiId", id2);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
@@ -800,20 +814,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		try {
 			workflowManagement
 					.addAtomicServiceToWorkflow(id1, id2, "name", id3);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
-		try {
-			workflowManagement.deleteRedirection(id1, id2, id3);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-		
-		try {
-			workflowManagement.deleteEndpoint(id1, id2, id3);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
