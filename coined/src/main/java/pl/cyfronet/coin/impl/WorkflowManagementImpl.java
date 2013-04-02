@@ -174,7 +174,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public List<Redirection> getRedirections(String contextId, String asiId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
-		validateId(contextId, asiId);
+		validateId(contextId);
 		Action<List<Redirection>> action = actionFactory
 				.createGetAsiRedirectionsAction(contextId, getUsername(), asiId);
 		return action.execute();
@@ -186,7 +186,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			int port, RedirectionType type) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		validateId(contextId, asiId);
+		validateId(contextId);
 		Action<String> action = actionFactory.createAddAsiRedirectionAction(
 				getUsername(), contextId, asiId, name, port, type);
 		return action.execute();
@@ -198,7 +198,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			String redirectionId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
-		validateId(contextId, asiId, redirectionId);
+		validateId(contextId, redirectionId);
 		Action<Class<Void>> action = actionFactory
 				.createRemoveAsiRedirectionAction(getUsername(), contextId,
 						asiId, redirectionId);
@@ -209,7 +209,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public List<Endpoint> getEndpoints(String contextId, String asiId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
-		validateId(contextId, asiId);
+		validateId(contextId);
 		Action<List<Endpoint>> action = actionFactory
 				.createListAsiEndpointsAction(getUsername(), contextId, asiId);
 		return action.execute();
@@ -221,7 +221,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		validateId(contextId, asiId);
+		validateId(contextId);
 		Action<String> action = actionFactory.createAddAsiEndpointAction(
 				getUsername(), contextId, asiId, endpoint);
 		return action.execute();
@@ -233,7 +233,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
-		validateId(contextId, asiId, endpointId);
+		validateId(contextId, endpointId);
 		Action<Class<Void>> action = actionFactory
 				.createRemoveAsiEndpointAction(getUsername(), contextId, asiId,
 						endpointId);
