@@ -21,7 +21,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
@@ -38,8 +37,6 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.CloudFacade;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
-import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
@@ -116,7 +113,6 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 			AtomicService as = new AtomicService();
 			as.setName("as" + i);
 			as.setDescription("description " + i);
-			as.setEndpoints(getEndpoints(i));
 
 			ases.add(as);
 		}
@@ -127,31 +123,6 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenReturn(ases);
 		when(actionFactory.createListAtomicServicesAction(username))
 				.thenReturn(action);
-	}
-
-	private List<Endpoint> getEndpoints(int size) {
-		List<Endpoint> endpoints = new ArrayList<Endpoint>();
-		for (int i = 0; i < size; i++) {
-			Endpoint endpoint = new Endpoint();
-			endpoint.setDescription("endpoint description " + i);
-			endpoint.setDescriptor("descriptor " + i);
-			endpoint.setInvocationPath("/path/" + i);
-			endpoint.setPort(900 + i);
-			endpoint.setType(getEndpointType(i));
-			endpoints.add(endpoint);
-		}
-		return endpoints;
-	}
-
-	private EndpointType getEndpointType(int i) {
-		int nr = i % 3;
-		if (nr == 0) {
-			return EndpointType.WS;
-		} else if (nr == 0) {
-			return EndpointType.WEBAPP;
-		} else {
-			return EndpointType.REST;
-		}
 	}
 
 	private void whenGetAtomicServices() {
@@ -173,31 +144,6 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		assertFalse(atomicService.isPublished());
 		assertFalse(atomicService.isScalable());
 		assertFalse(atomicService.isShared());
-
-		if (nr == 0) {
-			checkEndpointsListEmpty(atomicService.getEndpoints());
-		} else {
-			checkEndpoints(atomicService.getEndpoints(), nr);
-		}
-	}
-
-	private void checkEndpointsListEmpty(List<Endpoint> endpoints) {
-		assertEquals(endpoints.size(), 0);
-	}
-
-	private void checkEndpoints(List<Endpoint> endpoints, int size) {
-		assertEquals(endpoints.size(), size);
-		for (int i = 0; i < size; i++) {
-			checkEndpoint(endpoints.get(i), i);
-		}
-	}
-
-	private void checkEndpoint(Endpoint endpoint, int nr) {
-		assertEquals(endpoint.getDescription(), "endpoint description " + nr);
-		assertEquals(endpoint.getDescriptor(), "descriptor " + nr);
-		assertEquals(endpoint.getInvocationPath(), "/path/" + nr);
-		assertEquals(endpoint.getPort(), new Integer(900 + nr));
-		assertEquals(endpoint.getType(), getEndpointType(nr));
 	}
 
 	@Test

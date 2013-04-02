@@ -38,7 +38,6 @@ public class BeanConverter {
 		atomicService.setScalable(applianceType.isScalable());
 		atomicService.setPublished(applianceType.isPublished());
 		atomicService.setActive(applianceType.getTemplates_count() > 0);
-		atomicService.setEndpoints(getEndpoints(applianceType));
 		atomicService.setDevelopment(applianceType.isDevelopment());
 		atomicService.setProxyConfigurationName(applianceType
 				.getProxy_conf_name());

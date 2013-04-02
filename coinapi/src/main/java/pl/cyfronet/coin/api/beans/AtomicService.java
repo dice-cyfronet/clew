@@ -15,11 +15,7 @@
  */
 package pl.cyfronet.coin.api.beans;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
-import pl.cyfronet.coin.api.WorkflowManagement;
 
 /**
  * Bean which describes atomic service (vm template).
@@ -31,7 +27,6 @@ public class AtomicService {
 	private String atomicServiceId;
 	private String name;
 	private String description;
-	private List<Endpoint> endpoints;
 	private boolean shared;
 	private boolean scalable;
 	private boolean published;
@@ -80,24 +75,6 @@ public class AtomicService {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @deprecated use endpoint management methods present in the
-	 *             {@link WorkflowManagement} service
-	 */
-	@Deprecated
-	public List<Endpoint> getEndpoints() {
-		return endpoints;
-	}
-
-	/**
-	 * @deprecated use endpoint management methods present in the
-	 *             {@link WorkflowManagement} service
-	 */
-	@Deprecated
-	public void setEndpoints(List<Endpoint> endpoints) {
-		this.endpoints = endpoints;
 	}
 
 	public boolean isShared() {
@@ -195,11 +172,11 @@ public class AtomicService {
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
-				+ name + ", description=" + description + ", endpoints="
-				+ endpoints + ", shared=" + shared + ", scalable=" + scalable
-				+ ", published=" + published + ", active=" + active
-				+ ", development=" + development + ", proxyConfigurationName="
-				+ proxyConfigurationName + ", owner=" + owner + "]";
+				+ name + ", description=" + description + ", shared=" + shared
+				+ ", scalable=" + scalable + ", published=" + published
+				+ ", active=" + active + ", development=" + development
+				+ ", proxyConfigurationName=" + proxyConfigurationName
+				+ ", owner=" + owner + "]";
 	}
 
 	@Override
@@ -212,8 +189,6 @@ public class AtomicService {
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + (development ? 1231 : 1237);
-		result = prime * result
-				+ ((endpoints == null) ? 0 : endpoints.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
 		result = prime
@@ -226,10 +201,6 @@ public class AtomicService {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -252,11 +223,6 @@ public class AtomicService {
 		} else if (!description.equals(other.description))
 			return false;
 		if (development != other.development)
-			return false;
-		if (endpoints == null) {
-			if (other.endpoints != null)
-				return false;
-		} else if (!endpoints.equals(other.endpoints))
 			return false;
 		if (name == null) {
 			if (other.name != null)
