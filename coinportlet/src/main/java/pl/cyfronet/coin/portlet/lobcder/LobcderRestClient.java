@@ -137,7 +137,9 @@ public class LobcderRestClient {
 	}
 
 	private String getQueryUrl(LobcderSearchCriteria lsc) {
-		String queryUrl = baseUrl + "/items/query?path=/&mStartDate={mStartDate}&mEndDate={mEndDate}";
+		String queryUrl = baseUrl + "/items/query?path=/&mStartDate={mStartDate}&mEndDate={mEndDate}&cStartDate={cStartDate}&cEndDate={cEndDate}&name={name}";
+		
+		//modification terms
 		queryUrl = queryUrl.replace("{mStartDate}", String.valueOf(lsc.getModificationStartMillis()));
 		
 		long endDate = lsc.getModificationStopMillis();
@@ -149,6 +151,22 @@ public class LobcderRestClient {
 		}
 		
 		queryUrl = queryUrl.replace("{mEndDate}", String.valueOf(endDate));
+		
+		//creation terms
+		queryUrl = queryUrl.replace("{cStartDate}", String.valueOf(lsc.getCreationStartMillis()));
+		
+		endDate = lsc.getCreationStopMillis();
+		
+		if(endDate < 1) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+			endDate = calendar.getTime().getTime() / 1000;
+		}
+		
+		queryUrl = queryUrl.replace("{cEndDate}", String.valueOf(endDate));
+		
+		//name term
+		queryUrl = queryUrl.replace("{name}", lsc.getName());
 		
 		return queryUrl;
 	}

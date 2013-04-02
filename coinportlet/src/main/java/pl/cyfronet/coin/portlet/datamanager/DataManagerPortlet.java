@@ -306,6 +306,24 @@ public class DataManagerPortlet {
 			}
 		}
 		
+		if(!searchRequest.getStartCreationDate().isEmpty()) {
+			try {
+				lsc.setCreationStartMillis(sdf.parse(searchRequest.getStartCreationDate()).getTime() / 1000);
+			} catch (ParseException e) {
+				//ignoring
+			}
+		}
+		
+		if(!searchRequest.getStopCreationDate().isEmpty()) {
+			try {
+				lsc.setCreationStopMillis(sdf.parse(searchRequest.getStopCreationDate()).getTime() / 1000);
+			} catch (ParseException e) {
+				//ignoring
+			}
+		}
+			
+		lsc.setName(searchRequest.getName());
+		
 		List<LobcderEntry> foundItems = lobcderRestClient.search(lsc, portal.getUserToken(request));
 		Collections.sort(foundItems, new Comparator<LobcderEntry>() {
 			@Override

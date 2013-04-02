@@ -314,6 +314,7 @@ public class LobcderClient {
 	}
 	
 	private void executeMethod(HttpMethod method, String securityToken) throws HttpException, IOException {
+		log.debug("Executing LOBCDER method {} for security token {}", method.toString(), securityToken);
 		method.addRequestHeader("Authorization", httpUtil.createBasicAuthenticationHeaderValue(null, securityToken));
 		client.executeMethod(method);
 	}

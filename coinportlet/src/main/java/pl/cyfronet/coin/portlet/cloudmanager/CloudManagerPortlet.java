@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceResponse;
 
@@ -230,13 +231,21 @@ public class CloudManagerPortlet {
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_STOP_WORKFLOW)
 	public void doActionStopWorkflow(@RequestParam("workflowType") WorkflowType workflowType,
+			@RequestParam(value = PARAM_WORKFLOW_ID, required = false) String workflowId,
 			PortletRequest request, ActionResponse response) {
 		log.info("Stopping workflows of type [{}]", workflowType);
 		List<String> workflowIds = getWorkflowIds(workflowType, request);
 		
 		if(workflowIds.size() > 0) {
-			for(String workflowId : workflowIds) {
-				clientFactory.getWorkflowManagement(request).stopWorkflow(workflowId);
+			for(String wId : workflowIds) {
+				if(workflowId != null) {
+					if(workflowId.equals(wId)) {
+						clientFactory.getWorkflowManagement(request).stopWorkflow(wId);
+						break;
+					}
+				} else {
+					clientFactory.getWorkflowManagement(request).stopWorkflow(wId);
+				}
 			}
 		}
 	}
@@ -683,7 +692,7 @@ public class CloudManagerPortlet {
 	}
 	
 	@ResourceMapping("workflows")
-	public void getWorkflows(PortletRequest request, ResourceResponse response) {
+	public void doResourceGetWorkflows(PortletRequest request, ResourceResponse response) {
 		List<String> workflowIds = getWorkflowIds(WorkflowType.workflow, request);
 		StringBuilder builder = new StringBuilder();
 		
@@ -692,6 +701,12 @@ public class CloudManagerPortlet {
 				Map<AtomicService, List<AtomicServiceInstance>> atomicServiceInstances =
 						getAtomicServiceInstances(workflowId, request);
 				builder.append(workflowId);
+				
+				PortletURL stopUrl = response.createActionURL();
+				stopUrl.setParameter(PARAM_ACTION, ACTION_STOP_WORKFLOW);
+				stopUrl.setParameter(PARAM_WORKFLOW_TYPE, WorkflowType.workflow.name());
+				stopUrl.setParameter(PARAM_WORKFLOW_ID, workflowId);
+				builder.append(";" + stopUrl.toString());
 				
 				for(AtomicService atomicService : atomicServiceInstances.keySet()) {
 					if(atomicServiceInstances.get(atomicService) != null &&

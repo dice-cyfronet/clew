@@ -10,7 +10,6 @@
 <div class="coin-content coin-content-no-tabs">
 	<div>
 		<form:form class="coin-form" action='${search}' modelAttribute='searchRequest'>
-			<!--
 			<div class="coin-form-input">
 				<label for="name">
 					<spring:message code="data.manager.portlet.search.name.label"/>
@@ -18,7 +17,6 @@
 				<form:input path="name"/>
 				<form:errors path="name" cssClass="coin-error-panel"/>
 			</div>
-			-->
 			<div class="coin-form-input">
 				<label for="startModificationDate">
 					<spring:message code="data.manager.portlet.search.start.modification.date.label"/>
@@ -32,6 +30,20 @@
 				</label>
 				<form:input path="stopModificationDate"/>
 				<form:errors path="stopModificationDate" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="startCreationDate">
+					<spring:message code="data.manager.portlet.search.start.creation.date.label"/>
+				</label>
+				<form:input path="startCreationDate"/>
+				<form:errors path="startCreationDate" cssClass="coin-error-panel"/>
+			</div>
+			<div class="coin-form-input">
+				<label for="stopCreationDate">
+					<spring:message code="data.manager.portlet.search.stop.creation.date.label"/>
+				</label>
+				<form:input path="stopCreationDate"/>
+				<form:errors path="stopCreationDate" cssClass="coin-error-panel"/>
 			</div>
 			<div class="coin-form-submit">
 				<input type='submit' value='<spring:message code='data.manager.portlet.search.submit.label'/>'/>
@@ -85,6 +97,8 @@
 		jQuery(document).ready(function() {
 			$("#startModificationDate").datepicker();
 			$("#stopModificationDate").datepicker();
+			$("#startCreationDate").datepicker();
+			$("#stopCreationDate").datepicker();
 		});
 	</script>
 </div>

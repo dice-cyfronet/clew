@@ -22,10 +22,11 @@
 	    				
 	    				for(var i = 0; i < workflowSections.length; i++) {
 	    					var workflowData = workflowSections[i].split(';');
-	    					html += '<span style="padding-top: 10px; display: block;"><b>Workflow with id ' + workflowData[0] + '</b></span><br/>';
+	    					html += '<div style="float: left; width: 100%;"><span style="display: block; float: left;"><b>Workflow with id ' + workflowData[0] + '</b></span>' +
+	    							'<span style="float: right; display: block;"><a class="coin-link" href="' + workflowData[1] + '">Stop</a></span></div>';
 	    					
-	    					if(workflowData.length > 1) {
-	    						var instances = workflowData[1].split(':');
+	    					if(workflowData.length > 2) {
+	    						var instances = workflowData[2].split(':');
 	    						html += '<span style="padding-left: 10px; display: block;">' + instances[0] + ' instances</span><br/>';
 	    						
 	    						if(instances.length > 1) {
