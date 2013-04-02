@@ -36,12 +36,9 @@ public class CoinedAsserts {
 		assertEquals(as.getAtomicServiceId(), at.getId());
 		assertEquals(as.getName(), at.getName());
 		assertEquals(as.getDescription(), at.getDescription());
-		assertEquals(as.isHttp(), at.isHttp());
 		assertEquals(as.isPublished(), at.isPublished());
-		assertEquals(as.isHttp(), at.isHttp() && at.isIn_proxy());
 		assertEquals(as.isScalable(), at.isScalable());
 		assertEquals(as.isShared(), at.isShared());
-		assertEquals(as.isVnc(), at.isVnc());
 		assertEquals(as.isActive(), at.getTemplates_count() > 0);
 		assertEquals(as.getOwner(), at.getAuthor());
 		assertEquals(as.getProxyConfigurationName(), at.getProxy_conf_name());

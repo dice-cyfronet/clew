@@ -70,12 +70,9 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		at.setId("as");
 		at.setName("as");
 		at.setDescription("description");
-		at.setHttp(true);
-		at.setIn_proxy(true);
 		at.setPublished(true);
 		at.setScalable(true);
 		at.setShared(true);
-		at.setVnc(true);
 
 		ATEndpoint e1 = new ATEndpoint();
 		e1.setDescription("e1 description");
@@ -146,7 +143,6 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		at = new ApplianceType();
 		at.setName(asName);
 		at.setDescription(asDescription);
-		at.setHttp(true);
 
 		matcher = new AddAtomicServiceMatcher(username, at);
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asAirId);

@@ -32,22 +32,19 @@ public class AtomicService {
 	private String name;
 	private String description;
 	private List<Endpoint> endpoints;
-	private boolean vnc;
-	private boolean http;
 	private boolean shared;
 	private boolean scalable;
 	private boolean published;
-	private boolean inProxy;
 	private boolean active;
 	private boolean development;
-	
+
 	private String proxyConfigurationName;
-	
+
 	/**
 	 * @see #1433
 	 */
 	private String owner;
-	
+
 	public AtomicService() {
 	}
 
@@ -86,7 +83,8 @@ public class AtomicService {
 	}
 
 	/**
-	 * @deprecated use endpoint management methods present in the {@link WorkflowManagement} service
+	 * @deprecated use endpoint management methods present in the
+	 *             {@link WorkflowManagement} service
 	 */
 	@Deprecated
 	public List<Endpoint> getEndpoints() {
@@ -94,27 +92,12 @@ public class AtomicService {
 	}
 
 	/**
-	 * @deprecated use endpoint management methods present in the {@link WorkflowManagement} service
+	 * @deprecated use endpoint management methods present in the
+	 *             {@link WorkflowManagement} service
 	 */
 	@Deprecated
 	public void setEndpoints(List<Endpoint> endpoints) {
 		this.endpoints = endpoints;
-	}
-
-	public boolean isVnc() {
-		return vnc;
-	}
-
-	public void setVnc(boolean vnc) {
-		this.vnc = vnc;
-	}
-
-	public boolean isHttp() {
-		return http;
-	}
-
-	public void setHttp(boolean http) {
-		this.http = http;
 	}
 
 	public boolean isShared() {
@@ -154,20 +137,6 @@ public class AtomicService {
 	}
 
 	/**
-	 * @return the inProxy
-	 */
-	public boolean isInProxy() {
-		return inProxy;
-	}
-
-	/**
-	 * @param inProxy the inProxy to set
-	 */
-	public void setInProxy(boolean inProxy) {
-		this.inProxy = inProxy;
-	}
-
-	/**
 	 * @return the active
 	 */
 	public boolean isActive() {
@@ -180,7 +149,7 @@ public class AtomicService {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	/**
 	 * @return the development
 	 */
@@ -227,9 +196,8 @@ public class AtomicService {
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
 				+ name + ", description=" + description + ", endpoints="
-				+ endpoints + ", vnc=" + vnc + ", http=" + http + ", shared="
-				+ shared + ", scalable=" + scalable + ", published="
-				+ published + ", inProxy=" + inProxy + ", active=" + active
+				+ endpoints + ", shared=" + shared + ", scalable=" + scalable
+				+ ", published=" + published + ", active=" + active
 				+ ", development=" + development + ", proxyConfigurationName="
 				+ proxyConfigurationName + ", owner=" + owner + "]";
 	}
@@ -246,8 +214,6 @@ public class AtomicService {
 		result = prime * result + (development ? 1231 : 1237);
 		result = prime * result
 				+ ((endpoints == null) ? 0 : endpoints.hashCode());
-		result = prime * result + (http ? 1231 : 1237);
-		result = prime * result + (inProxy ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
 		result = prime
@@ -257,10 +223,13 @@ public class AtomicService {
 		result = prime * result + (published ? 1231 : 1237);
 		result = prime * result + (scalable ? 1231 : 1237);
 		result = prime * result + (shared ? 1231 : 1237);
-		result = prime * result + (vnc ? 1231 : 1237);
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -289,10 +258,6 @@ public class AtomicService {
 				return false;
 		} else if (!endpoints.equals(other.endpoints))
 			return false;
-		if (http != other.http)
-			return false;
-		if (inProxy != other.inProxy)
-			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -313,8 +278,6 @@ public class AtomicService {
 		if (scalable != other.scalable)
 			return false;
 		if (shared != other.shared)
-			return false;
-		if (vnc != other.vnc)
 			return false;
 		return true;
 	}

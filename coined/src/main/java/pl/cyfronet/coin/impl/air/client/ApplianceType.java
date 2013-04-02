@@ -32,17 +32,11 @@ public class ApplianceType {
 
 	private String author;
 
-	private boolean vnc;
-
-	private boolean in_proxy;
-
 	private boolean published;
 
 	private boolean scalable;
 
 	private boolean shared;
-
-	private boolean http;
 
 	private boolean development;
 
@@ -51,7 +45,7 @@ public class ApplianceType {
 	private int templates_count;
 
 	private String proxy_conf_name;
-	
+
 	private List<ApplianceConfiguration> configurations;
 
 	private List<ATEndpoint> endpoints;
@@ -72,22 +66,6 @@ public class ApplianceType {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public boolean isVnc() {
-		return vnc;
-	}
-
-	public void setVnc(boolean vnc) {
-		this.vnc = vnc;
-	}
-
-	public boolean isIn_proxy() {
-		return in_proxy;
-	}
-
-	public void setIn_proxy(boolean in_proxy) {
-		this.in_proxy = in_proxy;
 	}
 
 	public boolean isPublished() {
@@ -112,14 +90,6 @@ public class ApplianceType {
 
 	public void setShared(boolean shared) {
 		this.shared = shared;
-	}
-
-	public boolean isHttp() {
-		return http;
-	}
-
-	public void setHttp(boolean http) {
-		this.http = http;
 	}
 
 	public String getDescription() {
@@ -201,9 +171,8 @@ public class ApplianceType {
 	@Override
 	public String toString() {
 		return "ApplianceType [id=" + id + ", name=" + name + ", author="
-				+ author + ", vnc=" + vnc + ", in_proxy=" + in_proxy
-				+ ", published=" + published + ", scalable=" + scalable
-				+ ", shared=" + shared + ", http=" + http + ", development="
+				+ author + ", published=" + published + ", scalable="
+				+ scalable + ", shared=" + shared + ", development="
 				+ development + ", description=" + description
 				+ ", templates_count=" + templates_count + ", proxy_conf_name="
 				+ proxy_conf_name + ", configurations=" + configurations

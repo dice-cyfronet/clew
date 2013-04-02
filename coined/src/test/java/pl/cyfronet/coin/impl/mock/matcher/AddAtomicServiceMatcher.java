@@ -66,11 +66,8 @@ public class AddAtomicServiceMatcher extends
 				&& equals(request.getEndpoints(), as.getEndpoints())
 				&& portMappingsEquals(request.getPort_mappings(),
 						as.getPort_mappings())
-				&& request.getHttp() == as.isHttp()
-				&& request.getIn_proxy() == as.isIn_proxy()
 				&& request.getScalable() == as.isScalable()
 				&& request.getShared() == as.isShared()
-				&& request.getVnc() == as.isVnc()
 				&& correctPublishedState(request)
 				&& securityProxyNameEquals(request);
 	}

@@ -24,15 +24,10 @@ public class BeanConverterTest {
 		applianceType.setAuthor("author");
 		applianceType.setDescription("description");
 		applianceType.setDevelopment(true);
-		applianceType.setHttp(true);
-		applianceType.setIn_proxy(true);
 		applianceType.setName("name");
 		applianceType.setPublished(true);
 		applianceType.setScalable(true);
 		applianceType.setShared(true);
-		applianceType.setVnc(true);
-		
-		
 	}
 
 	private void whenConvertToAS() {
@@ -46,12 +41,8 @@ public class BeanConverterTest {
 		assertEquals(atomicService.getName(), applianceType.getName());
 		assertEquals(atomicService.isDevelopment(),
 				applianceType.isDevelopment());
-		assertEquals(atomicService.isHttp(), applianceType.isHttp()
-				&& applianceType.isIn_proxy());
-		assertEquals(atomicService.isInProxy(), applianceType.isIn_proxy());
 		assertEquals(atomicService.isPublished(), applianceType.isPublished());
 		assertEquals(atomicService.isScalable(), applianceType.isScalable());
 		assertEquals(atomicService.isShared(), applianceType.isShared());
-		assertEquals(atomicService.isVnc(), applianceType.isVnc());
 	}
 }

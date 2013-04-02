@@ -54,12 +54,9 @@ public class GetAtomicServiceTest extends ActionTest {
 		asType.setId(AS_ID);
 		asType.setName("as");
 		asType.setDescription("type1 description");
-		asType.setHttp(true);
-		asType.setIn_proxy(true);
 		asType.setPublished(true);
 		asType.setScalable(true);
 		asType.setShared(true);
-		asType.setVnc(true);
 		asType.setDevelopment(true);
 		asType.setTemplates_count(0);
 		asType.setProxy_conf_name("proxy/conf/name");

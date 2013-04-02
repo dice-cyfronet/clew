@@ -57,12 +57,9 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type1.setName("type1");
 		type1.setId("type1Id");
 		type1.setDescription("type1 description");
-		type1.setHttp(true);
-		type1.setIn_proxy(true);
 		type1.setPublished(true);
 		type1.setScalable(true);
 		type1.setShared(true);
-		type1.setVnc(true);
 		type1.setTemplates_count(0);
 		type1.setAuthor("marek");
 
@@ -87,15 +84,12 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type2.setName("type2");
 		type2.setId("type2Id");
 		type2.setDescription("type2 description");
-		type2.setHttp(false);
-		type2.setIn_proxy(false);
 		type2.setPublished(false);
 		type2.setScalable(false);
 		type2.setShared(false);
-		type2.setVnc(false);
 		type2.setTemplates_count(2);
 
-		// this AS should not be returned, because it is in 
+		// this AS should not be returned, because it is in
 		// development mode and it does not belong to the user.
 		ApplianceType devAS = new ApplianceType();
 		devAS.setDevelopment(true);
@@ -106,7 +100,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		userDevAS.setName("UserDevelopmentAS");
 
 		when(air.getApplianceTypes(null, true)).thenReturn(
-				Arrays.asList(type1, type2, devAS, userDevAS));		
+				Arrays.asList(type1, type2, devAS, userDevAS));
 	}
 
 	private void whenGetAtomicServices() {
@@ -149,8 +143,8 @@ public class ListAtomicServicesActionTest extends ActionTest {
 	}
 
 	private void givenEmptyAirAtomicServicesList() {
-		when(air.getApplianceTypes(null, true))
-				.thenReturn(new ArrayList<ApplianceType>());
+		when(air.getApplianceTypes(null, true)).thenReturn(
+				new ArrayList<ApplianceType>());
 	}
 
 	private void thenCheckReturnedEmptyAtomicServicesList() {

@@ -73,13 +73,10 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 		addASRequest.setPort_mappings(getPortMapping(applianceType
 				.getPort_mappings()));
 		addASRequest.setProxy_conf_name(applianceType.getProxy_conf_name());
-		addASRequest.setHttp(applianceType.isHttp());
-		addASRequest.setIn_proxy(applianceType.isIn_proxy());
 		addASRequest.setName(applianceType.getName());
 		addASRequest.setPublished(applianceType.isPublished());
 		addASRequest.setScalable(applianceType.isScalable());
 		addASRequest.setShared(applianceType.isShared());
-		addASRequest.setVnc(applianceType.isVnc());
 		addASRequest.setDevelopment(applianceType.isDevelopment());
 
 		addASRequest.setAuthor(username);

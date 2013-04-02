@@ -1,30 +1,23 @@
 package pl.cyfronet.coin.impl.air.client;
 
-
 public class ApplianceTypeRequest {
 
-private String client;
-	
+	private String client;
+
 	private String name;
-	
+
 	private String description;
 
-	private Boolean in_proxy;
-	
 	private Boolean scalable;
-	
+
 	private Boolean published;
-	
+
 	private Boolean shared;
-	
-	private Boolean http;
-	
-	private Boolean vnc;
-	
+
 	private Boolean development;
-	
+
 	private String original_appliance;
-	
+
 	private String proxy_conf_name;
 
 	/**
@@ -32,7 +25,7 @@ private String client;
 	 * @since 1.1.0
 	 */
 	private String author;
-	
+
 	/**
 	 * @return the client
 	 */
@@ -73,20 +66,6 @@ private String client;
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the in_proxy
-	 */
-	public Boolean getIn_proxy() {
-		return in_proxy;
-	}
-
-	/**
-	 * @param in_proxy the in_proxy to set
-	 */
-	public void setIn_proxy(Boolean in_proxy) {
-		this.in_proxy = in_proxy;
 	}
 
 	/**
@@ -132,34 +111,6 @@ private String client;
 	}
 
 	/**
-	 * @return the http
-	 */
-	public Boolean getHttp() {
-		return http;
-	}
-
-	/**
-	 * @param http the http to set
-	 */
-	public void setHttp(Boolean http) {
-		this.http = http;
-	}
-
-	/**
-	 * @return the vnc
-	 */
-	public Boolean getVnc() {
-		return vnc;
-	}
-
-	/**
-	 * @param vnc the vnc to set
-	 */
-	public void setVnc(Boolean vnc) {
-		this.vnc = vnc;
-	}
-
-	/**
 	 * @return the author
 	 */
 	public String getAuthor() {
@@ -186,7 +137,7 @@ private String client;
 	public void setDevelopment(Boolean development) {
 		this.development = development;
 	}
-	
+
 	/**
 	 * @return the original_appliance
 	 */
@@ -200,7 +151,7 @@ private String client;
 	public void setOriginal_appliance(String original_appliance) {
 		this.original_appliance = original_appliance;
 	}
-	
+
 	public String getProxy_conf_name() {
 		return proxy_conf_name;
 	}
@@ -209,15 +160,11 @@ private String client;
 		this.proxy_conf_name = proxy_conf_name;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "AtomicServiceRequest [client=" + client + ", name=" + name
-				+ ", description=" + description + ", in_proxy=" + in_proxy
-				+ ", scalable=" + scalable + ", published=" + published
-				+ ", shared=" + shared + ", http=" + http + ", vnc=" + vnc
+		return "ApplianceTypeRequest [client=" + client + ", name=" + name
+				+ ", description=" + description + ", scalable=" + scalable
+				+ ", published=" + published + ", shared=" + shared
 				+ ", development=" + development + ", original_appliance="
 				+ original_appliance + ", proxy_conf_name=" + proxy_conf_name
 				+ ", author=" + author + "]";

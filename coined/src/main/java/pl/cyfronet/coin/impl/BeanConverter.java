@@ -33,13 +33,9 @@ public class BeanConverter {
 		AtomicService atomicService = new AtomicService();
 		atomicService.setAtomicServiceId(applianceType.getId());
 		atomicService.setDescription(applianceType.getDescription());
-		atomicService.setHttp(applianceType.isHttp()
-				&& applianceType.isIn_proxy());
-		atomicService.setInProxy(applianceType.isIn_proxy());
 		atomicService.setName(applianceType.getName());
 		atomicService.setShared(applianceType.isShared());
 		atomicService.setScalable(applianceType.isScalable());
-		atomicService.setVnc(applianceType.isVnc());
 		atomicService.setPublished(applianceType.isPublished());
 		atomicService.setActive(applianceType.getTemplates_count() > 0);
 		atomicService.setEndpoints(getEndpoints(applianceType));

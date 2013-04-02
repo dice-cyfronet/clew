@@ -116,7 +116,6 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 			AtomicService as = new AtomicService();
 			as.setName("as" + i);
 			as.setDescription("description " + i);
-			as.setHttp(true);
 			as.setEndpoints(getEndpoints(i));
 
 			ases.add(as);
@@ -170,13 +169,10 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 	private void checkAtomicService(AtomicService atomicService, int nr) {
 		assertEquals(atomicService.getName(), "as" + nr);
 		assertEquals(atomicService.getDescription(), "description " + nr);
-		assertTrue(atomicService.isHttp());
 		assertFalse(atomicService.isActive());
-		assertFalse(atomicService.isInProxy());
 		assertFalse(atomicService.isPublished());
 		assertFalse(atomicService.isScalable());
 		assertFalse(atomicService.isShared());
-		assertFalse(atomicService.isVnc());
 
 		if (nr == 0) {
 			checkEndpointsListEmpty(atomicService.getEndpoints());
