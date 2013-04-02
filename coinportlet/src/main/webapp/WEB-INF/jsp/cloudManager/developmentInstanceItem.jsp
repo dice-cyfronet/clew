@@ -107,14 +107,19 @@
 	    									window.popup.dialog('close');
 	    								}
 	    								
-	    	    						window.popup = jQuery('<div class="coin-content coin-content-no-tabs" style="padding: 10px;"></div>').html(html).dialog({
+	    	    						window.popup = jQuery('<div class="coin-popup coin-content coin-content-no-tabs" style="padding: 10px;"></div>').html(html).dialog({
+	    	    							dialogClass: 'ui-dialog',
 	    	    							closeText: '',
 	    	    							modal: false,
 	    	    							position: 'top',
 	    	    							autoOpen: false,
-	    	    							draggable: false
+	    	    							draggable: false,
+	    	    							resizable: false
 	    	    						});
 	    	    						window.popup.dialog('open');
+	    	    						jQuery('.ui-dialog-titlebar').hide();
+	    	    						jQuery('.ui-dialog').attr('class', 'ui-dialog');
+	    	    						jQuery('.coin-popup').attr('class', 'coin-popup coin-content coin-content-no-tabs');
 	    	    						
 	    	    						return false;
 	    	    					});
