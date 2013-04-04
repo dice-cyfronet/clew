@@ -82,7 +82,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 				"Checking if workflow is in production. Workflow type: {} with following VMS {}",
 				workflowDetails.getWorkflow_type(), workflowDetails.getVms());
 		if (workflowDetails.getWorkflow_type() == WorkflowType.development) {
-			logger.warn(
+			logger.error(
 					"Trying to remove {} AS from workflow {} which is not in production mode",
 					asConfigId, contextId);
 			throw new WorkflowNotInProductionModeException();
@@ -94,7 +94,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			}
 		}
 
-		logger.warn(
+		logger.error(
 				"AS {} does not belong to {} workflow. Following ASes belongs to the workflow {}. Removing AS from workflow failed.",
 				new Object[] { asConfigId, contextId, workflowDetails.getVms() });
 		return false;
