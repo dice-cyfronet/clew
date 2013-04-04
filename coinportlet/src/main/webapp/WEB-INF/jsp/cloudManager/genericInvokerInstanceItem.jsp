@@ -8,7 +8,7 @@
 		Status: <span id="${statusId}" style="font-weight: bold; color: #db7024;">${atomicServiceInstance.status}</span>
 	</span>
 	<span class="coin-actions">
-		<c:if test="${atomicService.http and atomicService.published}">
+		<c:if test="${atomicService.published}">
 			<portlet:renderURL var="invokeAtomicService">
 				<portlet:param name="action" value="invokeAtomicService"/>
 				<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
