@@ -88,7 +88,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			throw new WorkflowNotInProductionModeException();
 		} else if (workflowDetails.getVms() != null) {
 			for (Vms vm : workflowDetails.getVms()) {
-				if (asConfigId.equals(vm.getConfiguration_id())) {
+				if (asConfigId.equals(vm.getConfiguration())) {
 					return true;
 				}
 			}

@@ -69,7 +69,7 @@ public class GetAsiRedirectionsAction extends
 		String initConfId = null;
 		for (Vms asi : wfd.getVms()) {
 			if (asi.getVms_id().equals(asiId)) {
-				initConfId = asi.getConfiguration_id();
+				initConfId = asi.getConfiguration();
 				if (initConfId == null) {
 					throw new CloudFacadeException(
 							"Error while getting redirection for ASI "

@@ -28,7 +28,7 @@ public class Vms {
 
 	private Specs specs;
 
-	private String configuration_id;
+	private String configuration;
 
 	private String appliance_type;
 	
@@ -81,15 +81,15 @@ public class Vms {
 	/**
 	 * @return the conf_id
 	 */
-	public String getConfiguration_id() {
-		return configuration_id;
+	public String getConfiguration() {
+		return configuration;
 	}
 
 	/**
 	 * @param conf_id the conf_id to set
 	 */
-	public void setConfiguration_id(String conf_id) {
-		this.configuration_id = conf_id;
+	public void setConfiguration(String conf_id) {
+		this.configuration = conf_id;
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class Vms {
 	@Override
 	public String toString() {
 		return "Vms [name=" + name + ", specs=" + specs + ", conf_id="
-				+ configuration_id + ", appliance_type=" + appliance_type
+				+ configuration + ", appliance_type=" + appliance_type
 				+ ", appliance_type_name=" + appliance_type_name
 				+ ", source_template=" + source_template + ", vms_id=" + vms_id
 				+ ", state=" + state + ", user_key=" + user_key + ", site_id="

@@ -114,7 +114,7 @@ public class WorkflowActionTest extends ActionTest {
 		assertEquals(asi.getName(), vm.getName());
 		assertEquals(asi.getStatus(), vm.getState());
 		assertEquals(asi.getId(), vm.getVms_id());
-		assertEquals(asi.getConfigurationId(), vm.getConfiguration_id());
+		assertEquals(asi.getConfigurationId(), vm.getConfiguration());
 		assertEquals(asi.getSiteId(), vm.getSite_id());
 	}
 }
