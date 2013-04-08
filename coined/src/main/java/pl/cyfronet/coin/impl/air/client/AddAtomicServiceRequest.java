@@ -35,6 +35,18 @@ public class AddAtomicServiceRequest extends ApplianceTypeRequest {
 	 */
 	private List<ATPortMapping> port_mappings;
 
+	/**
+	 * #1516
+	 * @since 1.3.0
+	 */
+	private ApplianceSla appliance_sla;
+	
+	/**
+	 * #1516
+	 * @since 1.3.0
+	 */
+	private AppliancePreferences appliance_preferences;
+	
 	public String getClient() {
 		return client;
 	}
@@ -57,5 +69,21 @@ public class AddAtomicServiceRequest extends ApplianceTypeRequest {
 
 	public void setPort_mappings(List<ATPortMapping> port_mappings) {
 		this.port_mappings = port_mappings;
+	}
+
+	public ApplianceSla getAppliance_sla() {
+		return appliance_sla;
+	}
+
+	public void setAppliance_sla(ApplianceSla appliance_sla) {
+		this.appliance_sla = appliance_sla;
+	}
+
+	public AppliancePreferences getAppliance_preferences() {
+		return appliance_preferences;
+	}
+
+	public void setAppliance_preferences(AppliancePreferences appliance_preferences) {
+		this.appliance_preferences = appliance_preferences;
 	}
 }

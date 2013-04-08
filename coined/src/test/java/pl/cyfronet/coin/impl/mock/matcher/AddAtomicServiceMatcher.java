@@ -23,6 +23,8 @@ import org.hamcrest.Description;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.AddAtomicServiceRequest;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
+import pl.cyfronet.coin.impl.air.client.ApplianceSla;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
@@ -69,7 +71,35 @@ public class AddAtomicServiceMatcher extends
 				&& request.getScalable() == as.isScalable()
 				&& request.getShared() == as.isShared()
 				&& correctPublishedState(request)
-				&& securityProxyNameEquals(request);
+				&& securityProxyNameEquals(request) && propsEquals(request)
+				&& slaEquals(request);
+	}
+
+	private boolean slaEquals(AddAtomicServiceRequest request) {
+		if (as.getAppliance_sla() != null) {
+			ApplianceSla sla = as.getAppliance_sla();
+			ApplianceSla requestSla = request.getAppliance_sla();
+			return sla.getConcurrent_requests() == requestSla
+					.getConcurrent_requests()
+					&& sla.getMean_response_time() == requestSla
+							.getMean_response_time()
+					&& sla.getRequests_throughput() == requestSla
+							.getRequests_throughput();
+
+		}
+		return request.getAppliance_sla() == null;
+	}
+
+	private boolean propsEquals(AddAtomicServiceRequest request) {
+		if (as.getAppliance_preferences() != null) {
+			AppliancePreferences prefs = as.getAppliance_preferences();
+			AppliancePreferences requestPrefs = request
+					.getAppliance_preferences();
+			return prefs.getCpu() == requestPrefs.getCpu()
+					&& prefs.getDisk() == requestPrefs.getDisk()
+					&& prefs.getMemory() == requestPrefs.getMemory();
+		}
+		return request.getAppliance_preferences() == null;
 	}
 
 	private boolean securityProxyNameEquals(AddAtomicServiceRequest request) {
