@@ -18,11 +18,11 @@
 				<form:form class="coin-form" action='${startDevAtomicService}' modelAttribute='startAtomicServiceRequest'>
 					<form:hidden path="atomicServiceId"/>
 					<form:hidden path="workflowType"/>
-					<div class="coin-form-input">
-						<label for="userKeyId">
+					<div>
+						<label for="userKeyId" style="display: inline; font-weight: bold;">
 							<spring:message code="cloud.manager.portlet.pick.user.key.label"/>
 						</label>
-						<form:radiobuttons path="userKeyId" items="${userKeyList}" element="div" cssStyle="margin-left: 10px; line-height: 15px; float: left;" />
+						<form:radiobuttons path="userKeyId" items="${userKeyList}" element="div" cssStyle="display: inline; margin-left: 10px; line-height: 15px; float: left;" />
 						<form:errors path="userKeyId" cssClass="coin-error-panel"/>
 					</div>
 					<div class="coin-form-submit">
