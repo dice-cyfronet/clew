@@ -64,9 +64,9 @@ public class Portal {
 			pc.setPassword(token, false);
 			userManager.storePasswordCredential(pc);
 			
-			//for now lets only remove the developer role before the roles are updated according to the token
-			if(roleManager.isUserInRole(userName, DEVELOPER_ROLE)) {
-				roleManager.removeRoleFromUser(userName, DEVELOPER_ROLE);
+			//removing user roles to be updated according to the token roles
+			for(Role role : roleManager.getRolesForUser(userName)) {
+				roleManager.removeRoleFromUser(userName, role.getName());
 			}
 
 			if(roles != null) {

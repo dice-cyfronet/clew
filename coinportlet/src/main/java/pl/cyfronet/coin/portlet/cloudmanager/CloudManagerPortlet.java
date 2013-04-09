@@ -106,6 +106,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_BREAKING_ENDPOINT_LINKS = "breakingEndpointLinks";
 	static final String MODEL_BEAN_USER_NAME = "userName";
 	static final String MODEL_BEAN_ATOMIC_SERVICE_NAME = "atomicServiceName";
+	static final String MODEL_BEAN_AS_ADMIN = "asCloudAdminFlag";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -287,6 +288,10 @@ public class CloudManagerPortlet {
 		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICES, atomicServices);
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
 		model.addAttribute(MODEL_BEAN_USER_NAME, portal.getUserName(request));
+		
+		if(portal.getUserRoles(request).contains("cloudadmin")) {
+			model.addAttribute(MODEL_BEAN_AS_ADMIN, true);
+		}
 		
 		if(!model.containsAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST)) {
 			model.addAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST, new StartAtomicServiceRequest());
