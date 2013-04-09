@@ -410,7 +410,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 
 	private void givenAtomicServiceDeletedAction(boolean admin) {
 		when(
-				authenticationHandler.hasRole(eq("admin"), anyString(),
+				authenticationHandler.hasRole(eq("cloudadmin"), anyString(),
 						anyString())).thenReturn(admin);
 		Action<Class<Void>> action = mock(Action.class);
 		when(

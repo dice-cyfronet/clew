@@ -50,7 +50,7 @@ import static pl.cyfronet.coin.impl.utils.Validator.validateId;
 public class CloudFacadeImpl extends UsernameAwareService implements
 		CloudFacade {
 
-	private static final String ADMIN_ROLE = "admin";
+	private static final String ADMIN_ROLE = "cloudadmin";
 
 	/**
 	 * Logger.
