@@ -20,7 +20,7 @@
 						<div style="width: 70%; float: left;">
 							<span class="coin-description">
 								<span style="padding-left: 10px; display: block;">
-									<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort}"/>
+									<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
 								</span>
 							</span>
 							<span class="coin-actions">
