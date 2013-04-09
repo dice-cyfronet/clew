@@ -19,7 +19,7 @@
 	<div class="coin-menu-bottom">
 		<ul>
 			<li>
-				<a class="coin-link" href="${startAtomicService}">Start new development instance</a>
+				<a class="coin-link" href="${startAtomicService}"><spring:message code="cloud.manager.portlet.start.atomic.service.instance.label"/></a>
 			</li>
 			<c:if test="${fn:length(activeAtomicServices) > 0}">
 				<li>
