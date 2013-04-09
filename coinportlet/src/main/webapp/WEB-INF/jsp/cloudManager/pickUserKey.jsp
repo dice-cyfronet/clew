@@ -8,7 +8,7 @@
 		</portlet:renderURL>
 		<c:set var="keyManagerLink"><a class="coin-link" href="${manageUserKeys}">link</a></c:set>
 		<spring:message code="cloud.manager.portlet.pick.user.key.info.message"
-				arguments="${atomicServiceId},${keyManagerLink}"/>
+				arguments="${atomicServiceName},${keyManagerLink}"/>
 		
 		<c:choose>
 			<c:when test="${fn:length(userKeyList) > 0}">

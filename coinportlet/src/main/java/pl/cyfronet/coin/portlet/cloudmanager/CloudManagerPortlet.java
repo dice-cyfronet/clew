@@ -105,6 +105,7 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_AUTH_ENDPOINT_LINKS = "authEndpointLinks";
 	static final String MODEL_BEAN_BREAKING_ENDPOINT_LINKS = "breakingEndpointLinks";
 	static final String MODEL_BEAN_USER_NAME = "userName";
+	static final String MODEL_BEAN_ATOMIC_SERVICE_NAME = "atomicServiceName";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -861,7 +862,18 @@ public class CloudManagerPortlet {
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_PICK_USER_KEY)
 	public String doViewPickUserKey(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType, Model model, PortletRequest request) {
+		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
+		AtomicService atomicService = null;
+		
+		for(AtomicService as : atomicServices) {
+			if(as.getAtomicServiceId().equals(atomicServiceId)) {
+				atomicService = as;
+				break;
+			}
+		}
+		
 		model.addAttribute(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
+		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_NAME, atomicService.getName());
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
 		
 		List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
