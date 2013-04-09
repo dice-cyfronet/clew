@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -11,7 +12,7 @@ public class AddRedirectionRequest {
 	private String atomicServiceInstanceId;
 	private String workflowId;
 	@NotEmpty @Pattern(regexp = "[a-zA-Z]{1}[a-zA-Z0-9_]*", message = "only letters and digits are allowed") private String name;
-	@DecimalMin("1") private int toPort;
+	@NotNull @DecimalMin("1") private Integer toPort;
 	private RedirectionType type;
 	
 	public String getAtomicServiceInstanceId() {
@@ -32,10 +33,10 @@ public class AddRedirectionRequest {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getToPort() {
+	public Integer getToPort() {
 		return toPort;
 	}
-	public void setToPort(int toPort) {
+	public void setToPort(Integer toPort) {
 		this.toPort = toPort;
 	}
 	public RedirectionType getType() {
