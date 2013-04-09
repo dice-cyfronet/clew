@@ -32,6 +32,8 @@ import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
+import pl.cyfronet.coin.impl.air.client.ApplianceSla;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
@@ -88,6 +90,18 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		e2.setPort(81);
 		e2.setEndpoint_type(EndpointType.WS.toString());
 
+		ApplianceSla sla = new ApplianceSla();
+		sla.setConcurrent_requests(123);
+		sla.setMean_response_time(2f);
+		sla.setRequests_throughput(3f);
+		at.setAppliance_sla(sla);
+		
+		AppliancePreferences prefs = new AppliancePreferences();
+		prefs.setCpu(2.4f);
+		prefs.setDisk(222354);
+		prefs.setMemory(5423623);
+		at.setAppliance_preferences(prefs);
+		
 		at.setEndpoints(Arrays.asList(e1, e2));
 
 		// #1331

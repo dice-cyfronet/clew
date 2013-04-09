@@ -55,10 +55,8 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 	 */
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
+		logger.debug("Removing {} AS from {} context", asConfigId, contextId);
 		if (workflowInProductionModeHasAS()) {
-			logger.debug("Removing {} AS from {} context", asConfigId,
-					contextId);
-
 			RemoveRequiredAppliancesRequestImpl request = new RemoveRequiredAppliancesRequestImpl();
 			request.setApplicationId(contextId);
 			request.setInitConfigIds(Arrays.asList(asConfigId));
@@ -70,7 +68,6 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 						"Exception was thrown by Atmosphere, plese contact administrator");
 			}
 		} else {
-			logger.warn("Trying to remove AS from workflow which does not exist");
 			throw new AtomicServiceNotFoundException();
 		}
 
@@ -81,16 +78,25 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			throws WorkflowNotInProductionModeException {
 		WorkflowDetail workflowDetails = getUserWorkflow(contextId,
 				getUsername());
+		logger.debug(
+				"Checking if workflow is in production. Workflow type: {} with following VMS {}",
+				workflowDetails.getWorkflow_type(), workflowDetails.getVms());
 		if (workflowDetails.getWorkflow_type() == WorkflowType.development) {
+			logger.error(
+					"Trying to remove {} AS from workflow {} which is not in production mode",
+					asConfigId, contextId);
 			throw new WorkflowNotInProductionModeException();
 		} else if (workflowDetails.getVms() != null) {
 			for (Vms vm : workflowDetails.getVms()) {
-				if (asConfigId.equals(vm.getConfiguration_id())) {
+				if (asConfigId.equals(vm.getConfiguration())) {
 					return true;
 				}
 			}
 		}
 
+		logger.error(
+				"AS {} does not belong to {} workflow. Following ASes belongs to the workflow {}. Removing AS from workflow failed.",
+				new Object[] { asConfigId, contextId, workflowDetails.getVms() });
 		return false;
 	}
 

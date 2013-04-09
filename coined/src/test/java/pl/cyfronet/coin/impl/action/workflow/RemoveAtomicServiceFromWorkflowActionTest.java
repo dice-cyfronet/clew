@@ -85,7 +85,7 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends
 
 	private Vms getVms(String asConfId) {
 		Vms as = new Vms();
-		as.setConfiguration_id(asConfId);
+		as.setConfiguration(asConfId);
 		return as;
 	}
 

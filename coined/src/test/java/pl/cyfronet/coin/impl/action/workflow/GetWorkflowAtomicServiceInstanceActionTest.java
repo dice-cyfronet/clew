@@ -45,7 +45,7 @@ public class GetWorkflowAtomicServiceInstanceActionTest extends
 		vm.setName("vm1");
 		vm.setState(Status.booting);
 		vm.setVms_id(asiId);
-		vm.setConfiguration_id("initConf1");
+		vm.setConfiguration("initConf1");
 		vm.setSite_id("cyfronet-folsom");
 
 		airWorkflow.setVms(Arrays.asList(vm));

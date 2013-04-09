@@ -52,6 +52,18 @@ public class ApplianceType {
 
 	private List<ATPortMapping> port_mappings;
 
+	/**
+	 * #1516
+	 * @since 1.3.0
+	 */
+	private ApplianceSla appliance_sla;
+	
+	/**
+	 * #1516
+	 * @since 1.3.0
+	 */
+	private AppliancePreferences appliance_preferences;
+	
 	public String getId() {
 		return id;
 	}
@@ -108,16 +120,10 @@ public class ApplianceType {
 		this.templates_count = templates_count;
 	}
 
-	/**
-	 * @return the proxy_conf_name
-	 */
 	public String getProxy_conf_name() {
 		return proxy_conf_name;
 	}
 
-	/**
-	 * @param proxy_conf_name the proxy_conf_name to set
-	 */
 	public void setProxy_conf_name(String proxy_conf_name) {
 		this.proxy_conf_name = proxy_conf_name;
 	}
@@ -154,18 +160,28 @@ public class ApplianceType {
 		this.development = development;
 	}
 
-	/**
-	 * @return the port_mappings
-	 */
 	public List<ATPortMapping> getPort_mappings() {
 		return port_mappings;
 	}
 
-	/**
-	 * @param port_mappings the port_mappings to set
-	 */
 	public void setPort_mappings(List<ATPortMapping> port_mappings) {
 		this.port_mappings = port_mappings;
+	}
+
+	public ApplianceSla getAppliance_sla() {
+		return appliance_sla;
+	}
+
+	public void setAppliance_sla(ApplianceSla appliance_sla) {
+		this.appliance_sla = appliance_sla;
+	}
+
+	public AppliancePreferences getAppliance_preferences() {
+		return appliance_preferences;
+	}
+
+	public void setAppliance_preferences(AppliancePreferences appliance_preferences) {
+		this.appliance_preferences = appliance_preferences;
 	}
 
 	@Override
@@ -177,6 +193,7 @@ public class ApplianceType {
 				+ ", templates_count=" + templates_count + ", proxy_conf_name="
 				+ proxy_conf_name + ", configurations=" + configurations
 				+ ", endpoints=" + endpoints + ", port_mappings="
-				+ port_mappings + "]";
+				+ port_mappings + ", appliance_sla=" + appliance_sla
+				+ ", appliance_preferences=" + appliance_preferences + "]";
 	}
 }

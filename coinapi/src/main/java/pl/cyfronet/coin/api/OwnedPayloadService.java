@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
@@ -56,16 +57,16 @@ public interface OwnedPayloadService {
 	@POST
 	@Path("/")
 	@Consumes({ MediaType.APPLICATION_JSON })
-	void create(NamedOwnedPayload ownedPayload) throws AlreadyExistsException;
+	Response create(NamedOwnedPayload ownedPayload) throws AlreadyExistsException;
 
 	@PUT
 	@Path("/{name : .+}")
 	@Consumes({ MediaType.APPLICATION_JSON })
-	void update(@PathParam("name") String name, OwnedPayload ownedPayload)
+	Response update(@PathParam("name") String name, OwnedPayload ownedPayload)
 			throws NotFoundException, NotAllowedException;
 
 	@DELETE
 	@Path("/{name : .+}")
-	void delete(@PathParam("name") String name) throws NotFoundException,
+	Response delete(@PathParam("name") String name) throws NotFoundException,
 			NotAllowedException;
 }

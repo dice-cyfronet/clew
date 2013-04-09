@@ -2,6 +2,8 @@ package pl.cyfronet.coin.impl;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import pl.cyfronet.coin.api.OwnedPayloadService;
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
@@ -41,26 +43,32 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public void create(NamedOwnedPayload ownedPayload)
+	public Response create(NamedOwnedPayload ownedPayload)
 			throws AlreadyExistsException {
 		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
 				.createNewAction(getUsername(), ownedPayload);
 		action.execute();
+
+		return Response.status(Response.Status.CREATED).build();
 	}
 
 	@Override
-	public void update(String name, OwnedPayload ownedPayload)
+	public Response update(String name, OwnedPayload ownedPayload)
 			throws AlreadyExistsException {
 		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
 				.createUpdateAction(getUsername(), name, ownedPayload);
 		action.execute();
+
+		return Response.ok().build();
 	}
 
 	@Override
-	public void delete(String name) {
+	public Response delete(String name) {
 		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
 				.createDeleteAction(getUsername(), name);
 		action.execute();
+
+		return Response.ok().build();
 	}
 
 	public void setActionFactory(ActionFactory actionFactory) {

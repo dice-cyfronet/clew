@@ -81,7 +81,9 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 
 		addASRequest.setAuthor(username);
 		addASRequest.setOriginal_appliance(parentId);
-
+		addASRequest.setAppliance_preferences(applianceType.getAppliance_preferences());
+		addASRequest.setAppliance_sla(applianceType.getAppliance_sla());
+		
 		try {
 			logger.debug("Creating new appliance type in AIR {}", addASRequest);
 			createdAtomicServiceId = getAir().addAtomicService(addASRequest);
