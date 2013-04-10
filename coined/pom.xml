@@ -13,8 +13,7 @@
 
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
-		<atmosphere.version>1.0.0-SNAPSHOT</atmosphere.version>		
-		<testng.version>6.1.1</testng.version>
+		<atmosphere.version>1.0.0</atmosphere.version>				
 	</properties>
 
 	<dependencies>
@@ -22,16 +21,11 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>${cxf.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -76,7 +70,8 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring-osgi.version}</version>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- Tests -->
@@ -107,7 +102,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring-osgi.version}</version>
+			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
