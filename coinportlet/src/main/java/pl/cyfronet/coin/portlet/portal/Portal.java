@@ -79,6 +79,9 @@ public class Portal {
 				}
 			}
 			
+			//the user role is always required
+			roleManager.addRoleToUser(userName, "user");
+			
 			//setting the token as one of the user's attributes
 			SecurityAttribute tokenAttribute = user.getSecurityAttributes().getAttribute("token", true);
 			tokenAttribute.setStringValue(token);
