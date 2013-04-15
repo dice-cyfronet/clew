@@ -21,7 +21,7 @@ import java.util.List;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import pl.cyfronet.coin.impl.action.AirAction;
+import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
@@ -29,7 +29,7 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class ListInitialConfigurationsAction extends
-		AirAction<List<InitialConfiguration>> {
+		ReadOnlyAirAction<List<InitialConfiguration>> {
 
 	private String atomicServiceId;
 	private boolean loadPayload;
@@ -65,10 +65,5 @@ public class ListInitialConfigurationsAction extends
 		}
 
 		return configurations;
-	}
-
-	@Override
-	public void rollback() {
-		// read only action, no rollback needed.
 	}
 }
