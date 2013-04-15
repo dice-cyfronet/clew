@@ -52,6 +52,7 @@
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="atomicServiceExceptionMapper" />
 		</jaxrs:providers>		
 	</jaxrs:client>
 
@@ -61,8 +62,11 @@
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="atomicServiceExceptionMapper" />
 		</jaxrs:providers>		
 	</jaxrs:client>
+
+	<bean id="atomicServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.AtomicServiceExceptionMapper" />
 
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
 	
