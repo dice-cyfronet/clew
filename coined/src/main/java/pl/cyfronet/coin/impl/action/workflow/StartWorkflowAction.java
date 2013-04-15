@@ -89,6 +89,7 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 				List<WorkflowBaseInfo> workflows = getWorkflows();
 				for (WorkflowBaseInfo wInfo : workflows) {
 					if (wInfo.getType() == type) {
+						logger.warn("Cannot start two {} workflows", type);
 						throw new WorkflowStartException(String.format(
 								"Cannot start two %s workflows", type));
 					}

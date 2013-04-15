@@ -59,10 +59,10 @@ public class RemoveAsiRedirectionAction extends
 			getHttpRedirectionService().unregisterHttpService(getContextId(),
 					getAsiId(), serviceName, port);
 		} catch (VirtualMachineNotFoundException e) {
-			logger.debug("Error while adding http redirection", e);
+			logger.error("ASI VM not found", e);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
-			logger.debug("Error while adding http redirection", e);
+			logger.error("Error while adding http redirection", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}
@@ -72,10 +72,10 @@ public class RemoveAsiRedirectionAction extends
 			getDnatRedirectionService().removePortRedirection(getAsiId(), port,
 					Protocol.TCP);
 		} catch (VirtualMachineNotFoundException e) {
-			logger.debug("Error while removing dnat redirection", e);
+			logger.error("ASI VM not found", e);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
-			logger.debug("Error while removing dnat redirection", e);
+			logger.error("Error while removing dnat redirection", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}

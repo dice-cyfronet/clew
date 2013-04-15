@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.AlreadyExistsException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -13,7 +16,10 @@ import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
 public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 
-	NamedOwnedPayload newPolicy;
+	private static final Logger logger = LoggerFactory
+			.getLogger(NewOwnedPayloadAction.class);
+
+	private NamedOwnedPayload newPayload;
 	private String username;
 	private OwnedPayloadActions actions;
 
@@ -22,7 +28,7 @@ public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 			OwnedPayloadActions actions) {
 		super(actionFactory);
 		this.username = username;
-		this.newPolicy = ownedPayload;
+		this.newPayload = ownedPayload;
 		this.actions = actions;
 	}
 
@@ -30,13 +36,17 @@ public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 	public Class<Void> execute() throws CloudFacadeException {
 		addDefaultOwnerIfOwnerListEmpty();
 		try {
-			actions.addOwnedPayload(newPolicy.getName(),
-					newPolicy.getPayload(), newPolicy.getOwners());
+			actions.addOwnedPayload(newPayload.getName(),
+					newPayload.getPayload(), newPayload.getOwners());
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 400) {
-				throw new AlreadyExistsException(e.getMessage());
+				logger.warn("Payload with {} name already exist in AIR",
+						newPayload.getName());
+				throw new AlreadyExistsException(e.getResponse().getEntity()
+						+ "");
 			} else {
-				throw new CloudFacadeException(e.getMessage());
+				logger.error("Error while contacting AIR", e);
+				throw new CloudFacadeException(e.getResponse().getEntity() + "");
 			}
 		}
 
@@ -44,9 +54,9 @@ public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 	}
 
 	private void addDefaultOwnerIfOwnerListEmpty() {
-		List<String> owners = newPolicy.getOwners();
+		List<String> owners = newPayload.getOwners();
 		if (owners == null || owners.size() == 0) {
-			newPolicy.setOwners(Arrays.asList(username));
+			newPayload.setOwners(Arrays.asList(username));
 		}
 	}
 
@@ -54,7 +64,7 @@ public class NewOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 	public void rollback() {
 		try {
 			Action<Class<Void>> action = new DeleteOwnedPayloadAction(
-					getActionFactory(), username, newPolicy.getName(), actions);
+					getActionFactory(), username, newPayload.getName(), actions);
 			action.execute();
 		} catch (Exception e) {
 			// Best effort.

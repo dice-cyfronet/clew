@@ -17,6 +17,9 @@ package pl.cyfronet.coin.impl.action.workflow;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
@@ -29,6 +32,9 @@ import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(GetWorkflowDetailAction.class);
 
 	private String contextId;
 	private String username;
@@ -52,13 +58,17 @@ public class GetWorkflowDetailAction extends ReadOnlyAirAction<WorkflowDetail> {
 			if (detail != null && detail.getVph_username().equals(username)) {
 				return detail;
 			} else {
+				logger.warn("Workflow {} is not found for user {}", contextId,
+						username);
 				// workflow is not found or it depends to other user.
 				throw new WorkflowNotFoundException();
 			}
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
-				throw new WorkflowNotFoundException();
+				logger.warn("Workflow {} not found", contextId);
+				throw new WorkflowNotFoundException();				
 			} else {
+				logger.error("AIR throws exception", e);
 				throw new CloudFacadeException(e.getMessage());
 			}
 		}

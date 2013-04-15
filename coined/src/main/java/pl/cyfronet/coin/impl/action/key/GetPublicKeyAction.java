@@ -53,12 +53,13 @@ public class GetPublicKeyAction extends ReadOnlyAirAction<String> {
 			return getAir().getPublicKey(username, keyId);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 400) {
+				logger.warn("Key {} not found for {} user", keyId, username);
 				throw new KeyNotFoundException();
 			}
-			logger.warn("Error while contacting AiR", e);
+			logger.error("Error while contacting AiR", e);
 			throw new CloudFacadeException("Error while contacting AiR");
 		} catch (Exception e) {
-			logger.warn("Error while contacting AiR", e);
+			logger.error("Error while contacting AiR", e);
 			throw new CloudFacadeException("Error while contacting AiR");
 		}
 	}

@@ -19,6 +19,9 @@ package pl.cyfronet.coin.impl.action.redirection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.WorkflowType;
@@ -38,6 +41,9 @@ import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
  */
 public class GetAsiRedirectionsAction extends
 		ReadOnlyAirAction<List<Redirection>> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(GetAsiRedirectionsAction.class);
 
 	private String asiId;
 	private String contextId;
@@ -71,10 +77,11 @@ public class GetAsiRedirectionsAction extends
 			if (asi.getVms_id().equals(asiId)) {
 				initConfId = asi.getConfiguration();
 				if (initConfId == null) {
-					throw new CloudFacadeException(
-							"Error while getting redirection for ASI "
-									+ asiId
-									+ " because ASI does not have a valid init conf id");
+					String msg = "Error while getting redirection for ASI "
+							+ asiId
+							+ " because ASI does not have a valid init conf id";
+					logger.error(msg);
+					throw new CloudFacadeException(msg);
 				}
 				List<PortMapping> pms = asi.getInternal_port_mappings();
 				if (pms == null) {
@@ -123,5 +130,4 @@ public class GetAsiRedirectionsAction extends
 		}
 		return redirections;
 	}
-
 }

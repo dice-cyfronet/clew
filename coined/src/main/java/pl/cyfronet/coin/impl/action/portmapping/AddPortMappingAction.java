@@ -38,8 +38,10 @@ public class AddPortMappingAction extends AirAction<String> {
 					http);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
+				logger.warn("Atomic Service {} not found", asId);
 				throw new AtomicServiceNotFoundException();
 			}
+			logger.error("Error while contacting AIR", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}

@@ -83,7 +83,7 @@ public class GetEndpointPayloadAction extends ReadOnlyAirAction<String> {
 			}
 		}
 
-		logger.debug("Endpoint {}:{}/{} not found", new Object[] {
+		logger.warn("Endpoint {}:{}/{} not found", new Object[] {
 				atomicServiceId, serviceName, invocationPath });
 		throw new EndpointNotFoundException();
 	}

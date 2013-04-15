@@ -100,12 +100,12 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 			return atomicServiceId;
 		} catch (ApplianceNotFoundException e) {
 			addASToAirAction.rollback();
-			logger.debug("Error while creating AS - ASI {} not found",
+			logger.error("Error while creating AS - ASI {} not found",
 					asInstanceId);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
 			addASToAirAction.rollback();
-			logger.debug("Error while creating AS - atmosphere exception", e);
+			logger.error("Error while creating AS - atmosphere exception", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}

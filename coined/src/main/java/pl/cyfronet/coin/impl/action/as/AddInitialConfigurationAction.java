@@ -38,8 +38,8 @@ public class AddInitialConfigurationAction extends AirAction<String> {
 	private String atomicServiceId;
 	private InitialConfiguration initialConfiguration;
 
-	public AddInitialConfigurationAction(ActionFactory actionFactory, String atomicServiceId,
-			InitialConfiguration initialConfiguration) {
+	public AddInitialConfigurationAction(ActionFactory actionFactory,
+			String atomicServiceId, InitialConfiguration initialConfiguration) {
 		super(actionFactory);
 		this.atomicServiceId = atomicServiceId;
 		this.initialConfiguration = initialConfiguration;
@@ -60,11 +60,17 @@ public class AddInitialConfigurationAction extends AirAction<String> {
 			if (e.getResponse().getEntity() != null) {
 				String msg = e.getResponse().getEntity().toString();
 				if (msg.contains("not found in AIR")) {
+					logger.warn("Atomic service {} not found in AIR",
+							atomicServiceId);
 					throw new AtomicServiceNotFoundException();
 				} else if (msg.contains("duplicated configuration")) {
+					logger.warn(
+							"Initial configuration {} for {} AS already exist in AIR",
+							initialConfiguration.getName(), atomicServiceId);
 					throw new InitialConfigurationAlreadyExistException();
 				}
 			}
+			logger.error("Exception thrown from AIR", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}

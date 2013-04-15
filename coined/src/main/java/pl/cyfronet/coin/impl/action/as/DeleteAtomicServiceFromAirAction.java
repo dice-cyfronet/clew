@@ -57,10 +57,16 @@ public class DeleteAtomicServiceFromAirAction extends AirAction<Class<Void>> {
 				getAir().deleteAtomicService(atomicServiceId, true);
 			} catch (WebApplicationException e) {
 				if (e.getResponse().getStatus() == 404) {
+					logger.warn(
+							"User is trying to remove non existing Atomic Service {}",
+							atomicServiceId);
 					throw new AtomicServiceNotFoundException();
 				} else if (e.getResponse().getStatus() == 400) {
+					logger.warn("Unable to remove Atomic Service", e);
 					throw new NotAcceptableException(e.getMessage());
 				}
+				logger.error("Unknown error occurs when removing AS from AIR",
+						e);
 				throw new CloudFacadeException(e.getMessage());
 			}
 		}

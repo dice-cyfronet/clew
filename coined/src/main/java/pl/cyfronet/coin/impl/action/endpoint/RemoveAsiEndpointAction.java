@@ -36,8 +36,10 @@ public class RemoveAsiEndpointAction extends AsiAction<Class<Void>> {
 			getAir().removeEndpoint(endpointId);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 400) {
+				logger.warn("Endpoint {} not found", endpointId);
 				throw new EndpointNotFoundException();
 			}
+			logger.error("AIR throws exception while removing ASI endpoint", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 		return Void.TYPE;

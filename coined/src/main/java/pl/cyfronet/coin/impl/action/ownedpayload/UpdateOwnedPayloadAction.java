@@ -4,12 +4,18 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.OwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
 public class UpdateOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(UpdateOwnedPayloadAction.class);
 
 	private String username;
 	private String ownedPayloadName;
@@ -34,10 +40,13 @@ public class UpdateOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 			update(ownedPayload);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
+				logger.warn("User {} is not allowed to update {} payload",
+						username, ownedPayloadName);
 				throw new NotAllowedException();
 			}
+			logger.error("Error while updating payload in AIR", e);
 			throw new CloudFacadeException(
-					"Error while deleting security policy from Air, response code "
+					"Error while updating owned payload in Air, response code "
 							+ e.getResponse().getStatus());
 		}
 

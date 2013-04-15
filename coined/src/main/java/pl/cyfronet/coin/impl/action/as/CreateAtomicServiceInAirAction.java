@@ -81,9 +81,10 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 
 		addASRequest.setAuthor(username);
 		addASRequest.setOriginal_appliance(parentId);
-		addASRequest.setAppliance_preferences(applianceType.getAppliance_preferences());
+		addASRequest.setAppliance_preferences(applianceType
+				.getAppliance_preferences());
 		addASRequest.setAppliance_sla(applianceType.getAppliance_sla());
-		
+
 		try {
 			logger.debug("Creating new appliance type in AIR {}", addASRequest);
 			createdAtomicServiceId = getAir().addAtomicService(addASRequest);
@@ -92,9 +93,11 @@ public class CreateAtomicServiceInAirAction extends BaseAction<String> {
 			return createdAtomicServiceId;
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 302) {
+				logger.warn("Atomic Service {} already exists ({})",
+						applianceType.getName(), e.getResponse().getEntity());
 				throw new AtomicServiceAlreadyExistsException();
 			}
-			logger.warn("Error received from AiR", e);
+			logger.error("Error received from AiR", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}

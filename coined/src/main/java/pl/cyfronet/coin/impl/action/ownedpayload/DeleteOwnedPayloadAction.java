@@ -2,6 +2,9 @@ package pl.cyfronet.coin.impl.action.ownedpayload;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
@@ -10,6 +13,9 @@ import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ownedpayload.provider.OwnedPayloadActions;
 
 public class DeleteOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(DeleteOwnedPayloadAction.class);
 
 	private String ownedPayloadName;
 	private String username;
@@ -33,10 +39,13 @@ public class DeleteOwnedPayloadAction extends OwnedPayloadAction<Class<Void>> {
 			actions.deleteOwnedPayload(username, ownedPayloadName);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
+				logger.warn("User {} is not allows to delete this {} payload",
+						username, ownedPayloadName);
 				throw new NotAllowedException();
 			}
+			logger.error("Error while deleting owned payload from AIR", e);
 			throw new CloudFacadeException(
-					"Error while deleting security policy from Air, response code"
+					"Error while deleting owned payload from Air, response code"
 							+ e.getResponse().getStatus());
 		}
 

@@ -60,7 +60,7 @@ public class DeletePublicKeyAction extends AtmosphereAndAirAction<Class<Void>> {
 			getAtmosphere().removeKeyPair(keyId);
 			getAir().deletePublicKey(getUsername(), keyId);
 		} catch (Exception e) {
-			logger.warn("Error while contacting AiR", e);
+			logger.error("Error while contacting AiR", e);
 			throw new CloudFacadeException("Error while contacting AiR");
 		}
 

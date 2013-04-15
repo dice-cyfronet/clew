@@ -16,6 +16,9 @@
 
 package pl.cyfronet.coin.impl.action.workflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -31,6 +34,9 @@ import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(RemoveASIFromWorkflowAction.class);
 
 	private String contextId;
 	private String asiId;
@@ -62,6 +68,7 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 				deleteASAction.execute();
 			}
 		} else {
+			logger.warn("Workflow {} does not have {} ASI", contextId, asiId);
 			throw new AtomicServiceInstanceNotFoundException();
 		}
 		return Void.TYPE;
@@ -78,6 +85,9 @@ public class RemoveASIFromWorkflowAction extends WorkflowAction<Class<Void>> {
 				}
 			}
 		} else {
+			logger.warn(
+					"Trying to remove redirection from workflow {} in production mode",
+					contextId);
 			throw new WorkflowNotInDevelopmentModeException();
 		}
 		return false;

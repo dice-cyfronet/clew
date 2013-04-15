@@ -41,6 +41,8 @@ public class GetInvocationPathInfo extends
 				return info;
 			}
 		}
+		logger.warn("Invocation path {} for {} ASI not found", serviceName,
+				asIs);
 		throw new RedirectionNotFoundException();
 	}
 

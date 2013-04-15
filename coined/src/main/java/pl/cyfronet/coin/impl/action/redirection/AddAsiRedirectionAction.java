@@ -74,11 +74,16 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 				}
 			}
 		}
+		logger.warn("ASI {} not found in workflow {}", getAsiId(),
+				getContextId());
 		throw new AtomicServiceInstanceNotFoundException();
 	}
 
 	private void checkIfWorkflowInDevelopmentMode() {
 		if (wd.getWorkflow_type() != WorkflowType.development) {
+			logger.warn(
+					"Trying to add redirection for workflow {} started in production mode",
+					getContextId());
 			throw new WorkflowNotInDevelopmentModeException();
 		}
 	}
@@ -89,10 +94,10 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 			getHttpRedirectionService().registerHttpService(getContextId(),
 					getAsiId(), port, serviceName);
 		} catch (VirtualMachineNotFoundException e) {
-			logger.debug("Error while adding http redirection", e);
+			logger.error("VM for ASI not found", e);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
-			logger.debug("Error while adding http redirection", e);
+			logger.error("Error while adding http redirection", e);
 			throw new CloudFacadeException(e.getMessage());
 		}
 	}
@@ -103,7 +108,7 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 			getDnatRedirectionService().addPortRedirection(getAsiId(), port,
 					Protocol.TCP, serviceName);
 		} catch (VirtualMachineNotFoundException e) {
-			logger.debug("Error while adding dnat redirection", e);
+			logger.error("VM for ASI not found", e);
 			throw new AtomicServiceInstanceNotFoundException();
 		} catch (DyReAllaException e) {
 			logger.debug("Error while adding dnat redirection", e);

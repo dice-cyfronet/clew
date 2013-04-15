@@ -58,6 +58,9 @@ public class AddPublicKeyAction extends AtmosphereAndAirAction<String> {
 			return addedKeyId;
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 409) {
+				logger.warn(
+						"User {} tries to register key with not unique name [{}]",
+						getUsername(), keyName);
 				throw new KeyAlreadyExistsException(keyName);
 			}
 			logger.warn("Error while contacting AiR", e);

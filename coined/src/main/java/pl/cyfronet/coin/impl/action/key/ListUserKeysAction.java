@@ -21,6 +21,9 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
@@ -32,6 +35,8 @@ import pl.cyfronet.coin.impl.air.client.UserKeyInfo;
  */
 public class ListUserKeysAction extends ReadOnlyAirAction<List<PublicKeyInfo>> {
 
+	private static final Logger logger = LoggerFactory.getLogger(ListUserKeysAction.class);
+	
 	private String username;
 
 	public ListUserKeysAction(ActionFactory actionFactory, String username) {
@@ -58,6 +63,7 @@ public class ListUserKeysAction extends ReadOnlyAirAction<List<PublicKeyInfo>> {
 			if (e.getResponse().getStatus() == 400) {
 				return new ArrayList<UserKeyInfo>();
 			}
+			logger.error("Error while contacting AIR", e);
 			throw new CloudFacadeException("Unable to get user keys from AiR");
 		}
 	}

@@ -58,7 +58,7 @@ public abstract class AirAction<T> extends BaseAction<T> {
 			}
 		}
 
-		logger.debug("Atomic service {} not found", applianceTypeId);
+		logger.warn("Atomic service {} not found", applianceTypeId);
 		throw new AtomicServiceNotFoundException();
 	}
 

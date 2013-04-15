@@ -1,5 +1,8 @@
 package pl.cyfronet.coin.impl.action.workflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
@@ -9,6 +12,9 @@ import pl.cyfronet.coin.impl.action.BaseAction;
 
 public class GetWorkflowAtomicServiceInstanceAction extends
 		BaseAction<AtomicServiceInstance> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(GetWorkflowAtomicServiceInstanceAction.class);
 
 	private String username;
 	private String workflowId;
@@ -34,6 +40,9 @@ public class GetWorkflowAtomicServiceInstanceAction extends
 				}
 			}
 		}
+		logger.warn(
+				"Atomic service instance {} started for {}, {} workflow not found",
+				new Object[] { asiId, username, workflow });
 		throw new AtomicServiceInstanceNotFoundException();
 	}
 
