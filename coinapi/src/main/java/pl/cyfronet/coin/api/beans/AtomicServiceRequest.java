@@ -33,6 +33,10 @@ public class AtomicServiceRequest {
 	private Boolean scalable;
 	private Boolean published;
 	
+	private Float cpu;
+	private Integer memory;
+	private Integer disk;
+	
 	public String getName() {
 		return name;
 	}
@@ -99,26 +103,49 @@ public class AtomicServiceRequest {
 		this.published = published;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public Float getCpu() {
+		return cpu;
+	}
+
+	public void setCpu(Float cpu) {
+		this.cpu = cpu;
+	}
+
+	public Integer getMemory() {
+		return memory;
+	}
+
+	public void setMemory(Integer memory) {
+		this.memory = memory;
+	}
+
+	public Integer getDisk() {
+		return disk;
+	}
+
+	public void setDisk(Integer disk) {
+		this.disk = disk;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "AtomicServiceRequest [name=" + name + ", description="
 				+ description + ", proxyConfigurationName="
 				+ proxyConfigurationName + ", shared=" + shared + ", scalable="
-				+ scalable + ", published=" + published + "]";
+				+ scalable + ", published=" + published + ", cpu=" + cpu
+				+ ", memory=" + memory + ", disk=" + disk + "]";
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((cpu == null) ? 0 : cpu.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((disk == null) ? 0 : disk.hashCode());
+		result = prime * result + ((memory == null) ? 0 : memory.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime
 				* result
@@ -132,9 +159,6 @@ public class AtomicServiceRequest {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -144,10 +168,25 @@ public class AtomicServiceRequest {
 		if (getClass() != obj.getClass())
 			return false;
 		AtomicServiceRequest other = (AtomicServiceRequest) obj;
+		if (cpu == null) {
+			if (other.cpu != null)
+				return false;
+		} else if (!cpu.equals(other.cpu))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
+			return false;
+		if (disk == null) {
+			if (other.disk != null)
+				return false;
+		} else if (!disk.equals(other.disk))
+			return false;
+		if (memory == null) {
+			if (other.memory != null)
+				return false;
+		} else if (!memory.equals(other.memory))
 			return false;
 		if (name == null) {
 			if (other.name != null)

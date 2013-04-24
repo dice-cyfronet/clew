@@ -29,6 +29,7 @@ import pl.cyfronet.coin.api.exception.AtomicServiceAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionTest;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 
@@ -82,6 +83,11 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		newAtomicService.setShared(null);
 		newAtomicService.setScalable(true);
 		
+		// #1532
+		newAtomicService.setCpu(1.2f);
+		newAtomicService.setDisk(123);
+		newAtomicService.setMemory(321);
+		
 		sourceAtomicService = new ApplianceType();
 		sourceAtomicService.setName("sourceASName");
 		sourceAtomicService.setScalable(false);
@@ -95,6 +101,13 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		atomicService.setShared(false);
 		atomicService.setScalable(true);
 
+		// #1532
+		AppliancePreferences prefs = new AppliancePreferences();
+		prefs.setCpu(newAtomicService.getCpu());
+		prefs.setDisk(newAtomicService.getDisk());
+		prefs.setMemory(newAtomicService.getMemory());
+		atomicService.setAppliance_preferences(prefs);
+		
 		matcher = new AddAtomicServiceMatcher(username, atomicService);
 		matcher.setCreatingNewAS(true);
 

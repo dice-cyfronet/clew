@@ -25,6 +25,7 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtmosphereAndAirAction;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.dyrealla.api.ApplianceNotFoundException;
 import pl.cyfronet.dyrealla.api.DyReAllaException;
@@ -88,9 +89,35 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		at.setShared(getRawBoolean(newAtomicService.getShared()));
 		at.setProxy_conf_name(newAtomicService.getProxyConfigurationName());
 
+		AppliancePreferences prefs = at.getAppliance_preferences();
+		
+		if(prefs == null) {
+			prefs = new AppliancePreferences();
+		}
+		
+		boolean prefsModified = false;
+		if(newAtomicService.getCpu() != null) {
+			prefs.setCpu(newAtomicService.getCpu());
+			prefsModified = true;
+		}
+		
+		if(newAtomicService.getDisk() != null) {
+			prefs.setDisk(newAtomicService.getDisk());
+			prefsModified = true;
+		}
+		
+		if(newAtomicService.getMemory() != null) {
+			prefs.setMemory(newAtomicService.getMemory());
+			prefsModified = true;
+		}
+		
+		if(prefsModified) {
+			at.setAppliance_preferences(prefs);
+		}
+
 		addASToAirAction = getActionFactory()
 				.createCreateAtomicServiceInAirAction(getUsername(), at);
-
+		
 		String atomicServiceId = addASToAirAction.execute();
 
 		try {
