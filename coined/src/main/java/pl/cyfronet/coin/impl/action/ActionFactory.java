@@ -15,10 +15,13 @@
  */
 package pl.cyfronet.coin.impl.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
+import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
@@ -199,17 +202,23 @@ public class ActionFactory {
 	}
 
 	public Action<String> createStartAtomicServiceAction(String username,
-			String atomicServiceId, String asName, String contextId,
-			String keyName) {
-		return new StartAtomicServiceAction(this, username, atomicServiceId,
-				asName, contextId, defaultPriority, keyName);
+			String contextId, AddAsWithKeyToWorkflow requiredAs) {
+		return new StartAtomicServiceAction(this, username, contextId,
+				defaultPriority, requiredAs);
 	}
 
 	public Action<String> createStartAtomicServiceAction(String username,
 			List<String> ids, List<String> names, String contextId,
 			Integer priority, String keyId) {
-		return new StartAtomicServiceAction(this, username, ids, names,
-				contextId, priority, keyId);
+		List<AddAsToWorkflow> requiredASes = new ArrayList<>();
+		for (int i = 0; i < ids.size(); i++) {
+			AddAsToWorkflow requiredAs = new AddAsToWorkflow();
+			requiredAs.setAsConfigId(ids.get(i));
+			requiredAs.setName(names.get(i));
+			requiredASes.add(requiredAs);
+		}
+		return new StartAtomicServiceAction(this, username, contextId,
+				priority, requiredASes, keyId);
 	}
 
 	// policy files

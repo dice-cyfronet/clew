@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Redirection;
@@ -99,6 +100,13 @@ public interface WorkflowManagement {
 	void stopWorkflow(@PathParam("workflowId") String workflowId)
 			throws WorkflowNotFoundException, CloudFacadeException;
 
+	@POST
+	@Path("/{workflowId}/as")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
+			AddAsWithKeyToWorkflow request) throws WorkflowNotFoundException,
+			CloudFacadeException;
+
 	/**
 	 * Add atomic service for started workflow. For new create AS selected key
 	 * will be injected, but only when workflow is in development mode.
@@ -110,6 +118,7 @@ public interface WorkflowManagement {
 	 */
 	@PUT
 	@Path("/{workflowId}/as/{asConfigId}/{name}")
+	@Deprecated
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
 			@PathParam("asConfigId") String asConfigId,
 			@PathParam("name") String name, @QueryParam("key_id") String keyId)

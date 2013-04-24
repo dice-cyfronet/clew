@@ -16,12 +16,12 @@
 package pl.cyfronet.coin.impl.action;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.workflow.WorkflowAction;
@@ -50,15 +50,21 @@ public abstract class AtomicServiceWorkflowAction<T> extends WorkflowAction<T> {
 	 * @param configIds List of appliance types configurations ids.
 	 * @param priority Workflow priority.
 	 */
-	protected void registerVms(String contextId, List<String> configIds,
-			List<String> names, Integer priority, WorkflowType workflowType,
-			String keyId) throws CloudFacadeException {
-		if (configIds != null && configIds.size() > 0) {
-
-			String[] ids = configIds.toArray(new String[0]);
+	protected void registerVms(String contextId,
+			List<AddAsToWorkflow> requiredAses, Integer priority,
+			WorkflowType workflowType, String keyId)
+			throws CloudFacadeException {
+		if (requiredAses != null && requiredAses.size() > 0) {
 			logger.debug(
 					"Registering required atomic services in atmosphere {} with key {}",
-					Arrays.toString(ids), keyId);
+					requiredAses, keyId);
+
+			List<String> configIds = new ArrayList<>();
+			List<String> names = new ArrayList<>();
+			for (AddAsToWorkflow requiredAs : requiredAses) {
+				configIds.add(requiredAs.getAsConfigId());
+				names.add(requiredAs.getName());
+			}
 
 			AddRequiredAppliancesRequestImpl request = new AddRequiredAppliancesRequestImpl();
 			request.setImportanceLevel(priority);

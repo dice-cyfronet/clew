@@ -22,6 +22,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -30,6 +32,7 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.AtomicServiceWorkflowAction;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
@@ -51,9 +54,8 @@ public class StartAtomicServiceAction extends
 	private String contextId;
 	private Integer defaultPriority;
 	private String keyName;
-	private List<String> initConfigIds;
-	private List<String> asNames;
 	private List<String> developmentASes;
+	private List<AddAsToWorkflow> requiredAses;
 
 	/**
 	 * @param air Air client.
@@ -64,21 +66,20 @@ public class StartAtomicServiceAction extends
 	 * @param username User name.
 	 */
 	public StartAtomicServiceAction(ActionFactory actionFactory,
-			String username, String initConfigId, String asName,
-			String contextId, Integer priority, String keyName) {
-		this(actionFactory, username, Arrays.asList(initConfigId), Arrays
-				.asList(asName), contextId, priority, keyName);
+			String username, String contextId, Integer priority,
+			AddAsWithKeyToWorkflow requiredAs) {
+		this(actionFactory, username, contextId, priority, Arrays
+				.asList((AddAsToWorkflow) requiredAs), requiredAs.getKeyId());
 	}
 
 	public StartAtomicServiceAction(ActionFactory actionFactory,
-			String username, List<String> initConfIds, List<String> asNames,
-			String contextId, Integer priority, String keyName) {
+			String username, String contextId, Integer priority,
+			List<AddAsToWorkflow> requiredAses, String keyName) {
 		super(actionFactory, username);
-		this.initConfigIds = initConfIds;
-		this.asNames = asNames;
 		this.contextId = contextId;
 		this.defaultPriority = priority;
 		this.keyName = keyName;
+		this.requiredAses = requiredAses;
 	}
 
 	/**
@@ -92,9 +93,8 @@ public class StartAtomicServiceAction extends
 	@Override
 	public String execute() throws CloudFacadeException {
 		WorkflowDetail workflow = getUserWorkflow(contextId, getUsername());
-		logger.debug(
-				"Add atomic service [{} {}] into workflow [{}] with key {}",
-				new Object[] { asNames, initConfigIds, contextId, keyName });
+		logger.debug("Add atomic services {} into workflow [{}] with key {}",
+				new Object[] { requiredAses, contextId, keyName });
 
 		List<ApplianceType> types = getTypes();
 		if (anyInDevelopment(types)) {
@@ -106,7 +106,7 @@ public class StartAtomicServiceAction extends
 		}
 
 		try {
-			registerVms(contextId, initConfigIds, asNames, defaultPriority,
+			registerVms(contextId, requiredAses, defaultPriority,
 					workflow.getWorkflow_type(), keyName);
 		} catch (CloudFacadeException e) {
 			if (isInDevelopmentMode(workflow)) {
@@ -135,23 +135,22 @@ public class StartAtomicServiceAction extends
 	}
 
 	private void createDevelopmentAtomicServices(List<ApplianceType> types) {
-		List<String> newInitConfs = new ArrayList<>();
 		developmentASes = new ArrayList<>();
 
 		for (int i = 0; i < types.size(); i++) {
 			ApplianceType baseAS = types.get(i);
-			String initConfId = initConfigIds.get(i);
-			createDevelopmentAtomicService(baseAS, initConfId, developmentASes,
-					newInitConfs);
+			AddAsToWorkflow requiredAs = requiredAses.get(i);
+			String initConfId = requiredAs.getAsConfigId();
+			String newInitConf = createDevelopmentAtomicService(baseAS,
+					requiredAs, initConfId, developmentASes);
+			requiredAs.setAsConfigId(newInitConf);
 		}
-
-		initConfigIds = newInitConfs;
 	}
 
 	private List<ApplianceType> getTypes() {
 		List<ApplianceType> types = new ArrayList<>();
-		for (String initConfId : initConfigIds) {
-			types.add(getAir().getTypeFromConfig(initConfId));
+		for (AddAsToWorkflow requiredAs : requiredAses) {
+			types.add(getAir().getTypeFromConfig(requiredAs.getAsConfigId()));
 		}
 		return types;
 	}
@@ -165,19 +164,43 @@ public class StartAtomicServiceAction extends
 		return false;
 	}
 
-	private void createDevelopmentAtomicService(ApplianceType baseAS,
-			String initConfId, List<String> developmentASes,
-			List<String> developmentInitConfs) {
+	private String createDevelopmentAtomicService(ApplianceType baseAS,
+			AddAsToWorkflow requiredAs, String initConfId,
+			List<String> developmentASes) {
 		baseAS.setDevelopment(true);
 		baseAS.setName(String.format("%s-%s", baseAS.getName(),
 				System.currentTimeMillis()));
-
+		fillProps(baseAS, requiredAs);
+		
 		Action<String> createASAction = getActionFactory()
 				.createCreateAtomicServiceInAirAction(getUsername(), baseAS,
 						baseAS.getId());
 		String devAsId = createASAction.execute();
 		developmentASes.add(devAsId);
-		developmentInitConfs.add(createInitConfCopy(devAsId, initConfId));
+		return createInitConfCopy(devAsId, initConfId);
+	}
+
+	private void fillProps(ApplianceType baseAS, AddAsToWorkflow requiredAs) {
+		AppliancePreferences prefs = baseAS.getAppliance_preferences();
+		if(prefs == null) {
+			prefs = new AppliancePreferences();
+		}
+		boolean prefsModified = false;
+		if(requiredAs.getCpu() != null) {
+			prefs.setCpu(requiredAs.getCpu());
+			prefsModified = true;
+		}
+		if(requiredAs.getDisk() != null) {
+			prefs.setDisk(requiredAs.getDisk());
+			prefsModified = true;
+		}
+		if(requiredAs.getMemory() != null) {
+			prefs.setMemory(requiredAs.getMemory());
+			prefsModified = true;
+		}
+		if(prefsModified) {
+			baseAS.setAppliance_preferences(prefs);
+		}
 	}
 
 	private String createInitConfCopy(String asName, String srcInitConfId) {

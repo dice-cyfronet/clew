@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.impl;
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -35,6 +37,8 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
@@ -48,6 +52,7 @@ import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.mock.matcher.AddAsToWorkflowMatcher;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -106,6 +111,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private String invalidId = "invalidId";
 
 	private String validId = "50b70f252a9524132a04cae0";
+
+	private AddAsWithKeyToWorkflow addAsToWorkflowRequest;
 
 	@Test(dataProvider = "getRedirectionsSize")
 	public void shouldGetAsiRedirections(int nr) throws Exception {
@@ -375,17 +382,27 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	@Test
 	public void shouldAddAtomicServiceWithKey() throws Exception {
-		givenMocketAddAtomicServiceToWorkflowAction();
+		givenMockedAddAtomicServiceToWorkflowAction();
 		whenAddAtomicServiceWithKeyToWorkflow();
-		thenAtomicServiceWithKeyAdded();
+		thenAtomicServiceAddedToWorkflow();
 	}
 
-	private void givenMocketAddAtomicServiceToWorkflowAction() {
+	private void givenMockedAddAtomicServiceToWorkflowAction() {
+		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+		request.setAsConfigId(atomicServiceId);
+		request.setName(asName);
+		request.setKeyId(keyId);
+		givenMockedAddAtomicServiceToWorkflowAction(request);
+	}
+
+	private void givenMockedAddAtomicServiceToWorkflowAction(
+			AddAsWithKeyToWorkflow request) {
+		AddAsToWorkflowMatcher matcher = new AddAsToWorkflowMatcher(request);
+
 		Action<String> action = mock(Action.class);
 		when(
-				actionFactory.createStartAtomicServiceAction(username,
-						atomicServiceId, asName, contextId, keyId)).thenReturn(
-				action);
+				actionFactory.createStartAtomicServiceAction(eq(username),
+						eq(contextId), argThat(matcher))).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -394,8 +411,32 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 				atomicServiceId, asName, keyId);
 	}
 
-	private void thenAtomicServiceWithKeyAdded() {
+	private void thenAtomicServiceAddedToWorkflow() {
 		thenActionExecuted();
+	}
+
+	@Test
+	public void shouldAddASToWorkflowWithCpuDataAndMemory() throws Exception {
+		givenMockedAddAtomicServiceToWorkflowWithCpuDataAndMemoryAction();
+		whenAddASWithCpuDataAndMemoryToWorkflow();
+		thenAtomicServiceAddedToWorkflow();
+	}
+
+	
+	private void givenMockedAddAtomicServiceToWorkflowWithCpuDataAndMemoryAction() {
+		addAsToWorkflowRequest = new AddAsWithKeyToWorkflow();
+		addAsToWorkflowRequest.setAsConfigId(atomicServiceId);
+		addAsToWorkflowRequest.setName(asName);
+		addAsToWorkflowRequest.setKeyId(keyId);
+		addAsToWorkflowRequest.setCpu(1.2f);
+		addAsToWorkflowRequest.setDisk(123);
+		addAsToWorkflowRequest.setMemory(321);
+		givenMockedAddAtomicServiceToWorkflowAction(addAsToWorkflowRequest);
+	}
+
+	private void whenAddASWithCpuDataAndMemoryToWorkflow() {
+		workflowManagement.addAtomicServiceToWorkflow(contextId,
+				addAsToWorkflowRequest);
 	}
 
 	// redirections
@@ -723,22 +764,23 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
-		
+
 		try {
-			workflowManagement.removeAtomicServiceFromWorkflow(invalidId, "asiId");
+			workflowManagement.removeAtomicServiceFromWorkflow(invalidId,
+					"asiId");
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
 
 		try {
-			workflowManagement
-					.removeAtomicServiceInstanceFromWorkflow(invalidId, "asiId");
+			workflowManagement.removeAtomicServiceInstanceFromWorkflow(
+					invalidId, "asiId");
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
-		
+
 		try {
 			workflowManagement.getRedirections(invalidId, "asiId");
 			fail();
@@ -785,14 +827,14 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
-		
+
 		try {
 			workflowManagement.deleteRedirection(id1, "asiId", id2);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
-		
+
 		try {
 			workflowManagement.deleteEndpoint(id1, "asiId", id2);
 			fail();

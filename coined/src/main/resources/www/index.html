@@ -263,6 +263,10 @@ body {
 						- adds atomic service to workflow</a>
 				</h3>
 				<div>
+					<div class="ui-state-error ui-corner-all" style="padding: 8px; margin-bottom: 6px">
+						<strong>Deprecated!</strong> This method is deprecated and will be removed in the next 
+						Cloud Facade release.
+					</div>
 					<ul>
 						<li>(required) <strong>workflowId</strong> workflow id
 						</li>
@@ -276,6 +280,34 @@ body {
 							which should be injected while starting ASI. Key will be injected
 							only when workflow is in development mode.
 						</li>
+					</ul>
+
+					<p>
+						The operation returns the <strong>200</strong> status code on
+						success and the <strong>400</strong> status code and problem
+						explanation when failed.
+					</p>
+				</div>
+				<h3>
+					<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/as</strong>
+						- adds atomic service to workflow</a>
+				</h3>
+				<div>
+					<ul>
+						<li>(required) <strong>workflowId</strong> workflow id</li>						
+					</ul>
+
+					<p>The structure of the JSON request includes:</p>
+					<ul>
+						<li>(required) <strong>asConfigId</strong> - atomic service configuration id</li>
+						<li>(optional) <strong>name</strong> - Atomic Service Instance name</li>	
+						<li>(optional) <strong>cpu</strong> - cpu required by atomic service. This property is taken into account only in development workflow mode.</li>
+						<li>(optional) <strong>disk</strong> - disk required by atomic service This property is taken into account only in development workflow mode.</li>
+						<li>(optional) <strong>memory</strong> - memory required by atomic service This property is taken into account only in development workflow mode.</li>		
+						<li>(optional) <strong>keyId</strong> - key ID
+							which should be injected while starting ASI. Key will be injected
+							only when workflow is in development mode.
+						</li>									
 					</ul>
 
 					<p>

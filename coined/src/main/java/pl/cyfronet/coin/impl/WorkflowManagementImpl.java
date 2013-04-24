@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.impl;
 
+import static pl.cyfronet.coin.impl.utils.Validator.validateId;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.Redirection;
@@ -42,7 +45,6 @@ import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
-import static pl.cyfronet.coin.impl.utils.Validator.*;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -82,18 +84,29 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
+	@Deprecated
 	public void addAtomicServiceToWorkflow(String contextId, String asId,
 			String name, String keyId) throws WorkflowNotFoundException,
 			CloudFacadeException {
-		logger.debug(
-				"Adding atomic service {} to worklow {} with given name {} and key id {}",
-				new Object[] { asId, contextId, name, keyId });
-		validateId(contextId, asId);
-		if (keyId != null) {
-			validateId(keyId);
+		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+		request.setAsConfigId(asId);
+		request.setName(name);
+		request.setKeyId(keyId);
+		addAtomicServiceToWorkflow(contextId, request);
+	}
+
+	@Override
+	public void addAtomicServiceToWorkflow(String contextId,
+			AddAsWithKeyToWorkflow request) throws WorkflowNotFoundException,
+			CloudFacadeException {
+		logger.debug("Adding atomic service {} to worklow {} [{}]",
+				new Object[] { request.getAsConfigId(), contextId, request });
+		validateId(contextId, request.getAsConfigId());
+		if (request.getKeyId() != null) {
+			validateId(request.getKeyId());
 		}
 		Action<String> action = actionFactory.createStartAtomicServiceAction(
-				getUsername(), asId, name, contextId, keyId);
+				getUsername(), contextId, request);
 		action.execute();
 	}
 

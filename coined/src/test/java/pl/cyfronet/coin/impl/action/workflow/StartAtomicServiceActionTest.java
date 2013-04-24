@@ -27,11 +27,13 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.mock.matcher.AddAtomicServiceMatcher;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
@@ -54,8 +56,14 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	private String devAsId = "devAsId";
 
+	private Float cpu = 1.2f;
+
+	private Integer disk = 123;
+
+	private Integer memory = 321;
+
 	@Test
-	public void shouldStartWithoutKeyWhenProductionWorkflow() throws Exception {
+	public void shouldStartWithoutKeyAndPropsWhenProductionWorkflow() throws Exception {
 		givenAtomicServiceRequestAndWorkflowAlreadyStarted(WorkflowType.portal,
 				OperationStatus.SUCCESSFUL);
 		whenStartAtomicService();
@@ -72,12 +80,20 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void whenStartAtomicService() {
-		whenStartAtomicService(username, keyId);
+		whenStartAtomicService(username, keyId, cpu, disk, memory );
 	}
 
-	private void whenStartAtomicService(String username, String keyId) {
+	private void whenStartAtomicService(String username, String keyId, Float cpu, Integer disk, Integer memory) {
+		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+		request.setAsConfigId(initConfigId);
+		request.setName(name);
+		request.setKeyId(keyId);
+		request.setCpu(cpu);
+		request.setDisk(disk);
+		request.setMemory(memory);
+
 		Action<String> action = actionFactory.createStartAtomicServiceAction(
-				username, initConfigId, name, contextId, keyId);
+				username, contextId, request);
 		id = action.execute();
 	}
 
@@ -91,7 +107,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	@Test
-	public void shouldStartASWithKeyWhenDevelopmentWorkflow() throws Exception {
+	public void shouldStartASWithKeyAndPropsWhenDevelopmentWorkflow() throws Exception {
 		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.SUCCESSFUL);
 		whenStartAtomicService();
 		thenCheckIfAtomicServiceWasStarted();
@@ -111,7 +127,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 	}
 
 	private void whenNotWorkflowOwnerTriesToStartASForThisWorkflow() {
-		whenStartAtomicService("otherUser", null);
+		whenStartAtomicService("otherUser", null, null, null, null);
 	}
 
 	@Test
@@ -147,7 +163,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 			thenVerifyRequestSendToAtmosphereAndTmpASRemove();
 		}
 	}
-	
+
 	private void givenAtmosphereReturnsErrorWhileStartingAtomicService() {
 		givenMockedAtmosphereForStartingASInDevMode(OperationStatus.FAILED);
 
@@ -199,7 +215,13 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		at.setDevelopment(true);
 		at.setEndpoints(baseAS.getEndpoints());
 		at.setPort_mappings(baseAS.getPort_mappings());
-
+		
+		AppliancePreferences prefs = new AppliancePreferences();
+		prefs.setCpu(cpu);
+		prefs.setDisk(disk);
+		prefs.setMemory(memory);
+		at.setAppliance_preferences(prefs);
+		
 		asMatcher = new AddAtomicServiceMatcher(username, at, true);
 
 		when(air.getTypeFromConfig(initConfigId)).thenReturn(baseAS);
