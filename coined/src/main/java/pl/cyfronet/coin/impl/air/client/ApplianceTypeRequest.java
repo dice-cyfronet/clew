@@ -20,6 +20,10 @@ public class ApplianceTypeRequest {
 
 	private String proxy_conf_name;
 
+	private Float cpu;
+	private Integer memory;
+	private Integer disk;
+	
 	/**
 	 * #1021
 	 * @since 1.1.0
@@ -160,6 +164,48 @@ public class ApplianceTypeRequest {
 		this.proxy_conf_name = proxy_conf_name;
 	}
 
+	/**
+	 * @return the cpu
+	 */
+	public Float getCpu() {
+		return cpu;
+	}
+
+	/**
+	 * @param cpu the cpu to set
+	 */
+	public void setCpu(Float cpu) {
+		this.cpu = cpu;
+	}
+
+	/**
+	 * @return the memory
+	 */
+	public Integer getMemory() {
+		return memory;
+	}
+
+	/**
+	 * @param memory the memory to set
+	 */
+	public void setMemory(Integer memory) {
+		this.memory = memory;
+	}
+
+	/**
+	 * @return the disk
+	 */
+	public Integer getDisk() {
+		return disk;
+	}
+
+	/**
+	 * @param disk the disk to set
+	 */
+	public void setDisk(Integer disk) {
+		this.disk = disk;
+	}
+
 	@Override
 	public String toString() {
 		return "ApplianceTypeRequest [client=" + client + ", name=" + name
@@ -167,6 +213,7 @@ public class ApplianceTypeRequest {
 				+ ", published=" + published + ", shared=" + shared
 				+ ", development=" + development + ", original_appliance="
 				+ original_appliance + ", proxy_conf_name=" + proxy_conf_name
+				+ ", cpu=" + cpu + ", memory=" + memory + ", disk=" + disk
 				+ ", author=" + author + "]";
 	}
 }

@@ -90,7 +90,10 @@ public interface AirClient {
 	@PUT
 	@Path("/appliance_type/{asId}")
 	void updateAtomicService(@PathParam("asId") String asId,
-			@FormParam("") ApplianceTypeRequest updatedAs);
+			@FormParam("") ApplianceTypeRequest updatedAs, 
+			@FormParam("appliance_preferences[cpu]") Float cpu, 
+			@FormParam("appliance_preferences[disk]") Integer disk,
+			@FormParam("appliance_preferences[memory]") Integer memory);
 
 	@DELETE
 	@Path("/appliance_type/{asId}")

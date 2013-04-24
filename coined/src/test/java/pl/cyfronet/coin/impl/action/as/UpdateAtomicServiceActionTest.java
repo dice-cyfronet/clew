@@ -53,6 +53,9 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 		updatedAs.setProxyConfigurationName("new/proxy/name");
 		updatedAs.setPublished(true);
 		updatedAs.setScalable(false);
+		updatedAs.setCpu(1.2f);
+		updatedAs.setDisk(123);
+		updatedAs.setMemory(321);
 
 		matcher = new UpdateAtomicServiceMatcher(at, updatedAs);
 		when(air.getApplianceTypes(asId, false)).thenReturn(Arrays.asList(at));
@@ -70,7 +73,9 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 	}
 
 	private void thenAtomicServiceUpdated() {
-		verify(air, times(1)).updateAtomicService(eq(asId), argThat(matcher));
+		verify(air, times(1)).updateAtomicService(eq(asId), argThat(matcher),
+				eq(updatedAs.getCpu()), eq(updatedAs.getDisk()),
+				eq(updatedAs.getMemory()));
 	}
 
 	@Test
@@ -85,7 +90,8 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhileAtomicServiceIsNotOwned() throws Exception {
+	public void shouldThrowExceptionWhileAtomicServiceIsNotOwned()
+			throws Exception {
 		givenAtomicServiceToUpdate();
 		try {
 			whenUpdateNotOwnedAtomicService();
@@ -113,6 +119,7 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 	private void givenAirThrow400Exception() {
 		givenAtomicServiceToUpdate();
 		doThrow(getAirException(400)).when(air).updateAtomicService(eq(asId),
-				argThat(matcher));
+				argThat(matcher), eq(updatedAs.getCpu()),
+				eq(updatedAs.getDisk()), eq(updatedAs.getMemory()));
 	}
 }

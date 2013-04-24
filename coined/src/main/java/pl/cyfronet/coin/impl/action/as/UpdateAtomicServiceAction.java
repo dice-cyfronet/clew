@@ -54,7 +54,9 @@ public class UpdateAtomicServiceAction extends AirAction<Class<Void>> {
 			updatedAsRequest.setShared(getFlag(oldAS.isShared(),
 					updatedAs.getShared()));
 			try {
-				getAir().updateAtomicService(asId, updatedAsRequest);
+				getAir().updateAtomicService(asId, updatedAsRequest,
+						updatedAs.getCpu(), updatedAs.getDisk(),
+						updatedAs.getMemory());
 			} catch (WebApplicationException e) {
 				if (e.getResponse().getStatus() == 400) {
 					logger.warn(
