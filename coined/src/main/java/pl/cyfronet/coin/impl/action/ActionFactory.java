@@ -88,7 +88,6 @@ public class ActionFactory {
 	private AirClient air;
 	private DyReAllaManagerService atmosphere;
 
-	private String defaultSiteId;
 	private Integer defaultPriority;
 
 	private String proxyHost;
@@ -122,8 +121,7 @@ public class ActionFactory {
 
 	public Action<String> createCreateAtomicServiceAction(String username,
 			NewAtomicService newAtomicService) {
-		return new CreateAtomicServiceAction(this, username, defaultSiteId,
-				newAtomicService);
+		return new CreateAtomicServiceAction(this, username, newAtomicService);
 	}
 
 	public Action<Class<Void>> createUpdateAtomicServiceAction(String username,
@@ -353,10 +351,6 @@ public class ActionFactory {
 
 	public DyReAllaManagerService getAtmosphere() {
 		return atmosphere;
-	}
-
-	public void setDefaultSiteId(String defaultSiteId) {
-		this.defaultSiteId = defaultSiteId;
 	}
 
 	public void setDefaultPriority(Integer defaultPriority) {

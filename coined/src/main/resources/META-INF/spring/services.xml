@@ -30,8 +30,7 @@
 		<property name="air" ref="air-client" />
 		<property name="atmosphere" ref="atmosphere" />
 		<property name="httpRedirectionService" ref="httpRedirectionService" />
-		<property name="dnatRedirectionService" ref="dnatRedirectionService" />		
-		<property name="defaultSiteId" value="${default.cloud.site.id}" />
+		<property name="dnatRedirectionService" ref="dnatRedirectionService" />				
 		<property name="defaultPriority" value="${default.workflow.priority}" />
 		<property name="proxyHost" value="${proxy.host}" />
 		<property name="proxyPort" value="${proxy.port}" />

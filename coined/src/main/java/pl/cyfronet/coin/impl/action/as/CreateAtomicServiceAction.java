@@ -38,7 +38,6 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(CreateAtomicServiceAction.class);
 
-	private String defaultSiteId;
 	private NewAtomicService newAtomicService;
 	private Action<String> addASToAirAction;
 
@@ -47,16 +46,13 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 	/**
 	 * @param air Air client.
 	 * @param atmosphere Atmosphere client.
-	 * @param defaultSiteId Default cloud site id.
 	 * @param atomicServiceInstanceId Atomic Service Instance id.
 	 * @param newAtomicService Information about new Atomic Service.
 	 */
 	public CreateAtomicServiceAction(ActionFactory actionFactory,
-			String username, String defaultSiteId,
-			NewAtomicService newAtomicService) {
+			String username, NewAtomicService newAtomicService) {
 		super(actionFactory, username);
 
-		this.defaultSiteId = defaultSiteId;
 		this.newAtomicService = newAtomicService;
 	}
 
@@ -74,9 +70,8 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 			CloudFacadeException {
 		String asInstanceId = newAtomicService.getSourceAsiId();
 
-		logger.debug("Creating {} from {} on {}", new Object[] {
-				newAtomicService, newAtomicService,
-				defaultSiteId });
+		logger.debug("Creating {} from {}", new Object[] {
+				newAtomicService, newAtomicService });
 
 		ApplianceType at = getActionFactory().createGetASITypeAction(
 				asInstanceId).execute();
@@ -90,40 +85,40 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 		at.setProxy_conf_name(newAtomicService.getProxyConfigurationName());
 
 		AppliancePreferences prefs = at.getAppliance_preferences();
-		
-		if(prefs == null) {
+
+		if (prefs == null) {
 			prefs = new AppliancePreferences();
 		}
-		
+
 		boolean prefsModified = false;
-		if(newAtomicService.getCpu() != null) {
+		if (newAtomicService.getCpu() != null) {
 			prefs.setCpu(newAtomicService.getCpu());
 			prefsModified = true;
 		}
-		
-		if(newAtomicService.getDisk() != null) {
+
+		if (newAtomicService.getDisk() != null) {
 			prefs.setDisk(newAtomicService.getDisk());
 			prefsModified = true;
 		}
-		
-		if(newAtomicService.getMemory() != null) {
+
+		if (newAtomicService.getMemory() != null) {
 			prefs.setMemory(newAtomicService.getMemory());
 			prefsModified = true;
 		}
-		
-		if(prefsModified) {
+
+		if (prefsModified) {
 			at.setAppliance_preferences(prefs);
 		}
 
 		addASToAirAction = getActionFactory()
 				.createCreateAtomicServiceInAirAction(getUsername(), at);
-		
+
 		String atomicServiceId = addASToAirAction.execute();
 
 		try {
 			// templateId =
 			getAtmosphere().createTemplate(asInstanceId,
-					newAtomicService.getName(), defaultSiteId, atomicServiceId);
+					newAtomicService.getName(), atomicServiceId);
 			return atomicServiceId;
 		} catch (ApplianceNotFoundException e) {
 			addASToAirAction.rollback();
@@ -140,7 +135,7 @@ public class CreateAtomicServiceAction extends AtmosphereAndAirAction<String> {
 	private boolean getRawBoolean(Boolean b) {
 		return b == null ? false : b.booleanValue();
 	}
-	
+
 	@Override
 	public void rollback() {
 		// atmosphere.deleteTemplate(templateId);

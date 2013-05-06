@@ -66,7 +66,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		when(air.addAtomicService(argThat(matcher))).thenReturn(asId);
 		when(
 				atmosphere.createTemplate(instanceId,
-						newAtomicService.getName(), cloudSiteId, asId))
+						newAtomicService.getName(), asId))
 				.thenReturn("1");
 	}
 
@@ -123,7 +123,7 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 	private void thenAtomicServiceCreated() throws Exception {
 		verify(air, times(1)).addAtomicService(argThat(matcher));
 		verify(atmosphere, times(1)).createTemplate(instanceId,
-				atomicService.getName(), cloudSiteId, asId);
+				atomicService.getName(), asId);
 		assertEquals(createdAsId, asId);
 	}
 

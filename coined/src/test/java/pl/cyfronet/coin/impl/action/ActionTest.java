@@ -37,8 +37,6 @@ public abstract class ActionTest {
 
 	protected ActionFactory actionFactory;
 
-	protected String cloudSiteId = "siteId";
-
 	protected Integer defaultPriority = 40;
 
 	@BeforeMethod
@@ -49,7 +47,6 @@ public abstract class ActionTest {
 		actionFactory = new ActionFactory();
 		actionFactory.setAir(air);
 		actionFactory.setAtmosphere(atmosphere);
-		actionFactory.setDefaultSiteId(cloudSiteId);
 		actionFactory.setDefaultPriority(defaultPriority);
 
 		actionFactory = spy(actionFactory);
