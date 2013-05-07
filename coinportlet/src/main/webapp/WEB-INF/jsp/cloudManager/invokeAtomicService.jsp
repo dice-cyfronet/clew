@@ -4,7 +4,7 @@
 	<portlet:param name="action" value="invokeAtomicService"/>
 </portlet:actionURL>
 
-<div class="coin-content coin-content-no-tabs">
+<div>
 	<c:if test="${negativeMessage != null}">
 		<div class="coin-error-panel">${negativeMessage}</div>
 	</c:if>

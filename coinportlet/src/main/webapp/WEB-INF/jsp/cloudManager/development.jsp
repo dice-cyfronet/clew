@@ -7,7 +7,7 @@
     <portlet:param name="workflowType" value="development"/>
 </portlet:renderURL>
 
-<div class="coin-content">
+<div>
 	<c:choose>
 		<c:when test="${fn:length(activeAtomicServices) > 0}">
 			<%@ include file="asInstanceList.jsp" %>

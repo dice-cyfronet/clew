@@ -7,7 +7,7 @@
 	<portlet:param name="action" value="addRedirection"/>
 </portlet:actionURL>
 
-<div class="coin-content coin-content-no-tabs">
+<div>
 	<div>
 		<div style="font-size: 1.3em; text-align: center; border-bottom: solid 2px #73726D; font-weight: bold;">Redirections</div>
 		<c:choose>

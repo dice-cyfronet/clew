@@ -1,6 +1,6 @@
 <%@ include file="../include.jsp" %>
 
-<div class="coin-content coin-content-no-tabs">
+<div>
 	<div>
 		<portlet:renderURL var="manageUserKeys">
 			<portlet:param name="action" value="userKeys"/>

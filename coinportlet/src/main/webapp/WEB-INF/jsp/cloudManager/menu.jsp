@@ -8,37 +8,37 @@
     <portlet:param name="action" value="workflows"/>
 </portlet:renderURL>
 
-<ul class="coin-menu">
+<ul class="nav nav-tabs">
 	<c:if test="${developerMode}">
 		<c:choose>
 			<c:when test="${view == 'development'}">
-				<li class="coin-development coin-selected-tab">
+				<li class="active">
 			</c:when>
 			<c:otherwise>
-				<li class="coin-development">
+				<li>
 			</c:otherwise>
 		</c:choose>
-			<a class="coin-link" href="${development}"><spring:message code="cloud.manager.portlet.menu.development.label"/></a>
+			<a href="${development}"><spring:message code="cloud.manager.portlet.menu.development.label"/></a>
 		</li>
 	</c:if>
 	<c:choose>
 		<c:when test="${view == 'genericInvoker'}">
-			<li class="coin-selected-tab">
+			<li class="active">
 		</c:when>
 		<c:otherwise>
 			<li>
 		</c:otherwise>
 	</c:choose>
-		<a class="coin-link" href="${genericInvoker}"><spring:message code="cloud.manager.portlet.menu.generic.invoker.label"/></a>
+		<a href="${genericInvoker}"><spring:message code="cloud.manager.portlet.menu.generic.invoker.label"/></a>
 	</li>
 	<c:choose>
 		<c:when test="${view == 'workflows'}">
-			<li class="coin-selected-tab">
+			<li class="active">
 		</c:when>
 		<c:otherwise>
 			<li>
 		</c:otherwise>
 	</c:choose>
-		<a class="coin-link" href="${workflows}"><spring:message code="cloud.manager.portlet.menu.workflows.label"/></a>
+		<a href="${workflows}"><spring:message code="cloud.manager.portlet.menu.workflows.label"/></a>
 	</li>
 </ul>

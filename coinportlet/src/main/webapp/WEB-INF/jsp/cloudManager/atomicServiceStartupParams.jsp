@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <%@ include file="menu.jsp" %>
 
-<div class="coin-content">
+<div>
 	<p>
 		<spring:message code='cloud.manager.portlet.available.atomic.services.list.header'/>
 	</p>

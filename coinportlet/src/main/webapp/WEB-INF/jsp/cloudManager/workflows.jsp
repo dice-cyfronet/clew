@@ -1,7 +1,7 @@
 <%@ include file="../include.jsp" %>
 <%@ include file="menu.jsp" %>
 
-<div class="coin-content">
+<div>
 	<div id="workflowsPanel" style="padding: 20px;">
 		Loading workflow information. Please wait ...
 	</div>

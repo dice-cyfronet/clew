@@ -4,7 +4,7 @@
 	<portlet:param name="action" value="uploadKey"/>
 </portlet:actionURL>
 
-<div class="coin-content coin-content-no-tabs">
+<div>
 	<c:choose>
 		<c:when test="${fn:length(userKeyList) > 0}">
 			<div><spring:message code="cloud.manager.portlet.user.keys.label"/></div>
