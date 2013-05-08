@@ -38,6 +38,24 @@ ${fn:escapeXml(ws.descriptor)}
 			</pre>
 		</div>
 	</c:forEach>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			jQuery('.collapse').on('shown', function() {
+				pm({
+	        		target: parent,
+	        		type: 'resizeEvent',
+	        		data: {size: (document.body.scrollHeight)}
+	        	});
+			});
+			jQuery('.collapse').on('hidden', function() {
+				pm({
+	        		target: parent,
+	        		type: 'resizeEvent',
+	        		data: {size: (document.body.scrollHeight)}
+	        	});
+			});
+		});
+	</script>
 </c:if>
 <c:if test="${atomicServiceInvokable}">
 	<c:if test="${invocationPath != null}">
