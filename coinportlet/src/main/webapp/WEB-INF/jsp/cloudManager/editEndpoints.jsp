@@ -7,194 +7,145 @@
 	<portlet:param name="action" value="addRedirection"/>
 </portlet:actionURL>
 
+<h2>Redirections</h2>
+<c:choose>
+	<c:when test="${fn:length(redirections) > 0}">
+		<c:forEach var="redirection" items="${redirections}">
+			<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+				<div class="span2 text-right" style="font-size: larger;">
+					<strong>${redirection.name} (${redirection.type})</strong>
+				</div>
+				<div class="span8">
+					<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
+				</div>
+				<div class="span2">
+					<portlet:actionURL var="removeRedirection">
+						<portlet:param name="action" value="removeRedirection"/>
+						<portlet:param name="atomicServiceInstanceId" value="${addRedirectionRequest.atomicServiceInstanceId}"/>
+						<portlet:param name="redirectionId" value="${redirection.id}"/>
+						<portlet:param name="workflowId" value="${addRedirectionRequest.workflowId}"/>
+					</portlet:actionURL>
+					<c:set var="removeConfirmation">removeRedirection-${redirection.id}</c:set>
+					<a id="${removeConfirmation}" href='${removeRedirection}'><spring:message code='cloud.manager.portlet.remove.redirection.label'/></a>
+					<script type="text/javascript">
+						jQuery(document).ready(function() {
+							jQuery('#${removeConfirmation}').click(function() {
+								if(!confirm("<spring:message code='cloud.manager.portlet.remove.redirection.confirmation.label'/>")) {
+									return false;
+								}
+							});
+    					});
+					</script>
+				</div>
+			</div>
+		</c:forEach>
+	</c:when>
+	<c:otherwise>
+		<p><spring:message code="cloud.manager.portlet.no.redirections.label"/></p>
+	</c:otherwise>
+</c:choose>
+<form:form action='${addRedirection}' modelAttribute='addRedirectionRequest'>
+	<form:hidden path="atomicServiceInstanceId"/>
+	<form:hidden path="workflowId"/>
+	<fieldset>
+		<legend><spring:message code="cloud.manager.portlet.define.redirection.form.label"/></legend>
+		<label for="name"><spring:message code="cloud.manager.portlet.add.redirection.name.label"/></label>
+		<form:input path="name"/>
+		<form:errors path="name" cssClass="text-error"/>
+		
+		<label for="toPort"><spring:message code="cloud.manager.portlet.add.redirection.to.port.label"/></label>
+		<form:input path="toPort"/>
+		<form:errors path="toPort" cssClass="text-error"/>
+			
+		<label for="type"><spring:message code="cloud.manager.portlet.add.redirection.type.label"/></label>
+		<form:select path="type" items="${redirectionTypes}"/>
+		<form:errors path="type" cssClass="coin-error-panel"/>
+		
+		<br/>
+		<button type='submit'><spring:message code='cloud.manager.portlet.add.redirection.submit.request'/></button>
+	</fieldset>
+</form:form>
+
+<h2>Endpoints</h2>
+<c:choose>
+	<c:when test="${fn:length(endpoints) > 0}">
+		<c:forEach var="endpoint" items="${endpoints}">
+			<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+				<div class="span2 text-right" style="font-size: larger;">
+					<a target="_blank" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a>
+				</div>
+				<div class="span8">
+					<span style="padding-left: 10px; display: block;">${endpoint.description}</span>
+					<span style="padding-left: 10px; display: block; margin-top: 5px;">URL: ${breakingEndpointLinks[endpoint.id]}</span>
+				</div>
+				<div class="span2">
+					<portlet:actionURL var="removeEndpoint">
+						<portlet:param name="action" value="removeEndpoint"/>
+						<portlet:param name="atomicServiceInstanceId" value="${addEndpointRequest.atomicServiceInstanceId}"/>
+						<portlet:param name="endpointId" value="${endpoint.id}"/>
+						<portlet:param name="workflowId" value="${addEndpointRequest.workflowId}"/>
+					</portlet:actionURL>
+					<c:set var="removeConfirmation">removeEndpoint-${endpoint.id}</c:set>
+					<a id="${removeConfirmation}" class="coin-link" href='${removeEndpoint}'><spring:message code='cloud.manager.portlet.remove.endpoint.label'/></a>
+					<script type="text/javascript">
+						jQuery(document).ready(function() {
+							jQuery('#${removeConfirmation}').click(function() {
+								if(!confirm("<spring:message code='cloud.manager.portlet.remove.endpoint.confirmation.label'/>")) {
+									return false;
+								}
+							});
+    					});
+					</script>
+				</div>
+			</div>
+		</c:forEach>
+	</c:when>
+	<c:otherwise>
+		<p><spring:message code="cloud.manager.portlet.no.endpoints.label"/></p>
+	</c:otherwise>
+</c:choose>
+<c:choose>
+	<c:when test="${fn:length(redirectionSelection) > 0}">
+		<form:form action='${addEndpoint}' modelAttribute='addEndpointRequest'>
+			<form:hidden path="atomicServiceInstanceId"/>
+				<form:hidden path="workflowId"/>
+			<fieldset>
+				<legend><spring:message code="cloud.manager.portlet.define.endpoint.form.label"/></legend>
+				
+				<label for="type"><spring:message code="cloud.manager.portlet.add.endpoint.type.label"/></label>
+				<form:select path="type" items="${endpointTypes}"/>
+				<form:errors path="type" cssClass="text-error"/>
+				
+				<label for="invocationPath"><spring:message code="cloud.manager.portlet.add.endpoint.invocation.path.name.label"/></label>
+				<form:input path="invocationPath"/>
+				<form:errors path="invocationPath" cssClass="text-error"/>
+				
+				<label for="port"><spring:message code="cloud.manager.portlet.add.endpoint.port.name.label"/></label>
+				<form:select items="${redirectionSelection}" path="port"/>
+				<form:errors path="port" cssClass="text-error"/>
+				
+				<label for="description"><spring:message code="cloud.manager.portlet.add.endpoint.description.label"/></label>
+				<form:textarea path="description"/>
+				<form:errors path="description" cssClass="text-error"/>
+				
+				<label for="descriptor"><spring:message code="cloud.manager.portlet.add.endpoint.descriptor.label"/></label>
+				<form:textarea path="descriptor"/>
+				<form:errors path="descriptor" cssClass="text-error"/>
+				
+				<br/>
+				<button type='submit'><spring:message code='cloud.manager.portlet.add.endpoint.submit.request'/></button>
+			</fieldset>
+		</form:form>
+	</c:when>
+	<c:otherwise>
+		<p><spring:message code="cloud.manager.portlet.endpoint.creation.disabled.no.redirections"/></p>
+	</c:otherwise>
+</c:choose>
+
 <div>
-	<div>
-		<div style="font-size: 1.3em; text-align: center; border-bottom: solid 2px #73726D; font-weight: bold;">Redirections</div>
-		<c:choose>
-			<c:when test="${fn:length(redirections) > 0}">
-				<c:forEach var="redirection" items="${redirections}">
-					<div class="coin-panel">
-						<div style="width: 30%; float: left; text-align: right;">
-							<span class="coin-header">${redirection.name} (${redirection.type})</span>
-						</div>
-						<div style="width: 70%; float: left;">
-							<span class="coin-description">
-								<span style="padding-left: 10px; display: block;">
-									<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
-								</span>
-							</span>
-							<span class="coin-actions">
-								<portlet:actionURL var="removeRedirection">
-									<portlet:param name="action" value="removeRedirection"/>
-									<portlet:param name="atomicServiceInstanceId" value="${addRedirectionRequest.atomicServiceInstanceId}"/>
-									<portlet:param name="redirectionId" value="${redirection.id}"/>
-									<portlet:param name="workflowId" value="${addRedirectionRequest.workflowId}"/>
-								</portlet:actionURL>
-								<c:set var="removeConfirmation">removeRedirection-${redirection.id}</c:set>
-								<a id="${removeConfirmation}" class="coin-link" href='${removeRedirection}'><spring:message code='cloud.manager.portlet.remove.redirection.label'/></a>
-								<script type="text/javascript">
-									jQuery(document).ready(function() {
-										jQuery('#${removeConfirmation}').click(function() {
-											if(!confirm("<spring:message code='cloud.manager.portlet.remove.redirection.confirmation.label'/>")) {
-												return false;
-											}
-										});
-			    					});
-								</script>
-							</span>
-						</div>
-					</div>
-				</c:forEach>
-			</c:when>
-			<c:otherwise>
-				<spring:message code="cloud.manager.portlet.no.redirections.label"/>
-			</c:otherwise>
-		</c:choose>
-		<div style="margin-top: 20px; border-top: solid 1px #73726D; display: table; width: 100%;">
-			<div style="width: 30%; display: table-cell; vertical-align: middle; text-align: right; padding-right: 20px; font-size: 1.1em;">
-				<spring:message code="cloud.manager.portlet.define.redirection.form.label"/>
-			</div>
-			<div style="width: 70%; display: table-cell;">
-				<form:form class="coin-form" action='${addRedirection}' modelAttribute='addRedirectionRequest'>
-					<div style="float: left;">
-						<form:hidden path="atomicServiceInstanceId"/>
-						<form:hidden path="workflowId"/>
-						<div class="coin-form-input">
-							<label for="name">
-								<spring:message code="cloud.manager.portlet.add.redirection.name.label"/>
-							</label>
-							<form:input path="name"/>
-							<form:errors path="name" cssClass="coin-error-panel"/>
-						</div>
-						<div class="coin-form-input">
-							<label for="toPort">
-								<spring:message code="cloud.manager.portlet.add.redirection.to.port.label"/>
-							</label>
-							<form:input path="toPort"/>
-							<form:errors path="toPort" cssClass="coin-error-panel"/>
-						</div>
-						<div class="coin-form-input">
-							<label for="type">
-								<spring:message code="cloud.manager.portlet.add.redirection.type.label"/>
-							</label>
-							<form:select path="type" items="${redirectionTypes}"/>
-							<form:errors path="type" cssClass="coin-error-panel"/>
-						</div>
-					</div>
-					<div style="float: left; margin-left: 20px;" class="coin-form-submit">
-						<input type='submit' value='<spring:message code='cloud.manager.portlet.add.redirection.submit.request'/>'/>
-					</div>
-				</form:form>
-			</div>
-		</div>
-	</div>
-	<div>
-		<div style="font-size: 1.3em; text-align: center; border-bottom: solid 2px #73726D; font-weight: bold;">Endpoints</div>
-		<c:choose>
-			<c:when test="${fn:length(endpoints) > 0}">
-				<c:forEach var="endpoint" items="${endpoints}">
-					<div class="coin-panel">
-						<div style="width: 30%; float: left; text-align: right;">
-							<span class="coin-header"><a class="coin-link" target="_blank" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a></span>
-						</div>
-						<div style="width: 70%; float: left;">
-							<span class="coin-description">
-								<span style="padding-left: 10px; display: block;">${endpoint.description}</span>
-								<span style="padding-left: 10px; display: block; margin-top: 5px;">URL: ${breakingEndpointLinks[endpoint.id]}</span>
-							</span>
-							<span class="coin-actions">
-								<portlet:actionURL var="removeEndpoint">
-									<portlet:param name="action" value="removeEndpoint"/>
-									<portlet:param name="atomicServiceInstanceId" value="${addEndpointRequest.atomicServiceInstanceId}"/>
-									<portlet:param name="endpointId" value="${endpoint.id}"/>
-									<portlet:param name="workflowId" value="${addEndpointRequest.workflowId}"/>
-								</portlet:actionURL>
-								<c:set var="removeConfirmation">removeEndpoint-${endpoint.id}</c:set>
-								<a id="${removeConfirmation}" class="coin-link" href='${removeEndpoint}'><spring:message code='cloud.manager.portlet.remove.endpoint.label'/></a>
-								<script type="text/javascript">
-									jQuery(document).ready(function() {
-										jQuery('#${removeConfirmation}').click(function() {
-											if(!confirm("<spring:message code='cloud.manager.portlet.remove.endpoint.confirmation.label'/>")) {
-												return false;
-											}
-										});
-			    					});
-								</script>
-							</span>
-						</div>
-					</div>
-				</c:forEach>
-			</c:when>
-			<c:otherwise>
-				<spring:message code="cloud.manager.portlet.no.endpoints.label"/>
-			</c:otherwise>
-		</c:choose>
-		<c:choose>
-			<c:when test="${fn:length(redirectionSelection) > 0}">
-				<div style="margin-top: 20px; border-top: solid 1px #73726D; display: table; width: 100%;">
-					<div style="width: 30%; display: table-cell; vertical-align: middle; text-align: right; padding-right: 20px; font-size: 1.1em;">
-						<spring:message code="cloud.manager.portlet.define.endpoint.form.label"/>
-					</div>
-					<div style="width: 70%; display: table-cell;">
-						<form:form class="coin-form" action='${addEndpoint}' modelAttribute='addEndpointRequest'>
-							<div style="float: left;">
-								<form:hidden path="atomicServiceInstanceId"/>
-								<form:hidden path="workflowId"/>
-								<div class="coin-form-input">
-									<label for="type">
-										<spring:message code="cloud.manager.portlet.add.endpoint.type.label"/>
-									</label>
-									<form:select path="type" items="${endpointTypes}"/>
-									<form:errors path="type" cssClass="coin-error-panel"/>
-								</div>
-								<div class="coin-form-input">
-									<label for="invocationPath">
-										<spring:message code="cloud.manager.portlet.add.endpoint.invocation.path.name.label"/>
-									</label>
-									<form:input path="invocationPath"/>
-									<form:errors path="invocationPath" cssClass="coin-error-panel"/>
-								</div>
-								<div class="coin-form-input">
-									<label for="port">
-										<spring:message code="cloud.manager.portlet.add.endpoint.port.name.label"/>
-									</label>
-									<form:select items="${redirectionSelection}" path="port"/>
-									<form:errors path="port" cssClass="coin-error-panel"/>
-								</div>
-								<div class="coin-form-input">
-									<label for="description">
-										<spring:message code="cloud.manager.portlet.add.endpoint.description.label"/>
-									</label>
-									<form:textarea path="description"/>
-									<form:errors path="description" cssClass="coin-error-panel"/>
-								</div>
-								<div class="coin-form-input">
-									<label for="descriptor">
-										<spring:message code="cloud.manager.portlet.add.endpoint.descriptor.label"/>
-									</label>
-									<form:textarea path="descriptor"/>
-									<form:errors path="descriptor" cssClass="coin-error-panel"/>
-								</div>
-							</div>
-							<div style="float: left; margin-left: 20px;" class="coin-form-submit">
-								<input type='submit' value='<spring:message code='cloud.manager.portlet.add.endpoint.submit.request'/>'/>
-							</div>
-						</form:form>
-					</div>
-				</div>
-			</c:when>
-			<c:otherwise>
-				<div>
-					<spring:message code="cloud.manager.portlet.endpoint.creation.disabled.no.redirections"/>
-				</div>
-			</c:otherwise>
-		</c:choose>
-	</div>
-	<div class="coin-menu-bottom">
-		<ul>
-			<li>
-				<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
-			</li>
-		</ul>
-	</div>
+	<ul class="inline">
+		<li>
+			<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
+		</li>
+	</ul>
 </div>

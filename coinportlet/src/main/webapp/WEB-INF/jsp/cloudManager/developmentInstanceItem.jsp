@@ -12,9 +12,9 @@
 			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 		</portlet:renderURL>
 		<c:set var="saveLinkId">saveLink-${atomicServiceInstance.id}</c:set>
-		<a id="${saveLinkId}" class="coin-link" href="${saveAtomicService}" style="visibility: hidden;">Save atomic service</a><br/>
+		<a id="${saveLinkId}" href="${saveAtomicService}" style="visibility: hidden;">Save atomic service</a><br/>
 		<c:set var="accessMethodsId">accessMethods-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${accessMethodsId}" href="#showAccessInfo" style="visibility: hidden;">Show access info</a><br/>
+		<a id="${accessMethodsId}" href="#" style="visibility: hidden;" data-toggle="popover" data-original-title="Access info" title="" data-placement="left">Show access info</a><br/>
 		
 		<portlet:actionURL var="shutdownAtomicServiceInstance">
 			<portlet:param name="action" value="stopDevInstance"/>
@@ -22,7 +22,7 @@
 			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a><br/>
+		<a id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a><br/>
 		
 		<portlet:renderURL var="editEndpoints">
 			<portlet:param name="action" value="editEndpoints"/>
@@ -30,7 +30,7 @@
 			<portlet:param name="workflowId" value="${workflowId}"/>
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
-		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Redirections and endpoints</a>
+		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Redirections and endpoints</a>
 	</div>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -78,50 +78,30 @@
 	    				if(jQuery('#${accessMethodsId}').css('visibility') === 'hidden') {
 	    					jQuery.get('${accessMethodsLink}', function(accessMethods) {
 	    						if(accessMethods !== '') {
-	    							jQuery('#${accessMethodsId}').click(function() {
-	    								var methods = accessMethods.split('|');
-	    								var html = '';
-		    							
-	    								for(var i = 0; i < methods.length; i++) {
-			    							var creds = methods[i].split(':');
-		    								html += '<b>' + creds[0] + ':</b><br/>' +
-			    								'<span style="padding-left: 10px;">Host: ' + creds[1] + '</span><br/>' +
-			    								'<span style="padding-left: 10px;">Port: ' + creds[2] + '</span><br/>';
-		    								
-			    							if(creds.length > 3) {
-		    									html += '<span style="padding-left: 10px;">Key: ' + creds[3] + '</span><br/>';
-		    								}
-			    							
-			    							if(creds[0] == 'ssh') {
-			    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
-			    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
-			    										'monospace; white-space: nowrap;">ssh root@' + creds[1] + ' -p ' + creds[2] + ' -i {private_key_file}</span>)</span><br/>';
-			    							}
-		    							}
-		    							
-		    							html += '<br/><a class="coin-link" href="#closeAccessInfoWindow" ' +
-											'onclick="window.popup.dialog(\'close\'); window.popup = null; return false;">Close</a>';
+	    							var methods = accessMethods.split('|');
+    								var html = '';
+	    							
+    								for(var i = 0; i < methods.length; i++) {
+		    							var creds = methods[i].split(':');
+	    								html += '<b><small>' + creds[0] + ':</small></b><br/>' +
+		    								'<span style="padding-left: 10px;"><small>Host: ' + creds[1] + '</small></span><br/>' +
+		    								'<span style="padding-left: 10px;"><small>Port: ' + creds[2] + '</small></span>';
 	    								
-	    								if(window.popup != null) {
-	    									window.popup.dialog('close');
+		    							if(creds.length > 3) {
+	    									html += '<br/><span style="padding-left: 10px;"><small>Key: ' + creds[3] + '</small></span>';
 	    								}
-	    								
-	    	    						window.popup = jQuery('<div class="coin-popup coin-content coin-content-no-tabs" style="padding: 10px;"></div>').html(html).dialog({
-	    	    							dialogClass: 'ui-dialog',
-	    	    							closeText: '',
-	    	    							modal: false,
-	    	    							position: 'top',
-	    	    							autoOpen: false,
-	    	    							draggable: false,
-	    	    							resizable: false
-	    	    						});
-	    	    						window.popup.dialog('open');
-	    	    						jQuery('.ui-dialog-titlebar').hide();
-	    	    						jQuery('.ui-dialog').attr('class', 'ui-dialog');
-	    	    						jQuery('.coin-popup').attr('class', 'coin-popup coin-content coin-content-no-tabs');
-	    	    						
-	    	    						return false;
-	    	    					});
+		    							
+		    							if(creds[0] == 'ssh') {
+		    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
+		    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
+		    										'monospace; ">ssh root@' + creds[1] + ' -p ' + creds[2] + ' -i {private_key_file}</span>)</span>';
+		    							}
+	    							}
+    	    						
+	    							jQuery('#${accessMethodsId}').popover({
+	    								html: true,
+	    								content: html
+	    							});
 	    							jQuery('#${accessMethodsId}').css('visibility', 'visible');
 	    							setTimeout("updates['${statusId}']('${statusLink}', '${statusId}')", 2000);
 	    						}

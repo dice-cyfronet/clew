@@ -29,33 +29,33 @@
 			<label for="description"><spring:message code="cloud.manager.portlet.save.atomic.service.description.label"/></label>
 			<spring:message code="cloud.manager.portlet.save.atomic.service.description.tooltip" var="tooltip"/>
 			<form:textarea path="description" title="${tooltip}"/>
-			<form:errors path="description" cssClass="coin-error-panel"/>
+			<form:errors path="description" cssClass="text-error"/>
 			
 			<spring:message code='cloud.manager.portlet.save.atomic.service.shared.flag.tooltip' var="tooltip"/>
 			<label class="checkbox">
 				<form:checkbox path="shared" title="${tooltip}"/>
 				<spring:message code="cloud.manager.portlet.save.atomic.service.shared.flag.label"/>
 			</label>
-			<form:errors path="shared" cssClass="coin-error-panel"/>
+			<form:errors path="shared" cssClass="text-error"/>
 			
 			<spring:message code="cloud.manager.portlet.save.atomic.service.scalable.flag.tooltip" var="tooltip"/>
 			<label class="checkbox">
 				<form:checkbox path="scalable" title="${tooltip}"/>
 				<spring:message code="cloud.manager.portlet.save.atomic.service.scalable.flag.label"/>
 			</label>
-			<form:errors path="scalable" cssClass="coin-error-panel"/>
+			<form:errors path="scalable" cssClass="text-error"/>
 			
 			<spring:message code="cloud.manager.portlet.save.atomic.service.published.flag.tooltip" var="tooltip"/>
 			<label class="checkbox">
 				<form:checkbox path="published" title="${tooltip}"/>
 				<spring:message code="cloud.manager.portlet.save.atomic.service.published.flag.label"/>
 			</label>
-			<form:errors path="published" cssClass="coin-error-panel"/>
+			<form:errors path="published" cssClass="text-error"/>
 			
 			<label for="proxyConfiguration"><spring:message code="cloud.manager.portlet.save.atomic.service.proxy.configuration.label"/></label>
 			<spring:message code="cloud.manager.portlet.save.atomic.service.proxy.configuration.tooltip" var="tooltip"/>
 			<form:input path="proxyConfiguration" title="${tooltip}"/>
-			<form:errors path="proxyConfiguration" cssClass="coin-error-panel"/>
+			<form:errors path="proxyConfiguration" cssClass="text-error"/>
 			
 			<br/>
 			<button type='submit' class="btn"><spring:message code='cloud.manager.portlet.submit.atomic.service.save.request'/></button>
