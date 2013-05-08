@@ -83,12 +83,11 @@
 	    							
     								for(var i = 0; i < methods.length; i++) {
 		    							var creds = methods[i].split(':');
-	    								html += '<b><small>' + creds[0] + ':</small></b><br/>' +
-		    								'<span style="padding-left: 10px;"><small>Host: ' + creds[1] + '</small></span><br/>' +
-		    								'<span style="padding-left: 10px;"><small>Port: ' + creds[2] + '</small></span>';
+	    								html += '<strong><small>' + creds[0] + ': </small></strong>' +
+		    								'<small>' + creds[1] + ':' + creds[2] + '</small>';
 	    								
 		    							if(creds.length > 3) {
-	    									html += '<br/><span style="padding-left: 10px;"><small>Key: ' + creds[3] + '</small></span>';
+	    									html += '<small> (' + creds[3] + ')</small>';
 	    								}
 		    							
 		    							if(creds[0] == 'ssh') {
