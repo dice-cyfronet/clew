@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 public class Portal {
 	private static final Logger log = LoggerFactory.getLogger(Portal.class);
 	
-	private static final String DEVELOPER_ROLE = "developer";
-	
 	public List<String> getUserRoles(PortletRequest request) {
 		List<String> roles = new ArrayList<String>();
 		String user = request.getUserPrincipal().getName();
@@ -81,6 +79,7 @@ public class Portal {
 			
 			//the user role is always required
 			roleManager.addRoleToUser(userName, "user");
+			log.debug("After {} user update roles include {}", userName, roleManager.getRolesForUser(userName));
 			
 			//setting the token as one of the user's attributes
 			SecurityAttribute tokenAttribute = user.getSecurityAttributes().getAttribute("token", true);
