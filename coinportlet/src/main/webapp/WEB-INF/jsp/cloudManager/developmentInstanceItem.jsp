@@ -1,13 +1,12 @@
 <c:forEach var="atomicServiceInstance" items="${atomicServiceInstances}" varStatus="status">
-	<span class="coin-description">
-		Instance ${status.index + 1}<br/>
+	<div class="span8">
 		<c:set var="statusId">status-${atomicServiceInstance.id}</c:set>
 		Name: ${atomicServiceInstance.name}<br/>
 		Development Id: ${atomicServiceInstance.id}<br/>
 		Site: ${atomicServiceInstance.siteId}<br/>
 		Status: <span id="${statusId}" style="font-weight: bold; color: #db7024;">${atomicServiceInstance.status}</span>
-	</span>
-	<span class="coin-actions">
+	</div>
+	<div class="span2">
 		<portlet:renderURL var="saveAtomicService">
 			<portlet:param name="action" value="saveAtomicService"/>
 			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
@@ -32,7 +31,7 @@
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
 		<a class="coin-link" id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Redirections and endpoints</a>
-	</span>
+	</div>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
 			jQuery('#${shutdownInstanceId}').click(function() {

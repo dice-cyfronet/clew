@@ -2,11 +2,13 @@
 
 <portlet:resourceURL var="asSavingStatusLink" id="asSavingStatus"/>
 
-<div class="coin-content coin-content-no-tabs">
-	<p><spring:message code="cloud.manager.portlet.saving.as.in.progress.message"/>
-	<span id="asSavingState" style="font-weight: bold; color: #db7024;">saving</span></p>
-	<div class="coin-menu-bottom">
-		<ul>
+<div>
+	<p>
+		<spring:message code="cloud.manager.portlet.saving.as.in.progress.message"/>
+		<span id="asSavingState" style="font-weight: bold; color: #db7024;">saving</span>
+	</p>
+	<div>
+		<ul class="inline">
 			<li>
 				<a class="coin-link" href='<portlet:renderURL/>' id="mainPage" style="visibility: hidden;">Go back to the main page</a>
 			</li>

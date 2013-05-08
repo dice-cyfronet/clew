@@ -2,106 +2,100 @@
 <%@ include file="menu.jsp" %>
 
 <div>
-	<p>
-		<spring:message code='cloud.manager.portlet.available.atomic.services.list.header'/>
-	</p>
+	<p class="lead"><spring:message code='cloud.manager.portlet.available.atomic.services.list.header'/></p>
 	<c:forEach var='atomicService' items='${atomicServices}'>
 		<c:if test="${(workflowType == 'portal' and atomicService.active) or workflowType == 'development'}">
-			<div class="coin-panel">
-				<div style="width: 30%; float: left; text-align: right;">
-					<span class="coin-header">${atomicService.name}</span>
+			<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+				<div class="span2 text-right" style="font-size: larger;">
+					<strong>${atomicService.name}</strong>
 				</div>
-				<div style="width: 70%; float: left;">
-					<span class="coin-description">
-						<span style="padding-left: 10px; display: block;">
+				<div class="span8">
+					<c:choose>
+						<c:when test="${atomicService.description == null or atomicService.description == ''}">
+							<em>no description</em>
+						</c:when>
+						<c:otherwise>
+							<p>${atomicService.description}</p>
+						</c:otherwise>
+					</c:choose>
+				</div>
+				<div class="span2">
+					<c:choose>
+						<c:when test="${atomicService.active}">
 							<c:choose>
-								<c:when test="${atomicService.description == null or atomicService.description == ''}">
-									<i>no description</i>
+								<c:when test="${workflowType == 'development'}">
+									<portlet:renderURL var="startDevAs">
+										<portlet:param name="action" value="pickUserKey"/>
+										<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+										<portlet:param name="workflowType" value="${workflowType}"/>
+									</portlet:renderURL>
+									<a href="${startDevAs}">Start</a>
 								</c:when>
 								<c:otherwise>
-									${atomicService.description}
+									<portlet:actionURL var="startAs">
+										<portlet:param name="action" value="startAtomicService"/>
+										<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+										<portlet:param name="workflowType" value="${workflowType}"/>
+									</portlet:actionURL>
+									<a href="${startAs}">Start</a>
 								</c:otherwise>
 							</c:choose>
-						</span>
-					</span>
-					<span class="coin-actions">
-						<c:choose>
-							<c:when test="${atomicService.active}">
-								<c:choose>
-									<c:when test="${workflowType == 'development'}">
-										<portlet:renderURL var="startDevAs">
-											<portlet:param name="action" value="pickUserKey"/>
-											<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-											<portlet:param name="workflowType" value="${workflowType}"/>
-										</portlet:renderURL>
-										<a class="coin-link" href="${startDevAs}">Start</a>
-									</c:when>
-									<c:otherwise>
-										<portlet:actionURL var="startAs">
-											<portlet:param name="action" value="startAtomicService"/>
-											<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-											<portlet:param name="workflowType" value="${workflowType}"/>
-										</portlet:actionURL>
-										<a class="coin-link" href="${startAs}">Start</a>
-									</c:otherwise>
-								</c:choose>
-							</c:when>
-							<c:otherwise>
-								<c:set var="inactiveAtomicServiceLink">inactiveAS-link-${atomicService.atomicServiceId}</c:set>
-								<c:set var="inactiveAtomicServiceLabel">inactiveAS-label-${atomicService.atomicServiceId}</c:set>
-								<a id="${inactiveAtomicServiceLink}" class="coin-link" href="${startAs}" style="visibility: hidden;">Start</a>
-								<span id="${inactiveAtomicServiceLabel}">Not active</span>
-								<portlet:resourceURL var="checkAsStatus" id="asSavingStatus">
-									<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-								</portlet:resourceURL>
-								<script type="text/javascript">
-			    					jQuery(document).ready(function() {
-			    						if(window.updates == null) {
-			    							window.updates = {};
-			    						}
-			    						
-			    						window.updates['${inactiveAtomicServiceLink}'] = function() {
-			    							jQuery.get('${checkAsStatus}', function(status) {
-			    								if(status === 'done') {
-			    									jQuery('#${inactiveAtomicServiceLabel}').text('');
-			    									jQuery('#${inactiveAtomicServiceLink}').css('visibility', 'visible');
-			    								} else {
-			    									setTimeout("updates['${inactiveAtomicServiceLink}']()", 2000);
-			    								}
-			    							});
-			    						};
-			    						
-			    						updates['${inactiveAtomicServiceLink}']();
-			    					});
-			    				</script>
-							</c:otherwise>
-						</c:choose>
-						<c:if test="${atomicService.owner == userName or asCloudAdminFlag}">
-							<portlet:renderURL var="editAs">
-								<portlet:param name="action" value="editAs"/>
+						</c:when>
+						<c:otherwise>
+							<c:set var="inactiveAtomicServiceLink">inactiveAS-link-${atomicService.atomicServiceId}</c:set>
+							<c:set var="inactiveAtomicServiceLabel">inactiveAS-label-${atomicService.atomicServiceId}</c:set>
+							<a id="${inactiveAtomicServiceLink}" href="${startAs}" style="visibility: hidden;">Start</a><br/>
+							<span id="${inactiveAtomicServiceLabel}">Not active</span>
+							<portlet:resourceURL var="checkAsStatus" id="asSavingStatus">
 								<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-								<portlet:param name="workflowType" value="${workflowType}"/>
-							</portlet:renderURL>
-							<br/><a class="coin-link" href="${editAs}">Edit</a>
-							
-							<c:set var="removeAsLink">removeAS-link-${atomicService.atomicServiceId}</c:set>
-							<portlet:actionURL var="removeAs">
-								<portlet:param name="action" value="removeAs"/>
-								<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-								<portlet:param name="workflowType" value="${workflowType}"/>
-							</portlet:actionURL>
-							<br/><a id="${removeAsLink}" style="color: #EFC09F;" class="coin-link" href="${removeAs}">Remove</a>
+							</portlet:resourceURL>
 							<script type="text/javascript">
-								jQuery(document).ready(function() {
-									jQuery('#${removeAsLink}').click(function() {
-										if(!confirm("<spring:message code='cloud.manager.portlet.remove.as.confirmation.message'/>")) {
-											return false;
-										}
-									});
+		    					jQuery(document).ready(function() {
+		    						if(window.updates == null) {
+		    							window.updates = {};
+		    						}
+		    						
+		    						window.updates['${inactiveAtomicServiceLink}'] = function() {
+		    							jQuery.get('${checkAsStatus}', function(status) {
+		    								if(status === 'done') {
+		    									jQuery('#${inactiveAtomicServiceLabel}').text('');
+		    									jQuery('#${inactiveAtomicServiceLink}').css('visibility', 'visible');
+		    								} else {
+		    									setTimeout("updates['${inactiveAtomicServiceLink}']()", 2000);
+		    								}
+		    							});
+		    						};
+		    						
+		    						updates['${inactiveAtomicServiceLink}']();
+		    					});
+		    				</script>
+						</c:otherwise>
+					</c:choose>
+					<c:if test="${atomicService.owner == userName or asCloudAdminFlag}">
+						<portlet:renderURL var="editAs">
+							<portlet:param name="action" value="editAs"/>
+							<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+							<portlet:param name="workflowType" value="${workflowType}"/>
+						</portlet:renderURL>
+						<br/><a href="${editAs}">Edit</a>
+						
+						<c:set var="removeAsLink">removeAS-link-${atomicService.atomicServiceId}</c:set>
+						<portlet:actionURL var="removeAs">
+							<portlet:param name="action" value="removeAs"/>
+							<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+							<portlet:param name="workflowType" value="${workflowType}"/>
+						</portlet:actionURL>
+						<br/><a id="${removeAsLink}" href="${removeAs}">Remove</a>
+						<script type="text/javascript">
+							jQuery(document).ready(function() {
+								jQuery('#${removeAsLink}').click(function() {
+									if(!confirm("<spring:message code='cloud.manager.portlet.remove.as.confirmation.message'/>")) {
+										return false;
+									}
 								});
-							</script>
-						</c:if>
-					</span>
+							});
+						</script>
+					</c:if>
 				</div>
 			</div>
 		</c:if>
@@ -113,10 +107,10 @@
 			});
 		</script>
 	</c:if>
-	<div class="coin-menu-bottom">
-		<ul>
+	<div>
+		<ul class="inline">
 			<li>
-				<a class="coin-link" href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
+				<a href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
 			</li>
 		</ul>
 	</div>

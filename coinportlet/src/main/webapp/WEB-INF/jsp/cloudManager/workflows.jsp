@@ -2,9 +2,7 @@
 <%@ include file="menu.jsp" %>
 
 <div>
-	<div id="workflowsPanel" style="padding: 20px;">
-		Loading workflow information. Please wait ...
-	</div>
+	<p id="workflowsPanel">Loading workflow information. Please wait ...</p>
 	<portlet:resourceURL var="workflowsLink" id="workflows">
 		<portlet:param name="workflowId" value="${workflowId}"/>
 		<portlet:param name="atomicServiceId" value="${atomicServiceInstance.atomicServiceId}"/>
