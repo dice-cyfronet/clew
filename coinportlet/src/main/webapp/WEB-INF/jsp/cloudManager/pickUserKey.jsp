@@ -20,6 +20,10 @@
 					<form:hidden path="workflowType"/>
 					<fieldset>
 						<legend><spring:message code="cloud.manager.portlet.pick.user.key.label"/></legend>
+						
+						<label for="asiName"><spring:message code="cloud.manager.portlet.asi.optional.name.label"/></label>
+						<form:input path="atomicServiceInstanceName"/>
+						
 						<c:forEach var="entry" items="${userKeyList}">
 							<label class="radio">
 								<form:radiobutton path="userKeyId" value="${entry.key}"/>

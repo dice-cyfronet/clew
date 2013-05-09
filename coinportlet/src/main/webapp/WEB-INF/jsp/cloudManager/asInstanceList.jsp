@@ -5,7 +5,7 @@
 			<strong>
 				<c:choose>
 					<c:when test="${view == 'development'}">
-							${atomicService.name}<br/>
+							${entry.value[0].name}<br/>
 							<em>
 								<c:choose>
 									<c:when test="${atomicService.published}">
