@@ -35,9 +35,12 @@
 		inheritHeaders="true">
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<ref bean="workflowServiceExceptionMapper" />
 		</jaxrs:providers>		
 	</jaxrs:client>
 
+	<bean id="workflowServiceExceptionMapper" class="pl.cyfronet.coin.api.exception.mapper.WorkflowServiceExceptionMapper" />
+	
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
 	
 	<util:constant id="failOnUnknown" static-field="org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES" />

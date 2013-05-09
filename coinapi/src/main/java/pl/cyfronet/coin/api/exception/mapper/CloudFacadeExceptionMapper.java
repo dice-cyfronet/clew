@@ -16,6 +16,9 @@
 
 package pl.cyfronet.coin.api.exception.mapper;
 
+import java.io.InputStream;
+import java.util.Scanner;
+
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
@@ -30,7 +33,20 @@ public abstract class CloudFacadeExceptionMapper implements
 		if (r.getEntity() == null) {
 			return null;
 		} else {
+			if (r.getEntity() instanceof InputStream) {
+				return convertStreamToString((InputStream) r.getEntity());
+			}
 			return r.getEntity().toString();
 		}
+	}
+
+	private String convertStreamToString(InputStream is) {
+		// from http://stackoverflow.com/questions/309424/read-convert-an-inputstream-to-a-string
+		Scanner s = new Scanner(is);
+		Scanner sWithDelimiter = s.useDelimiter("\\A");
+		String str = s.hasNext() ? s.next() : "";
+		s.close();
+		sWithDelimiter.close();
+		return str;
 	}
 }
