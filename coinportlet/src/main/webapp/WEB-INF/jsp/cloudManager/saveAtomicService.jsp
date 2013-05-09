@@ -57,6 +57,23 @@
 			<form:input path="proxyConfiguration" title="${tooltip}"/>
 			<form:errors path="proxyConfiguration" cssClass="text-error"/>
 			
+			<label for"cores"><spring:message code="cloud.manager.portlet.save.atomic.service.cores.label"/></label>
+			<spring:message code="cloud.manager.portlet.save.atomic.service.cores.tooltip" var="tooltip"/>
+			<form:select path="cores" title="${tooltip}" items="${coreItems}">
+				<form:option value="hello"></form:option>
+			</form:select>
+			<form:errors path="cores" cssClass="text-error"/>
+			
+			<label for"memory"><spring:message code="cloud.manager.portlet.save.atomic.service.memory.label"/></label>
+			<spring:message code="cloud.manager.portlet.save.atomic.service.memory.tooltip" var="tooltip"/>
+			<form:select path="memory" title="${tooltip}" items="${memoryItems}"/>
+			<form:errors path="memory" cssClass="text-error"/>
+			
+			<label for"disk"><spring:message code="cloud.manager.portlet.save.atomic.service.disk.label"/></label>
+			<spring:message code="cloud.manager.portlet.save.atomic.service.disk.tooltip" var="tooltip"/>
+			<form:select path="disk" title="${tooltip}" items="${diskItems}"/>
+			<form:errors path="disk" cssClass="text-error"/>
+			
 			<br/>
 			<button type='submit' class="btn"><spring:message code='cloud.manager.portlet.submit.atomic.service.save.request'/></button>
 		</fieldset>
@@ -69,6 +86,9 @@
 			jQuery('input#scalable').tooltip();
 			jQuery('input#published').tooltip();
 			jQuery('input#proxyConfiguration').tooltip();
+			jQuery('select#cores').tooltip();
+			jQuery('select#memory').tooltip();
+			jQuery('select#disk').tooltip();
 		});
 	</script>
 	<div>

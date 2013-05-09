@@ -12,7 +12,28 @@ public class SaveAtomicServiceRequest {
 	private boolean scalable;
 	private String proxyConfiguration;
 	private String atomicServiceId;
+	private String cores;
+	private String disk;
+	private String memory;
 	
+	public String getCores() {
+		return cores;
+	}
+	public void setCores(String cores) {
+		this.cores = cores;
+	}
+	public String getDisk() {
+		return disk;
+	}
+	public void setDisk(String disk) {
+		this.disk = disk;
+	}
+	public String getMemory() {
+		return memory;
+	}
+	public void setMemory(String memory) {
+		this.memory = memory;
+	}
 	public boolean isShared() {
 		return shared;
 	}

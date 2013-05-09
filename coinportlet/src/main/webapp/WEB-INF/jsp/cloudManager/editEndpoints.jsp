@@ -11,7 +11,7 @@
 <c:choose>
 	<c:when test="${fn:length(redirections) > 0}">
 		<c:forEach var="redirection" items="${redirections}">
-			<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+			<div class="row-fluid row-hover">
 				<div class="span2 text-right" style="font-size: larger;">
 					<strong>${redirection.name} (${redirection.type})</strong>
 				</div>
@@ -70,7 +70,7 @@
 <c:choose>
 	<c:when test="${fn:length(endpoints) > 0}">
 		<c:forEach var="endpoint" items="${endpoints}">
-			<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+			<div class="row-fluid row-hover">
 				<div class="span2 text-right" style="font-size: larger;">
 					<a target="_blank" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a>
 				</div>

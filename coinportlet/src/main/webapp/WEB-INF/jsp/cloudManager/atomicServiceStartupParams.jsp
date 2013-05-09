@@ -4,7 +4,7 @@
 <p class="lead"><spring:message code='cloud.manager.portlet.available.atomic.services.list.header'/></p>
 <c:forEach var='atomicService' items='${atomicServices}'>
 	<c:if test="${(workflowType == 'portal' and atomicService.active) or workflowType == 'development'}">
-		<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+		<div class="row-fluid row-hover">
 			<div class="span2 text-right" style="font-size: larger;">
 				<strong>${atomicService.name}</strong>
 			</div>
@@ -31,12 +31,19 @@
 								<a href="${startDevAs}">Start</a>
 							</c:when>
 							<c:otherwise>
-								<portlet:actionURL var="startAs">
-									<portlet:param name="action" value="startAtomicService"/>
-									<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-									<portlet:param name="workflowType" value="${workflowType}"/>
-								</portlet:actionURL>
-								<a href="${startAs}">Start</a>
+								<c:choose>
+									<c:when test="${fn:contains(runningAsIds, atomicService.atomicServiceId)}">
+										<spring:message code="cloud.manager.portlet.as.already.running.in.invoker.mode"/>
+									</c:when>
+									<c:otherwise>
+										<portlet:actionURL var="startAs">
+											<portlet:param name="action" value="startAtomicService"/>
+											<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+											<portlet:param name="workflowType" value="${workflowType}"/>
+										</portlet:actionURL>
+										<a href="${startAs}">Start</a>
+									</c:otherwise>
+								</c:choose>
 							</c:otherwise>
 						</c:choose>
 					</c:when>
