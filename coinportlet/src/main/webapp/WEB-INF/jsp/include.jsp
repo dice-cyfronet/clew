@@ -9,6 +9,11 @@
 <portlet:defineObjects/>
 
 <style>
+	.row-hover {
+		border-bottom: 1px solid #DDDDDD;
+		padding-bottom: 5px;
+		padding-top: 5px;
+	}
 	.row-hover:hover {
 		background-color: #f5f5f5;
 	}

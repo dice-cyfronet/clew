@@ -63,6 +63,7 @@ import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.KeyAlreadyExistsException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 import pl.cyfronet.coin.api.exception.WrongKeyFormatException;
@@ -370,7 +371,12 @@ public class CloudManagerPortlet {
 				aawktw.setName(atomicService.getName());
 			}
 			
-			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId, aawktw);
+			try {
+				clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId, aawktw);
+			} catch (CloudFacadeException e) {
+				log.error("Could not start atomic service: " + e.getResponse().getEntity());
+				throw e;
+			}
 		} else {
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
 		}

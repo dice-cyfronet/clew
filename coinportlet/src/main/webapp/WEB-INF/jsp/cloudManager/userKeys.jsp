@@ -9,7 +9,7 @@
 		<c:when test="${fn:length(userKeyList) > 0}">
 			<p class="lead"><spring:message code="cloud.manager.portlet.user.keys.label"/></p>
 			<c:forEach var="userKey" items="${userKeyList}">
-				<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+				<div class="row-fluid row-hover">
 					<div class="span2 text-right" style="font-size: larger;">
 						<strong>${userKey.keyName}</strong>
 					</div>

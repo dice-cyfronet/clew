@@ -1,6 +1,6 @@
 <c:forEach var="entry" items="${activeAtomicServices}" varStatus="status">
 	<c:set var="atomicService" value="${entry.key}"/>
-	<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+	<div class="row-fluid row-hover">
 		<div class="span2 text-right" style="font-size: larger;">
 			<strong>
 				<c:choose>

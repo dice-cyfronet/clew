@@ -47,6 +47,7 @@ public class LoginPortlet {
 		String destination = request.getParameter("destination");
 		log.info("Processing login request for user [{}], token [{}] and destination [{}]",
 				new String[] {user, token, destination});
+		log.debug("Maximum inactivity time for this session is " + request.getPortletSession().getMaxInactiveInterval() + " s");
 		
 		if(user != null && token != null && destination != null) {
 			UserDetails userDetails = ticketService.validate(token);
