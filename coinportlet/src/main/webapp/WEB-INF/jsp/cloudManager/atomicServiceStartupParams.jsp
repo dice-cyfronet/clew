@@ -31,12 +31,19 @@
 								<a href="${startDevAs}">Start</a>
 							</c:when>
 							<c:otherwise>
-								<portlet:actionURL var="startAs">
-									<portlet:param name="action" value="startAtomicService"/>
-									<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
-									<portlet:param name="workflowType" value="${workflowType}"/>
-								</portlet:actionURL>
-								<a href="${startAs}">Start</a>
+								<c:choose>
+									<c:when test="${fn:contains(runningAsIds, atomicService.atomicServiceId)}">
+										<spring:message code="cloud.manager.portlet.as.already.running.in.invoker.mode"/>
+									</c:when>
+									<c:otherwise>
+										<portlet:actionURL var="startAs">
+											<portlet:param name="action" value="startAtomicService"/>
+											<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+											<portlet:param name="workflowType" value="${workflowType}"/>
+										</portlet:actionURL>
+										<a href="${startAs}">Start</a>
+									</c:otherwise>
+								</c:choose>
 							</c:otherwise>
 						</c:choose>
 					</c:when>

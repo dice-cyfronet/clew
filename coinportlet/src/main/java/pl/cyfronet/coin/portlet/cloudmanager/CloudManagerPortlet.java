@@ -30,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
@@ -47,7 +48,6 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.util.HtmlUtils;
 
 import pl.cyfronet.coin.api.RedirectionType;
-import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
 import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
@@ -110,6 +110,10 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_USER_NAME = "userName";
 	static final String MODEL_BEAN_ATOMIC_SERVICE_NAME = "atomicServiceName";
 	static final String MODEL_BEAN_AS_ADMIN = "asCloudAdminFlag";
+	static final String MODEL_BEAN_CORES_ITEMS = "coreItems";
+	static final String MODEL_BEAN_MEMORY_ITEMS = "memoryItems";
+	static final String MODEL_BEAN_DISK_ITEMS = "diskItems";
+	static final String MODEL_BEAN_RUNNING_AS_IDS = "runningAsIds";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -146,6 +150,10 @@ public class CloudManagerPortlet {
 	static final String ACTION_REMOVE_REDIRECTION = "removeRedirection";
 	static final String ACTION_REMOVE_AS = "removeAs";
 	static final String ACTION_EDIT_AS = "editAs";
+	
+	@Value("${cloud.instance.cores}") private String instanceCoresItems;
+	@Value("${cloud.instance.memory}") private String instanceMemoryItems;
+	@Value("${cloud.instance.disk}") private String instanceDiskItems;
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -305,6 +313,16 @@ public class CloudManagerPortlet {
 			model.addAttribute(PARAM_AS_REMOVAL_ERROR, asRemovalError);
 		}
 		
+		if(workflowType == WorkflowType.portal) {
+			List<String> runningAtomicServiceIds = new ArrayList<>();
+			
+			for(AtomicService as : getAtomicServiceInstances(getWorkflowIds(workflowType, request).get(0), request).keySet()) {
+				runningAtomicServiceIds.add(as.getAtomicServiceId());
+			}
+			
+			model.addAttribute(MODEL_BEAN_RUNNING_AS_IDS, runningAtomicServiceIds);
+		}
+		
 		return "cloudManager/atomicServiceStartupParams";
 	}
 
@@ -392,6 +410,10 @@ public class CloudManagerPortlet {
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
 		
+		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems));
+		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems));
+		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems));
+		
 		return "cloudManager/saveAtomicService";
 	}
 
@@ -413,6 +435,7 @@ public class CloudManagerPortlet {
 			atomicService.setPublished(saveAtomicServiceRequest.isPublished());
 			atomicService.setScalable(saveAtomicServiceRequest.isScalable());
 			atomicService.setShared(saveAtomicServiceRequest.isShared());
+			copyFlavorProperties(saveAtomicServiceRequest, atomicService);
 			
 			log.info("Saving new atomic service for instance id [{}]", saveAtomicServiceRequest.getAtomicServiceInstanceId());				
 			
@@ -1159,6 +1182,10 @@ public class CloudManagerPortlet {
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
 		
+		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems));
+		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems));
+		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems));
+		
 		return "cloudManager/saveAtomicService";
 	}
 	
@@ -1181,6 +1208,9 @@ public class CloudManagerPortlet {
 			asr.setPublished(editAs.isPublished());
 			asr.setScalable(editAs.isScalable());
 			asr.setShared(editAs.isShared());
+			
+			copyFlavorProperties(editAs, asr);
+			
 			clientFactory.getCloudFacade(request).updateAtomicService(editAs.getAtomicServiceId(), asr);
 			response.setRenderParameter(PARAM_ACTION, ACTION_START_ATOMIC_SERVICE);
 			response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
@@ -1189,6 +1219,31 @@ public class CloudManagerPortlet {
 			response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, editAs.getAtomicServiceId());
 			response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
 		}
+	}
+
+	private void copyFlavorProperties(SaveAtomicServiceRequest asForm, AtomicServiceRequest asBean) {
+		if(!asForm.getCores().equals("none")) {
+			asBean.setCpu(Float.valueOf(asForm.getCores()));
+		}
+		
+		if(!asForm.getMemory().equals("none")) {
+			asBean.setMemory(Integer.valueOf(asForm.getMemory()));
+		}
+		
+		if(!asForm.getDisk().equals("none")) {
+			asBean.setDisk(Integer.valueOf(asForm.getDisk()));
+		}
+	}
+	
+	private Map<String, String> createItemsMap(String values) {
+		Map<String, String> result = new LinkedHashMap<>();
+		result.put("none", "Don't care");
+		
+		for(String value : values.split(",")) {
+			result.put(value, value);
+		}
+		
+		return result;
 	}
 
 	private boolean validateProxyConfiguration(SaveAtomicServiceRequest editAs, PortletRequest request) {
