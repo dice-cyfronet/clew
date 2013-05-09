@@ -23,12 +23,12 @@
 			
 			<label for="name"><spring:message code="cloud.manager.portlet.save.atomic.service.name.label"/></label>
 			<spring:message code="cloud.manager.portlet.save.atomic.service.name.tooltip" var="tooltip"/>
-			<form:input path="name" title="${tooltip}"/>
+			<form:input path="name" title="${tooltip}" cssClass="input-xxlarge"/>
 			<form:errors path="name" cssClass="text-error"/>
 			
 			<label for="description"><spring:message code="cloud.manager.portlet.save.atomic.service.description.label"/></label>
 			<spring:message code="cloud.manager.portlet.save.atomic.service.description.tooltip" var="tooltip"/>
-			<form:textarea path="description" title="${tooltip}"/>
+			<form:textarea path="description" title="${tooltip}" cssClass="input-xxlarge"/>
 			<form:errors path="description" cssClass="text-error"/>
 			
 			<spring:message code='cloud.manager.portlet.save.atomic.service.shared.flag.tooltip' var="tooltip"/>
