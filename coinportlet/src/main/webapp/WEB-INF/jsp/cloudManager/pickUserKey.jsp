@@ -24,6 +24,20 @@
 						<label for="asiName"><spring:message code="cloud.manager.portlet.asi.optional.name.label"/></label>
 						<form:input path="atomicServiceInstanceName"/>
 						
+						<label for"cores"><spring:message code="cloud.manager.portlet.save.atomic.service.cores.label"/></label>
+						<form:select path="cores" items="${coreItems}">
+							<form:option value="hello"></form:option>
+						</form:select>
+						<form:errors path="cores" cssClass="text-error"/>
+						
+						<label for"memory"><spring:message code="cloud.manager.portlet.save.atomic.service.memory.label"/></label>
+						<form:select path="memory" items="${memoryItems}"/>
+						<form:errors path="memory" cssClass="text-error"/>
+						
+						<label for"disk"><spring:message code="cloud.manager.portlet.save.atomic.service.disk.label"/></label>
+						<form:select path="disk" items="${diskItems}"/>
+						<form:errors path="disk" cssClass="text-error"/>
+						
 						<c:forEach var="entry" items="${userKeyList}">
 							<label class="radio">
 								<form:radiobutton path="userKeyId" value="${entry.key}"/>

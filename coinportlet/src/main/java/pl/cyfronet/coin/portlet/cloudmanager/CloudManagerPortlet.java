@@ -128,6 +128,9 @@ public class CloudManagerPortlet {
 	static final String PARAM_REDIRECTION_ID = "redirectionId";
 	static final String PARAM_AS_REMOVAL_ERROR = "asRemovalError";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_NAME = "atomicServiceInstanceName";
+	static final String PARAM_ATOMIC_SERVICE_CORES = "cores";
+	static final String PARAM_ATOMIC_SERVICE_MEMORY = "memory";
+	static final String PARAM_ATOMIC_SERVICE_DISK = "disk";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -331,6 +334,9 @@ public class CloudManagerPortlet {
 			String atomicServiceId, @RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
 			@RequestParam(required = false, value = PARAM_USER_KEY_ID) String userKeyId,
 			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_INSTANCE_NAME) String instanceName,
+			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_CORES) String cores,
+			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_MEMORY) String memory,
+			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_DISK) String disk,
 			PortletRequest request, ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
@@ -389,6 +395,18 @@ public class CloudManagerPortlet {
 				aawktw.setName(atomicService.getName());
 			}
 			
+			if(cores != null) {
+				aawktw.setCpu(Float.parseFloat(cores));
+			}
+			
+			if(memory != null) {
+				aawktw.setMemory(Integer.valueOf(memory));
+			}
+			
+			if(disk != null) {
+				aawktw.setDisk(Integer.valueOf(disk));
+			}
+			
 			try {
 				clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId, aawktw);
 			} catch (CloudFacadeException e) {
@@ -410,9 +428,9 @@ public class CloudManagerPortlet {
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
 		
-		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems));
-		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems));
-		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems));
+		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems, false));
+		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems, true));
+		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems, true));
 		
 		return "cloudManager/saveAtomicService";
 	}
@@ -943,6 +961,10 @@ public class CloudManagerPortlet {
 			model.addAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST, startRequest);
 		}
 		
+		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems, false));
+		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems, true));
+		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems, true));
+		
 		return "cloudManager/pickUserKey";
 	}
 	
@@ -1179,15 +1201,31 @@ public class CloudManagerPortlet {
 			sasr.setShared(as.isShared());
 			sasr.setAtomicServiceId(atomicServiceId);
 			sasr.setAtomicServiceInstanceId(" ");
-			sasr.setCores(String.valueOf(as.getCpu().intValue()));
-			sasr.setMemory(String.valueOf(as.getMemory()));
-			sasr.setDisk(String.valueOf(as.getDisk()));
+			
+			if(as.getCpu() != null) {
+				sasr.setCores(String.valueOf(as.getCpu().intValue()));
+			} else {
+				sasr.setCores("0");
+			}
+			
+			if(as.getMemory() != null) {
+				sasr.setMemory(String.valueOf(as.getMemory()));
+			} else {
+				sasr.setMemory("0");
+			}
+			
+			if(as.getDisk() != null) {
+				sasr.setDisk(String.valueOf(as.getDisk()));
+			} else {
+				sasr.setDisk("0");
+			}
+			
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
 		
-		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems));
-		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems));
-		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems));
+		model.addAttribute(MODEL_BEAN_CORES_ITEMS, createItemsMap(instanceCoresItems, false));
+		model.addAttribute(MODEL_BEAN_MEMORY_ITEMS, createItemsMap(instanceMemoryItems, true));
+		model.addAttribute(MODEL_BEAN_DISK_ITEMS, createItemsMap(instanceDiskItems, true));
 		
 		return "cloudManager/saveAtomicService";
 	}
@@ -1211,9 +1249,8 @@ public class CloudManagerPortlet {
 			asr.setPublished(editAs.isPublished());
 			asr.setScalable(editAs.isScalable());
 			asr.setShared(editAs.isShared());
-			
 			copyFlavorProperties(editAs, asr);
-			
+			log.debug("Updating AS with bean {}", asr);
 			clientFactory.getCloudFacade(request).updateAtomicService(editAs.getAtomicServiceId(), asr);
 			response.setRenderParameter(PARAM_ACTION, ACTION_START_ATOMIC_SERVICE);
 			response.setRenderParameter(PARAM_WORKFLOW_TYPE, workflowType.name());
@@ -1238,12 +1275,17 @@ public class CloudManagerPortlet {
 		}
 	}
 	
-	private Map<String, String> createItemsMap(String values) {
+	private Map<String, String> createItemsMap(String values, boolean gigsToBytes) {
 		Map<String, String> result = new LinkedHashMap<>();
-		result.put("none", "Don't care");
+		result.put("0", "Don't care");
 		
 		for(String value : values.split(",")) {
-			result.put(value, value);
+			if(gigsToBytes) {
+//				result.put(String.valueOf(Integer.valueOf(value) * 1024 * 1024 * 1024), value);
+				result.put(value, value);
+			} else {
+				result.put(value, value);
+			}
 		}
 		
 		return result;
