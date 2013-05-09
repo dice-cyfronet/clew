@@ -7,6 +7,7 @@ public class StartAtomicServiceRequest {
 	private String atomicServiceName;
 	private WorkflowType workflowType;
 	private String userKeyId;
+	private String atomicServiceInstanceName;
 	
 	public String getAtomicServiceId() {
 		return atomicServiceId;
@@ -37,6 +38,15 @@ public class StartAtomicServiceRequest {
 	public String toString() {
 		return "StartAtomicServiceRequest [atomicServiceId=" + atomicServiceId
 				+ ", atomicServiceName=" + atomicServiceName
-				+ ", workflowType=" + workflowType + ", userKeyId=" + userKeyId + "]";
+				+ ", workflowType=" + workflowType + ", userKeyId=" + userKeyId
+				+ ", atomicServiceInstanceName=" + atomicServiceInstanceName
+				+ "]";
+	}
+	
+	public String getAtomicServiceInstanceName() {
+		return atomicServiceInstanceName;
+	}
+	public void setAtomicServiceInstanceName(String atomicServiceInstanceName) {
+		this.atomicServiceInstanceName = atomicServiceInstanceName;
 	}
 }

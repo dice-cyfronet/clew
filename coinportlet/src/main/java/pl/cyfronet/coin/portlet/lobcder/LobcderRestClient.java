@@ -3,7 +3,6 @@ package pl.cyfronet.coin.portlet.lobcder;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;

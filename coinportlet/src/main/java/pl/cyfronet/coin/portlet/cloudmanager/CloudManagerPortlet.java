@@ -47,6 +47,8 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.util.HtmlUtils;
 
 import pl.cyfronet.coin.api.RedirectionType;
+import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
+import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.AtomicServiceRequest;
@@ -120,6 +122,7 @@ public class CloudManagerPortlet {
 	static final String PARAM_ENDPOINT_ID = "endpointId";
 	static final String PARAM_REDIRECTION_ID = "redirectionId";
 	static final String PARAM_AS_REMOVAL_ERROR = "asRemovalError";
+	static final String PARAM_ATOMIC_SERVICE_INSTANCE_NAME = "atomicServiceInstanceName";
 
 	static final String ACTION_START_ATOMIC_SERVICE = "startAtomicService";
 	static final String ACTION_SAVE_ATOMIC_SERVICE = "saveAtomicService";
@@ -308,6 +311,7 @@ public class CloudManagerPortlet {
 	public void doActionStartAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID)
 			String atomicServiceId, @RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
 			@RequestParam(required = false, value = PARAM_USER_KEY_ID) String userKeyId,
+			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_INSTANCE_NAME) String instanceName,
 			PortletRequest request, ActionResponse response) {
 		log.info("Processing start atomic service request for [{}]", atomicServiceId);
 		
@@ -356,9 +360,17 @@ public class CloudManagerPortlet {
 			log.info("Starting atomic service instance for workflow [{}], configuration [{}]" +
 					" and user key with id [{}]",
 					new String[] {workflowId, initialconfigurations.get(0).getId(), userKeyId});
+			AddAsWithKeyToWorkflow aawktw = new AddAsWithKeyToWorkflow();
+			aawktw.setAsConfigId(initialconfigurations.get(0).getId());
+			aawktw.setKeyId(userKeyId);
 			
-			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId,
-					initialconfigurations.get(0).getId(), atomicService.getName(), userKeyId);
+			if(instanceName != null && !instanceName.trim().isEmpty()) {
+				aawktw.setName(instanceName);
+			} else {
+				aawktw.setName(atomicService.getName());
+			}
+			
+			clientFactory.getWorkflowManagement(request).addAtomicServiceToWorkflow(workflowId, aawktw);
 		} else {
 			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
 		}
@@ -1176,7 +1188,7 @@ public class CloudManagerPortlet {
 	private boolean validateProxyConfiguration(SaveAtomicServiceRequest editAs, PortletRequest request) {
 		List<String> securityConfigurations = clientFactory.getSecurityConfigurationService(request).list();
 		
-		if(securityConfigurations.contains(editAs.getProxyConfiguration())) {
+		if(editAs.getProxyConfiguration().isEmpty() || securityConfigurations.contains(editAs.getProxyConfiguration())) {
 			return true;
 		} else {
 			return false;

@@ -55,6 +55,7 @@ public class LoginPortlet {
 				throw new IllegalArgumentException("User token [" + token + "] is not valid");
 			}
 			
+			log.debug("Updating portal user {} with roles {}", user, userDetails.getRole());
 			portal.updateUser(user, token, userDetails.getRole(), request);
 			model.addAttribute(MODEL_BEAN_USER_LOGIN, user);
 			model.addAttribute(MODEL_BEAN_USER_TOKEN, token);

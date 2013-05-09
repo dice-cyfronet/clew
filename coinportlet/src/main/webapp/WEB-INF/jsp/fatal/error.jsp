@@ -1,6 +1,5 @@
-<div class="coin-content coin-content-no-tabs">
-	<div class="coin-error-panel">
-		Whoops! It looks like an unforseen error occurred. Please, try again to submit your request and if the error
-		still occurs contact the service maintainers.
-	</div>
+<div class="alert alert-block alert-error">
+	<h4>Whoops!</h4>
+	<p>It looks like an unforseen error occurred. Please, try again to submit your request and if the error
+	still occurs contact the service maintainers.</p>
 </div>

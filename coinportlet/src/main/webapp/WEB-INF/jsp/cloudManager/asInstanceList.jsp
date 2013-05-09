@@ -1,43 +1,39 @@
 <c:forEach var="entry" items="${activeAtomicServices}" varStatus="status">
 	<c:set var="atomicService" value="${entry.key}"/>
-	<div class="coin-panel">
-		<div style="width: 30%; float: left; text-align: right;">
-			<c:choose>
-				<c:when test="${view == 'development'}">
-					<span class="coin-header">
-						<span style="padding-right: 10px; display: block;">${atomicService.name}</span>
-						<span style="padding-right: 10px; font-style: italic; display: block;">
-							<c:choose>
-								<c:when test="${atomicService.published}">
-									(type: atomic service)
-								</c:when>
-								<c:otherwise>
-									(type: template)
-								</c:otherwise>
-							</c:choose>
-						</span>
-					</span>
-				</c:when>
-				<c:otherwise>
-					<span class="coin-header">
-						<span style="padding-right: 10px; display: block;">${atomicService.name}</span>
-					</span>
-				</c:otherwise>
-			</c:choose>
+	<div class="row-fluid row-hover" style="margin-bottom: 10px;">
+		<div class="span2 text-right" style="font-size: larger;">
+			<strong>
+				<c:choose>
+					<c:when test="${view == 'development'}">
+							${entry.value[0].name}<br/>
+							<em>
+								<c:choose>
+									<c:when test="${atomicService.published}">
+										(type: atomic service)
+									</c:when>
+									<c:otherwise>
+										(type: template)
+									</c:otherwise>
+								</c:choose>
+							</em>
+					</c:when>
+					<c:otherwise>
+						${atomicService.name}
+					</c:otherwise>
+				</c:choose>
+			</strong>
 		</div>
 		<c:set var="atomicServiceInstances" value="${entry.value}"/>
-		<div style="width: 70%; float: left;">
-			<c:choose>
-				<c:when test="${view == 'development'}">
-					<%@ include file="developmentInstanceItem.jsp" %>
-				</c:when>
-				<c:when test="${view == 'genericInvoker'}">
-					<%@ include file="genericInvokerInstanceItem.jsp" %>
-				</c:when>
-				<c:otherwise>
-					Unknown view mode!
-				</c:otherwise>
-			</c:choose>
-		</div>
+		<c:choose>
+			<c:when test="${view == 'development'}">
+				<%@ include file="developmentInstanceItem.jsp" %>
+			</c:when>
+			<c:when test="${view == 'genericInvoker'}">
+				<%@ include file="genericInvokerInstanceItem.jsp" %>
+			</c:when>
+			<c:otherwise>
+				<p>Unknown view mode!</p>
+			</c:otherwise>
+		</c:choose>
 	</div>
 </c:forEach>

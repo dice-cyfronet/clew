@@ -7,3 +7,9 @@
 <%@ taglib prefix="form"    		uri="http://www.springframework.org/tags/form" %>
 
 <portlet:defineObjects/>
+
+<style>
+	.row-hover:hover {
+		background-color: #f5f5f5;
+	}
+</style>

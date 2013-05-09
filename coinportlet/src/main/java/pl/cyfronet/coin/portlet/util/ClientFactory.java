@@ -63,6 +63,12 @@ public class ClientFactory {
 		return securityConfigurationService;
 	}
 	
+	public KeyManagement getKeyManagement(PortletRequest request) {
+		attachBasicAuth(request, keyManagement);
+		
+		return keyManagement;
+	}
+	
 	private String createBasicAuthHeader(PortletRequest request) {
 		String token = portal.getUserToken(request);
 
@@ -79,11 +85,5 @@ public class ClientFactory {
 		Client client = WebClient.client(proxy);
 		client.reset();
 		client.header(HEADER_AUTHORIZATION, createBasicAuthHeader(request));
-	}
-
-	public KeyManagement getKeyManagement(PortletRequest request) {
-		attachBasicAuth(request, keyManagement);
-		
-		return keyManagement;
 	}
 }
