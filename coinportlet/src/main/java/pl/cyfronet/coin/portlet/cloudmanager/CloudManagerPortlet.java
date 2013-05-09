@@ -1179,6 +1179,9 @@ public class CloudManagerPortlet {
 			sasr.setShared(as.isShared());
 			sasr.setAtomicServiceId(atomicServiceId);
 			sasr.setAtomicServiceInstanceId(" ");
+			sasr.setCores(String.valueOf(as.getCpu().intValue()));
+			sasr.setMemory(String.valueOf(as.getMemory()));
+			sasr.setDisk(String.valueOf(as.getDisk()));
 			model.addAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST, sasr);
 		}
 		
