@@ -1176,7 +1176,7 @@ public class CloudManagerPortlet {
 	private boolean validateProxyConfiguration(SaveAtomicServiceRequest editAs, PortletRequest request) {
 		List<String> securityConfigurations = clientFactory.getSecurityConfigurationService(request).list();
 		
-		if(securityConfigurations.contains(editAs.getProxyConfiguration())) {
+		if(editAs.getProxyConfiguration().isEmpty() || securityConfigurations.contains(editAs.getProxyConfiguration())) {
 			return true;
 		} else {
 			return false;
