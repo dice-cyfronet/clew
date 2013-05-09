@@ -67,7 +67,11 @@ public abstract class WorkflowAction<T> extends AtmosphereAndAirAction<T> {
 
 	private String getErrorMessage(ManagerResponse response) {
 		if (response.getErrors() != null) {
-			return response.getErrors().toString();
+			StringBuilder sb = new StringBuilder();
+			for (String msg : response.getErrors().values()) {
+				sb.append(msg).append("\n");
+			}
+			return sb.toString();
 		}
 
 		return null;
