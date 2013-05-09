@@ -32,6 +32,7 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionTest;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
@@ -63,6 +64,11 @@ public class ListAtomicServicesActionTest extends ActionTest {
 		type1.setTemplates_count(0);
 		type1.setAuthor("marek");
 
+		AppliancePreferences prefs = new AppliancePreferences();
+		prefs.setCpu(1.0f);
+		prefs.setDisk(123);
+		prefs.setMemory(321);
+		
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");
 		type1AsEndpoint.setEndpoint_type("ws");

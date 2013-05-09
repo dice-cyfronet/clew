@@ -22,6 +22,7 @@ import pl.cyfronet.coin.api.beans.AtomicService;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
+import pl.cyfronet.coin.impl.air.client.AppliancePreferences;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 
 /**
@@ -41,7 +42,14 @@ public class BeanConverter {
 		atomicService.setDevelopment(applianceType.isDevelopment());
 		atomicService.setProxyConfigurationName(applianceType
 				.getProxy_conf_name());
-
+		
+		AppliancePreferences prefs = applianceType.getAppliance_preferences();
+		if(prefs != null) {			
+			atomicService.setCpu(prefs.getCpu());
+			atomicService.setDisk(prefs.getDisk());
+			atomicService.setMemory(prefs.getMemory());		
+		}
+		
 		// #1433
 		atomicService.setOwner(applianceType.getAuthor());
 

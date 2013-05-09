@@ -35,6 +35,12 @@ public class AtomicService {
 
 	private String proxyConfigurationName;
 
+	private Float cpu;
+
+	private Integer memory;
+
+	private Integer disk;
+
 	/**
 	 * @see #1433
 	 */
@@ -169,6 +175,52 @@ public class AtomicService {
 		this.proxyConfigurationName = proxyConfigurationName;
 	}
 
+	/**
+	 * @return the cpu
+	 */
+	public Float getCpu() {
+		return cpu;
+	}
+
+	/**
+	 * @param cpu the cpu to set
+	 */
+	public void setCpu(Float cpu) {
+		this.cpu = cpu;
+	}
+
+
+	/**
+	 * @return the memory
+	 */
+	public Integer getMemory() {
+		return memory;
+	}
+
+	/**
+	 * @param memory the memory to set
+	 */
+	public void setMemory(Integer memory) {
+		this.memory = memory;
+	}
+
+	/**
+	 * @return the disk
+	 */
+	public Integer getDisk() {
+		return disk;
+	}
+
+	/**
+	 * @param disk the disk to set
+	 */
+	public void setDisk(Integer disk) {
+		this.disk = disk;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "AtomicService [atomicServiceId=" + atomicServiceId + ", name="
@@ -176,9 +228,13 @@ public class AtomicService {
 				+ ", scalable=" + scalable + ", published=" + published
 				+ ", active=" + active + ", development=" + development
 				+ ", proxyConfigurationName=" + proxyConfigurationName
+				+ ", cpu=" + cpu + ", memory=" + memory + ", disk=" + disk
 				+ ", owner=" + owner + "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -186,9 +242,12 @@ public class AtomicService {
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result
 				+ ((atomicServiceId == null) ? 0 : atomicServiceId.hashCode());
+		result = prime * result + ((cpu == null) ? 0 : cpu.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + (development ? 1231 : 1237);
+		result = prime * result + ((disk == null) ? 0 : disk.hashCode());
+		result = prime * result + ((memory == null) ? 0 : memory.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
 		result = prime
@@ -201,6 +260,9 @@ public class AtomicService {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -217,12 +279,27 @@ public class AtomicService {
 				return false;
 		} else if (!atomicServiceId.equals(other.atomicServiceId))
 			return false;
+		if (cpu == null) {
+			if (other.cpu != null)
+				return false;
+		} else if (!cpu.equals(other.cpu))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
 		if (development != other.development)
+			return false;
+		if (disk == null) {
+			if (other.disk != null)
+				return false;
+		} else if (!disk.equals(other.disk))
+			return false;
+		if (memory == null) {
+			if (other.memory != null)
+				return false;
+		} else if (!memory.equals(other.memory))
 			return false;
 		if (name == null) {
 			if (other.name != null)

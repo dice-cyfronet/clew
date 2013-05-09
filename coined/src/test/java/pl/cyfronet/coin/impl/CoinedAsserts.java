@@ -42,6 +42,11 @@ public class CoinedAsserts {
 		assertEquals(as.isActive(), at.getTemplates_count() > 0);
 		assertEquals(as.getOwner(), at.getAuthor());
 		assertEquals(as.getProxyConfigurationName(), at.getProxy_conf_name());
+		if(at.getAppliance_preferences() != null) {
+			assertEquals(as.getCpu(), at.getAppliance_preferences().getCpu());
+			assertEquals(as.getDisk(), at.getAppliance_preferences().getDisk());
+			assertEquals(as.getMemory(), at.getAppliance_preferences().getMemory());
+		}
 	}
 
 	public static void assertEndpoints(List<Endpoint> asEndpoints,

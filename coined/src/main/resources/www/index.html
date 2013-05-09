@@ -304,8 +304,8 @@ body {
 						<li>(required) <strong>asConfigId</strong> - atomic service configuration id</li>
 						<li>(optional) <strong>name</strong> - Atomic Service Instance name</li>	
 						<li>(optional) <strong>cpu</strong> - cpu required by atomic service. This property is taken into account only in development workflow mode.</li>
-						<li>(optional) <strong>disk</strong> - disk required by atomic service This property is taken into account only in development workflow mode.</li>
-						<li>(optional) <strong>memory</strong> - memory required by atomic service This property is taken into account only in development workflow mode.</li>		
+						<li>(optional) <strong>disk</strong> - disk required by atomic service. This property is taken into account only in development workflow mode.</li>
+						<li>(optional) <strong>memory</strong> - memory required by atomic service. This property is taken into account only in development workflow mode.</li>		
 						<li>(optional) <strong>keyId</strong> - key ID
 							which should be injected while starting ASI. Key will be injected
 							only when workflow is in development mode.
@@ -528,6 +528,9 @@ body {
 							multiplicated among workflow</li>
 						<li><strong>publisher</strong> - true if atomic service is
 							published for the end users</li>
+						<li>(optional) <strong>cpu</strong> - cpu required by atomic service</li>
+						<li>(optional) <strong>disk</strong> - disk required by atomic service</li>
+						<li>(optional) <strong>memory</strong> - memory required by atomic service</li>
 						<li><strong>endpoints</strong> - registered atomic service
 							endpoints:
 							<ul>
