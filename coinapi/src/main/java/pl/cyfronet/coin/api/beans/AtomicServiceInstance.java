@@ -38,9 +38,14 @@ public class AtomicServiceInstance extends StatusBean {
 	private String instanceId;
 
 	private String publicKeyId;
+		
+	/**
+	 * @see #1578
+	 */
+	private List<String> ips;
 
 	/**
-	 * @see 1407
+	 * @see #1407
 	 */
 	private String siteId;
 	
@@ -136,12 +141,27 @@ public class AtomicServiceInstance extends StatusBean {
 		this.siteId = siteId;
 	}
 
+	/**
+	 * @return the privateIp
+	 */
+	public List<String> getIps() {
+		return ips;
+	}
+
+	/**
+	 * @param privateIp the privateIp to set
+	 */
+	public void setIps(List<String> privateIp) {
+		this.ips = privateIp;
+	}
+
 	@Override
 	public String toString() {
 		return "AtomicServiceInstance [atomicServiceId=" + atomicServiceId
 				+ ", atomicServiceName=" + atomicServiceName
 				+ ", redirections=" + redirections + ", configurationId="
 				+ configurationId + ", instanceId=" + instanceId
-				+ ", publicKeyId=" + publicKeyId + ", siteId=" + siteId + "]";
+				+ ", publicKeyId=" + publicKeyId + ", ips=" + ips
+				+ ", siteId=" + siteId + "]";
 	}
 }

@@ -35,6 +35,7 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
+import pl.cyfronet.coin.impl.air.client.Specs;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
@@ -134,7 +135,11 @@ public class GetUserWorkflowActionTest extends WorkflowActionTest {
 		vm1.setVms_id("id1");
 		vm1.setConfiguration("initConf1");
 		vm1.setSite_id("cyfronet-folsom");
-
+		
+		Specs specs = new Specs();
+		specs.setIp(Arrays.asList("10.100.8.8"));		
+		vm1.setSpecs(specs);
+		
 		Vms vm2 = new Vms();
 		vm2.setAppliance_type("type2");
 		vm2.setAppliance_type("type2 name");

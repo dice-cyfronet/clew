@@ -18,6 +18,7 @@ package pl.cyfronet.coin.impl.action.workflow;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.impl.action.ActionTest;
@@ -116,5 +117,10 @@ public class WorkflowActionTest extends ActionTest {
 		assertEquals(asi.getId(), vm.getVms_id());
 		assertEquals(asi.getConfigurationId(), vm.getConfiguration());
 		assertEquals(asi.getSiteId(), vm.getSite_id());
+		if(vm.getSpecs() != null) {
+			assertEquals(asi.getIps(), vm.getSpecs().getIp());
+		} else {
+			assertNull(asi.getIps());
+		}
 	}
 }
