@@ -1262,17 +1262,9 @@ public class CloudManagerPortlet {
 	}
 
 	private void copyFlavorProperties(SaveAtomicServiceRequest asForm, AtomicServiceRequest asBean) {
-		if(!asForm.getCores().equals("none")) {
-			asBean.setCpu(Float.valueOf(asForm.getCores()));
-		}
-		
-		if(!asForm.getMemory().equals("none")) {
-			asBean.setMemory(Long.valueOf(asForm.getMemory()));
-		}
-		
-		if(!asForm.getDisk().equals("none")) {
-			asBean.setDisk(Long.valueOf(asForm.getDisk()));
-		}
+		asBean.setCpu(Float.valueOf(asForm.getCores()));
+		asBean.setMemory(Long.valueOf(asForm.getMemory()));
+		asBean.setDisk(Long.valueOf(asForm.getDisk()));
 	}
 	
 	private Map<String, String> createItemsMap(String values, boolean gigsToBytes) {
@@ -1281,8 +1273,7 @@ public class CloudManagerPortlet {
 		
 		for(String value : values.split(",")) {
 			if(gigsToBytes) {
-//				result.put(String.valueOf(Integer.valueOf(value) * 1024 * 1024 * 1024), value);
-				result.put(value, value);
+				result.put(String.valueOf(Long.valueOf(value) * 1024 * 1024 * 1024), value);
 			} else {
 				result.put(value, value);
 			}
