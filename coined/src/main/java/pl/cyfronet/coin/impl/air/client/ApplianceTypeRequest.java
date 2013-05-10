@@ -21,8 +21,8 @@ public class ApplianceTypeRequest {
 	private String proxy_conf_name;
 
 	private Float cpu;
-	private Integer memory;
-	private Integer disk;
+	private Long memory;
+	private Long disk;
 	
 	/**
 	 * #1021
@@ -181,28 +181,28 @@ public class ApplianceTypeRequest {
 	/**
 	 * @return the memory
 	 */
-	public Integer getMemory() {
+	public Long getMemory() {
 		return memory;
 	}
 
 	/**
 	 * @param memory the memory to set
 	 */
-	public void setMemory(Integer memory) {
+	public void setMemory(Long memory) {
 		this.memory = memory;
 	}
 
 	/**
 	 * @return the disk
 	 */
-	public Integer getDisk() {
+	public Long getDisk() {
 		return disk;
 	}
 
 	/**
 	 * @param disk the disk to set
 	 */
-	public void setDisk(Integer disk) {
+	public void setDisk(Long disk) {
 		this.disk = disk;
 	}
 

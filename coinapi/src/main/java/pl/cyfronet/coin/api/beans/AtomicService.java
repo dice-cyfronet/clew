@@ -37,9 +37,9 @@ public class AtomicService {
 
 	private Float cpu;
 
-	private Integer memory;
+	private Long memory;
 
-	private Integer disk;
+	private Long disk;
 
 	/**
 	 * @see #1433
@@ -189,36 +189,36 @@ public class AtomicService {
 		this.cpu = cpu;
 	}
 
-
 	/**
 	 * @return the memory
 	 */
-	public Integer getMemory() {
+	public Long getMemory() {
 		return memory;
 	}
 
 	/**
 	 * @param memory the memory to set
 	 */
-	public void setMemory(Integer memory) {
+	public void setMemory(Long memory) {
 		this.memory = memory;
 	}
 
 	/**
 	 * @return the disk
 	 */
-	public Integer getDisk() {
+	public Long getDisk() {
 		return disk;
 	}
 
 	/**
 	 * @param disk the disk to set
 	 */
-	public void setDisk(Integer disk) {
+	public void setDisk(Long disk) {
 		this.disk = disk;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -232,7 +232,8 @@ public class AtomicService {
 				+ ", owner=" + owner + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -260,7 +261,8 @@ public class AtomicService {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

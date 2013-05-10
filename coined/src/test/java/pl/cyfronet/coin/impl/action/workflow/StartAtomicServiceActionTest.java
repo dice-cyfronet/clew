@@ -58,9 +58,9 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 
 	private Float cpu = 1.2f;
 
-	private Integer disk = 123;
+	private Long disk = 123l;
 
-	private Integer memory = 321;
+	private Long memory = 321l;
 
 	@Test
 	public void shouldStartWithoutKeyAndPropsWhenProductionWorkflow() throws Exception {
@@ -83,7 +83,7 @@ public class StartAtomicServiceActionTest extends WorkflowActionTest {
 		whenStartAtomicService(username, keyId, cpu, disk, memory );
 	}
 
-	private void whenStartAtomicService(String username, String keyId, Float cpu, Integer disk, Integer memory) {
+	private void whenStartAtomicService(String username, String keyId, Float cpu, Long disk, Long memory) {
 		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
 		request.setAsConfigId(initConfigId);
 		request.setName(name);

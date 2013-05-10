@@ -1227,11 +1227,11 @@ public class CloudManagerPortlet {
 		}
 		
 		if(!asForm.getMemory().equals("none")) {
-			asBean.setMemory(Integer.valueOf(asForm.getMemory()));
+			asBean.setMemory(Long.valueOf(asForm.getMemory()));
 		}
 		
 		if(!asForm.getDisk().equals("none")) {
-			asBean.setDisk(Integer.valueOf(asForm.getDisk()));
+			asBean.setDisk(Long.valueOf(asForm.getDisk()));
 		}
 	}
 	

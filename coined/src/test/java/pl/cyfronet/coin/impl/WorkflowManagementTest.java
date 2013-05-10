@@ -37,7 +37,6 @@ import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.WorkflowManagement;
-import pl.cyfronet.coin.api.beans.AddAsToWorkflow;
 import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
@@ -429,8 +428,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		addAsToWorkflowRequest.setName(asName);
 		addAsToWorkflowRequest.setKeyId(keyId);
 		addAsToWorkflowRequest.setCpu(1.2f);
-		addAsToWorkflowRequest.setDisk(123);
-		addAsToWorkflowRequest.setMemory(321);
+		addAsToWorkflowRequest.setDisk(123l);
+		addAsToWorkflowRequest.setMemory(321l);
 		givenMockedAddAtomicServiceToWorkflowAction(addAsToWorkflowRequest);
 	}
 

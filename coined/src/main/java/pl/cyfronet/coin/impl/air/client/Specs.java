@@ -21,8 +21,6 @@ import java.util.List;
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
 public class Specs {
-
-	private Integer memory;
 	
 	private List<String> mac;
 	
@@ -32,19 +30,21 @@ public class Specs {
 	
 	private String id;
 	
-	private Integer disk;
+	private Long disk;
+
+	private Long memory;
 	
 	/**
 	 * @return the memory
 	 */
-	public Integer getMemory() {
+	public Long getMemory() {
 		return memory;
 	}
 
 	/**
 	 * @param memory the memory to set
 	 */
-	public void setMemory(Integer memory) {
+	public void setMemory(Long memory) {
 		this.memory = memory;
 	}
 
@@ -107,14 +107,14 @@ public class Specs {
 	/**
 	 * @return the disk
 	 */
-	public Integer getDisk() {
+	public Long getDisk() {
 		return disk;
 	}
 
 	/**
 	 * @param disk the disk to set
 	 */
-	public void setDisk(Integer disk) {
+	public void setDisk(Long disk) {
 		this.disk = disk;
 	}
 

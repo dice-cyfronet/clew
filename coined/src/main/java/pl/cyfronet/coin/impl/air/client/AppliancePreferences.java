@@ -2,8 +2,8 @@ package pl.cyfronet.coin.impl.air.client;
 
 public class AppliancePreferences {
 	private Float cpu;
-	private Integer memory;
-	private Integer disk;
+	private Long memory;
+	private Long disk;
 
 	public Float getCpu() {
 		return cpu;
@@ -13,19 +13,19 @@ public class AppliancePreferences {
 		this.cpu = cpu;
 	}
 
-	public Integer getMemory() {
+	public Long getMemory() {
 		return memory;
 	}
 
-	public void setMemory(Integer memory) {
+	public void setMemory(Long memory) {
 		this.memory = memory;
 	}
 
-	public Integer getDisk() {
+	public Long getDisk() {
 		return disk;
 	}
 
-	public void setDisk(Integer disk) {
+	public void setDisk(Long disk) {
 		this.disk = disk;
 	}
 
