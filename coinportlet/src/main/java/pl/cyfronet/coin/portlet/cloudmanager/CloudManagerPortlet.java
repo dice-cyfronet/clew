@@ -400,11 +400,11 @@ public class CloudManagerPortlet {
 			}
 			
 			if(memory != null) {
-				aawktw.setMemory(Integer.valueOf(memory));
+				aawktw.setMemory(Long.valueOf(memory));
 			}
 			
 			if(disk != null) {
-				aawktw.setDisk(Integer.valueOf(disk));
+				aawktw.setDisk(Long.valueOf(disk));
 			}
 			
 			try {
