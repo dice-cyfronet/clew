@@ -17,6 +17,7 @@
 						<p>${atomicService.description}</p>
 					</c:otherwise>
 				</c:choose>
+				<p>Id: ${atomicService.atomicServiceId}</p>
 			</div>
 			<div class="span2">
 				<c:choose>
