@@ -318,9 +318,12 @@ public class CloudManagerPortlet {
 		
 		if(workflowType == WorkflowType.portal) {
 			List<String> runningAtomicServiceIds = new ArrayList<>();
+			List<String> workflowIds = getWorkflowIds(workflowType, request);
 			
-			for(AtomicService as : getAtomicServiceInstances(getWorkflowIds(workflowType, request).get(0), request).keySet()) {
-				runningAtomicServiceIds.add(as.getAtomicServiceId());
+			if(workflowIds != null && workflowIds.size() > 0) {
+				for(AtomicService as : getAtomicServiceInstances(workflowIds.get(0), request).keySet()) {
+					runningAtomicServiceIds.add(as.getAtomicServiceId());
+				}
 			}
 			
 			model.addAttribute(MODEL_BEAN_RUNNING_AS_IDS, runningAtomicServiceIds);
