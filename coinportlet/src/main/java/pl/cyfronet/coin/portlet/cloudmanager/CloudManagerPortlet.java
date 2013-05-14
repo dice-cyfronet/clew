@@ -157,6 +157,7 @@ public class CloudManagerPortlet {
 	@Value("${cloud.instance.cores}") private String instanceCoresItems;
 	@Value("${cloud.instance.memory}") private String instanceMemoryItems;
 	@Value("${cloud.instance.disk}") private String instanceDiskItems;
+	@Value("${cloud.admin.role}") private String cloudAdminRole;
 	
 	@Autowired private ClientFactory clientFactory;
 	@Autowired private Portal portal;
@@ -304,7 +305,7 @@ public class CloudManagerPortlet {
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
 		model.addAttribute(MODEL_BEAN_USER_NAME, portal.getUserName(request));
 		
-		if(portal.getUserRoles(request).contains("cloudadmin")) {
+		if(portal.getUserRoles(request).contains(cloudAdminRole)) {
 			model.addAttribute(MODEL_BEAN_AS_ADMIN, true);
 		}
 		
