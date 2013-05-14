@@ -13,7 +13,7 @@
 
 	<properties>
 		<bundle.symbolicName>coined</bundle.symbolicName>
-		<atmosphere.version>1.1.0</atmosphere.version>				
+		<atmosphere.version>1.1.1</atmosphere.version>				
 	</properties>
 
 	<dependencies>
