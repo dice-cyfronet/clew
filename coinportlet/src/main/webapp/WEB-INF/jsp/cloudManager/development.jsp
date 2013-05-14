@@ -19,7 +19,7 @@
 	<div>
 		<ul class="inline">
 			<li>
-				<a href="${startAtomicService}"><spring:message code="cloud.manager.portlet.start.atomic.service.instance.label"/></a>
+				<a href="${startAtomicService}"><spring:message code="cloud.manager.portlet.manage.atomic.service.instance.label"/></a>
 			</li>
 			<c:if test="${fn:length(activeAtomicServices) > 0}">
 				<li>

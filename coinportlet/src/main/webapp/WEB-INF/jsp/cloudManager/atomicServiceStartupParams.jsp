@@ -78,7 +78,7 @@
 	    				</script>
 					</c:otherwise>
 				</c:choose>
-				<c:if test="${atomicService.owner == userName or asCloudAdminFlag}">
+				<c:if test="${(atomicService.owner == userName or asCloudAdminFlag) and workflowType == 'development'}">
 					<portlet:renderURL var="editAs">
 						<portlet:param name="action" value="editAs"/>
 						<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
