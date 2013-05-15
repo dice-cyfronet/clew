@@ -26,8 +26,8 @@ public class AddAsToWorkflow {
 	private String asConfigId;
 	private String name;
 	private Float cpu;
-	private Long memory;
-	private Long disk;
+	private Integer memory;
+	private Integer disk;
 
 	public String getAsConfigId() {
 		return asConfigId;
@@ -53,19 +53,19 @@ public class AddAsToWorkflow {
 		this.cpu = cpu;
 	}
 
-	public Long getMemory() {
+	public Integer getMemory() {
 		return memory;
 	}
 
-	public void setMemory(Long memory) {
+	public void setMemory(Integer memory) {
 		this.memory = memory;
 	}
 
-	public Long getDisk() {
+	public Integer getDisk() {
 		return disk;
 	}
 
-	public void setDisk(Long disk) {
+	public void setDisk(Integer disk) {
 		this.disk = disk;
 	}
 

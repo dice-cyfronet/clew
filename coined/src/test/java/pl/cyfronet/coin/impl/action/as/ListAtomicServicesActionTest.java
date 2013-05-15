@@ -66,8 +66,8 @@ public class ListAtomicServicesActionTest extends ActionTest {
 
 		AppliancePreferences prefs = new AppliancePreferences();
 		prefs.setCpu(1.0f);
-		prefs.setDisk(123l);
-		prefs.setMemory(321l);
+		prefs.setDisk(123);
+		prefs.setMemory(321);
 		
 		ATEndpoint type1AsEndpoint = new ATEndpoint();
 		type1AsEndpoint.setDescription("description");

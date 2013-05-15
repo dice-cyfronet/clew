@@ -404,11 +404,11 @@ public class CloudManagerPortlet {
 			}
 			
 			if(memory != null) {
-				aawktw.setMemory(Long.valueOf(memory));
+				aawktw.setMemory(Integer.valueOf(memory));
 			}
 			
 			if(disk != null) {
-				aawktw.setDisk(Long.valueOf(disk));
+				aawktw.setDisk(Integer.valueOf(disk));
 			}
 			
 			try {
@@ -1267,17 +1267,17 @@ public class CloudManagerPortlet {
 
 	private void copyFlavorProperties(SaveAtomicServiceRequest asForm, AtomicServiceRequest asBean) {
 		asBean.setCpu(Float.valueOf(asForm.getCores()));
-		asBean.setMemory(Long.valueOf(asForm.getMemory()));
-		asBean.setDisk(Long.valueOf(asForm.getDisk()));
+		asBean.setMemory(Integer.valueOf(asForm.getMemory()));
+		asBean.setDisk(Integer.valueOf(asForm.getDisk()));
 	}
 	
-	private Map<String, String> createItemsMap(String values, boolean gigsToBytes) {
+	private Map<String, String> createItemsMap(String values, boolean gigsToMegaBytes) {
 		Map<String, String> result = new LinkedHashMap<>();
 		result.put("0", "Don't care");
 		
 		for(String value : values.split(",")) {
-			if(gigsToBytes) {
-				result.put(String.valueOf(Long.valueOf(value) * 1024 * 1024 * 1024), value);
+			if(gigsToMegaBytes) {
+				result.put(String.valueOf(Long.valueOf(value) * 1024), value);
 			} else {
 				result.put(value, value);
 			}

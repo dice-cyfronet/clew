@@ -54,8 +54,8 @@ public class UpdateAtomicServiceActionTest extends ActionTest {
 		updatedAs.setPublished(true);
 		updatedAs.setScalable(false);
 		updatedAs.setCpu(1.2f);
-		updatedAs.setDisk(123l);
-		updatedAs.setMemory(321l);
+		updatedAs.setDisk(123);
+		updatedAs.setMemory(321);
 
 		matcher = new UpdateAtomicServiceMatcher(at, updatedAs);
 		when(air.getApplianceTypes(asId, false)).thenReturn(Arrays.asList(at));

@@ -428,8 +428,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		addAsToWorkflowRequest.setName(asName);
 		addAsToWorkflowRequest.setKeyId(keyId);
 		addAsToWorkflowRequest.setCpu(1.2f);
-		addAsToWorkflowRequest.setDisk(123l);
-		addAsToWorkflowRequest.setMemory(321l);
+		addAsToWorkflowRequest.setDisk(123);
+		addAsToWorkflowRequest.setMemory(321);
 		givenMockedAddAtomicServiceToWorkflowAction(addAsToWorkflowRequest);
 	}
 

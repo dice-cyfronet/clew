@@ -85,8 +85,8 @@ public class CreateAtomicServiceActionTest extends ActionTest {
 		
 		// #1532
 		newAtomicService.setCpu(1.2f);
-		newAtomicService.setDisk(123l);
-		newAtomicService.setMemory(321l);
+		newAtomicService.setDisk(123);
+		newAtomicService.setMemory(321);
 		
 		sourceAtomicService = new ApplianceType();
 		sourceAtomicService.setName("sourceASName");

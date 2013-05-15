@@ -98,8 +98,8 @@ public class CreateAtomicServiceInAirActionTest extends ActionTest {
 		
 		AppliancePreferences prefs = new AppliancePreferences();
 		prefs.setCpu(2.4f);
-		prefs.setDisk(222354l);
-		prefs.setMemory(5423623l);
+		prefs.setDisk(222354);
+		prefs.setMemory(54236);
 		at.setAppliance_preferences(prefs);
 		
 		at.setEndpoints(Arrays.asList(e1, e2));

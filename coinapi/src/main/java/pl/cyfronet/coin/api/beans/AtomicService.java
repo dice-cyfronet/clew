@@ -37,9 +37,9 @@ public class AtomicService {
 
 	private Float cpu;
 
-	private Long memory;
+	private Integer memory;
 
-	private Long disk;
+	private Integer disk;
 
 	/**
 	 * @see #1433
@@ -192,28 +192,28 @@ public class AtomicService {
 	/**
 	 * @return the memory
 	 */
-	public Long getMemory() {
+	public Integer getMemory() {
 		return memory;
 	}
 
 	/**
 	 * @param memory the memory to set
 	 */
-	public void setMemory(Long memory) {
+	public void setMemory(Integer memory) {
 		this.memory = memory;
 	}
 
 	/**
 	 * @return the disk
 	 */
-	public Long getDisk() {
+	public Integer getDisk() {
 		return disk;
 	}
 
 	/**
 	 * @param disk the disk to set
 	 */
-	public void setDisk(Long disk) {
+	public void setDisk(Integer disk) {
 		this.disk = disk;
 	}
 
