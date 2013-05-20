@@ -12,7 +12,7 @@
 	<c:when test="${fn:length(redirections) > 0}">
 		<c:forEach var="redirection" items="${redirections}">
 			<div class="row-fluid row-hover">
-				<div class="span2 text-right" style="font-size: larger;">
+				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;"">
 					<strong>${redirection.name} (${redirection.type})</strong>
 				</div>
 				<div class="span8">
@@ -71,7 +71,7 @@
 	<c:when test="${fn:length(endpoints) > 0}">
 		<c:forEach var="endpoint" items="${endpoints}">
 			<div class="row-fluid row-hover">
-				<div class="span2 text-right" style="font-size: larger;">
+				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;"">
 					<a target="_blank" href="${endpointLinks[endpoint.id]}">${endpoint.type} (${endpoint.invocationPath})</a>
 				</div>
 				<div class="span8">

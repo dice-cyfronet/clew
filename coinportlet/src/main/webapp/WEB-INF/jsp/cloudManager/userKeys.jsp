@@ -10,7 +10,7 @@
 			<p class="lead"><spring:message code="cloud.manager.portlet.user.keys.label"/></p>
 			<c:forEach var="userKey" items="${userKeyList}">
 				<div class="row-fluid row-hover">
-					<div class="span2 text-right" style="font-size: larger;">
+					<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;">
 						<strong>${userKey.keyName}</strong>
 					</div>
 					<div class="span8">

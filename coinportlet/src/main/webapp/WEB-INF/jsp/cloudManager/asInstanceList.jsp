@@ -1,7 +1,7 @@
 <c:forEach var="entry" items="${activeAtomicServices}" varStatus="status">
 	<c:set var="atomicService" value="${entry.key}"/>
 	<div class="row-fluid row-hover">
-		<div class="span2 text-right" style="font-size: larger;">
+		<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;">
 			<strong>
 				<c:choose>
 					<c:when test="${view == 'development'}">
