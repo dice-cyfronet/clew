@@ -5,7 +5,7 @@
 <c:forEach var='atomicService' items='${atomicServices}'>
 	<c:if test="${(workflowType == 'portal' and atomicService.active) or workflowType == 'development'}">
 		<div class="row-fluid row-hover">
-			<div class="span2 text-right" style="font-size: larger;">
+			<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;">
 				<strong>${atomicService.name}</strong>
 			</div>
 			<div class="span8">
