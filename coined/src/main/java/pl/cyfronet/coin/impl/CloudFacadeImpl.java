@@ -73,12 +73,12 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	@Override
 	public String createAtomicService(NewAtomicService newAtomicService)
 			throws AtomicServiceInstanceNotFoundException, CloudFacadeException {
-		logger.debug("Create atomic service from {}",
-				newAtomicService.getSourceAsiId());
+		String username = getUsername();
+		logger.info("{} creates atomic service from {} [{}]", new Object[] {
+				username, newAtomicService.getSourceAsiId(), newAtomicService });
 		try {
 			Action<String> action = actionFactory
-					.createCreateAtomicServiceAction(getUsername(),
-							newAtomicService);
+					.createCreateAtomicServiceAction(username, newAtomicService);
 			return action.execute();
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
@@ -103,9 +103,9 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			throws AtomicServiceNotFoundException,
 			AtomicServiceNotFoundException, CloudFacadeException,
 			InitialConfigurationAlreadyExistException {
-
-		logger.debug("Creating new atomic service from {}, metadata: {}",
-				atomicServiceId, initialConfiguration);
+		String username = getUsername();
+		logger.info("{} creates new {} atomic service initial configuration",
+				username, atomicServiceId);
 		validateId(atomicServiceId);
 
 		Action<String> action = actionFactory.createAddInitialConfiguration(
@@ -159,10 +159,12 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	public void deleteAtomicService(String atomicServiceId)
 			throws AtomicServiceNotFoundException, NotAcceptableException,
 			NotAllowedException {
+		String username = getUsername();
+		logger.info("{} deletes {} atomic service", username, atomicServiceId);
 		validateId(atomicServiceId);
 		Action<Class<Void>> action = actionFactory
-				.createDeleteAtomicServiceAction(getUsername(),
-						atomicServiceId, hasRole(ADMIN_ROLE));
+				.createDeleteAtomicServiceAction(username, atomicServiceId,
+						hasRole(ADMIN_ROLE));
 		action.execute();
 	}
 
@@ -171,13 +173,14 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 			AtomicServiceRequest updateRequest)
 			throws AtomicServiceNotFoundException, NotAcceptableException,
 			NotAllowedException {
-		logger.debug("Updating atomic service %s %s", atomicServiceId,
-				updateRequest);
+		String username = getUsername();
+		logger.info("{} updates {} atomic service [{}]", new Object[] {
+				username, atomicServiceId, updateRequest });
 
 		validateId(atomicServiceId);
 		Action<Class<Void>> action = actionFactory
-				.createUpdateAtomicServiceAction(getUsername(),
-						atomicServiceId, updateRequest, hasRole(ADMIN_ROLE));
+				.createUpdateAtomicServiceAction(username, atomicServiceId,
+						updateRequest, hasRole(ADMIN_ROLE));
 		action.execute();
 	}
 }

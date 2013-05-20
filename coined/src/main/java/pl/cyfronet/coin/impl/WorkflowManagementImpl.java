@@ -65,17 +65,20 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	@Override
 	public String startWorkflow(WorkflowStartRequest workflow)
 			throws WorkflowStartException {
+		String username = getUsername();
+		logger.info("{} starts workflow {}", username, workflow);
 		Action<String> action = actionFactory.createStartWorkflowAction(
-				workflow, getUsername());
+				workflow, username);
 		return action.execute();
 	}
 
 	@Override
 	public void stopWorkflow(String workflowId) {
-		logger.debug("Stopping workflow with {} workflowId", workflowId);
+		String username = getUsername();
+		logger.info("{} stops {} workflow", username, workflowId);
 		validateId(workflowId);
 		Action<Class<Void>> action = actionFactory.createStopWorkflowAction(
-				workflowId, getUsername());
+				workflowId, username);
 		try {
 			action.execute();
 		} catch (WorkflowNotFoundException e) {
@@ -99,14 +102,16 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public void addAtomicServiceToWorkflow(String contextId,
 			AddAsWithKeyToWorkflow request) throws WorkflowNotFoundException,
 			CloudFacadeException {
-		logger.debug("Adding atomic service {} to worklow {} [{}]",
-				new Object[] { request.getAsConfigId(), contextId, request });
+		String username = getUsername();
+		logger.info("{} adds atomic service {} to worklow {} [{}]",
+				new Object[] { username, request.getAsConfigId(), contextId,
+						request });
 		validateId(contextId, request.getAsConfigId());
 		if (request.getKeyId() != null) {
 			validateId(request.getKeyId());
 		}
 		Action<String> action = actionFactory.createStartAtomicServiceAction(
-				getUsername(), contextId, request);
+				username, contextId, request);
 		action.execute();
 	}
 
@@ -114,12 +119,11 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public void removeAtomicServiceFromWorkflow(String workflowId,
 			String asConfigId) {
 		String username = getUsername();
-		logger.debug(
-				"Remove atomic service [{}] from workflow [{}] for user {}",
-				new Object[] { asConfigId, workflowId, username });
+		logger.info("{} removes {} atomic service from {} workflow",
+				new Object[] { username, asConfigId, workflowId });
 		validateId(workflowId);
 		Action<Class<Void>> action = actionFactory
-				.createRemoveAtomicServiceFromWorkflowAction(getUsername(),
+				.createRemoveAtomicServiceFromWorkflowAction(username,
 						workflowId, asConfigId);
 		action.execute();
 	}
@@ -129,9 +133,8 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			String asInstanceId) throws WorkflowNotFoundException,
 			WorkflowNotInDevelopmentModeException, CloudFacadeException {
 		String username = getUsername();
-		logger.debug(
-				"Remove atomic service instance [{}] from workflow [{}] for user {}",
-				new Object[] { asInstanceId, workflowId, username });
+		logger.info("{} removes {} atomic service instance from {} workflow",
+				new Object[] { username, asInstanceId, workflowId });
 		validateId(workflowId);
 		Action<Class<Void>> action = actionFactory
 				.createRemoveASIFromWorkflowAction(username, workflowId,
@@ -139,10 +142,6 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		action.execute();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.WorkflowManagement#getWorkflows()
-	 */
 	@Override
 	public UserWorkflows getWorkflows() {
 		String username = getUsername();
@@ -199,6 +198,10 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			int port, RedirectionType type) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
+		String username = getUsername();
+		logger.info(
+				"{} adds new redirection for {} ASI belonging to {} workflow [{}:{} {} type]",
+				new Object[] { username, asiId, contextId, name, port, type });
 		validateId(contextId);
 		Action<String> action = actionFactory.createAddAsiRedirectionAction(
 				getUsername(), contextId, asiId, name, port, type);
@@ -211,10 +214,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			String redirectionId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException {
+		String username = getUsername();
+		logger.info(
+				"{} delets {} redirecition for {} ASI belonging to {} workflow",
+				new Object[] { username, redirectionId, asiId, contextId });
 		validateId(contextId, redirectionId);
 		Action<Class<Void>> action = actionFactory
-				.createRemoveAsiRedirectionAction(getUsername(), contextId,
-						asiId, redirectionId);
+				.createRemoveAsiRedirectionAction(username, contextId, asiId,
+						redirectionId);
 		action.execute();
 	}
 
@@ -234,9 +241,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
+		String username = getUsername();
+		logger.info(
+				"{} adds {} endpoint into {} Atomic Service Instance belonging to {} workflow",
+				new Object[] { username, endpoint, asiId, contextId });
+
 		validateId(contextId);
 		Action<String> action = actionFactory.createAddAsiEndpointAction(
-				getUsername(), contextId, asiId, endpoint);
+				username, contextId, asiId, endpoint);
 		return action.execute();
 	}
 
@@ -246,9 +258,14 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException, EndpointNotFoundException {
+		String username = getUsername();
+		logger.info(
+				"{} removes {} endpoint from {} Atomic Service Instance belonging to {} workflow",
+				new Object[] { username, endpointId, asiId, contextId });
+
 		validateId(contextId, endpointId);
 		Action<Class<Void>> action = actionFactory
-				.createRemoveAsiEndpointAction(getUsername(), contextId, asiId,
+				.createRemoveAsiEndpointAction(username, contextId, asiId,
 						endpointId);
 		action.execute();
 	}
