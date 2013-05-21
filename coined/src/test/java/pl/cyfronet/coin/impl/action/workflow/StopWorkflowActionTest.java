@@ -75,9 +75,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		when(atmosphere.removeRequiredAppliances(contextId)).thenReturn(
 				atmosphereManagerResponse);
 	}
-
-	// FIXME waiting for atmo improvement
-	@Test(enabled = false)
+	
+	@Test
 	public void shouldThrowCloudExceptionWhenAtmosphereFail() throws Exception {
 		// when
 		givenWorkflowStarted();
@@ -97,7 +96,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 
 	// FIXME waiting for atmo improvement
 	@Test(enabled = false)
-	public void shouldStopWorkflowWhenOnAtmosphereWarning() throws Exception {
+	public void shouldStopWorkflowWhenAtmosphereReturnsWarning() throws Exception {
 		// given
 		givenWorkflowStarted();
 		mockStopWorkflowInAtmosphereWithWarning(contextId);
