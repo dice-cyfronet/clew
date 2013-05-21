@@ -19,6 +19,9 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.OwnedPayloadService;
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
@@ -33,6 +36,9 @@ import pl.cyfronet.coin.impl.action.ActionFactory;
  */
 public class SecurityPolicyServiceImpl extends UsernameAwareService implements
 		OwnedPayloadService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(SecurityPolicyServiceImpl.class);
 
 	private ActionFactory actionFactory;
 
@@ -63,6 +69,8 @@ public class SecurityPolicyServiceImpl extends UsernameAwareService implements
 	@Override
 	public Response create(NamedOwnedPayload ownedPayload)
 			throws AlreadyExistsException {
+		String username = getUsername();
+		logger.info("{} creates new security policy {}", username, ownedPayload);
 		Action<Class<Void>> action = actionFactory.getPoliciesActionFactory()
 				.createNewAction(getUsername(), ownedPayload);
 		action.execute();
@@ -73,6 +81,8 @@ public class SecurityPolicyServiceImpl extends UsernameAwareService implements
 	@Override
 	public Response update(String name, OwnedPayload ownedPayload)
 			throws AlreadyExistsException {
+		String username = getUsername();
+		logger.info("{} updates {} security policy [{}]", new Object[] {username, name, ownedPayload});
 		Action<Class<Void>> action = actionFactory.getPoliciesActionFactory()
 				.createUpdateAction(getUsername(), name, ownedPayload);
 		action.execute();
@@ -82,6 +92,8 @@ public class SecurityPolicyServiceImpl extends UsernameAwareService implements
 
 	@Override
 	public Response delete(String name) {
+		String username = getUsername();
+		logger.info("{} deletes {} security policy", username, name);
 		Action<Class<Void>> action = actionFactory.getPoliciesActionFactory()
 				.createDeleteAction(getUsername(), name);
 		action.execute();

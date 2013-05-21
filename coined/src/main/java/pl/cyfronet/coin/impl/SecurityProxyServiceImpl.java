@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.api.OwnedPayloadService;
 import pl.cyfronet.coin.api.beans.NamedOwnedPayload;
 import pl.cyfronet.coin.api.beans.OwnedPayload;
@@ -15,6 +18,9 @@ import pl.cyfronet.coin.impl.action.ActionFactory;
 
 public class SecurityProxyServiceImpl extends UsernameAwareService implements
 		OwnedPayloadService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(SecurityProxyServiceImpl.class);
 
 	private ActionFactory actionFactory;
 
@@ -45,8 +51,11 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 	@Override
 	public Response create(NamedOwnedPayload ownedPayload)
 			throws AlreadyExistsException {
-		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
-				.createNewAction(getUsername(), ownedPayload);
+		String username = getUsername();
+		logger.info("{} creates new security proxy {}", username, ownedPayload);
+		Action<Class<Void>> action = actionFactory
+				.getProxiesActionFactory().createNewAction(username,
+						ownedPayload);
 		action.execute();
 
 		return Response.status(Response.Status.CREATED).build();
@@ -55,6 +64,8 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 	@Override
 	public Response update(String name, OwnedPayload ownedPayload)
 			throws AlreadyExistsException {
+		String username = getUsername();
+		logger.info("{} updates {} security proxy [{}]", new Object[] {username, name, ownedPayload});
 		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
 				.createUpdateAction(getUsername(), name, ownedPayload);
 		action.execute();
@@ -64,6 +75,8 @@ public class SecurityProxyServiceImpl extends UsernameAwareService implements
 
 	@Override
 	public Response delete(String name) {
+		String username = getUsername();
+		logger.info("{} deletes {} security proxy", username, name);
 		Action<Class<Void>> action = actionFactory.getProxiesActionFactory()
 				.createDeleteAction(getUsername(), name);
 		action.execute();

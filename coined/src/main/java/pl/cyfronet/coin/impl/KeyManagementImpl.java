@@ -56,7 +56,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	public String add(String keyName, String publicKey)
 			throws KeyAlreadyExistsException {
 		String username = getUsername();
-		logger.debug("Adding new key {} for {}", keyName, username);
+		logger.info("{} adds new key {}", username, keyName);
 		Action<String> action = actionFactory.createAddPublicKeyAction(
 				username, keyName, publicKey);
 		return action.execute();
@@ -65,7 +65,7 @@ public class KeyManagementImpl extends UsernameAwareService implements
 	@Override
 	public void delete(String keyId) throws KeyNotFoundException {
 		String username = getUsername();
-		logger.debug("Adding key {} for {}", keyId, username);
+		logger.info("{} deletes {} key", username, keyId);
 		validateId(keyId);
 		Action<Class<Void>> action = actionFactory.createDeletePublicKeyAction(
 				username, keyId);
