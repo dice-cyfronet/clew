@@ -1,5 +1,12 @@
 <c:forEach var="atomicServiceInstance" items="${atomicServiceInstances}" varStatus="status">
-	<div class="span8">
+	<c:choose>
+		<c:when test="${status.index > 0}">
+			<div class="span8 offset2">
+		</c:when>
+		<c:otherwise>
+			<div class="span8">
+		</c:otherwise>
+	</c:choose>
 		<c:set var="statusId">status-${atomicServiceInstance.id}</c:set>
 		Development Id: ${atomicServiceInstance.id}<br/>
 		Site: ${atomicServiceInstance.siteId}<br/>
