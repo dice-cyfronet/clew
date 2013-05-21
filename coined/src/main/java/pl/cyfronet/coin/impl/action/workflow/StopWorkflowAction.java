@@ -28,6 +28,7 @@ import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 
 /**
  * Stop workflow action.
@@ -60,11 +61,10 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 	public Class<Void> execute() throws CloudFacadeException {
 		logger.debug("stopping workflow {}", contextId);
 		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
-		// ManagerResponse response =
-		getAtmosphere().removeRequiredAppliances(contextId);
+		ManagerResponse response = getAtmosphere().removeRequiredAppliances(
+				contextId);
 
-		// FIXME waiting for atmo improvement
-		// parseResponseAndThrowExceptionsWhenNeeded(response);
+		parseResponseAndThrowExceptionsWhenNeeded(response);
 		getAir().stopWorkflow(contextId);
 
 		List<Vms> vms = wd.getVms();
