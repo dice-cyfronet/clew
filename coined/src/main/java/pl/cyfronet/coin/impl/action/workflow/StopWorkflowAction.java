@@ -61,13 +61,17 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 	public Class<Void> execute() throws CloudFacadeException {
 		logger.debug("stopping workflow {}", contextId);
 		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
-		ManagerResponse response = getAtmosphere().removeRequiredAppliances(
+		List<Vms> vms = wd.getVms();
+		
+		if(vms != null && vms.size() > 0) {
+			ManagerResponse response = getAtmosphere().removeRequiredAppliances(
 				contextId);
-
-		parseResponseAndThrowExceptionsWhenNeeded(response);
+			parseResponseAndThrowExceptionsWhenNeeded(response);
+		}
+		
 		getAir().stopWorkflow(contextId);
 
-		List<Vms> vms = wd.getVms();
+		
 		if (wd.getWorkflow_type() == WorkflowType.development && vms != null) {
 			List<String> asesToRemove = new ArrayList<>();
 			for (Vms vm : vms) {

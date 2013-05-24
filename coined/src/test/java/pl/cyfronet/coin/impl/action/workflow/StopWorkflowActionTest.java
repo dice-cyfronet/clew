@@ -15,6 +15,7 @@
  */
 package pl.cyfronet.coin.impl.action.workflow;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,6 +49,8 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 
 	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() {
 		givenWorkflowStarted();
+		workflowDetails.setVms(Arrays.asList(new Vms()));
+		
 		mockStopWorkflowInAtmosphere();
 	}
 
@@ -77,9 +80,20 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 	}
 	
 	@Test
+	public void shouldNoIvokeDyreallaWhenNoVms() throws Exception {
+		givenWorkflowStarted();
+		mockStopWorkflowInAtmosphere();
+
+		whenStopWorkflow();
+
+		verify(atmosphere, times(0)).removeRequiredAppliances(anyString());
+	}
+	
+	@Test
 	public void shouldThrowCloudExceptionWhenAtmosphereFail() throws Exception {
 		// when
 		givenWorkflowStarted();
+		workflowDetails.setVms(Arrays.asList(new Vms()));
 		mockStopWorkflowInAtmosphereWithError(contextId);
 
 		try {
