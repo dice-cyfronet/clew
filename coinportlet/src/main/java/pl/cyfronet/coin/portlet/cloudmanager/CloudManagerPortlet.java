@@ -1273,7 +1273,7 @@ public class CloudManagerPortlet {
 	
 	private Map<String, String> createItemsMap(String values, boolean gigsToMegaBytes) {
 		Map<String, String> result = new LinkedHashMap<>();
-		result.put("0", "Don't care");
+		result.put("0", messages.getMessage("cloud.manager.portlet.default.flavor.property.label", null, null));
 		
 		for(String value : values.split(",")) {
 			if(gigsToMegaBytes) {
