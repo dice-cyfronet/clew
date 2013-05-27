@@ -123,7 +123,8 @@ public class AddAtomicServiceMatcher extends
 			if (creatingNewAS) {
 				return !as.isDevelopment();
 			} else {
-				return request.getDevelopment() == as.isDevelopment();
+				return request.getDevelopment() == as.isDevelopment()
+						&& (!development || !request.getPublished());
 			}
 		}
 		return false;

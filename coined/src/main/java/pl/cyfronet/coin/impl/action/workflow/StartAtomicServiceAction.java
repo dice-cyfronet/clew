@@ -168,6 +168,8 @@ public class StartAtomicServiceAction extends
 			AddAsToWorkflow requiredAs, String initConfId,
 			List<String> developmentASes) {
 		baseAS.setDevelopment(true);
+		//#1669
+		baseAS.setPublished(false);
 		baseAS.setName(String.format("%s-%s", baseAS.getName(),
 				System.currentTimeMillis()));
 		fillProps(baseAS, requiredAs);
