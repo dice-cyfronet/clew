@@ -62,7 +62,7 @@
 		<form:errors path="type" cssClass="coin-error-panel"/>
 		
 		<br/>
-		<button type='submit'><spring:message code='cloud.manager.portlet.add.redirection.submit.request'/></button>
+		<button type='submit' class="btn"><spring:message code='cloud.manager.portlet.add.redirection.submit.request'/></button>
 	</fieldset>
 </form:form>
 
@@ -133,7 +133,7 @@
 				<form:errors path="descriptor" cssClass="text-error"/>
 				
 				<br/>
-				<button type='submit'><spring:message code='cloud.manager.portlet.add.endpoint.submit.request'/></button>
+				<button type='submit' class="btn"><spring:message code='cloud.manager.portlet.add.endpoint.submit.request'/></button>
 			</fieldset>
 		</form:form>
 	</c:when>
