@@ -1,5 +1,5 @@
 <provider>
-  <providerId xmlns="http://taverna.sf.net/2008/xml/t2flow">http://taverna.sf.net/2010/service-provider/wsdl</providerId>
+  <providerId xmlns="http://taverna.sf.net/2008/xml/t2flow">http://gimias.org/2012/service-provider/vphshare</providerId>
   <configBean xmlns="http://taverna.sf.net/2008/xml/t2flow" encoding="xstream">
     <net.sf.taverna.t2.activities.wsdl.servicedescriptions.WSDLServiceProviderConfig xmlns="">
       <uri serialization="custom">

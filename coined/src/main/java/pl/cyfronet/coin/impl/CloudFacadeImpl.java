@@ -36,6 +36,7 @@ import pl.cyfronet.coin.api.exception.InitialConfigurationAlreadyExistException;
 import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
+import pl.cyfronet.coin.auth.annotation.Public;
 import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
@@ -115,6 +116,7 @@ public class CloudFacadeImpl extends UsernameAwareService implements
 	}
 
 	@Override
+	@Public
 	public String getServicesSet() {
 		Action<String> action = actionFactory.createGetServicesSetAction();
 		return action.execute();
