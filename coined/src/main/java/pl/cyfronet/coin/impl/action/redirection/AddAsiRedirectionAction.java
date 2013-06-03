@@ -17,6 +17,7 @@ import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
+import static pl.cyfronet.coin.impl.utils.Validator.validateRedirectionName;
 
 public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 
@@ -44,6 +45,8 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 
 	@Override
 	public String execute() throws CloudFacadeException {
+		validateRedirectionName(serviceName);
+		
 		wd = getUserWorkflow(getContextId(), getUsername());
 
 		checkIfWorkflowInDevelopmentMode();

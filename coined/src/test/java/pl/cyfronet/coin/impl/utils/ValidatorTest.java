@@ -14,21 +14,50 @@ public class ValidatorTest {
 	public void shouldNotThrowsExceptionWhileIdValid() throws Exception {
 		Validator.validateId("50b70f252a9524132a04cae0");
 	}
-	
+
 	@DataProvider
 	protected Object[][] getNotValidIds() {
-		return new Object[][] {
-				{null},
-				{"50b70f252a9524132a04cae01"}, //to long
-				{"50b70f252a9524132a04cae"}, // to short
-				{"50b70f252a9524132a04cag"} // illegal char
+		return new Object[][] { { null }, { "50b70f252a9524132a04cae01" }, // to
+																			// long
+				{ "50b70f252a9524132a04cae" }, // to short
+				{ "50b70f252a9524132a04cag" } // illegal char
 		};
 	}
-	
-	@Test(dataProvider="getNotValidIds")
-	public void shouldThrowExceptionWhileIdIsNotValid(String notValidId) throws Exception {
+
+	@Test(dataProvider = "getNotValidIds")
+	public void shouldThrowExceptionWhileIdIsNotValid(String notValidId)
+			throws Exception {
 		try {
 			Validator.validateId(notValidId);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+	}
+
+	@DataProvider
+	protected Object[][] getValidRedirectionNames() {
+		return new Object[][] { { "asdf" }, { "ASDF" }, {"123"},  { "-" }, { "_" },
+				{ "aA_-as123" } };
+	}
+
+	@Test(dataProvider = "getValidRedirectionNames")
+	public void shouldValidateCorrectRedirectionName(String redirectionName)
+			throws Exception {
+		Validator.validateRedirectionName(redirectionName);
+	}
+
+	@DataProvider
+	protected Object[][] getInvalidRedirectionNames() {
+		return new Object[][] { { "*" }, { "ASD(F" }, {"123@"}, { "-&" }, { "$_" },
+				{ "aA_-as#123" } };
+	}
+
+	@Test(dataProvider = "getInvalidRedirectionNames")
+	public void shouldThrownExceptionOnInvalidRedirectionName(
+			String redirectionName) throws Exception {
+		try {
+			Validator.validateRedirectionName(redirectionName);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
