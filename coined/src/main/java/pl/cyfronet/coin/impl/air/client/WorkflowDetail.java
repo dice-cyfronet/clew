@@ -40,8 +40,6 @@ public class WorkflowDetail {
 
 	private String description;
 
-	private Status state;
-
 	private List<Vms> vms;
 
 	/**
@@ -115,20 +113,6 @@ public class WorkflowDetail {
 	}
 
 	/**
-	 * @return the state
-	 */
-	public Status getState() {
-		return state;
-	}
-
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(Status state) {
-		this.state = state;
-	}
-
-	/**
 	 * @return the vms
 	 */
 	public List<Vms> getVms() {
@@ -156,8 +140,7 @@ public class WorkflowDetail {
 		this.workflow_type = workflow_type;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -165,6 +148,6 @@ public class WorkflowDetail {
 		return "WorkflowDetail [name=" + name + ", id=" + id
 				+ ", vph_username=" + vph_username + ", workflow_type="
 				+ workflow_type + ", priority=" + priority + ", description="
-				+ description + ", state=" + state + ", vms=" + vms + "]";
+				+ description + ", vms=" + vms + "]";
 	}
 }

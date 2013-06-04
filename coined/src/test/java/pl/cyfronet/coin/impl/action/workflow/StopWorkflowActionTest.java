@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
@@ -180,7 +179,6 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		w1.setVph_username("myUser");
 		w1.setName("w1");
 		w1.setId(contextId);
-		w1.setState(Status.running);
 		w1.setWorkflow_type(WorkflowType.development);
 
 		// when

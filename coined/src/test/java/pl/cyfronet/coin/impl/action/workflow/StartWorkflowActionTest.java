@@ -31,7 +31,6 @@ import javax.ws.rs.WebApplicationException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
@@ -251,11 +250,9 @@ public class StartWorkflowActionTest extends WorkflowActionTest {
 
 		WorkflowDetail w1 = new WorkflowDetail();
 		w1.setWorkflow_type(WorkflowType.workflow);
-		w1.setState(Status.running);
 
 		WorkflowDetail w2 = new WorkflowDetail();
 		w2.setWorkflow_type(type);
-		w2.setState(Status.running);
 
 		when(air.getUserWorkflows(username)).thenReturn(Arrays.asList(w1, w2));
 	}
