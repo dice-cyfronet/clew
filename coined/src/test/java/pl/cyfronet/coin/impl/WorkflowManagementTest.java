@@ -421,7 +421,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenAtomicServiceAddedToWorkflow();
 	}
 
-	
 	private void givenMockedAddAtomicServiceToWorkflowWithCpuDataAndMemoryAction() {
 		addAsToWorkflowRequest = new AddAsWithKeyToWorkflow();
 		addAsToWorkflowRequest.setAsConfigId(atomicServiceId);
@@ -439,21 +438,23 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void shouldThrow400WhenAsWithToLongNameAddedToWorkflow() throws Exception {
-		String toLongName = "12345678901234567890123456789012345678901234567890123456789012345"; //65 chars
+	public void shouldThrow400WhenAsWithToLongNameAddedToWorkflow()
+			throws Exception {
+		String toLongName = "12345678901234567890123456789012345678901234567890123456789012345"; // 65
+																									// chars
 		addAsToWorkflowRequest = new AddAsWithKeyToWorkflow();
 		addAsToWorkflowRequest.setAsConfigId(atomicServiceId);
 		addAsToWorkflowRequest.setName(toLongName);
-		
+
 		try {
 			workflowManagement.addAtomicServiceToWorkflow(contextId,
 					addAsToWorkflowRequest);
 			fail();
-		} catch(WebApplicationException e) {
+		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
 	}
-	
+
 	// redirections
 
 	@Test
@@ -524,6 +525,18 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			fail();
 		} catch (AtomicServiceInstanceNotFoundException e) {
 			// OK should be thrown
+		}
+	}
+
+	@Test
+	public void shouldThrow400WhenRedirectionNameIncorrect() throws Exception {
+		String wrongRedirectionName = "asdfsad$";
+		try {
+			workflowManagement.addRedirection(contextId, asiId,
+					wrongRedirectionName, redirectionPort, redirectionType);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
 		}
 	}
 

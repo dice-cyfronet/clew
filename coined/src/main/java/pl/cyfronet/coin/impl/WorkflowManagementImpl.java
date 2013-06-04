@@ -199,7 +199,8 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			int port, RedirectionType type) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
-		String username = getUsername();
+		validateRedirectionName(name);
+		String username = getUsername();		
 		logger.info(
 				"{} adds new redirection for {} ASI belonging to {} workflow [{}:{} {} type]",
 				new Object[] { username, asiId, contextId, name, port, type });
