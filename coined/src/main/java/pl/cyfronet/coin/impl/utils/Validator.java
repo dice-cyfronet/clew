@@ -12,6 +12,8 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
  */
 public class Validator {
 
+	private static final int AS_NAME_MAX_LENGTH = 64;
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(Validator.class);
 
@@ -59,6 +61,18 @@ public class Validator {
 			throw new CloudFacadeException(String.format(
 					"%s is not a valid redirection name", redirectionName),
 					Response.Status.BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Checks if AS name is correct (not longer than 64 chars).
+	 * @param asName Atomic Service name.
+	 */
+	public static void validateASName(String asName) {
+		if (asName != null && asName.length() > AS_NAME_MAX_LENGTH) {
+			throw new CloudFacadeException(String.format(
+					"%s name is to long. Name should have maximum %s chars",
+					asName, AS_NAME_MAX_LENGTH), Response.Status.BAD_REQUEST);
 		}
 	}
 }

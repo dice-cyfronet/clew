@@ -15,7 +15,7 @@
  */
 package pl.cyfronet.coin.impl;
 
-import static pl.cyfronet.coin.impl.utils.Validator.validateId;
+import static pl.cyfronet.coin.impl.utils.Validator.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +107,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 				new Object[] { username, request.getAsConfigId(), contextId,
 						request });
 		validateId(contextId, request.getAsConfigId());
+		validateASName(request.getName());
 		if (request.getKeyId() != null) {
 			validateId(request.getKeyId());
 		}

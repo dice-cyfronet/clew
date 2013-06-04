@@ -63,4 +63,15 @@ public class ValidatorTest {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
 	}
+	
+	@Test
+	public void shouldThrowExceptionWhenAsNameToLong() throws Exception {
+		String toLongName = "asdfghjklaasdfghjklaasdfghjklaasdfghjklaasdfghjklaasdfghjklaasdfg";
+		try {
+			Validator.validateASName(toLongName);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+	}
 }

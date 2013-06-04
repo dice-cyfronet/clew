@@ -438,6 +438,22 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 				addAsToWorkflowRequest);
 	}
 
+	@Test
+	public void shouldThrow400WhenAsWithToLongNameAddedToWorkflow() throws Exception {
+		String toLongName = "12345678901234567890123456789012345678901234567890123456789012345"; //65 chars
+		addAsToWorkflowRequest = new AddAsWithKeyToWorkflow();
+		addAsToWorkflowRequest.setAsConfigId(atomicServiceId);
+		addAsToWorkflowRequest.setName(toLongName);
+		
+		try {
+			workflowManagement.addAtomicServiceToWorkflow(contextId,
+					addAsToWorkflowRequest);
+			fail();
+		} catch(WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+	}
+	
 	// redirections
 
 	@Test
