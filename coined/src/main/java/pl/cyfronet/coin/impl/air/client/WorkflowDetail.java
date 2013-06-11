@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 
 /**
