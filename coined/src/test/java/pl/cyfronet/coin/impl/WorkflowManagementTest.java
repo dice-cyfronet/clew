@@ -406,8 +406,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void whenAddAtomicServiceWithKeyToWorkflow() {
-		workflowManagement.addAtomicServiceToWorkflow(contextId,
-				atomicServiceId, asName, keyId);
+		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+		request.setAsConfigId(atomicServiceId);
+		request.setName(asName);
+		request.setKeyId(keyId);
+		workflowManagement.addAtomicServiceToWorkflow(contextId, request);
 	}
 
 	private void thenAtomicServiceAddedToWorkflow() {
@@ -882,8 +885,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	public void shouldThrow400WhenIdNotValid3Ids(String id1, String id2,
 			String id3) throws Exception {
 		try {
-			workflowManagement
-					.addAtomicServiceToWorkflow(id1, id2, "name", id3);
+			AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+			request.setAsConfigId(id2);
+			request.setName("name");
+			request.setKeyId(id3);
+			workflowManagement.addAtomicServiceToWorkflow(id1, request);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);

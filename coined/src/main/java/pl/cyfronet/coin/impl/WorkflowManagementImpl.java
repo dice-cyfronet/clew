@@ -84,19 +84,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
-	}
-
-	@Override
-	@Deprecated
-	public void addAtomicServiceToWorkflow(String contextId, String asId,
-			String name, String keyId) throws WorkflowNotFoundException,
-			CloudFacadeException {
-		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
-		request.setAsConfigId(asId);
-		request.setName(name);
-		request.setKeyId(keyId);
-		addAtomicServiceToWorkflow(contextId, request);
-	}
+	}	
 
 	@Override
 	public void addAtomicServiceToWorkflow(String contextId,

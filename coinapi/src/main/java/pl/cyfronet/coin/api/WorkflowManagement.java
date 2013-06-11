@@ -24,11 +24,9 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
@@ -100,29 +98,18 @@ public interface WorkflowManagement {
 	void stopWorkflow(@PathParam("workflowId") String workflowId)
 			throws WorkflowNotFoundException, CloudFacadeException;
 
+	/**
+	 * Add atomic service for started workflow. For new create AS selected key
+	 * will be injected, but only when workflow is in development mode.
+	 * @param workflowId Workflow id.	 
+	 * @param request Request with all information about required AS.
+	 */
 	@POST
 	@Path("/{workflowId}/as")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
 			AddAsWithKeyToWorkflow request) throws WorkflowNotFoundException,
-			CloudFacadeException;
-
-	/**
-	 * Add atomic service for started workflow. For new create AS selected key
-	 * will be injected, but only when workflow is in development mode.
-	 * @param workflowId Workflow id.
-	 * @param asId Atomic service configuration id.
-	 * @param name ASI Name.
-	 * @param key Key (id) which will be injected into new started ASI (but only
-	 *            when workflow is in development mode).
-	 */
-	@PUT
-	@Path("/{workflowId}/as/{asConfigId}/{name}")
-	@Deprecated
-	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
-			@PathParam("asConfigId") String asConfigId,
-			@PathParam("name") String name, @QueryParam("key_id") String keyId)
-			throws WorkflowNotFoundException, CloudFacadeException;
+			CloudFacadeException;	
 
 	/**
 	 * Remove atomic service from running workflow.
