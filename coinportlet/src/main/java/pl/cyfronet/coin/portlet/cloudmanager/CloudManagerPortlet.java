@@ -3,6 +3,7 @@ package pl.cyfronet.coin.portlet.cloudmanager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.util.HtmlUtils;
 
@@ -58,9 +60,7 @@ import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
-import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
-import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -114,6 +114,8 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_MEMORY_ITEMS = "memoryItems";
 	static final String MODEL_BEAN_DISK_ITEMS = "diskItems";
 	static final String MODEL_BEAN_RUNNING_AS_IDS = "runningAsIds";
+	static final String MODEL_BEAN_ERROR_MESSAGE = "errorMessage";
+	static final String MODEL_BEAN_ERROR_STACKTRACE = "errorStacktrace";
 	
 	static final String PARAM_ACTION = "action";
 	static final String PARAM_ATOMIC_SERVICE_INSTANCE_ID = "atomicServiceInstanceId";
@@ -1095,10 +1097,16 @@ public class CloudManagerPortlet {
 	}
 	
 	@ExceptionHandler(Exception.class)
-	public String handleExceptions(Exception e) {
+	public ModelAndView handleExceptions(Exception e) {
 		log.error("Unexpected exception occurred", e);
+		Map<String, Object> beans = new HashMap<>();
+		beans.put(MODEL_BEAN_ERROR_MESSAGE, e.getMessage());
 		
-		return "fatal/error";
+		StringWriter writer = new StringWriter();
+		e.printStackTrace(new PrintWriter(writer));
+		beans.put(MODEL_BEAN_ERROR_STACKTRACE, writer.toString());
+		
+		return new ModelAndView("fatal/error", beans);
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_ADD_REDIRECTION)
@@ -1367,22 +1375,23 @@ public class CloudManagerPortlet {
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {
-		List<String> result = new ArrayList<String>();
-		UserWorkflows userWorkflows = clientFactory.getWorkflowManagement(request).getWorkflows();
-		
-		if(userWorkflows != null) {
-			if(userWorkflows.getWorkflows() != null) {
-				for(WorkflowBaseInfo workflow : userWorkflows.getWorkflows()) {
-					if(workflow.getType() == workflowType) {
-						result.add(workflow.getId());
-					}
-				}
-			}
-		} else {
-			log.warn("User workflows bean is null for workflow type [{}]", workflowType);
-		}
-		
-		return result;
+		throw new RuntimeException("Yo!!!");
+//		List<String> result = new ArrayList<String>();
+//		UserWorkflows userWorkflows = clientFactory.getWorkflowManagement(request).getWorkflows();
+//		
+//		if(userWorkflows != null) {
+//			if(userWorkflows.getWorkflows() != null) {
+//				for(WorkflowBaseInfo workflow : userWorkflows.getWorkflows()) {
+//					if(workflow.getType() == workflowType) {
+//						result.add(workflow.getId());
+//					}
+//				}
+//			}
+//		} else {
+//			log.warn("User workflows bean is null for workflow type [{}]", workflowType);
+//		}
+//		
+//		return result;
 	}
 	
 	private Map<AtomicService, List<AtomicServiceInstance>> getAtomicServiceInstances(String workflowId, PortletRequest request) {
