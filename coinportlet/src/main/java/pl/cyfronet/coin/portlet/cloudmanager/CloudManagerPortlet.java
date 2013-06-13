@@ -60,7 +60,9 @@ import pl.cyfronet.coin.api.beans.InitialConfiguration;
 import pl.cyfronet.coin.api.beans.NewAtomicService;
 import pl.cyfronet.coin.api.beans.PublicKeyInfo;
 import pl.cyfronet.coin.api.beans.Redirection;
+import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
+import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -1375,23 +1377,22 @@ public class CloudManagerPortlet {
 	}
 	
 	private List<String> getWorkflowIds(WorkflowType workflowType, PortletRequest request) {
-		throw new RuntimeException("Yo!!!");
-//		List<String> result = new ArrayList<String>();
-//		UserWorkflows userWorkflows = clientFactory.getWorkflowManagement(request).getWorkflows();
-//		
-//		if(userWorkflows != null) {
-//			if(userWorkflows.getWorkflows() != null) {
-//				for(WorkflowBaseInfo workflow : userWorkflows.getWorkflows()) {
-//					if(workflow.getType() == workflowType) {
-//						result.add(workflow.getId());
-//					}
-//				}
-//			}
-//		} else {
-//			log.warn("User workflows bean is null for workflow type [{}]", workflowType);
-//		}
-//		
-//		return result;
+		List<String> result = new ArrayList<String>();
+		UserWorkflows userWorkflows = clientFactory.getWorkflowManagement(request).getWorkflows();
+		
+		if(userWorkflows != null) {
+			if(userWorkflows.getWorkflows() != null) {
+				for(WorkflowBaseInfo workflow : userWorkflows.getWorkflows()) {
+					if(workflow.getType() == workflowType) {
+						result.add(workflow.getId());
+					}
+				}
+			}
+		} else {
+			log.warn("User workflows bean is null for workflow type [{}]", workflowType);
+		}
+		
+		return result;
 	}
 	
 	private Map<AtomicService, List<AtomicServiceInstance>> getAtomicServiceInstances(String workflowId, PortletRequest request) {
