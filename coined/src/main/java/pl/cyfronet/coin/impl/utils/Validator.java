@@ -12,6 +12,8 @@ import pl.cyfronet.coin.api.exception.CloudFacadeException;
  */
 public class Validator {
 
+	private static final int AS_NAME_MAX_LENGTH = 64;
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(Validator.class);
 
@@ -20,13 +22,16 @@ public class Validator {
 	 */
 	private static final String MONGODB_OBJECT_ID_REGEXP = "[a-f0-9]{24}";
 
+	private static final String REDIRECTION_REGEXP = "[a-zA-Z0-9_-]+";
+
 	/**
-	 * Check if given string is a valid MongoDB id.
+	 * Check if given string fulfill given regexp.
 	 * @param id Id to be checked
+	 * @param regexp Valid format regexp.
 	 * @return True if id is valid.
 	 */
-	private static boolean isObjectId(String id) {
-		return id != null && id.matches(MONGODB_OBJECT_ID_REGEXP);
+	private static boolean isValid(String value, String regexp) {
+		return value != null && value.matches(regexp);
 	}
 
 	/**
@@ -36,12 +41,38 @@ public class Validator {
 	 */
 	public static void validateId(String... ids) throws CloudFacadeException {
 		for (String id : ids) {
-			if (!isObjectId(id)) {
+			if (!isValid(id, MONGODB_OBJECT_ID_REGEXP)) {
 				logger.info("Id {} is not valid", id);
 				throw new CloudFacadeException(String.format(
 						"%s is not a valid id", id),
 						Response.Status.BAD_REQUEST);
 			}
+		}
+	}
+
+	/**
+	 * Checks if redirection name is valid. If not than CloudFacadeException
+	 * with return code 400 is thrown.
+	 * @param id Redirection name to be checked.
+	 */
+	public static void validateRedirectionName(String redirectionName) {
+		if (!isValid(redirectionName, REDIRECTION_REGEXP)) {
+			logger.debug("Id {} is not valid redirection name", redirectionName);
+			throw new CloudFacadeException(String.format(
+					"%s is not a valid redirection name", redirectionName),
+					Response.Status.BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Checks if AS name is correct (not longer than 64 chars).
+	 * @param asName Atomic Service name.
+	 */
+	public static void validateASName(String asName) {
+		if (asName != null && asName.length() > AS_NAME_MAX_LENGTH) {
+			throw new CloudFacadeException(String.format(
+					"%s name is to long. Name should have maximum %s chars",
+					asName, AS_NAME_MAX_LENGTH), Response.Status.BAD_REQUEST);
 		}
 	}
 }

@@ -59,10 +59,12 @@ public class DeleteAtomicServiceAction extends BaseAction<Class<Void>> {
 
 	private void checkIfCanRemoveAS() {
 		if (!admin) {
-			AtomicService as = actionFactory.createGetAtomicServiceAction(asId)
-					.execute();
+			AtomicService as = actionFactory.createGetAtomicServiceAction(asId,
+					false).execute();
 			if (!username.equals(as.getOwner())) {
-				logger.warn("User {} is trying to remove not owned Atomic Service {}", username, asId);
+				logger.warn(
+						"User {} is trying to remove not owned Atomic Service {}",
+						username, asId);
 				throw new NotAllowedException(
 						"You are not allowed to delete this Atomic Service");
 			}

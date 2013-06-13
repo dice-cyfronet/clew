@@ -29,7 +29,7 @@
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
-	<jaxrs:client id="wm-client" address="http://149.156.10.133:9099/workflow"		
+	<jaxrs:client id="wm-client" address="http://vph.cyfronet.pl/cloudfacade/workflows"		
 		serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
 		username="test" password="${ticket}"		
 		inheritHeaders="true">

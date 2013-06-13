@@ -30,15 +30,13 @@ public class GetAtomicServiceAction extends AirAction<AtomicService> {
 
 	private String atomicServiceId;
 
-	/**
-	 * @param air Air rest client.
-	 * @param atomicServiceId Atomic service instance. Right now it is equals
-	 *            into atomic service name.
-	 */
+	private boolean loadDescriptor;
+
 	public GetAtomicServiceAction(ActionFactory actionFactory,
-			String atomicServiceId) {
+			String atomicServiceId, boolean loadDescriptor) {
 		super(actionFactory);
 		this.atomicServiceId = atomicServiceId;
+		this.loadDescriptor = loadDescriptor;
 	}
 
 	/**
@@ -49,7 +47,8 @@ public class GetAtomicServiceAction extends AirAction<AtomicService> {
 	 */
 	@Override
 	public AtomicService execute() throws CloudFacadeException {
-		ApplianceType applianceType = getApplianceType(atomicServiceId);
+		ApplianceType applianceType = getApplianceType(atomicServiceId,
+				loadDescriptor);
 		return getAtomicService(applianceType);
 	}
 

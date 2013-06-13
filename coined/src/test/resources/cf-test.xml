@@ -46,7 +46,7 @@
 		</cxf:inFaultInterceptors>
 	</cxf:bus>
 
-	<jaxrs:client id="cf-client-local" address="http://localhost:9099/as"
+	<jaxrs:client id="cf-client-local" address="http://localhost:9099/atomic_services"
 		username="test" password="${ticket}"			    
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		inheritHeaders="true">
@@ -56,7 +56,7 @@
 		</jaxrs:providers>		
 	</jaxrs:client>
 
-	<jaxrs:client id="cf-client" address="http://vph.cyfronet.pl/cloudfacade/as"				   
+	<jaxrs:client id="cf-client" address="http://vph.cyfronet.pl/cloudfacade/atomic_services"				   
 		serviceClass="pl.cyfronet.coin.api.CloudFacade"
 		username="test" password="${ticket}"
 		inheritHeaders="true">

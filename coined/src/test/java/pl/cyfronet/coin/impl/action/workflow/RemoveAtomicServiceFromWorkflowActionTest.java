@@ -31,7 +31,6 @@ import org.testng.annotations.Test;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
@@ -127,28 +126,6 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username("differentUser");
 		wd.setWorkflow_type(WorkflowType.portal);
-
-		givenGetWorkflowAction(wd);
-	}
-
-	@Test
-	public void shouldThrowExceptionWhenWorkflowNotInProductionMode()
-			throws Exception {
-		givenWorkflowInDevelopmentMode();
-		try {
-			whenRemoveASFromWorkflow();
-			fail();
-		} catch (WorkflowNotInProductionModeException e) {
-			// OK - should be thrown
-		}
-
-		thenOnlyAirActionInvoked();
-	}
-
-	private void givenWorkflowInDevelopmentMode() {
-		WorkflowDetail wd = new WorkflowDetail();
-		wd.setVph_username(username);
-		wd.setWorkflow_type(WorkflowType.development);
 
 		givenGetWorkflowAction(wd);
 	}

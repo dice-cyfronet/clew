@@ -18,9 +18,45 @@
  
 	<import resource="classpath:META-INF/cxf/cxf.xml" />	
 
+	<!-- atomic services management -->
+
+	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}/atomic_services">
+		<jaxrs:serviceBeans>
+			<ref bean="cloudFacade" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
+			<ref bean="authorizationInterceptor" />
+		</jaxrs:providers>
+	</jaxrs:server>
+	
+	<!-- workflow management -->
+
+	<jaxrs:server id="workflow-management-rs" address="http://0.0.0.0:${port}/workflows">
+		<jaxrs:serviceBeans>
+			<ref bean="workflow-management" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="authenticationInterceptor" />
+			<ref bean="authorizationInterceptor" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean name="workflow-management" class="pl.cyfronet.coin.impl.WorkflowManagementImpl">
+		<property name="actionFactory" ref="actionFactory" />		
+		<property name="authenticator" ref="authenticationHandler" />
+	</bean>
+
+	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">		
+		<property name="actionFactory" ref="actionFactory" />
+		<property name="authenticator" ref="authenticationHandler" />
+	</bean>
+	
     <!-- security policies -->
 
-	<jaxrs:server id="roles-management-rs" address="http://0.0.0.0:${port}/securitypolicy">
+	<jaxrs:server id="roles-management-rs" address="http://0.0.0.0:${port}/security_policies">
 		<jaxrs:serviceBeans>
 			<ref bean="roles-management" />
 		</jaxrs:serviceBeans>
@@ -36,7 +72,7 @@
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>
 
-	<jaxrs:server id="proxy-config-management-rs" address="http://0.0.0.0:${port}/securityproxy">
+	<jaxrs:server id="proxy-config-management-rs" address="http://0.0.0.0:${port}/security_proxies">
 		<jaxrs:serviceBeans>
 			<ref bean="proxy-config-management" />
 		</jaxrs:serviceBeans>
@@ -54,7 +90,7 @@
 
 	<!-- keys management -->
 	
-	<jaxrs:server id="keys-management-rs" address="http://0.0.0.0:${port}/key">
+	<jaxrs:server id="keys-management-rs" address="http://0.0.0.0:${port}/keys">
 		<jaxrs:serviceBeans>
 			<ref bean="keys-management" />
 		</jaxrs:serviceBeans>
@@ -65,43 +101,6 @@
 	</jaxrs:server>	
 
 	<bean name="keys-management" class="pl.cyfronet.coin.impl.KeyManagementImpl">
-		<property name="actionFactory" ref="actionFactory" />
-		<property name="authenticator" ref="authenticationHandler" />
-	</bean>
-
-	<!-- workflow management -->
-
-	<jaxrs:server id="workflow-management-rs" address="http://0.0.0.0:${port}/workflow">
-		<jaxrs:serviceBeans>
-			<ref bean="workflow-management" />
-		</jaxrs:serviceBeans>
-		<jaxrs:providers>
-			<ref bean="jsonProvider" />
-			<ref bean="authenticationInterceptor" />
-			<ref bean="authorizationInterceptor" />
-		</jaxrs:providers>
-	</jaxrs:server>
-
-	<bean name="workflow-management" class="pl.cyfronet.coin.impl.WorkflowManagementImpl">
-		<property name="actionFactory" ref="actionFactory" />		
-		<property name="authenticator" ref="authenticationHandler" />
-	</bean>
-
-
-    <!-- atomic services management -->
-
-	<jaxrs:server id="coinRSEndpoint" address="http://0.0.0.0:${port}/as">
-		<jaxrs:serviceBeans>
-			<ref bean="cloudFacade" />
-		</jaxrs:serviceBeans>
-		<jaxrs:providers>
-			<ref bean="jsonProvider" />
-			<ref bean="authenticationInterceptor" />
-			<ref bean="authorizationInterceptor" />
-		</jaxrs:providers>
-	</jaxrs:server>
-
-	<bean name="cloudFacade" class="pl.cyfronet.coin.impl.CloudFacadeImpl">		
 		<property name="actionFactory" ref="actionFactory" />
 		<property name="authenticator" ref="authenticationHandler" />
 	</bean>

@@ -1,21 +1,8 @@
-/*
- * Copyright 2012 ACC CYFRONET AGH
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package pl.cyfronet.coin.impl;
 
-import static pl.cyfronet.coin.impl.utils.Validator.*;
+import static pl.cyfronet.coin.impl.utils.Validator.validateASName;
+import static pl.cyfronet.coin.impl.utils.Validator.validateId;
+import static pl.cyfronet.coin.impl.utils.Validator.validateRedirectionName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.RedirectionType;
-import pl.cyfronet.coin.api.WorkflowManagement;
+import pl.cyfronet.coin.api.WorkflowManagementOld;
 import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
@@ -46,11 +33,8 @@ import pl.cyfronet.coin.auth.annotation.Role;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 
-/**
- * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- */
-public class WorkflowManagementImpl extends UsernameAwareService implements
-		WorkflowManagement {
+public class WorkflowManagementImplOld extends UsernameAwareService implements
+		WorkflowManagementOld {
 
 	// throw new WebApplicationException(403);
 
@@ -84,7 +68,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
-	}	
+	}
 
 	@Override
 	public void addAtomicServiceToWorkflow(String contextId,
@@ -114,6 +98,20 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		Action<Class<Void>> action = actionFactory
 				.createRemoveAtomicServiceFromWorkflowAction(username,
 						workflowId, asConfigId);
+		action.execute();
+	}
+
+	@Override
+	public void removeAtomicServiceInstanceFromWorkflow(String workflowId,
+			String asInstanceId) throws WorkflowNotFoundException,
+			WorkflowNotInDevelopmentModeException, CloudFacadeException {
+		String username = getUsername();
+		logger.info("{} removes {} atomic service instance from {} workflow",
+				new Object[] { username, asInstanceId, workflowId });
+		validateId(workflowId);
+		Action<Class<Void>> action = actionFactory
+				.createRemoveASIFromWorkflowAction(username, workflowId,
+						asInstanceId);
 		action.execute();
 	}
 
@@ -174,7 +172,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
 		validateRedirectionName(name);
-		String username = getUsername();		
+		String username = getUsername();
 		logger.info(
 				"{} adds new redirection for {} ASI belonging to {} workflow [{}:{} {} type]",
 				new Object[] { username, asiId, contextId, name, port, type });

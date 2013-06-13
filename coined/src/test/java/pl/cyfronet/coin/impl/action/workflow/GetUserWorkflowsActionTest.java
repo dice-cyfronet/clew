@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.impl.action.Action;
@@ -47,17 +46,12 @@ public class GetUserWorkflowsActionTest extends WorkflowActionTest {
 		WorkflowDetail w1 = new WorkflowDetail();
 		w1.setName("w1");
 		w1.setId("id1");
-		w1.setState(Status.running);
 		w1.setWorkflow_type(WorkflowType.development);
 
 		WorkflowDetail w2 = new WorkflowDetail();
 		w2.setName("w2");
 		w2.setId("id2");
-		w2.setState(Status.running);
 		w2.setWorkflow_type(WorkflowType.workflow);
-
-		WorkflowDetail w3 = new WorkflowDetail();
-		w3.setState(Status.stopped);
 
 		when(air.getUserWorkflows(username)).thenReturn(Arrays.asList(w1, w2));
 	}

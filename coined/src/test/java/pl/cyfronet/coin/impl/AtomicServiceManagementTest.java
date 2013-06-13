@@ -121,7 +121,7 @@ public class AtomicServiceManagementTest extends AbstractServiceTest {
 		currentAction = action;
 
 		when(action.execute()).thenReturn(ases);
-		when(actionFactory.createListAtomicServicesAction(username))
+		when(actionFactory.createListAtomicServicesAction(username, true))
 				.thenReturn(action);
 	}
 

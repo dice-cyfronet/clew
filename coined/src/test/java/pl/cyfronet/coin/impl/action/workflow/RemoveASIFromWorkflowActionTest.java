@@ -31,7 +31,6 @@ import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
-import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.ApplianceConfiguration;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
@@ -93,7 +92,8 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 
 	private void whenRemoveASIFromWorkflow() {
 		Action<Class<Void>> action = actionFactory
-				.createRemoveASIFromWorkflowAction(username, contextId, asiId);
+				.createRemoveAtomicServiceFromWorkflowAction(username,
+						contextId, asiId);
 		action.execute();
 	}
 
@@ -154,28 +154,6 @@ public class RemoveASIFromWorkflowActionTest extends RemoveWorkflowElementTest {
 
 	private void givenWorkflowWithoutASI() {
 		givenWorkflowWithASIs(true, "otherId", "yetAnotherId");
-	}
-
-	@Test
-	public void shouldThrownExceptionWhenWorkflowInProductionMode()
-			throws Exception {
-		givenWorkflowInProductionMode();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (WorkflowNotInDevelopmentModeException e) {
-			// OK - should be thrown
-		}
-
-		thenOnlyAirActionInvoked();
-	}
-
-	private void givenWorkflowInProductionMode() {
-		WorkflowDetail wd = new WorkflowDetail();
-		wd.setVph_username(username);
-		wd.setWorkflow_type(WorkflowType.workflow);
-
-		when(air.getWorkflow(contextId)).thenReturn(wd);
 	}
 
 	@Override

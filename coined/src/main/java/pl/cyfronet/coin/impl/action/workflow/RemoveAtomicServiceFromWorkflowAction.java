@@ -22,12 +22,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
+import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
+import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.impl.RemoveRequiredAppliancesRequestImpl;
 
 /**
@@ -40,13 +45,14 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			.getLogger(RemoveAtomicServiceFromWorkflowAction.class);
 
 	private String contextId;
-	private String asConfigId;
-
+	private String asiId;
+	WorkflowDetail workflowDetails;
+	
 	public RemoveAtomicServiceFromWorkflowAction(ActionFactory actionFactory,
-			String username, String contextId, String asConfigId) {
+			String username, String contextId, String asiId) {
 		super(actionFactory, username);
 		this.contextId = contextId;
-		this.asConfigId = asConfigId;
+		this.asiId = asiId;
 	}
 
 	/*
@@ -55,11 +61,62 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 	 */
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
-		logger.debug("Removing {} AS from {} context", asConfigId, contextId);
+		logger.debug("Removing {} AS from {} context", asiId, contextId);
+		workflowDetails = getUserWorkflow(contextId,
+				getUsername());
+		
+		if(workflowDetails.getWorkflow_type() == WorkflowType.development) {
+			removeAsiFromWorkflow();
+		} else {
+			removeAtomicServiceFromWorkflow();
+		}		
+
+		return Void.TYPE;
+	}
+
+	private void removeAsiFromWorkflow() {
+		if (workflowInDevelopmentModeHasASI()) {
+			ApplianceType at = getActionFactory().createGetASITypeAction(asiId)
+					.execute();
+
+			ManagerResponse response = getAtmosphere().removeAppliance(asiId);
+			parseResponseAndThrowExceptionsWhenNeeded(response);
+
+			if (at.isDevelopment()) {
+				Action<Class<Void>> deleteASAction = getActionFactory()
+						.createDeleteAtomicServiceFromAirAction(at.getId());
+				deleteASAction.execute();
+			}
+		} else {
+			logger.warn("Workflow {} does not have {} ASI", contextId, asiId);
+			throw new AtomicServiceInstanceNotFoundException();
+		}
+	}
+
+	private boolean workflowInDevelopmentModeHasASI() {
+		if (workflowDetails.getWorkflow_type() == WorkflowType.development) {
+			if (workflowDetails.getVms() != null) {
+				for (Vms vm : workflowDetails.getVms()) {
+					if (vm.getVms_id().equals(asiId)) {
+						return true;
+					}
+				}
+			}
+		} else {
+			logger.warn(
+					"Trying to remove redirection from workflow {} in production mode",
+					contextId);
+			throw new WorkflowNotInDevelopmentModeException();
+		}
+		return false;
+	}
+
+	
+	private void removeAtomicServiceFromWorkflow() {
 		if (workflowInProductionModeHasAS()) {
 			RemoveRequiredAppliancesRequestImpl request = new RemoveRequiredAppliancesRequestImpl();
 			request.setApplicationId(contextId);
-			request.setInitConfigIds(Arrays.asList(asConfigId));
+			request.setInitConfigIds(Arrays.asList(asiId));
 			try {
 				getAtmosphere().removeRequiredAppliances(request);
 			} catch (Exception e) {
@@ -69,26 +126,22 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			}
 		} else {
 			throw new AtomicServiceNotFoundException();
-		}
-
-		return Void.TYPE;
+		}		
 	}
 
 	private boolean workflowInProductionModeHasAS()
-			throws WorkflowNotInProductionModeException {
-		WorkflowDetail workflowDetails = getUserWorkflow(contextId,
-				getUsername());
+			throws WorkflowNotInProductionModeException {		
 		logger.debug(
 				"Checking if workflow is in production. Workflow type: {} with following VMS {}",
 				workflowDetails.getWorkflow_type(), workflowDetails.getVms());
 		if (workflowDetails.getWorkflow_type() == WorkflowType.development) {
 			logger.error(
 					"Trying to remove {} AS from workflow {} which is not in production mode",
-					asConfigId, contextId);
+					asiId, contextId);
 			throw new WorkflowNotInProductionModeException();
 		} else if (workflowDetails.getVms() != null) {
 			for (Vms vm : workflowDetails.getVms()) {
-				if (asConfigId.equals(vm.getConfiguration())) {
+				if (asiId.equals(vm.getConfiguration())) {
 					return true;
 				}
 			}
@@ -96,7 +149,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 
 		logger.error(
 				"AS {} does not belong to {} workflow. Following ASes belongs to the workflow {}. Removing AS from workflow failed.",
-				new Object[] { asConfigId, contextId, workflowDetails.getVms() });
+				new Object[] { asiId, contextId, workflowDetails.getVms() });
 		return false;
 	}
 

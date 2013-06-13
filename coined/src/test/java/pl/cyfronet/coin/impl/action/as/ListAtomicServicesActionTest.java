@@ -111,7 +111,7 @@ public class ListAtomicServicesActionTest extends ActionTest {
 
 	private void whenGetAtomicServices() {
 		Action<List<AtomicService>> action = actionFactory
-				.createListAtomicServicesAction(username);
+				.createListAtomicServicesAction(username, true);
 		asList = action.execute();
 	}
 

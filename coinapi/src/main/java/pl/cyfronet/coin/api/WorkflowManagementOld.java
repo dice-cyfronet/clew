@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 ACC CYFRONET AGH
+ * Copyright 2013 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package pl.cyfronet.coin.api;
 
 import java.util.List;
@@ -42,14 +43,16 @@ import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
 import pl.cyfronet.coin.api.exception.RedirectionNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
+import pl.cyfronet.coin.api.exception.WorkflowNotInProductionModeException;
 import pl.cyfronet.coin.api.exception.WorkflowStartException;
 
 /**
- * REST service dedicated for managing workflow lifecycle.
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
+@Deprecated
 @Path("/")
-public interface WorkflowManagement {
+public interface WorkflowManagementOld {
 
 	/**
 	 * Get user workflows. Identification of the user is taken from the security
@@ -57,7 +60,7 @@ public interface WorkflowManagement {
 	 * @return List of user workflows.
 	 */
 	@GET
-	@Path("/")
+	@Path("/list")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@WebMethod(operationName = "getUserWorkflows")
 	@WebResult(name = "workflows")
@@ -69,6 +72,12 @@ public interface WorkflowManagement {
 	 * atomic services can be available while starting workflow or latter on
 	 * during workflow run). There can be many workflow type Workflows but only
 	 * one portal and development workflow.
+	 * <p>
+	 * Service will be published as a REST service which consumes JSON with
+	 * following format: <code>
+	 * 	{"name": "workflowName:, "requiredIds": ["atomicService1Id", ..., "atomicServiceNId"]}  
+	 * </code>
+	 * <p>
 	 * @param workflow Workflow specification
 	 * @return Workflow id.
 	 * @throws WorkflowStartException Thrown when workflow cannot be started.
@@ -77,75 +86,93 @@ public interface WorkflowManagement {
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@Path("/")
+	@Path("/start")
 	String startWorkflow(WorkflowStartRequest workflow)
 			throws WorkflowStartException, CloudFacadeException;
 
 	/**
-	 * Get full information about workflow.
-	 * @param contextId Workflow id.
-	 * @return Workflow structure (workflow name, type, atomic service instances
-	 *         running in the scope of this workflow).
-	 */
-	@GET
-	@Path("/{contextId}")
-	@Produces({ MediaType.APPLICATION_JSON })
-	Workflow getWorkflow(@PathParam("contextId") String contextId)
-			throws WorkflowNotFoundException;
-	
-	/**
 	 * Stop workflow. It will stop all atomic services executed for the
 	 * workflow.
-	 * @param contextId Workflow id.
+	 * @param workflowId Workflow id.
 	 */
 	@DELETE
-	@Path("/{contextId}")
-	void stopWorkflow(@PathParam("contextId") String contextId)
+	@Path("/{workflowId}")
+	void stopWorkflow(@PathParam("workflowId") String workflowId)
 			throws WorkflowNotFoundException, CloudFacadeException;
 
 	/**
 	 * Add atomic service for started workflow. For new create AS selected key
 	 * will be injected, but only when workflow is in development mode.
-	 * @param contextId Workflow id.	 
+	 * @param workflowId Workflow id.	 
 	 * @param request Request with all information about required AS.
 	 */
 	@POST
-	@Path("/{contextId}/atomic_services")
+	@Path("/{workflowId}/as")
 	@Consumes({ MediaType.APPLICATION_JSON })
-	void addAtomicServiceToWorkflow(@PathParam("contextId") String contextId,
+	void addAtomicServiceToWorkflow(@PathParam("workflowId") String workflowId,
 			AddAsWithKeyToWorkflow request) throws WorkflowNotFoundException,
 			CloudFacadeException;	
 
 	/**
 	 * Remove atomic service from running workflow.
-	 * @param contextId Workflow id.
+	 * @param workflowId Workflow id.
 	 * @param asId Atomic service configuration id.
 	 */
 	@DELETE
-	@Path("/{contextId}/atomic_services/{asiId}")
+	@Path("/{workflowId}/as/{asConfigId}")
 	void removeAtomicServiceFromWorkflow(
-			@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId)
-			throws WorkflowNotFoundException, CloudFacadeException;	
+			@PathParam("workflowId") String workflowId,
+			@PathParam("asConfigId") String asConfigId)
+			throws WorkflowNotFoundException,
+			WorkflowNotInProductionModeException, CloudFacadeException;
+
+	@DELETE
+	@Path("/{workflowId}/asi/{asInstanceId}")
+	void removeAtomicServiceInstanceFromWorkflow(
+			@PathParam("workflowId") String workflowId,
+			@PathParam("asInstanceId") String asInstanceId)
+			throws WorkflowNotFoundException,
+			WorkflowNotInDevelopmentModeException, CloudFacadeException;
+
+	/**
+	 * Get full information about workflow.
+	 * @param workflowId Workflow id.
+	 * @return Workflow structure (workflow name, type, atomic service instances
+	 *         running in the scope of this workflow).
+	 */
+	@GET
+	@Path("/{workflowId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	Workflow getWorkflow(@PathParam("workflowId") String workflowId)
+			throws WorkflowNotFoundException;
+
+	@GET
+	@Path("/{workflowId}/instance/{asiId}")
+	AtomicServiceInstance getWorkflowAtomicServiceInstance(
+			@PathParam("workflowId") String workflowId,
+			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException;
 
 	// redirections
 
+	@DELETE
+	@Path("/{contextId}/asi/{asiId}/redirection/{redirectionId}")
+	void deleteRedirection(@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId,
+			@PathParam("redirectionId") String redirectionId)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException;
+
 	@GET
-	@Path("/{contextId}/atomic_services/{asiId}")
-	AtomicServiceInstance getWorkflowAtomicServiceInstance(
-			@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException;
-	
-	@GET
-	@Path("/{contextId}/atomic_services/{asiId}/redirections")
+	@Path("/{contextId}/asi/{asiId}/redirection")
 	@Produces({ MediaType.APPLICATION_JSON })
 	List<Redirection> getRedirections(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException;
 
 	@POST
-	@Path("/{contextId}/atomic_services/{asiId}/redirections")
+	@Path("/{contextId}/asi/{asiId}/redirection")
 	String addRedirection(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId, @FormParam("name") String name,
 			@FormParam("port") int port, @FormParam("type") RedirectionType type)
@@ -153,26 +180,17 @@ public interface WorkflowManagement {
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException;
 
-	@DELETE
-	@Path("/{contextId}/atomic_services/{asiId}/redirections/{redirectionId}")
-	void deleteRedirection(@PathParam("contextId") String contextId,
-			@PathParam("asiId") String asiId,
-			@PathParam("redirectionId") String redirectionId)
-			throws WorkflowNotFoundException,
-			AtomicServiceInstanceNotFoundException,
-			WorkflowNotInDevelopmentModeException, RedirectionNotFoundException;
-	
 	// endpoints
 
 	@GET
-	@Path("/{contextId}/atomic_services/{asiId}/endpoints")
+	@Path("/{contextId}/asi/{asiId}/endpoint")
 	@Produces({ MediaType.APPLICATION_JSON })
 	List<Endpoint> getEndpoints(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException;
 
 	@POST
-	@Path("/{contextId}/atomic_services/{asiId}/endpoints")
+	@Path("/{contextId}/asi/{asiId}/endpoint")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	String addEndpoint(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId, Endpoint endpoint)
@@ -181,7 +199,7 @@ public interface WorkflowManagement {
 			WorkflowNotInDevelopmentModeException;
 
 	@DELETE
-	@Path("/{contextId}/atomic_services/{asiId}/endpoints/{endpointId}")
+	@Path("/{contextId}/asi/{asiId}/endpoint/{endpointId}")
 	void deleteEndpoint(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId,
 			@PathParam("endpointId") String endpointId)

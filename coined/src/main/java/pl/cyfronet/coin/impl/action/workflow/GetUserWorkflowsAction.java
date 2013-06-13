@@ -18,7 +18,6 @@ package pl.cyfronet.coin.impl.action.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.cyfronet.coin.api.beans.Status;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.ActionFactory;
@@ -44,13 +43,11 @@ public class GetUserWorkflowsAction extends AirAction<List<WorkflowBaseInfo>> {
 				username);
 		List<WorkflowBaseInfo> workflows = new ArrayList<WorkflowBaseInfo>();
 		for (WorkflowDetail workflowDetail : workflowDetails) {
-			if (workflowDetail.getState() == Status.running) {
-				WorkflowBaseInfo info = new WorkflowBaseInfo();
-				info.setId(workflowDetail.getId());
-				info.setName(workflowDetail.getName());
-				info.setType(workflowDetail.getWorkflow_type());
-				workflows.add(info);
-			}
+			WorkflowBaseInfo info = new WorkflowBaseInfo();
+			info.setId(workflowDetail.getId());
+			info.setName(workflowDetail.getName());
+			info.setType(workflowDetail.getWorkflow_type());
+			workflows.add(info);
 		}
 
 		return workflows;

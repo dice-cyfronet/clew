@@ -45,7 +45,7 @@
 		</cxf:inFaultInterceptors>
 	</cxf:bus>
 
-	<jaxrs:client id="client-local" address="http://localhost:9099/securitypolicy"			    
+	<jaxrs:client id="client-local" address="http://localhost:9099/security_policies"			    
 		serviceClass="pl.cyfronet.coin.api.SecurityPolicyService"
 		username="test" password="${ticket}"
 		inheritHeaders="true">
@@ -54,7 +54,7 @@
 		</jaxrs:providers>		
 	</jaxrs:client>
 
-	<jaxrs:client id="client" address="http://vph.cyfronet.pl/cloudfacade/securitypolicy"				   
+	<jaxrs:client id="client" address="http://vph.cyfronet.pl/cloudfacade/security_policies"				   
 		serviceClass="pl.cyfronet.coin.api.SecurityPolicyService"
 		username="test" password="${ticket}"
 		inheritHeaders="true">

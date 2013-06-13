@@ -84,7 +84,7 @@ public class GetAtomicServiceTest extends ActionTest {
 
 	private void whenGetAtomicService(String asId) {
 		Action<AtomicService> action = actionFactory
-				.createGetAtomicServiceAction(asId);
+				.createGetAtomicServiceAction(asId, true);
 		atomicService = action.execute();
 	}
 

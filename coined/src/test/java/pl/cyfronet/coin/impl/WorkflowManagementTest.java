@@ -299,87 +299,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void shouldRemoveASIFromWorkflow() throws Exception {
-		givenRemoveASIFromWorkflowSuccess();
-		whenRemoveASIFromWorkflow();
-		thenActionExecuted();
-	}
-
-	private void givenRemoveASIFromWorkflowSuccess() {
-		Action<Class<Void>> action = mock(Action.class);
-		givenRemoveASIAction(action);
-	}
-
-	private void givenRemoveASIAction(Action<Class<Void>> action) {
-		when(
-				actionFactory.createRemoveASIFromWorkflowAction(username,
-						contextId, asiId)).thenReturn(action);
-		currentAction = action;
-	}
-
-	private void whenRemoveASIFromWorkflow() {
-		workflowManagement.removeAtomicServiceInstanceFromWorkflow(contextId,
-				asiId);
-	}
-
-	@Test
-	public void shouldThrowExceptionWhileRemovingASIAndWorkflowNotFound()
-			throws Exception {
-		givenNotKnowWorkflowWhileRemovingASI();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (WorkflowNotFoundException e) {
-			// OK - should be thrown
-		}
-		thenActionExecuted();
-	}
-
-	private void givenNotKnowWorkflowWhileRemovingASI() {
-		givenRemoveASIError(new WorkflowNotFoundException());
-	}
-
-	private void givenRemoveASIError(CloudFacadeException exception) {
-		Action<Class<Void>> action = mock(Action.class);
-		when(action.execute()).thenThrow(exception);
-		givenRemoveASIAction(action);
-	}
-
-	@Test
-	public void shouldThrowExceptionWhileRemovingNonExistingASI()
-			throws Exception {
-		givenNotKnowASIWhileRemovingASI();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (AtomicServiceInstanceNotFoundException e) {
-			// Ok should be thrown
-		}
-		thenActionExecuted();
-	}
-
-	private void givenNotKnowASIWhileRemovingASI() {
-		givenRemoveASIError(new AtomicServiceInstanceNotFoundException());
-	}
-
-	@Test
-	public void shouldThrowExceptionWhileRemovingASIInProductionMode()
-			throws Exception {
-		givenRemovingASIInProductionMode();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (WorkflowNotInDevelopmentModeException e) {
-			// Ok should be thrown
-		}
-		thenActionExecuted();
-	}
-
-	private void givenRemovingASIInProductionMode() {
-		givenRemoveASIError(new WorkflowNotInDevelopmentModeException());
-	}
-
-	@Test
 	public void shouldAddAtomicServiceWithKey() throws Exception {
 		givenMockedAddAtomicServiceToWorkflowAction();
 		whenAddAtomicServiceWithKeyToWorkflow();
@@ -406,8 +325,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void whenAddAtomicServiceWithKeyToWorkflow() {
-		workflowManagement.addAtomicServiceToWorkflow(contextId,
-				atomicServiceId, asName, keyId);
+		AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+		request.setAsConfigId(atomicServiceId);
+		request.setName(asName);
+		request.setKeyId(keyId);
+		workflowManagement.addAtomicServiceToWorkflow(contextId, request);
 	}
 
 	private void thenAtomicServiceAddedToWorkflow() {
@@ -421,7 +343,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenAtomicServiceAddedToWorkflow();
 	}
 
-	
 	private void givenMockedAddAtomicServiceToWorkflowWithCpuDataAndMemoryAction() {
 		addAsToWorkflowRequest = new AddAsWithKeyToWorkflow();
 		addAsToWorkflowRequest.setAsConfigId(atomicServiceId);
@@ -436,6 +357,24 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private void whenAddASWithCpuDataAndMemoryToWorkflow() {
 		workflowManagement.addAtomicServiceToWorkflow(contextId,
 				addAsToWorkflowRequest);
+	}
+
+	@Test
+	public void shouldThrow400WhenAsWithToLongNameAddedToWorkflow()
+			throws Exception {
+		String toLongName = "12345678901234567890123456789012345678901234567890123456789012345"; // 65
+																									// chars
+		addAsToWorkflowRequest = new AddAsWithKeyToWorkflow();
+		addAsToWorkflowRequest.setAsConfigId(atomicServiceId);
+		addAsToWorkflowRequest.setName(toLongName);
+
+		try {
+			workflowManagement.addAtomicServiceToWorkflow(contextId,
+					addAsToWorkflowRequest);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
 	}
 
 	// redirections
@@ -508,6 +447,18 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			fail();
 		} catch (AtomicServiceInstanceNotFoundException e) {
 			// OK should be thrown
+		}
+	}
+
+	@Test
+	public void shouldThrow400WhenRedirectionNameIncorrect() throws Exception {
+		String wrongRedirectionName = "asdfsad$";
+		try {
+			workflowManagement.addRedirection(contextId, asiId,
+					wrongRedirectionName, redirectionPort, redirectionType);
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
 		}
 	}
 
@@ -773,14 +724,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		}
 
 		try {
-			workflowManagement.removeAtomicServiceInstanceFromWorkflow(
-					invalidId, "asiId");
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
-		try {
 			workflowManagement.getRedirections(invalidId, "asiId");
 			fail();
 		} catch (WebApplicationException e) {
@@ -853,8 +796,11 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	public void shouldThrow400WhenIdNotValid3Ids(String id1, String id2,
 			String id3) throws Exception {
 		try {
-			workflowManagement
-					.addAtomicServiceToWorkflow(id1, id2, "name", id3);
+			AddAsWithKeyToWorkflow request = new AddAsWithKeyToWorkflow();
+			request.setAsConfigId(id2);
+			request.setName("name");
+			request.setKeyId(id3);
+			workflowManagement.addAtomicServiceToWorkflow(id1, request);
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);

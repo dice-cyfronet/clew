@@ -50,7 +50,7 @@ public class DeleteAtomicServiceActionTest extends ActionTest {
 		as.setOwner(username);
 		Action<AtomicService> action = mock(Action.class);
 		when(action.execute()).thenReturn(as);
-		when(actionFactory.createGetAtomicServiceAction(asId)).thenReturn(
+		when(actionFactory.createGetAtomicServiceAction(asId, false)).thenReturn(
 				action);
 	}
 
