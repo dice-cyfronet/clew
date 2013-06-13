@@ -22,7 +22,7 @@
   	   http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
-	<jaxrs:client id="client" address="http://localhost:${port}/securitypolicy"		
+	<jaxrs:client id="client" address="http://localhost:${port}/security_policies"		
 		username="User123" password="notimportant"	    
 		serviceClass="pl.cyfronet.coin.api.OwnedPayloadService"
 		inheritHeaders="true">

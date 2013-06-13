@@ -99,8 +99,8 @@ public class ActionFactory {
 	private String coinBaseUrl;
 
 	public Action<List<AtomicService>> createListAtomicServicesAction(
-			String username) {
-		return new ListAtomicServicesAction(this, username);
+			String username, boolean loadDescriptors) {
+		return new ListAtomicServicesAction(this, username, loadDescriptors);
 	}
 
 	public Action<Class<Void>> createDeleteAtomicServiceAction(String username,
@@ -159,8 +159,8 @@ public class ActionFactory {
 	}
 
 	public Action<AtomicService> createGetAtomicServiceAction(
-			String atomicServiceId) {
-		return new GetAtomicServiceAction(this, atomicServiceId);
+			String atomicServiceId, boolean loadDescriptor) {
+		return new GetAtomicServiceAction(this, atomicServiceId, loadDescriptor);
 	}
 
 	public Action<ApplianceType> createGetASITypeAction(String instanceId) {

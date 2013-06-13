@@ -95,10 +95,10 @@ html,body {
 }
 
 .deprecation-warning {
-	font: 120% "Trebuchet MS", sans-serif;
+	font: 250% "Trebuchet MS", sans-serif;
 	text-align: center;
 	padding: 8px; 
-	margin-top: 16px;
+	margin-bottom: 20px;
 }
 </style>
 
@@ -107,7 +107,10 @@ html,body {
 <body>
 
 	<div class="wrapper">
-		<div class="proper-content">			
+		<div class="proper-content">
+			<div class="ui-state-error ui-corner-all deprecation-warning">
+				<strong>WARNING!</strong> The this is an old API which will be removed in the next Cloud Facade (1.6.0) release. <a href="/"><a href="/"><strong>Back to current API documentation!</strong></a>
+			</div>
 			<div class="ui-state-error ui-corner-all"
 				style="padding: 8px; margin-bottom: 6px">
 				<strong>Note!</strong> The operations listed below are secured with
@@ -117,15 +120,15 @@ html,body {
 			<div class="content">
 				<div id="tabs">
 					<ul>
-						<li><a href="#workflow-accordion">Workflows</a></li>
-						<li><a href="#as-accordion">Atomic Services</a></li>
-						<li><a href="#securitypolicy-accordion">Security Policies</a></li>
-						<li><a href="#securityproxy-accordion">Security Proxies</a></li>
-						<li><a href="#key-accordion">Public Keys</a></li>
+						<li><a href="#workflow-accordion">Workflow</a></li>
+						<li><a href="#as-accordion">Atomic Service</a></li>
+						<li><a href="#securitypolicy-accordion">Security Policy</a></li>
+						<li><a href="#securityproxy-accordion">Security Proxy</a></li>
+						<li><a href="#key-accordion">Public Key</a></li>
 					</ul>
 					<div id="workflow-accordion">
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflows</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/list</strong>
 								- gets the JSON structure of user workflows</a>
 						</h3>
 						<div>
@@ -145,36 +148,7 @@ html,body {
 							</ul>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/workflows</strong>
-								- starts new workflow for the user</a>
-						</h3>
-						<div>
-							<p>The structure of the JSON request includes:</p>
-							<ul>
-								<li>(required) <strong>name</strong> - workflow name
-								</li>
-								<li>(optional) <strong>description</strong> - workflow
-									description
-								</li>
-								<li>(optional) <strong>priority</strong> - workflow
-									priority
-								</li>
-								<li>(optional) <strong>type</strong> - workflow type
-									(possible values <i>workflow</i>, <i>development</i>, <i>portal</i>)
-								</li>
-								<li>(optional) <strong>asConfigIds</strong> - list of
-									required workflow atomic services configurations
-								</li>
-							</ul>
-							<p>
-								The operation returns the <strong>200</strong> status code and
-								the <strong>id</strong> of the created workflow instance on
-								success. The <strong>400</strong> status code and problem
-								explanation is given when the operation failed.
-							</p>
-						</div>						
-						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflows/{workflowId}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}</strong>
 								- gets the JSON structure workflow identified by workflowId</a>
 						</h3>
 						<div>
@@ -228,23 +202,7 @@ html,body {
 							</ul>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflows/{workflowId}</strong>
-								- stops workflow</a>
-						</h3>
-						<div>
-							<ul>
-								<li>(required) <strong>workflowId</strong> - workflow id
-									(acquired when starting the workflow)
-								</li>
-							</ul>
-							<p>
-								The operation returns the <strong>200</strong> status code on
-								success and the <strong>400</strong> status code and problem
-								explanation when failed.
-							</p>
-						</div>
-						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflows/{workflowId}/atomic_services/{asiId}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/instance/{asiId}</strong>
 								- gets the JSON structure workflow atomic service instance
 								identified by workflowId and asiId</a>
 						</h3>
@@ -293,9 +251,54 @@ html,body {
 											instance</li>
 									</ul></li>
 							</ul>
+						</div>
+						<h3>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/start</strong>
+								- starts new workflow for the user</a>
+						</h3>
+						<div>
+							<p>The structure of the JSON request includes:</p>
+							<ul>
+								<li>(required) <strong>name</strong> - workflow name
+								</li>
+								<li>(optional) <strong>description</strong> - workflow
+									description
+								</li>
+								<li>(optional) <strong>priority</strong> - workflow
+									priority
+								</li>
+								<li>(optional) <strong>type</strong> - workflow type
+									(possible values <i>workflow</i>, <i>development</i>, <i>portal</i>)
+								</li>
+								<li>(optional) <strong>asConfigIds</strong> - list of
+									required workflow atomic services configurations
+								</li>
+							</ul>
+							<p>
+								The operation returns the <strong>200</strong> status code and
+								the <strong>id</strong> of the created workflow instance on
+								success. The <strong>400</strong> status code and problem
+								explanation is given when the operation failed.
+							</p>
+						</div>
+						<h3>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}</strong>
+								- stops workflow</a>
+						</h3>
+						<div>
+							<ul>
+								<li>(required) <strong>workflowId</strong> - workflow id
+									(acquired when starting the workflow)
+								</li>
+							</ul>
+							<p>
+								The operation returns the <strong>200</strong> status code on
+								success and the <strong>400</strong> status code and problem
+								explanation when failed.
+							</p>
 						</div>						
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/workflows/{workflowId}/atomic_services</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/as</strong>
 								- adds atomic service to workflow</a>
 						</h3>
 						<div>
@@ -337,14 +340,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/as/{asConfigId}</strong>
 								- remove atomic service from workflow</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service instance id
+								<li>(required) <strong>asConfigId</strong> atomic service
+									configuration id
 								</li>
 							</ul>
 
@@ -355,7 +359,7 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/redirections</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/asi/{asiId}/redirection</strong>
 								- gets information about Atomic Service instance redirections</a>
 						</h3>
 						<div>
@@ -389,7 +393,7 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/redirections</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/asi/{asiId}/redirection</strong>
 								- reates new Atomic Service instance redirection</a>
 						</h3>
 						<div>
@@ -419,7 +423,7 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/redirections/{redirectionId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/asi/{asiId}/redirection/{redirectionId}</strong>
 								- deletes Atomic Service instance redirection</a>
 						</h3>
 						<div>
@@ -442,7 +446,7 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/endpoints</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/asi/{asiId}/endpoint</strong>
 								- gets information about Atomic Service instance endpoints</a>
 						</h3>
 						<div>
@@ -475,7 +479,7 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/endpoints</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/asi/{asiId}/endpoint</strong>
 								- reates new Atomic Service instance endpoint</a>
 						</h3>
 						<div>
@@ -507,7 +511,7 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/endpoints/{endpointId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/asi/{asiId}/endpoint/{endpointId}</strong>
 								- deletes Atomic Service instance endpoint</a>
 						</h3>
 						<div>
@@ -532,7 +536,7 @@ html,body {
 					</div>
 					<div id="as-accordion">
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/atomic_services</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/as/list</strong>
 								- gets the JSON structure of all registered atomic services</a>
 						</h3>
 						<div>
@@ -569,7 +573,7 @@ html,body {
 							</ul>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/atomic_services</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/as</strong>
 								- create new atomic service</a>
 						</h3>
 						<div>
@@ -614,7 +618,7 @@ html,body {
 							does not exist).
 						</div>
 						<h3>
-							<a href="#"><strong class="method">PUT</strong> <strong>/atomic_services/{atomicServiceId}</strong>
+							<a href="#"><strong class="method">PUT</strong> <strong>/as/{atomicServiceId}</strong>
 								- updates information about atomic service</a>
 						</h3>
 						<div>
@@ -657,7 +661,7 @@ html,body {
 							does not exist).
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/atomic_services/{atomicServiceId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/as/{atomicServiceId}</strong>
 								- deletes atomic service</a>
 						</h3>
 						<div>
@@ -679,7 +683,7 @@ html,body {
 							service instances created from this atomic service.
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/atomic_services/{atomicServiceId}/configurations</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/configurations</strong>
 								- gets atomic service configurations</a>
 						</h3>
 						<div>
@@ -700,7 +704,7 @@ html,body {
 							</ul>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/atomic_services/{atomicServiceId}/configurations</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/as/{atomicServiceId}/configurations</strong>
 								- Add new atomic service configuration</a>
 						</h3>
 						<div>
@@ -723,7 +727,7 @@ html,body {
 							explanation when failed.
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/atomic_services/services_set</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/as/services_set</strong>
 								- Get atomic services set in the taverna format</a>
 						</h3>
 						<div>
@@ -757,7 +761,7 @@ html,body {
 					</pre>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/atomic_services/{atomicServiceId}/endpoints/{redirectionName}/{invocationPath}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/as/{atomicServiceId}/endpoint/{redirectionName}/{invocationPath}</strong>
 								- Get endpoint descriptor</a>
 						</h3>
 						<div>
@@ -803,7 +807,7 @@ html,body {
 					</div>
 					<div id="securitypolicy-accordion">
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/security_policies</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy</strong>
 								- lists stored security policies names</a>
 						</h3>
 						<div>
@@ -817,7 +821,7 @@ html,body {
 								policies names on success.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/security_policies/{policyName}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy/{policyName}</strong>
 								- gets security policy</a>
 						</h3>
 						<div>
@@ -846,7 +850,7 @@ html,body {
 								does not exist.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/security_policies/{policyName}/payload</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/securitypolicy/{policyName}/payload</strong>
 								- gets security policy content</a>
 						</h3>
 						<div>
@@ -868,7 +872,7 @@ html,body {
 								security policy with given name does not exist.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/security_policies</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/securitypolicy</strong>
 								- creates new security policy</a>
 						</h3>
 						<div>
@@ -890,7 +894,7 @@ html,body {
 								with non unique name.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">PUT</strong> <strong>/security_policies/{policyName}</strong>
+							<a href="#"><strong class="method">PUT</strong> <strong>/securitypolicy/{policyName}</strong>
 								- update security policy</a>
 						</h3>
 						<div>
@@ -915,7 +919,7 @@ html,body {
 								code is returned when user tries to update not owned policy.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/security_policies/{policyName}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/securitypolicy/{policyName}</strong>
 								- removes security policy</a>
 						</h3>
 						<div>
@@ -936,7 +940,7 @@ html,body {
 
 					<div id="securityproxy-accordion">
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/security_proxies</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/securityproxy</strong>
 								- lists stored security proxy configurations names</a>
 						</h3>
 						<div>
@@ -950,7 +954,7 @@ html,body {
 								proxy configurations names on success.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/security_proxies/{proxyName}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/securityproxy/{proxyName}</strong>
 								- gets security proxy configuration</a>
 						</h3>
 						<div>
@@ -982,7 +986,7 @@ html,body {
 								with given name does not exist.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/security_proxies/{proxyName}/payload</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/securityproxy/{proxyName}/payload</strong>
 								- gets security proxy configuration content</a>
 						</h3>
 						<div>
@@ -1005,7 +1009,7 @@ html,body {
 								not exist.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/security_proxies</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/securityproxy</strong>
 								- creates new security proxy configuration</a>
 						</h3>
 						<div>
@@ -1028,7 +1032,7 @@ html,body {
 								proxy configuration with non unique name.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">PUT</strong> <strong>/security_proxies/{proxyName}</strong>
+							<a href="#"><strong class="method">PUT</strong> <strong>/securityproxy/{proxyName}</strong>
 								- update security proxy configuration</a>
 						</h3>
 						<div>
@@ -1054,7 +1058,7 @@ html,body {
 								not owned security proxy configuration.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/security_proxies/{proxyName}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/securityproxy/{proxyName}</strong>
 								- removes security proxy configuration</a>
 						</h3>
 						<div>
@@ -1075,7 +1079,7 @@ html,body {
 
 					<div id="key-accordion">
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/keys</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/key</strong>
 								- lists user public keys</a>
 						</h3>
 						<div>
@@ -1093,7 +1097,7 @@ html,body {
 							</ul>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/keys</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/key</strong>
 								- add new user public key</a>
 						</h3>
 						<div>
@@ -1113,7 +1117,7 @@ html,body {
 								correct 400 (bad request is returned)</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/keys/{keyId}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/key/{keyId}</strong>
 								- get public key content</a>
 						</h3>
 						<div>
@@ -1127,7 +1131,7 @@ html,body {
 								404 is returned.</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/keys/{keyId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/key/{keyId}</strong>
 								- delete user public key</a>
 						</h3>
 						<div>
@@ -1141,10 +1145,7 @@ html,body {
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="ui-state-error ui-corner-all deprecation-warning">
-				<a href="/old"><strong>Old API documentation</strong></a> Old API which will be removed in the next Cloud Facade (1.6.0) release!
-			</div>
+			</div>			
 		</div>
 		<div class="push"></div>
 	</div>

@@ -299,87 +299,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void shouldRemoveASIFromWorkflow() throws Exception {
-		givenRemoveASIFromWorkflowSuccess();
-		whenRemoveASIFromWorkflow();
-		thenActionExecuted();
-	}
-
-	private void givenRemoveASIFromWorkflowSuccess() {
-		Action<Class<Void>> action = mock(Action.class);
-		givenRemoveASIAction(action);
-	}
-
-	private void givenRemoveASIAction(Action<Class<Void>> action) {
-		when(
-				actionFactory.createRemoveASIFromWorkflowAction(username,
-						contextId, asiId)).thenReturn(action);
-		currentAction = action;
-	}
-
-	private void whenRemoveASIFromWorkflow() {
-		workflowManagement.removeAtomicServiceInstanceFromWorkflow(contextId,
-				asiId);
-	}
-
-	@Test
-	public void shouldThrowExceptionWhileRemovingASIAndWorkflowNotFound()
-			throws Exception {
-		givenNotKnowWorkflowWhileRemovingASI();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (WorkflowNotFoundException e) {
-			// OK - should be thrown
-		}
-		thenActionExecuted();
-	}
-
-	private void givenNotKnowWorkflowWhileRemovingASI() {
-		givenRemoveASIError(new WorkflowNotFoundException());
-	}
-
-	private void givenRemoveASIError(CloudFacadeException exception) {
-		Action<Class<Void>> action = mock(Action.class);
-		when(action.execute()).thenThrow(exception);
-		givenRemoveASIAction(action);
-	}
-
-	@Test
-	public void shouldThrowExceptionWhileRemovingNonExistingASI()
-			throws Exception {
-		givenNotKnowASIWhileRemovingASI();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (AtomicServiceInstanceNotFoundException e) {
-			// Ok should be thrown
-		}
-		thenActionExecuted();
-	}
-
-	private void givenNotKnowASIWhileRemovingASI() {
-		givenRemoveASIError(new AtomicServiceInstanceNotFoundException());
-	}
-
-	@Test
-	public void shouldThrowExceptionWhileRemovingASIInProductionMode()
-			throws Exception {
-		givenRemovingASIInProductionMode();
-		try {
-			whenRemoveASIFromWorkflow();
-			fail();
-		} catch (WorkflowNotInDevelopmentModeException e) {
-			// Ok should be thrown
-		}
-		thenActionExecuted();
-	}
-
-	private void givenRemovingASIInProductionMode() {
-		givenRemoveASIError(new WorkflowNotInDevelopmentModeException());
-	}
-
-	@Test
 	public void shouldAddAtomicServiceWithKey() throws Exception {
 		givenMockedAddAtomicServiceToWorkflowAction();
 		whenAddAtomicServiceWithKeyToWorkflow();
@@ -799,14 +718,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		try {
 			workflowManagement.removeAtomicServiceFromWorkflow(invalidId,
 					"asiId");
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
-		try {
-			workflowManagement.removeAtomicServiceInstanceFromWorkflow(
-					invalidId, "asiId");
 			fail();
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);

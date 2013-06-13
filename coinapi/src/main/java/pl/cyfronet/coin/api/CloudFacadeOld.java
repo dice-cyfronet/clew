@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 ACC CYFRONET AGH
+ * Copyright 2013 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,6 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package pl.cyfronet.coin.api;
 
 import java.util.List;
@@ -42,14 +43,12 @@ import pl.cyfronet.coin.api.exception.NotAcceptableException;
 import pl.cyfronet.coin.api.exception.NotAllowedException;
 
 /**
- * Web service definition of the cloud facade which exposes methods allowing to
- * manage cloud infrastructure.
- * @author <a href="d.harezlak@cyfronet.pl>Daniel Harezlak</a>
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
+@Deprecated
 @Path("/")
-public interface CloudFacade {
-
+public interface CloudFacadeOld {
 	/**
 	 * Get list of atomic services (vm templates) available for the user.
 	 * @return List of available atomic services.
@@ -57,18 +56,9 @@ public interface CloudFacade {
 	 *             services list occurs.
 	 */
 	@GET
-	@Path("/")
+	@Path("/list")
 	@Produces({ MediaType.APPLICATION_JSON })
 	List<AtomicService> getAtomicServices() throws CloudFacadeException;
-
-	@GET
-	@Path("/{atomicServiceId}")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	AtomicService getAtomicService(
-			@PathParam("atomicServiceId") String atomicServiceId,
-			@QueryParam("descriptor") boolean loadDescriptor)
-			throws AtomicServiceNotFoundException, NotAcceptableException,
-			NotAllowedException;
 
 	/**
 	 * Create atomic service (vm template) from atomic service instance (running
@@ -95,7 +85,7 @@ public interface CloudFacade {
 			AtomicServiceRequest updateRequest)
 			throws AtomicServiceNotFoundException, NotAcceptableException,
 			NotAllowedException;
-
+	
 	@DELETE
 	@Path("/{atomicServiceId}")
 	void deleteAtomicService(
@@ -142,7 +132,7 @@ public interface CloudFacade {
 	String getServicesSet();
 
 	@GET
-	@Path("/{atomicServiceId}/endpoints/{servicePort}/{invocationPath : .+}/get_path_info")
+	@Path("/{atomicServiceId}/endpoint/{servicePort}/{invocationPath : .+}/get_path_info")
 	@Produces({ MediaType.APPLICATION_JSON })
 	InvocationPathInfo getInvocationPathInfo(
 			@PathParam("atomicServiceId") String atomicServiceId,
@@ -152,7 +142,7 @@ public interface CloudFacade {
 			EndpointNotFoundException;
 
 	@GET
-	@Path("/{atomicServiceId}/endpoints/{serviceName}/{invocationPath : .+}")
+	@Path("/{atomicServiceId}/endpoint/{serviceName}/{invocationPath : .+}")
 	String getEndpointDescriptor(
 			@PathParam("atomicServiceId") String atomicServiceId,
 			@PathParam("serviceName") String servicePort,

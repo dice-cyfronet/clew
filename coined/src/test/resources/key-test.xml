@@ -48,7 +48,7 @@
 		</cxf:inFaultInterceptors>
 	</cxf:bus>
 
-	<jaxrs:client id="key-client-local" address="http://localhost:8088/key"			    
+	<jaxrs:client id="key-client-local" address="http://localhost:8088/keys"			    
 		serviceClass="pl.cyfronet.coin.api.KeyManagement"
 		inheritHeaders="true">
 		<jaxrs:providers>
@@ -56,7 +56,7 @@
 		</jaxrs:providers>		
 	</jaxrs:client>
 
-	<jaxrs:client id="key-client" address="http://149.156.10.133:9099/key"				   
+	<jaxrs:client id="key-client" address="http://149.156.10.133:9099/keys"				   
 		serviceClass="pl.cyfronet.coin.api.KeyManagement"
 		username="test" password="${ticket}"
 		inheritHeaders="true">

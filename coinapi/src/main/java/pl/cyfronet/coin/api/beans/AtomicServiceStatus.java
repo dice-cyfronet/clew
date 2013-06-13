@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 ACC CYFRONET AGH
+ * Copyright 2013 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,25 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package pl.cyfronet.coin.api;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+package pl.cyfronet.coin.api.beans;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  */
-public interface DocumentationService {
+public class AtomicServiceStatus {
+	private boolean active;
 
-	/**
-	 * Get documentation page content.
-	 * @return Documentation page content.
-	 */
-	@GET
-	@Path("/")
-	String getDocumentation();
-	
-	@GET
-	@Path("/old")
-	String getOldDocumentation();
+	@Override
+	public String toString() {
+		return "AtomicServiceStatus [active=" + active + "]";
+	}
 }

@@ -33,10 +33,13 @@ public class ListAtomicServicesAction extends
 		ReadOnlyAirAction<List<AtomicService>> {
 
 	private String username;
+	private boolean loadDescriptors;
 
-	public ListAtomicServicesAction(ActionFactory actionFactory, String username) {
+	public ListAtomicServicesAction(ActionFactory actionFactory,
+			String username, boolean loadDescriptors) {
 		super(actionFactory);
 		this.username = username;
+		this.loadDescriptors = loadDescriptors;
 	}
 
 	/**
@@ -46,11 +49,11 @@ public class ListAtomicServicesAction extends
 	 */
 	@Override
 	public List<AtomicService> execute() {
-		List<ApplianceType> applianceTypes = getApplianceTypes(true);
+		List<ApplianceType> applianceTypes = getApplianceTypes(loadDescriptors);
 		List<AtomicService> atomicServices = new ArrayList<AtomicService>();
 		for (ApplianceType applianceType : applianceTypes) {
 			if (!applianceType.isDevelopment()
-					|| username.equals(applianceType.getAuthor())) {				
+					|| username.equals(applianceType.getAuthor())) {
 				AtomicService atomicService = getAtomicService(applianceType);
 				atomicServices.add(atomicService);
 			}

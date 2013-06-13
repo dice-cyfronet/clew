@@ -21,7 +21,7 @@
   	   http://www.springframework.org/schema/util/spring-util.xsd
        ">
 
-	<jaxrs:client id="workflowManagementClient" address="http://localhost:${port}/workflow"
+	<jaxrs:client id="workflowManagementClient" address="http://localhost:${port}/workflows"
 		username="User123" password="notimportant" serviceClass="pl.cyfronet.coin.api.WorkflowManagement"
 		inheritHeaders="true">
 		<jaxrs:providers>

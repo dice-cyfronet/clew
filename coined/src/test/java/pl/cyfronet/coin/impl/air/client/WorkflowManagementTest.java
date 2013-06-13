@@ -32,9 +32,9 @@ public class WorkflowManagementTest {
 		BeanFactory factory = (BeanFactory) appContext;
 		
 		WorkflowManagement wm = factory.getBean("wm-client", WorkflowManagement.class);
-		wm.getEndpoints("50a8a4182a95243717000de2", "cyfronet-folsom-vm-8084641d-82a8-48df-9ac6-7fdf49bac034");
+//		wm.getEndpoints("50a8a4182a95243717000de2", "cyfronet-folsom-vm-8084641d-82a8-48df-9ac6-7fdf49bac034");
 
-		
+		wm.stopWorkflow("51b7020c866488216d01ecf0");
 		
 	}
 }

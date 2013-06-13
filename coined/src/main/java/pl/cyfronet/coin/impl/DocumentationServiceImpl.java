@@ -24,11 +24,9 @@ import pl.cyfronet.coin.impl.utils.FileUtils;
 public class DocumentationServiceImpl implements DocumentationService {
 
 	private static final String DOCUMENTATION_LOCATION = "www/index.html";
+	
+	private static final String OLD_DOCUMENTATION_LOCATION = "www/index-old.html";
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.api.CloudFacade#getDocumentation()
-	 */
 	@Override
 	public String getDocumentation() {
 		String documentationContent = FileUtils
@@ -36,6 +34,13 @@ public class DocumentationServiceImpl implements DocumentationService {
 		return removeCorruptedChars(documentationContent);
 	}
 
+	@Override
+	public String getOldDocumentation() {
+		String documentationContent = FileUtils
+				.getFileContent(OLD_DOCUMENTATION_LOCATION);
+		return removeCorruptedChars(documentationContent);
+	}
+	
 	/**
 	 * Strange behavior of the OSGI loading file content. It changes ( into {.
 	 * @param content Loaded documentation content.

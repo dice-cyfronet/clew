@@ -273,7 +273,7 @@ public class CloudManagerPortlet {
 			@RequestParam("atomicServiceInstanceId") String atomicServiceInstanceId,
 			PortletRequest request, ActionResponse response) {
 		log.info("Stopping AS instance with id [{}] from workflow with id [{}]", atomicServiceInstanceId, workflowId);
-		clientFactory.getWorkflowManagement(request).removeAtomicServiceInstanceFromWorkflow(workflowId, atomicServiceInstanceId);
+		clientFactory.getWorkflowManagement(request).removeAtomicServiceFromWorkflow(workflowId, atomicServiceInstanceId);
 	}
 	
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_STOP_INVOKER_INSTANCE)
