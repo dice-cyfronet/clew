@@ -569,6 +569,48 @@ html,body {
 							</ul>
 						</div>
 						<h3>
+							<a href="#"><strong class="method">GET</strong> <strong>/atomic_services/{atomicServiceId}</strong>
+								- gets atomic service JSON structure</a>
+						</h3>
+						<div>
+							<ul>
+								<li>(required) <strong>atomicServiceId</strong> - atomic service id</li>
+								<li>(query param) <strong>descriptor</strong> - If true than descriptors will be loaded (default false)</li>
+							</ul>
+						
+							<p>The structure of the returned JSON includes array of:</p>
+							<ul>
+								<li><strong>atomicServiceId</strong> - atomic service id</li>
+								<li><strong>name</strong> - atomic service name</li>
+								<li><strong>description</strong> - atomic service
+									description</li>
+								<li><strong>shared</strong> - true if atomic service can be
+									shared among workflows</li>
+								<li><strong>scalable</strong> - true if atomic service can
+									be multiplicated among workflow</li>
+								<li><strong>publisher</strong> - true if atomic service is
+									published for the end users</li>
+								<li><strong>cpu</strong> - cpu required by atomic service</li>
+								<li><strong>disk</strong> - disk required by atomic service
+									(in MB)</li>
+								<li><strong>memory</strong> - memory required by atomic
+									service (in MB)</li>
+								<li><strong>endpoints</strong> - registered atomic service
+									endpoints:
+									<ul>
+										<li><strong>description</strong> - endpoint description</li>
+										<li><strong>descriptor</strong> - endpoint descriptor
+											(e.g. WSDL)</li>
+										<li><strong>invocationPath</strong> - endpoint invocation
+											path</li>
+										<li><strong>port</strong> - endpoint port</li>
+										<li><strong>serviceName</strong> - service name</li>
+										<li><strong>type</strong> - endpoint type (WS, REST,
+											WebApp)</li>
+									</ul></li>
+							</ul>
+						</div>
+						<h3>
 							<a href="#"><strong class="method">POST</strong> <strong>/atomic_services</strong>
 								- create new atomic service</a>
 						</h3>
