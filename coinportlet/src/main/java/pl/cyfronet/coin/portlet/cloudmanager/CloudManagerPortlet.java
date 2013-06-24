@@ -496,8 +496,9 @@ public class CloudManagerPortlet {
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_INVOKE_ATOMIC_SERVICE)
 	public String doViewInvokeAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String atomicServiceInstanceId,
-			@RequestParam(required = false, value = PARAM_INVOCATION_RESULT)
-			String invocationResult, @RequestParam(required = false, value = PARAM_INVOCATION_CODE)
+			@RequestParam(PARAM_WORKFLOW_ID) String workflowId,
+			@RequestParam(required = false, value = PARAM_INVOCATION_RESULT) String invocationResult,
+			@RequestParam(required = false, value = PARAM_INVOCATION_CODE)
 			String invocationCode, Model model, PortletRequest request) {
 		log.debug("Atomic service invocation request called for AS id [{}] and AS instance id [{}]", atomicServiceId, atomicServiceInstanceId);
 		
@@ -512,17 +513,11 @@ public class CloudManagerPortlet {
 		}
 		
 		String configurationId = null;
-		String workflowId = null;
 		List<InitialConfiguration> initialConfigurations = clientFactory.getCloudFacade(request).
 				getInitialConfigurations(atomicServiceId, false);
 		
 		if(initialConfigurations != null && initialConfigurations.size() > 0) {
 			configurationId = initialConfigurations.get(0).getId();
-		}
-		
-		if(getWorkflowIds(WorkflowType.portal, request) != null &&
-				getWorkflowIds(WorkflowType.portal, request).size() > 0) {
-			workflowId = getWorkflowIds(WorkflowType.portal, request).get(0);
 		}
 		
 		if(atomicService != null && configurationId != null && workflowId != null) {
@@ -655,6 +650,8 @@ public class CloudManagerPortlet {
 		response.setRenderParameter(PARAM_INVOCATION_CODE, resultCode);
 		response.setRenderParameter(PARAM_ATOMIC_SERVICE_INSTANCE_ID,
 				invokeAtomicServiceRequest.getAtomicServiceInstanceId());
+		response.setRenderParameter(PARAM_WORKFLOW_ID,
+				invokeAtomicServiceRequest.getWorkflowId());
 	}
 	
 	@ResourceMapping("instanceStatus")

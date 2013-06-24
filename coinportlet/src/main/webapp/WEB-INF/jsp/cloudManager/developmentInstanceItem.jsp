@@ -29,6 +29,15 @@
 		</portlet:actionURL>
 		<c:set var="shutdownInstanceId">shutdownInstance-${atomicServiceInstance.id}</c:set>
 		<a id="${shutdownInstanceId}" href="${shutdownAtomicServiceInstance}" style="visibility: hidden;">Shut down</a><br/>
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery('#${shutdownInstanceId}').click(function() {
+					if(!confirm("<spring:message code='cloud.manager.portlet.stop.instance.confirmation.label'/>")) {
+						return false;
+					}
+				});
+			});
+		</script>
 		
 		<portlet:renderURL var="editEndpoints">
 			<portlet:param name="action" value="editEndpoints"/>
@@ -36,17 +45,17 @@
 			<portlet:param name="workflowId" value="${workflowId}"/>
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
-		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Installed applications and endpoints</a>
+		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Installed applications and endpoints</a><br/>
+		
+		<portlet:renderURL var="invokeAtomicService">
+			<portlet:param name="action" value="invokeAtomicService"/>
+			<portlet:param name="atomicServiceId" value="${atomicService.atomicServiceId}"/>
+			<portlet:param name="atomicServiceInstanceId" value="${atomicServiceInstance.id}"/>
+			<portlet:param name="workflowId" value="${workflowId}"/>
+		</portlet:renderURL>
+		<c:set var="invokeId">invokeId-${atomicServiceInstance.id}</c:set>
+		<a id="${invokeId}" href="${invokeAtomicService}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.invoke.atomic.service.label"/></a><br/>
 	</div>
-	<script type="text/javascript">
-		jQuery(document).ready(function() {
-			jQuery('#${shutdownInstanceId}').click(function() {
-				if(!confirm("<spring:message code='cloud.manager.portlet.stop.instance.confirmation.label'/>")) {
-					return false;
-				}
-			});
-		});
-	</script>
 	<c:if test="${not status.last}">
 		<hr style="margin-left: 20px; margin-right: 20px;"/>
 	</c:if>
@@ -76,6 +85,10 @@
 	    				if(jQuery('#${saveLinkId}').css('visibility') === 'hidden') {
 	    					jQuery('#${saveLinkId}').css('visibility', 'visible');
 	    				}
+	    				
+	    				if(jQuery('#${invokeId}').css('visibility') === 'hidden') {
+			    			jQuery('#${invokeId}').css('visibility', 'visible');
+			    		}
 	    				
 	    				if(jQuery('#${accessMethodsId}').css('visibility') === 'hidden') {
 	    					jQuery.get('${accessMethodsLink}', function(accessMethods) {
