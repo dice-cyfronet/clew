@@ -23,6 +23,7 @@
 						
 						<label for="asiName"><spring:message code="cloud.manager.portlet.asi.optional.name.label"/></label>
 						<form:input path="atomicServiceInstanceName"/>
+						<form:errors path="atomicServiceInstanceName" cssClass="text-error"/>
 						
 						<label for"cores"><spring:message code="cloud.manager.portlet.save.atomic.service.cores.label"/></label>
 						<form:select path="cores" items="${coreItems}">

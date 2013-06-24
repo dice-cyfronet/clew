@@ -338,33 +338,36 @@ public class CloudManagerPortlet {
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_START_ATOMIC_SERVICE)
-	public void doActionStartAtomicService(@RequestParam(PARAM_ATOMIC_SERVICE_ID)
-			String atomicServiceId, @RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType,
-			@RequestParam(required = false, value = PARAM_USER_KEY_ID) String userKeyId,
-			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_INSTANCE_NAME) String instanceName,
-			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_CORES) String cores,
-			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_MEMORY) String memory,
-			@RequestParam(required = false, value = PARAM_ATOMIC_SERVICE_DISK) String disk,
-			PortletRequest request, ActionResponse response) {
-		log.info("Processing start atomic service request for [{}]", atomicServiceId);
+	public void doActionStartAtomicService(@ModelAttribute(MODEL_BEAN_START_ATOMIC_SERVICE_REQUEST) StartAtomicServiceRequest startAtomicServiceRequest,
+			BindingResult errors, PortletRequest request, ActionResponse response) {
+		log.info("Processing start atomic service request for [{}]", startAtomicServiceRequest.getAtomicServiceId());
+		validator.validate(startAtomicServiceRequest, errors);
+		
+		if(errors.hasErrors()) {
+			response.setRenderParameter(PARAM_ACTION, ACTION_PICK_USER_KEY);
+			response.setRenderParameter(PARAM_ATOMIC_SERVICE_ID, startAtomicServiceRequest.getAtomicServiceId());
+			response.setRenderParameter(PARAM_WORKFLOW_TYPE, startAtomicServiceRequest.getWorkflowType().name());
+			
+			return;
+		}
 		
 		List<AtomicService> ass = getSortedAtomicServices(request);
 		AtomicService atomicService = null;
 		
 		for(AtomicService as : ass) {
-			if(as.getAtomicServiceId().equals(atomicServiceId)) {
+			if(as.getAtomicServiceId().equals(startAtomicServiceRequest.getAtomicServiceId())) {
 				atomicService = as;
 				break;
 			}
 		}
 		
-		List<String> workflowIds = getWorkflowIds(workflowType, request);
+		List<String> workflowIds = getWorkflowIds(startAtomicServiceRequest.getWorkflowType(), request);
 		String workflowId = null;
 		
 		if(workflowIds.size() == 0) {
 			WorkflowStartRequest wsr = new WorkflowStartRequest();
-			wsr.setName(workflowType.name() + " workflow");
-			wsr.setType(workflowType);
+			wsr.setName(startAtomicServiceRequest.getWorkflowType().name() + " workflow");
+			wsr.setType(startAtomicServiceRequest.getWorkflowType());
 			
 			try {
 				workflowId = clientFactory.getWorkflowManagement(request).startWorkflow(wsr);
@@ -375,44 +378,44 @@ public class CloudManagerPortlet {
 			workflowId = workflowIds.get(0);
 		}
 		
-		log.debug("Retrieving initial configurations for atomic service with id [{}]", atomicServiceId);
+		log.debug("Retrieving initial configurations for atomic service with id [{}]", startAtomicServiceRequest.getAtomicServiceId());
 		
 		List<InitialConfiguration> initialconfigurations =
-				clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false);
+				clientFactory.getCloudFacade(request).getInitialConfigurations(startAtomicServiceRequest.getAtomicServiceId(), false);
 		
 		if(initialconfigurations != null && initialconfigurations.size() == 0) {
 			//no initial configurations available, creating default one
-			clientFactory.getCloudFacade(request).addInitialConfiguration(atomicServiceId,
-					createDefaultInitialConfiguration(atomicServiceId));
+			clientFactory.getCloudFacade(request).addInitialConfiguration(startAtomicServiceRequest.getAtomicServiceId(),
+					createDefaultInitialConfiguration(startAtomicServiceRequest.getAtomicServiceId()));
 			//fetching the list again
-			initialconfigurations = clientFactory.getCloudFacade(request).getInitialConfigurations(atomicServiceId, false);
+			initialconfigurations = clientFactory.getCloudFacade(request).getInitialConfigurations(startAtomicServiceRequest.getAtomicServiceId(), false);
 		}
 		
 		if(initialconfigurations != null && initialconfigurations.size() > 0 &&
 				initialconfigurations.get(0).getId() != null) {
 			log.info("Starting atomic service instance for workflow [{}], configuration [{}]" +
 					" and user key with id [{}]",
-					new String[] {workflowId, initialconfigurations.get(0).getId(), userKeyId});
+					new String[] {workflowId, initialconfigurations.get(0).getId(), startAtomicServiceRequest.getUserKeyId()});
 			AddAsWithKeyToWorkflow aawktw = new AddAsWithKeyToWorkflow();
 			aawktw.setAsConfigId(initialconfigurations.get(0).getId());
-			aawktw.setKeyId(userKeyId);
+			aawktw.setKeyId(startAtomicServiceRequest.getUserKeyId());
 			
-			if(instanceName != null && !instanceName.trim().isEmpty()) {
-				aawktw.setName(instanceName);
+			if(startAtomicServiceRequest.getAtomicServiceInstanceName() != null && !startAtomicServiceRequest.getAtomicServiceInstanceName().trim().isEmpty()) {
+				aawktw.setName(startAtomicServiceRequest.getAtomicServiceInstanceName());
 			} else {
 				aawktw.setName(atomicService.getName());
 			}
 			
-			if(cores != null) {
-				aawktw.setCpu(Float.parseFloat(cores));
+			if(startAtomicServiceRequest.getCores() != null) {
+				aawktw.setCpu(Float.parseFloat(startAtomicServiceRequest.getCores()));
 			}
 			
-			if(memory != null) {
-				aawktw.setMemory(Integer.valueOf(memory));
+			if(startAtomicServiceRequest.getMemory() != null) {
+				aawktw.setMemory(Integer.valueOf(startAtomicServiceRequest.getMemory()));
 			}
 			
-			if(disk != null) {
-				aawktw.setDisk(Integer.valueOf(disk));
+			if(startAtomicServiceRequest.getDisk() != null) {
+				aawktw.setDisk(Integer.valueOf(startAtomicServiceRequest.getDisk()));
 			}
 			
 			try {
@@ -422,10 +425,10 @@ public class CloudManagerPortlet {
 				throw e;
 			}
 		} else {
-			log.warn("Configuration problem occurred during starting atomic service with id [{}]", atomicServiceId);
+			log.warn("Configuration problem occurred during starting atomic service with id [{}]", startAtomicServiceRequest.getAtomicServiceId());
 		}
 
-		response.setRenderParameter(PARAM_CURRENT_ATOMIC_SERVICE, atomicServiceId);
+		response.setRenderParameter(PARAM_CURRENT_ATOMIC_SERVICE, startAtomicServiceRequest.getAtomicServiceId());
 	}
 
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_SAVE_ATOMIC_SERVICE)
