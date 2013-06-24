@@ -824,9 +824,9 @@ public class CloudManagerPortlet {
 			PortletRequest request, ResourceResponse response) {
 		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		
-		for(AtomicService as : atomicServices) {
-			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
-				try {
+		try {
+			for(AtomicService as : atomicServices) {
+				if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
 					if(as.isActive()) {
 						response.getWriter().write("done");
 					} else {
@@ -834,13 +834,9 @@ public class CloudManagerPortlet {
 					}
 					
 					return;
-				} catch (IOException e) {
-					log.warn("Could not write atomic service status to the http writer", e);
 				}
 			}
-		}
-		
-		try {
+
 			response.getWriter().write("unknown AS with id " + atomicServiceId);
 		} catch (IOException e) {
 			log.warn("Could not write atomic service status to the http writer", e);
