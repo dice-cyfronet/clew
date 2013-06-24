@@ -36,7 +36,7 @@
 			<portlet:param name="workflowId" value="${workflowId}"/>
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
-		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Redirections and endpoints</a>
+		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Installed applications and endpoints</a>
 	</div>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {

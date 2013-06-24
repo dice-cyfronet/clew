@@ -7,7 +7,7 @@
 	<portlet:param name="action" value="addRedirection"/>
 </portlet:actionURL>
 
-<h2>Redirections</h2>
+<h2>Installed applications</h2>
 <c:choose>
 	<c:when test="${fn:length(redirections) > 0}">
 		<c:forEach var="redirection" items="${redirections}">
@@ -16,7 +16,7 @@
 					<strong>${redirection.name} (${redirection.type})</strong>
 				</div>
 				<div class="span8">
-					<spring:message code="cloud.manager.portlet.remove.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
+					<spring:message code="cloud.manager.portlet.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
 				</div>
 				<div class="span2">
 					<portlet:actionURL var="removeRedirection">
