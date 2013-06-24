@@ -73,10 +73,6 @@
 	    			}
 	    			
 	    			if(status === 'running') {
-	    				if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
-	    					jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
-	    				}
-	    				
 	    				if(jQuery('#${saveLinkId}').css('visibility') === 'hidden') {
 	    					jQuery('#${saveLinkId}').css('visibility', 'visible');
 	    				}
@@ -129,6 +125,16 @@
 						if(jQuery('#${editEndpointsId}').css('visibility') === 'visible') {
 							jQuery('#${editEndpointsId}').css('visibility', 'hidden');
 	    				}
+	    			}
+	    			
+	    			if (status === 'running' || status === 'booting') {
+	    				if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
+	    					jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
+	    				}
+	    			} else {
+	    				if(jQuery('#${shutdownInstanceId}').css('visibility') === 'visible') {
+			    			jQuery('#${shutdownInstanceId}').css('visibility', 'hidden');
+			    		}
 	    			}
 	    			
 	    			if(!timeoutSet) {

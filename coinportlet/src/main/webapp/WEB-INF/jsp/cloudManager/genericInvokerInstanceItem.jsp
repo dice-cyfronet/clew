@@ -64,15 +64,17 @@
 			    			if(jQuery('#${invokeId}').css('visibility') === 'hidden') {
 				    			jQuery('#${invokeId}').css('visibility', 'visible');
 				    		}
-			    			
-			    			if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
-				    			jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
-				    		}
 			    		} else {
 			    			if(jQuery('#${invokeId}').css('visibility') === 'visible') {
 				    			jQuery('#${invokeId}').css('visibility', 'hidden');
 				    		}
-			    			
+			    		}
+			    		
+			    		if (status === 'running' || status === 'booting') {
+			    			if(jQuery('#${shutdownInstanceId}').css('visibility') === 'hidden') {
+				    			jQuery('#${shutdownInstanceId}').css('visibility', 'visible');
+				    		}
+			    		} else {
 			    			if(jQuery('#${shutdownInstanceId}').css('visibility') === 'visible') {
 				    			jQuery('#${shutdownInstanceId}').css('visibility', 'hidden');
 				    		}
