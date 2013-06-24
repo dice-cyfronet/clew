@@ -25,27 +25,29 @@
 						<form:input path="atomicServiceInstanceName"/>
 						<form:errors path="atomicServiceInstanceName" cssClass="text-error"/>
 						
-						<label for"cores"><spring:message code="cloud.manager.portlet.save.atomic.service.cores.label"/></label>
+						<label for="cores"><spring:message code="cloud.manager.portlet.save.atomic.service.cores.label"/></label>
 						<form:select path="cores" items="${coreItems}">
 							<form:option value="hello"></form:option>
 						</form:select>
 						<form:errors path="cores" cssClass="text-error"/>
 						
-						<label for"memory"><spring:message code="cloud.manager.portlet.save.atomic.service.memory.label"/></label>
+						<label for="memory"><spring:message code="cloud.manager.portlet.save.atomic.service.memory.label"/></label>
 						<form:select path="memory" items="${memoryItems}"/>
 						<form:errors path="memory" cssClass="text-error"/>
 						
-						<label for"disk"><spring:message code="cloud.manager.portlet.save.atomic.service.disk.label"/></label>
+						<label for="disk"><spring:message code="cloud.manager.portlet.save.atomic.service.disk.label"/></label>
 						<form:select path="disk" items="${diskItems}"/>
 						<form:errors path="disk" cssClass="text-error"/>
 						
+						<label for="userKeyId"><spring:message code="cloud.manager.portlet.start.atomic.service.developer.key.label"/></label>
 						<c:forEach var="entry" items="${userKeyList}">
 							<label class="radio">
 								<form:radiobutton path="userKeyId" value="${entry.key}"/>
 								${entry.value}
 							</label>
 						</c:forEach>
-						<button class="btn" type='submit'><spring:message code='cloud.manager.portlet.start.atomic.service.submit.label'/></button>
+						<button class="btn btn-primary" type='submit'><spring:message code='cloud.manager.portlet.start.atomic.service.submit.label'/></button>
+						<a href='<portlet:renderURL/>' class="btn"><spring:message code='cloud.manager.portlet.cancel.start.atomic.service.action.label'/></a>
 					</fieldset>
 				</form:form>
 			</c:when>
@@ -53,12 +55,5 @@
 				<p><spring:message code="cloud.manager.portlet.no.user.keys.label"/></p>
 			</c:otherwise>
 		</c:choose>
-	</div>
-	<div>
-		<ul class="inline">
-			<li>
-				<a href='<portlet:renderURL/>'><spring:message code='cloud.manager.portlet.return.to.main.view.label'/></a>
-			</li>
-		</ul>
 	</div>
 </div>
