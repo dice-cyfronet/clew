@@ -702,6 +702,14 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	@Test
 	public void shouldThrow400WhenIdIsNotValid() throws Exception {
 		try {
+			workflowManagement.getWorkflowAtomicServiceInstance(invalidId,
+					"asiId");
+			fail();
+		} catch (WebApplicationException e) {
+			assertEquals(e.getResponse().getStatus(), 400);
+		}
+
+		try {
 			workflowManagement.stopWorkflow(invalidId);
 			fail();
 		} catch (WebApplicationException e) {
@@ -762,14 +770,6 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	@Test(dataProvider = "get2Ids")
 	public void shouldThrow400WhenIdNotValid2Ids(String id1, String id2)
 			throws Exception {
-
-		try {
-			workflowManagement.getWorkflowAtomicServiceInstance(id1, id2);
-			fail();
-		} catch (WebApplicationException e) {
-			assertEquals(e.getResponse().getStatus(), 400);
-		}
-
 		try {
 			workflowManagement.deleteRedirection(id1, "asiId", id2);
 			fail();
