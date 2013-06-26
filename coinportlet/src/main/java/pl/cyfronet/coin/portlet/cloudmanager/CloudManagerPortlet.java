@@ -502,16 +502,7 @@ public class CloudManagerPortlet {
 			String invocationCode, Model model, PortletRequest request) {
 		log.debug("Atomic service invocation request called for AS id [{}] and AS instance id [{}]", atomicServiceId, atomicServiceInstanceId);
 		
-		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
-		AtomicService atomicService = null;
-		
-		for(AtomicService as : atomicServices) {
-			if(as.getAtomicServiceId().equals(atomicServiceId)) {
-				atomicService = as;
-				break;
-			}
-		}
-		
+		AtomicService atomicService = clientFactory.getCloudFacade(request).getAtomicService(atomicServiceId, true);
 		String configurationId = null;
 		List<InitialConfiguration> initialConfigurations = clientFactory.getCloudFacade(request).
 				getInitialConfigurations(atomicServiceId, false);
@@ -661,24 +652,15 @@ public class CloudManagerPortlet {
 			PortletRequest request, ResourceResponse response) {
 		log.trace("Processing atomic service instance status request for workflow [{}], atomic service [{}] and instance [{}]",
 				new String[] {workflowId, atomicServiceId, instanceId});
-		
-		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
+
 		boolean statusRetrieved = false;
-		
-		if(workflow != null && workflow.getAtomicServiceInstances() != null) {
-			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
-				if(asi.getId() != null && asi.getId().equals(instanceId)) {
-					try {
-						response.getWriter().write(asi.getStatus().toString());
-					} catch (IOException e) {
-						log.warn("Could not write instance status to the http writer", e);
-					}
-					
-					statusRetrieved = true;
-					
-					break;
-				}
-			}
+	
+		try {
+			AtomicServiceInstance asi = clientFactory.getWorkflowManagement(request).getWorkflowAtomicServiceInstance(workflowId, instanceId);
+			response.getWriter().write(asi.getStatus().toString());
+			statusRetrieved = true;
+		} catch (Exception e) {
+			log.warn("Could not update the atomic service status for id " + instanceId, e);
 		}
 		
 		if(!statusRetrieved) {
@@ -699,57 +681,49 @@ public class CloudManagerPortlet {
 		log.trace("Processing atomic service instance access methods request for workflow [{}] and instance [{}]",
 				new String[] {workflowId, instanceId});
 		
-		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
+		AtomicServiceInstance asi = clientFactory.getWorkflowManagement(request).getWorkflowAtomicServiceInstance(workflowId, instanceId);
 		boolean accessMethodsRetrieved = false;
-		
-		if(workflow != null && workflow.getAtomicServiceInstances() != null) {
-			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
-				if(asi.getId() != null && asi.getId().equals(instanceId)) {
-					try {
-						if(asi.getRedirections() != null && asi.getRedirections().size() > 0) {
-							StringBuilder builder = new StringBuilder();
-							
-							for(Redirection redirection : asi.getRedirections()) {
-								if(redirection.getName() != null) {
-									builder.append(redirection.getName()).append(":")
-											.append(redirection.getHost()).append(":")
-											.append(redirection.getFromPort());
 
-									if(redirection.getName().equals("ssh") && asi.getPublicKeyId() != null) {
-										List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
-										String keyName = null;
-										
-										for(PublicKeyInfo pki : keys) {
-											if(pki.getId().equals(asi.getPublicKeyId())) {
-												keyName = pki.getKeyName();
-												break;
-											}
-										}
-										
-										if(keyName != null) {
-											builder.append(":").append(keyName);
-										}
-									}
+		try {
+			if(asi.getRedirections() != null && asi.getRedirections().size() > 0) {
+				StringBuilder builder = new StringBuilder();
+				
+				for(Redirection redirection : asi.getRedirections()) {
+					if(redirection.getName() != null) {
+						builder.append(redirection.getName()).append(":")
+								.append(redirection.getHost()).append(":")
+								.append(redirection.getFromPort());
+
+						if(redirection.getName().equals("ssh") && asi.getPublicKeyId() != null) {
+							List<PublicKeyInfo> keys = clientFactory.getKeyManagement(request).list();
+							String keyName = null;
+							
+							for(PublicKeyInfo pki : keys) {
+								if(pki.getId().equals(asi.getPublicKeyId())) {
+									keyName = pki.getKeyName();
+									break;
 								}
-								
-								builder.append("|");
 							}
 							
-							if(builder.length() > 0) {
-								builder.deleteCharAt(builder.length() - 1);
+							if(keyName != null) {
+								builder.append(":").append(keyName);
 							}
-							
-							log.trace("Returning the following redirection sequence: [{}]", builder.toString());
-							response.getWriter().write(builder.toString());
-							accessMethodsRetrieved = true;
 						}
-					} catch (IOException e) {
-						log.warn("Could not write instance status to the http writer", e);
 					}
-
-					break;
+					
+					builder.append("|");
 				}
+				
+				if(builder.length() > 0) {
+					builder.deleteCharAt(builder.length() - 1);
+				}
+				
+				log.trace("Returning the following redirection sequence: [{}]", builder.toString());
+				response.getWriter().write(builder.toString());
+				accessMethodsRetrieved = true;
 			}
+		} catch (IOException e) {
+			log.warn("Could not write instance status to the http writer", e);
 		}
 		
 		if(!accessMethodsRetrieved) {
@@ -819,19 +793,13 @@ public class CloudManagerPortlet {
 	@ResourceMapping("asSavingStatus")
 	public void checkAsStatus(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			PortletRequest request, ResourceResponse response) {
-		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
+		AtomicService as = clientFactory.getCloudFacade(request).getAtomicService(atomicServiceId, false);
 		
 		try {
-			for(AtomicService as : atomicServices) {
-				if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
-					if(as.isActive()) {
-						response.getWriter().write("done");
-					} else {
-						response.getWriter().write("saving");
-					}
-					
-					return;
-				}
+			if(as.isActive()) {
+				response.getWriter().write("done");
+			} else {
+				response.getWriter().write("saving");
 			}
 
 			response.getWriter().write("unknown AS with id " + atomicServiceId);
@@ -930,16 +898,7 @@ public class CloudManagerPortlet {
 	@RequestMapping(params = PARAM_ACTION + "=" + ACTION_PICK_USER_KEY)
 	public String doViewPickUserKey(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			@RequestParam(PARAM_WORKFLOW_TYPE) WorkflowType workflowType, Model model, PortletRequest request) {
-		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
-		AtomicService atomicService = null;
-		
-		for(AtomicService as : atomicServices) {
-			if(as.getAtomicServiceId().equals(atomicServiceId)) {
-				atomicService = as;
-				break;
-			}
-		}
-		
+		AtomicService atomicService = clientFactory.getCloudFacade(request).getAtomicService(atomicServiceId, false);
 		model.addAttribute(PARAM_ATOMIC_SERVICE_ID, atomicServiceId);
 		model.addAttribute(MODEL_BEAN_ATOMIC_SERVICE_NAME, atomicService.getName());
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
@@ -1201,7 +1160,7 @@ public class CloudManagerPortlet {
 		model.addAttribute(PARAM_WORKFLOW_TYPE, workflowType);
 		
 		if(!model.containsAttribute(MODEL_BEAN_SAVE_ATOMIC_SERVICE_REQUEST)) {
-			AtomicService as = getAtomicService(atomicServiceId, clientFactory.getCloudFacade(request).getAtomicServices());
+			AtomicService as = clientFactory.getCloudFacade(request).getAtomicService(atomicServiceId,true);
 			SaveAtomicServiceRequest sasr = new SaveAtomicServiceRequest();
 			sasr.setName(as.getName());
 			sasr.setDescription(as.getDescription());
@@ -1396,11 +1355,10 @@ public class CloudManagerPortlet {
 		
 		Map<AtomicService, List<AtomicServiceInstance>> result = new LinkedHashMap<AtomicService, List<AtomicServiceInstance>>();
 		Workflow workflow = clientFactory.getWorkflowManagement(request).getWorkflow(workflowId);
-		List<AtomicService> atomicServices = clientFactory.getCloudFacade(request).getAtomicServices();
 		
 		if(workflow != null && workflow.getAtomicServiceInstances() != null) {
 			for(AtomicServiceInstance asi : workflow.getAtomicServiceInstances()) {
-				AtomicService as = getAtomicService(asi.getAtomicServiceId(), atomicServices);
+				AtomicService as = clientFactory.getCloudFacade(request).getAtomicService(asi.getAtomicServiceId(), true);
 				
 				if(!result.keySet().contains(as)) {
 					result.put(as, new ArrayList<AtomicServiceInstance>());
@@ -1413,17 +1371,6 @@ public class CloudManagerPortlet {
 		}
 		
 		return result;
-	}
-
-	private AtomicService getAtomicService(String atomicServiceId,
-			List<AtomicService> atomicServices) {
-		for(AtomicService as : atomicServices) {
-			if(as.getAtomicServiceId() != null && as.getAtomicServiceId().equals(atomicServiceId)) {
-				return as;
-			}
-		}
-		
-		return null;
 	}
 	
 	private List<AtomicService> getSortedAtomicServices(PortletRequest request) {
