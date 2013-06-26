@@ -150,7 +150,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	public AtomicServiceInstance getWorkflowAtomicServiceInstance(
 			String workflowId, String asiId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
-		validateId(workflowId, asiId);
+		validateId(workflowId);
 		Action<AtomicServiceInstance> action = actionFactory
 				.createGetWorkflowAtomicServiceInstanceAction(getUsername(),
 						workflowId, asiId);
