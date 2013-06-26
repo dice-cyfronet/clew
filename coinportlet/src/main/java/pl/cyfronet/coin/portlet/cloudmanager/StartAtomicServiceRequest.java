@@ -1,12 +1,19 @@
 package pl.cyfronet.coin.portlet.cloudmanager;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
 import pl.cyfronet.coin.api.beans.WorkflowType;
 
 public class StartAtomicServiceRequest {
+	@NotNull
 	private String atomicServiceId;
 	private String atomicServiceName;
+	@NotNull
 	private WorkflowType workflowType;
 	private String userKeyId;
+	@Length(min = 0, max = 64, message = "length of the atomic service instance name should not be longer than 64 characters")
 	private String atomicServiceInstanceName;
 	private String cores;
 	private String memory;
