@@ -1432,9 +1432,10 @@ public class CloudManagerPortlet {
 			}
 			
 			if(redirection != null) {
+				log.info("Redirection: {}", redirection);
 				String link = "http://" + (addAuthentication ? auth : "") + redirection.getHost().trim() + ":" + redirection.getFromPort() + 
-						"/" + redirection.getPostfix().trim() +
-						(!redirection.getPostfix().trim().endsWith("/") && !endpoint.getInvocationPath().trim().startsWith("/") ? "/" : "") +
+						(redirection.getPostfix() == null ? "" : "/" + redirection.getPostfix().trim() +
+						(!redirection.getPostfix().trim().endsWith("/") && !endpoint.getInvocationPath().trim().startsWith("/") ? "/" : "")) +
 						endpoint.getInvocationPath().trim();
 				
 				if(wbr) {
