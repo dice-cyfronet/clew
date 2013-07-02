@@ -9,7 +9,7 @@
 
 	<groupId>pl.cyfronet.coin</groupId>
 	<artifactId>coin</artifactId>
-	<version>1.5.0</version>
+	<version>1.6.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>COIN - Cloud User Interfaces</name>
@@ -31,7 +31,7 @@
 		<connection>scm:git:ssh://git@dev.cyfronet.pl/atmosphere/coin.git</connection>
 		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/atmosphere/coin.git</developerConnection>
 		<url>http://dev.cyfronet.pl/gitlab/atmosphere/coin</url>
-	  <tag>coin-1.5.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<build>
