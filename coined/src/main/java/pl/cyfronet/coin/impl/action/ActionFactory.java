@@ -67,7 +67,6 @@ import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowsAction;
 import pl.cyfronet.coin.impl.action.workflow.GetWorkflowAtomicServiceInstanceAction;
 import pl.cyfronet.coin.impl.action.workflow.GetWorkflowDetailAction;
-import pl.cyfronet.coin.impl.action.workflow.RemoveASIFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.RemoveAtomicServiceFromWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.StartAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.workflow.StartWorkflowAction;
@@ -252,14 +251,9 @@ public class ActionFactory {
 	}
 
 	public Action<Class<Void>> createRemoveAtomicServiceFromWorkflowAction(
-			String username, String contextId, String asConfId) {
-		return new RemoveAtomicServiceFromWorkflowAction(this, username,
-				contextId, asConfId);
-	}
-
-	public Action<Class<Void>> createRemoveASIFromWorkflowAction(
 			String username, String contextId, String asiId) {
-		return new RemoveASIFromWorkflowAction(this, username, contextId, asiId);
+		return new RemoveAtomicServiceFromWorkflowAction(this, username,
+				contextId, asiId);
 	}
 
 	// redirections

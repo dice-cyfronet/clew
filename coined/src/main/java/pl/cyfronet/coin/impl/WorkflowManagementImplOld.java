@@ -110,8 +110,8 @@ public class WorkflowManagementImplOld extends UsernameAwareService implements
 				new Object[] { username, asInstanceId, workflowId });
 		validateId(workflowId);
 		Action<Class<Void>> action = actionFactory
-				.createRemoveASIFromWorkflowAction(username, workflowId,
-						asInstanceId);
+				.createRemoveAtomicServiceFromWorkflowAction(username,
+						workflowId, asInstanceId);
 		action.execute();
 	}
 
