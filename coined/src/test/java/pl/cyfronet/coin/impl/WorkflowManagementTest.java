@@ -42,6 +42,7 @@ import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
 import pl.cyfronet.coin.api.beans.Redirection;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -249,8 +250,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 		thenActionExecuted();
 
-	}
-
+	}	
+	
 	private void givenNotKnownWorkflow() {
 		givenRemoveASError(new WorkflowNotFoundException());
 	}
@@ -262,7 +263,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		givenRemoveASAction(action);
 
 	}
-
+	
 	@Test
 	public void shouldThrowExceptionWhileRemovingASWhichIsNotFound()
 			throws Exception {
@@ -296,6 +297,23 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenWorkflowInDevelopmentModeAndRemoveAS() {
 		givenRemoveASError(new WorkflowNotInProductionModeException());
+	}
+
+	@Test
+	public void shouldThrow403WhenRemovingSavingASI() throws Exception {
+		givenRemoveSavingASIFromWorkflow();
+		try {
+			whenRemoveASFromWorkflow();
+			fail();
+		} catch (AtomicServiceInstanceInUseException e) {
+			// OK - should be thrown
+		}
+			
+		thenActionExecuted();
+	}
+	
+	private void givenRemoveSavingASIFromWorkflow() {
+		givenRemoveASError(new AtomicServiceInstanceInUseException());		
 	}
 
 	@Test

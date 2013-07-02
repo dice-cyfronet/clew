@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -54,6 +55,8 @@ public class WorkflowServiceExceptionMapper extends CloudFacadeExceptionMapper {
 			} else if (WorkflowNotInProductionModeException.ERROR_MESSAGE
 					.equals(message)) {
 				throw new WorkflowNotInProductionModeException();
+			} else if (AtomicServiceInstanceInUseException.ERROR_MESSAGE.equals(message)) {
+				throw new AtomicServiceInstanceInUseException();
 			}
 		case 404:
 			if (WorkflowNotFoundException.ERROR_MESSAGE.equals(message)) {

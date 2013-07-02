@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -32,6 +33,7 @@ import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.api.VMSavingException;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 import pl.cyfronet.dyrealla.api.allocation.impl.RemoveRequiredAppliancesRequestImpl;
 
@@ -47,7 +49,7 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 	private String contextId;
 	private String asiId;
 	WorkflowDetail workflowDetails;
-	
+
 	public RemoveAtomicServiceFromWorkflowAction(ActionFactory actionFactory,
 			String username, String contextId, String asiId) {
 		super(actionFactory, username);
@@ -62,14 +64,13 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 	@Override
 	public Class<Void> execute() throws CloudFacadeException {
 		logger.debug("Removing {} AS from {} context", asiId, contextId);
-		workflowDetails = getUserWorkflow(contextId,
-				getUsername());
-		
-		if(workflowDetails.getWorkflow_type() == WorkflowType.development) {
+		workflowDetails = getUserWorkflow(contextId, getUsername());
+
+		if (workflowDetails.getWorkflow_type() == WorkflowType.development) {
 			removeAsiFromWorkflow();
 		} else {
 			removeAtomicServiceFromWorkflow();
-		}		
+		}
 
 		return Void.TYPE;
 	}
@@ -79,8 +80,17 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			ApplianceType at = getActionFactory().createGetASITypeAction(asiId)
 					.execute();
 
-			ManagerResponse response = getAtmosphere().removeAppliance(asiId);
-			parseResponseAndThrowExceptionsWhenNeeded(response);
+			try {
+				ManagerResponse response = getAtmosphere().removeAppliance(
+						asiId);
+				parseResponseAndThrowExceptionsWhenNeeded(response);
+			} catch (VMSavingException e) {
+				throw new AtomicServiceInstanceInUseException();
+			} catch (Exception e) {
+				logger.error("Unexpected error was thrown from Atmosphere", e);
+				throw new CloudFacadeException(
+						"Exception was thrown by Atmosphere, plese contact administrator");
+			}
 
 			if (at.isDevelopment()) {
 				Action<Class<Void>> deleteASAction = getActionFactory()
@@ -111,7 +121,6 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 		return false;
 	}
 
-	
 	private void removeAtomicServiceFromWorkflow() {
 		if (workflowInProductionModeHasAS()) {
 			RemoveRequiredAppliancesRequestImpl request = new RemoveRequiredAppliancesRequestImpl();
@@ -119,6 +128,8 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			request.setInitConfigIds(Arrays.asList(asiId));
 			try {
 				getAtmosphere().removeRequiredAppliances(request);
+			} catch (VMSavingException e) {
+				throw new AtomicServiceInstanceInUseException();
 			} catch (Exception e) {
 				logger.error("Unexpected error was thrown from Atmosphere", e);
 				throw new CloudFacadeException(
@@ -126,11 +137,11 @@ public class RemoveAtomicServiceFromWorkflowAction extends
 			}
 		} else {
 			throw new AtomicServiceNotFoundException();
-		}		
+		}
 	}
 
 	private boolean workflowInProductionModeHasAS()
-			throws WorkflowNotInProductionModeException {		
+			throws WorkflowNotInProductionModeException {
 		logger.debug(
 				"Checking if workflow is in production. Workflow type: {} with following VMS {}",
 				workflowDetails.getWorkflow_type(), workflowDetails.getVms());

@@ -29,15 +29,15 @@ public abstract class RemoveWorkflowElementTest extends WorkflowActionTest {
 		mockGetNonExistingWorkflow(air, contextId);
 	}
 	
-	protected void thenWorkflowElementRemoved() {
+	protected void thenWorkflowElementRemoved() throws Exception {
 		verify(air, times(1)).getWorkflow(contextId);
 		verifyElementRemovedFromAtmosphere(1);
 	}
 	
-	protected void thenOnlyAirActionInvoked() {
+	protected void thenOnlyAirActionInvoked() throws Exception {
 		verify(air, times(1)).getWorkflow(contextId);
 		verifyElementRemovedFromAtmosphere(0);
 	}
 	
-	protected abstract void verifyElementRemovedFromAtmosphere(int times);
+	protected abstract void verifyElementRemovedFromAtmosphere(int times) throws Exception;
 }

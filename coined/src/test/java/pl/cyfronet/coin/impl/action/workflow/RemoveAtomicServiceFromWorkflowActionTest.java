@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.impl.action.workflow;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -29,12 +31,15 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 import pl.cyfronet.coin.impl.mock.matcher.RemoveRequiredAppliancesRequestMatcher;
+import pl.cyfronet.dyrealla.api.VMSavingException;
+import pl.cyfronet.dyrealla.api.allocation.RemoveRequiredAppliancesRequest;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -54,7 +59,7 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends
 
 	@Test(dataProvider = "productionWorkflowTypeProvider")
 	public void shouldRemoveAS(WorkflowType workflowType) throws Exception {
-		givenWorkflowWithASAndRemoveASAction(workflowType);
+		givenWorkflowWithAS(workflowType);
 		whenRemoveASFromWorkflow();
 		thenWorkflowElementRemoved();
 	}
@@ -65,7 +70,7 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends
 				{ WorkflowType.workflow } };
 	}
 
-	private void givenWorkflowWithASAndRemoveASAction(WorkflowType workflowType) {
+	private void givenWorkflowWithAS(WorkflowType workflowType) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setVph_username(username);
 		wd.setWorkflow_type(workflowType);
@@ -155,14 +160,40 @@ public class RemoveAtomicServiceFromWorkflowActionTest extends
 		givenGetWorkflowAction(wd);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see pl.cyfronet.coin.impl.action.RemoveWorkflowElementTest#
-	 * verifyElementRemovedFromAtmosphere(int)
-	 */
 	@Override
-	protected void verifyElementRemovedFromAtmosphere(int times) {
+	protected void verifyElementRemovedFromAtmosphere(int times)
+			throws Exception {
 		verify(atmosphere, times(times)).removeRequiredAppliances(
 				argThat(matcher));
+	}
+
+	@DataProvider
+	private Object[][] allWorkflowTypeProvider() {
+		return new Object[][] { { WorkflowType.portal },
+				{ WorkflowType.workflow }, { WorkflowType.development } };
+	}
+
+	@Test(dataProvider = "allWorkflowTypeProvider")
+	public void shouldThrowExceptionWhenRemovingSavingAS(WorkflowType type)
+			throws Exception {
+		givenWorkflowWithSavingAS(type);
+		try {
+			whenRemoveASFromWorkflow();
+			fail();
+		} catch (AtomicServiceInstanceInUseException e) {
+			// OK should be thrown.
+		}
+	}
+
+	private void givenWorkflowWithSavingAS(WorkflowType type) throws Exception {
+		givenWorkflowWithAS(WorkflowType.portal);
+
+		when(atmosphere.removeAppliance(anyString())).thenThrow(
+				new VMSavingException());
+
+		when(
+				atmosphere
+						.removeRequiredAppliances(any(RemoveRequiredAppliancesRequest.class)))
+				.thenThrow(new VMSavingException());
 	}
 }

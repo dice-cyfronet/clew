@@ -26,11 +26,13 @@ import java.util.Arrays;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.api.VMSavingException;
 import pl.cyfronet.dyrealla.api.allocation.OperationStatus;
 import pl.cyfronet.dyrealla.api.allocation.impl.ManagerResponseImpl;
 
@@ -46,13 +48,16 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		thenCheckWorkflowStopped();
 	}
 
-	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() {
-		givenWorkflowStarted();
-		workflowDetails.setVms(Arrays.asList(new Vms()));
-		
+	private void givenAirStateWithWorkflowListAndMockedStopWorkflowAction() throws Exception {
+		givenWorkflowStartedWithVm();
 		mockStopWorkflowInAtmosphere();
 	}
 
+	private void givenWorkflowStartedWithVm() {
+		givenWorkflowStarted();
+		workflowDetails.setVms(Arrays.asList(new Vms()));
+	}
+	
 	private void whenStopWorkflow() {
 		stopWorkflow(contextId);
 	}
@@ -63,13 +68,13 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		action.execute();
 	}
 
-	private void thenCheckWorkflowStopped() {
+	private void thenCheckWorkflowStopped() throws Exception {
 		verify(air, times(1)).stopWorkflow(contextId);
 		verify(air, times(1)).getWorkflow(contextId);
 		verify(atmosphere, times(1)).removeRequiredAppliances(contextId);
 	}
 
-	private void mockStopWorkflowInAtmosphere() {
+	private void mockStopWorkflowInAtmosphere() throws Exception {
 		ManagerResponseImpl atmosphereManagerResponse = new ManagerResponseImpl();
 		atmosphereManagerResponse
 				.setOperationStatus(OperationStatus.SUCCESSFUL);
@@ -130,13 +135,13 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		// OperationStatus.COMPLETED_WITH_ERRORS);
 	}
 
-	private void mockStopWorkflowInAtmosphereWithError(String contextId) {
+	private void mockStopWorkflowInAtmosphereWithError(String contextId) throws Exception {
 		mockStopWorkflowInAtmosphereWithReturnStatus(contextId,
 				OperationStatus.FAILED);
 	}
 
 	private void mockStopWorkflowInAtmosphereWithReturnStatus(String contextId,
-			OperationStatus returnStatus) {
+			OperationStatus returnStatus) throws Exception {
 		ManagerResponseImpl atmosphereFailureResponse = new ManagerResponseImpl();
 		atmosphereFailureResponse.setOperationStatus(returnStatus);
 		atmosphereFailureResponse.addError("key", "something wrong happend "
@@ -202,7 +207,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		thenWorkflowIsStoppedAndDevelopmentASesAreRemoved();
 	}
 
-	private void givenWorkflowWith2ASesStartedInDevelopmentMode() {
+	private void givenWorkflowWith2ASesStartedInDevelopmentMode() throws Exception {
 		givenWorkflowStarted(WorkflowType.development);
 		mockStopWorkflowInAtmosphere();
 
@@ -212,7 +217,7 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		workflowDetails.setVms(Arrays.asList(vm1, vm2));
 	}
 
-	private void thenWorkflowIsStoppedAndDevelopmentASesAreRemoved() {
+	private void thenWorkflowIsStoppedAndDevelopmentASesAreRemoved() throws Exception {
 		thenCheckWorkflowStopped();
 
 		verify(air, times(1)).deleteAtomicService("asi1AS", true);
@@ -224,5 +229,26 @@ public class StopWorkflowActionTest extends WorkflowActionTest {
 		vm.setVms_id(vmId);
 		vm.setAppliance_type(vmId + "AS");
 		return vm;
+	}
+	
+	@Test
+	public void shouldThrowExceptionWhenStoppingWorkflowWithSavingASI() throws Exception {
+		givenWorkflowWithSavingASI();
+		try {
+			whenStopWorkflow();
+			fail();
+		} catch(AtomicServiceInstanceInUseException e) {
+			//OK should be thrown.			
+		}
+	}
+
+	private void givenWorkflowWithSavingASI() throws Exception {
+		givenWorkflowStartedWithVm(); 
+		
+		ManagerResponseImpl atmosphereManagerResponse = new ManagerResponseImpl();
+		atmosphereManagerResponse
+				.setOperationStatus(OperationStatus.SUCCESSFUL);
+
+		when(atmosphere.removeRequiredAppliances(contextId)).thenThrow(new VMSavingException());
 	}
 }

@@ -22,12 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.WorkflowNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
+import pl.cyfronet.dyrealla.api.InternalDyReAllaException;
+import pl.cyfronet.dyrealla.api.VMSavingException;
 import pl.cyfronet.dyrealla.api.allocation.ManagerResponse;
 
 /**
@@ -64,9 +67,16 @@ public class StopWorkflowAction extends WorkflowAction<Class<Void>> {
 		List<Vms> vms = wd.getVms();
 		
 		if(vms != null && vms.size() > 0) {
-			ManagerResponse response = getAtmosphere().removeRequiredAppliances(
-				contextId);
-			parseResponseAndThrowExceptionsWhenNeeded(response);
+			ManagerResponse response;
+			try {
+				response = getAtmosphere().removeRequiredAppliances(
+					contextId);
+				parseResponseAndThrowExceptionsWhenNeeded(response);
+			} catch (VMSavingException e) {
+				throw new AtomicServiceInstanceInUseException();
+			} catch (InternalDyReAllaException e) {
+				throw new CloudFacadeException(e.getMessage());
+			}
 		}
 		
 		getAir().stopWorkflow(contextId);
