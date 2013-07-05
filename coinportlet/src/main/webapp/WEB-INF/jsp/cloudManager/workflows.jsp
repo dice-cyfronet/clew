@@ -21,21 +21,16 @@
 	    				for(var i = 0; i < workflowSections.length; i++) {
 	    					var workflowData = workflowSections[i].split(';');
 	    					html += '<div style="float: left; width: 100%;"><span style="display: block; float: left;"><b>Workflow with id ' + workflowData[0] + '</b></span>' +
-	    							'<span style="float: right; display: block;"><a class="coin-link" href="' + workflowData[1] + '">Stop</a></span></div>';
+	    							'<span style="float: right; display: block;"><a href="' + workflowData[1] + '">Stop</a></span></div>';
 	    					
-	    					if(workflowData.length > 2) {
-	    						var instances = workflowData[2].split(':');
-	    						html += '<span style="padding-left: 10px; display: block;">' + instances[0] + ' instances</span><br/>';
-	    						
-	    						if(instances.length > 1) {
-	    							for(var j = 1; j < instances.length; j += 2) {
-	    								html += '<span style="padding-left: 20px; display: block;">' + instances[j] + ': <span style="color: #db7024;">' + instances[j + 1] + '</span></span><br/>';
-	    							}
-	    						} else {
-	    							html += '<span style="padding-left: 20px; display: block;">No instances</span><br/>';
-	    						}
+	    					if (workflowData.length > 2) {
+		    					for (var j = 2; j < workflowData.length; j++) {
+		    						var instanceData = workflowData[j].split(':');
+		    						html += '<div style="clear: both;"></div><span style="padding-left: 10px; display: block; margin-top: 15px;"><em>' + instanceData[0] + ' instances</em></span>';
+		    						html += '<span style="padding-left: 20px; display: block;">' + instanceData[1] + ': <span style="color: #db7024;">' + instanceData[2] + '</span></span>';
+		    					}
 	    					} else {
-	    						html += '<span style="padding-top: 10px; display: block;">No instances</span><br/>';
+	    						html += '<span style="padding-top: 10px; display: block;">No instances</span>';
 	    					}
 	    				}
 	    				
