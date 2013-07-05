@@ -1282,8 +1282,10 @@ public class CloudManagerPortlet {
 		String urlPath = createInvocationPath(request.getHost(), request.getPort(), request.getPostfix()) +
 				request.getInvocationPath().trim();
 		
-		for(FormField field : request.getFormFields()) {
-			urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
+		if (request.getFormFields() != null) {
+			for (FormField field : request.getFormFields()) {
+				urlPath = urlPath.replace("{" + field.getName() + "}", field.getValue());
+			}
 		}
 		
 		log.debug("URL for service invocation is [{}]", urlPath);
@@ -1305,7 +1307,7 @@ public class CloudManagerPortlet {
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String line = null;
 			
-			while((line = in.readLine()) != null) {
+			while ((line = in.readLine()) != null) {
 				response.append(line).append("\n");
 			}
 			
@@ -1315,7 +1317,7 @@ public class CloudManagerPortlet {
 			responseCode = connection.getResponseCode();
 			log.debug("Service invocation headear names and values: [{}]", connection.getHeaderFields());
 		} catch (IOException e) {
-			if(connection != null) {
+			if (connection != null) {
 				responseCode = connection.getResponseCode();
 				response.append(connection.getResponseMessage());
 			}
@@ -1326,7 +1328,7 @@ public class CloudManagerPortlet {
 	
 	private String createInvocationPath(String host, Integer port, String postfix) {
 		String urlPath = messages.getMessage("cloud.manager.portlet.hello.as.postfix.endpoint.template", null, null).
-				replace("{host}", host).replace("{port}", String.valueOf(port)).replace("{postfix}", postfix);
+				replace("{host}", host).replace("{port}", String.valueOf(port)).replace("{postfix}", postfix == null ? "" : postfix);
 		
 		return urlPath.trim();
 	}
