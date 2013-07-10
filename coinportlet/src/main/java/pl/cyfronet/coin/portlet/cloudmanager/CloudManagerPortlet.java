@@ -791,18 +791,20 @@ public class CloudManagerPortlet {
 	}
 	
 	@ResourceMapping("asSavingStatus")
-	public void checkAsStatus(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
+	public void doResourceCheckAsStatus(@RequestParam(PARAM_ATOMIC_SERVICE_ID) String atomicServiceId,
 			PortletRequest request, ResourceResponse response) {
 		AtomicService as = clientFactory.getCloudFacade(request).getAtomicService(atomicServiceId, false);
 		
 		try {
-			if(as.isActive()) {
-				response.getWriter().write("done");
+			if(as != null) {
+				if(as.isActive()) {
+					response.getWriter().write("done");
+				} else {
+					response.getWriter().write("saving");
+				}
 			} else {
-				response.getWriter().write("saving");
+				response.getWriter().write("unknown AS with id " + atomicServiceId);
 			}
-
-			response.getWriter().write("unknown AS with id " + atomicServiceId);
 		} catch (IOException e) {
 			log.warn("Could not write atomic service status to the http writer", e);
 		}
