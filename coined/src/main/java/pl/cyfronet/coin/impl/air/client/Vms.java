@@ -50,6 +50,13 @@ public class Vms {
 
 	private List<PortMapping> internal_port_mappings;
 
+	
+	/**
+	 * @since 1.6
+	 * @see #1726
+	 */
+	private List<VmHttpRedirection> http_redirections;
+	
 	/**
 	 * @return the name
 	 */
@@ -203,6 +210,14 @@ public class Vms {
 	 */
 	public void setUser_key(String user_key) {
 		this.user_key = user_key;
+	}
+
+	public List<VmHttpRedirection> getHttp_redirections() {
+		return http_redirections;
+	}
+
+	public void setHttp_redirections(List<VmHttpRedirection> http_redirections) {
+		this.http_redirections = http_redirections;
 	}
 
 	@Override

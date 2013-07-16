@@ -143,7 +143,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenReturn(asiRedirections);
 
 		when(
-				actionFactory.createGetAsiRedirectionsAction(contextId,
+				actionFactory.createGetAsiRedirectionsActionOld(contextId,
 						username, asiId)).thenReturn(action);
 		currentAction = action;
 	}
@@ -193,7 +193,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenThrow(exception);
 
 		when(
-				actionFactory.createGetAsiRedirectionsAction(contextId,
+				actionFactory.createGetAsiRedirectionsActionOld(contextId,
 						username, asiId)).thenReturn(action);
 		currentAction = action;
 	}

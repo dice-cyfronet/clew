@@ -34,6 +34,7 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.beans.redirection.Redirections;
 import pl.cyfronet.coin.impl.action.as.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
@@ -62,6 +63,7 @@ import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
 import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsActionOld;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowsAction;
@@ -258,12 +260,21 @@ public class ActionFactory {
 
 	// redirections
 
-	public Action<List<Redirection>> createGetAsiRedirectionsAction(
+	/**
+	 * @deprecated will be removed in CF 1.7 release
+	 */
+	@Deprecated
+	public Action<List<Redirection>> createGetAsiRedirectionsActionOld(
 			String contextId, String username, String asiId) {
-		return new GetAsiRedirectionsAction(this, contextId, username, asiId,
+		return new GetAsiRedirectionsActionOld(this, contextId, username, asiId,
 				proxyHost, proxyPort);
 	}
 
+	public Action<Redirections> createGetAsiRedirectionsAction(String username,
+			String contextId, String asiId) {
+		return new GetAsiRedirectionsAction(this, username, contextId, asiId);
+	}
+	
 	public Action<String> createAddAsiRedirectionAction(String username,
 			String contextId, String asiId, String serviceName, int port,
 			RedirectionType type) {
@@ -371,5 +382,5 @@ public class ActionFactory {
 
 	public void setCoinBaseUrl(String coinBaseUrl) {
 		this.coinBaseUrl = coinBaseUrl;
-	}
+	}	
 }
