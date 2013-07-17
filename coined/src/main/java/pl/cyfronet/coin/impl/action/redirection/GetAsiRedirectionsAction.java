@@ -101,7 +101,8 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 				httpRedirection.setId(atpm.getId());
 				httpRedirection.setName(atpm.getService_name());
 				httpRedirection.setToPort(atpm.getPort());
-				httpRedirection.setUrl(getUrl(atpm));
+				httpRedirection.setHttps(atpm.isHttps());
+				httpRedirection.setUrls(getUrls(atpm));
 
 				httpRedirections.add(httpRedirection);
 			}
@@ -110,18 +111,26 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 		return httpRedirections;
 	}
 
-	private String getUrl(ATPortMapping atpm) {
-		String url = getProxyUrl(atpm);
-		if (url == null) {
-			url = getDirectUrl(atpm);
+	private List<String> getUrls(ATPortMapping atpm) {
+		List<String> urls = getProxyUrl(atpm);
+		if (urls == null || urls.size() == 0) {
+			urls = getDirectUrl(atpm);
 		}
 
-		return url;
+		return urls;
 	}
 
-	private String getDirectUrl(ATPortMapping atpm) {
-		String prefix = atpm.isHttp() ? "http://" : "https://";
-		return String.format("%s%s:%s", prefix, getAsiIp(), atpm.getPort());
+	private List<String> getDirectUrl(ATPortMapping atpm) {
+		List<String> urls = new ArrayList<>();
+		if(atpm.isHttp()) {
+			urls.add(String.format("http://%s:%s", getAsiIp(), atpm.getPort()));
+		}
+		
+		if(atpm.isHttps()) {
+			urls.add(String.format("https://%s:%s", getAsiIp(), atpm.getPort()));
+		}
+		
+		return urls;
 	}
 
 	private String getAsiIp() {
@@ -143,15 +152,16 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 		return null;
 	}
 
-	private String getProxyUrl(ATPortMapping atpm) {
+	private List<String> getProxyUrl(ATPortMapping atpm) {
+		List<String> urls = new ArrayList<>();
 		if (asi.getHttp_redirections() != null) {
 			for (VmHttpRedirection httpRedirection : asi.getHttp_redirections()) {
 				if (httpRedirection.getVm_port() == atpm.getPort()) {
-					return httpRedirection.getUrl();
+					urls.add(httpRedirection.getUrl());
 				}
 			}
 		}
-		return null;
+		return urls;
 	}
 
 	private List<NatRedirection> getNatRedirections() {

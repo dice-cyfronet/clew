@@ -27,5 +27,7 @@ public enum RedirectionType {
 	
 	HTTP,
 	
-	HTTPS
+	HTTPS,
+	
+	HTTP_AND_HTTPS
 }

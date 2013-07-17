@@ -75,13 +75,31 @@ public class AddAsiRedirectionActionTest extends AsiRedirectionActionTest {
 				asiId, port, serviceName, getHttpProtocol(type));
 		assertEquals(redirectionId, givenRedirectionId);
 	}
-
+	
 	private HttpProtocol getHttpProtocol(RedirectionType type) {
 		if (type == RedirectionType.HTTPS) {
 			return HttpProtocol.HTTPS;
 		} else {
 			return HttpProtocol.HTTP;
 		}
+	}
+
+	@Test
+	public void shouldCreateHttpAndHttpsRedirections() throws Exception {
+		givenAsiInDevelopmentMode();
+		whenAddAsiRedirection(RedirectionType.HTTP_AND_HTTPS);
+		thenHttpAndHttpsRedirectionsCreated();
+	}
+	
+	private void thenHttpAndHttpsRedirectionsCreated() throws Exception {
+		verify(air, times(1)).addPortMapping("rest", atId, serviceName, port,
+				true, true);
+		verify(httpRedirectionService, times(1)).registerHttpService(contextId,
+				asiId, port, serviceName, HttpProtocol.HTTP);
+		verify(httpRedirectionService, times(1)).registerHttpService(contextId,
+				asiId, port, serviceName, HttpProtocol.HTTPS);
+		
+		assertEquals(redirectionId, givenRedirectionId);		
 	}
 
 	@Test

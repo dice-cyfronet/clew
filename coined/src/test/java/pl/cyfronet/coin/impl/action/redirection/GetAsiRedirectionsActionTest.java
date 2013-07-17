@@ -34,132 +34,138 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private Integer httpPort = 80;
 	private String httpId = "httpId";
 	private String httpUrl = "http://proxy/http";
-	
+
 	private String httpsName = "https";
 	private Integer httpsPort = 443;
 	private String httpsId = "httpsId";
 	private String httpsUrl = "https://proxy/http";
-	
+
 	private String natName = "ssh";
 	private Integer natPort = 22;
 	private String natId = "httpsId";
-	
+
 	private Redirections redirections;
 	private String directHttpUrl = "http://149.156.8.34:80";
 	private String directHttpsUrl = "https://149.156.8.34:443";
 	private String headnodeIp = "149.156.10.133";
-	private int headnodePort = 12345;	
+	private int headnodePort = 12345;
+	private Integer bothPort = 81;
+	private String bothName = "both";
+	private String bothId ="bothId";
 
 	@Test
 	public void shouldGetHttpRedirectionsForVmWithPrivateIp() throws Exception {
-		 givenWorkflowAsiWithPrivateIp();
-		 whenGetRedirections();
-		 thenRedirectionWithProxyUrlCreated();
+		givenWorkflowAsiWithPrivateIp();
+		whenGetRedirections();
+		thenRedirectionWithProxyUrlCreated();
 	}
-	
+
 	private void givenWorkflowAsiWithPrivateIp() {
 		givenApplianceType();
 		Vms vm = givenWorflowWithOneVm(WorkflowType.development);
-		
+
 		VmHttpRedirection httpRedirection = new VmHttpRedirection();
 		httpRedirection.setUrl(httpUrl);
 		httpRedirection.setVm_port(httpPort);
-		
+
 		VmHttpRedirection httpsRedirection = new VmHttpRedirection();
 		httpsRedirection.setUrl(httpsUrl);
-		httpsRedirection.setVm_port(httpsPort);	
-		
-		vm.setHttp_redirections(Arrays.asList(httpRedirection, httpsRedirection));	
+		httpsRedirection.setVm_port(httpsPort);
+
+		vm.setHttp_redirections(Arrays
+				.asList(httpRedirection, httpsRedirection));
 	}
 
 	private void givenApplianceType() {
 		ApplianceType applType = new ApplianceType();
-		
+
 		ATPortMapping httpMapping = new ATPortMapping();
 		httpMapping.setPort(httpPort);
 		httpMapping.setService_name(httpName);
 		httpMapping.setHttp(true);
-		httpMapping.setId(httpId);		
-		
+		httpMapping.setId(httpId);
+
 		ATPortMapping httpsMapping = new ATPortMapping();
 		httpsMapping.setPort(httpsPort);
 		httpsMapping.setService_name(httpsName);
 		httpsMapping.setHttps(true);
 		httpsMapping.setId(httpsId);
-		
+
 		ATPortMapping natMapping = new ATPortMapping();
 		natMapping.setPort(natPort);
 		natMapping.setService_name(natName);
 		natMapping.setId(natId);
-		
-		applType.setPort_mappings(Arrays.asList(httpMapping, httpsMapping, natMapping));
-		
+
+		applType.setPort_mappings(Arrays.asList(httpMapping, httpsMapping,
+				natMapping));
+
 		when(air.getTypeFromVM(asiId)).thenReturn(applType);
 	}
-	
+
 	private Vms givenWorflowWithOneVm(WorkflowType type) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setId(contextId);
 		wd.setVph_username(username);
 		wd.setWorkflow_type(type);
-		
+
 		Vms vm = new Vms();
 		vm.setAppliance_type("type1");
 		vm.setAppliance_type_name("type1 name");
 		vm.setName("vm1");
-		if(type == WorkflowType.development) {
+		if (type == WorkflowType.development) {
 			vm.setVms_id(asiId);
 		} else {
 			vm.setConfiguration(asiId);
 		}
-		
+
 		Specs specs = new Specs();
 		specs.setIp(Arrays.asList("10.100.8.34", "149.156.8.34"));
-		
+
 		vm.setSpecs(specs);
-					
+
 		wd.setVms(Arrays.asList(vm));
-		
-		when(air.getWorkflow(contextId)).thenReturn(wd);	
-		
+
+		when(air.getWorkflow(contextId)).thenReturn(wd);
+
 		return vm;
 	}
-	
+
 	private void whenGetRedirections() {
 		Action<Redirections> action = actionFactory
 				.createGetAsiRedirectionsAction(username, contextId, asiId);
-		redirections = action.execute();		
+		redirections = action.execute();
 	}
 
 	private void thenRedirectionWithProxyUrlCreated() {
 		thenRedirectionWithUrlCreated(httpUrl, httpsUrl);
 	}
-	
-	private void thenRedirectionWithUrlCreated(String r1Url, String r2Url ) {
+
+	private void thenRedirectionWithUrlCreated(String r1Url, String r2Url) {
 		List<HttpRedirection> http = redirections.getHttp();
 		assertNotNull(http);
 		assertEquals(http.size(), 2);
-		
+
 		HttpRedirection httpRedirection = http.get(0);
 		assertEquals(httpRedirection.getId(), httpId);
 		assertEquals(httpRedirection.getName(), httpName);
 		assertEquals(httpRedirection.getToPort(), httpPort);
-		assertEquals(httpRedirection.getUrl(), r1Url);
-		
-		
+		assertEquals(httpRedirection.getUrls().size(), 1);
+		assertEquals(httpRedirection.getUrls().get(0), r1Url);
+
 		HttpRedirection httpsRedirection = http.get(1);
 		assertEquals(httpsRedirection.getId(), httpsId);
 		assertEquals(httpsRedirection.getName(), httpsName);
 		assertEquals(httpsRedirection.getToPort(), httpsPort);
-		assertEquals(httpsRedirection.getUrl(), r2Url);
+		assertEquals(httpsRedirection.getUrls().size(), 1);
+		assertEquals(httpsRedirection.getUrls().get(0), r2Url);
 	}
 
 	@Test
 	public void shouldGetHttpRedirectionForVmWithPublicIp() throws Exception {
-		 givenWorkflowAsiWithPublicIp();
-		 whenGetRedirections();
-		 thenRedirectionWithDirectUrlCreated();
-	}	
+		givenWorkflowAsiWithPublicIp();
+		whenGetRedirections();
+		thenRedirectionWithDirectUrlCreated();
+	}
 
 	private void givenWorkflowAsiWithPublicIp() {
 		givenApplianceType();
@@ -171,23 +177,77 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	}
 
 	@Test
+	public void shouldGetHttpAndHttpsRedirectionsForTheSamePort()
+			throws Exception {
+		givenAsiWithHttpAndHttpsRedirectionsIntoTheSamePort();
+		whenGetRedirections();
+		thenRedirectionWith2UrlsCreated();
+	}
+
+	private void givenAsiWithHttpAndHttpsRedirectionsIntoTheSamePort() {
+		givenApplianceTypeWithHttpAndHttpsRedirectionIntoTheSamePort();
+		Vms vm = givenWorflowWithOneVm(WorkflowType.development);
+
+		VmHttpRedirection httpRedirection = new VmHttpRedirection();
+		httpRedirection.setUrl(httpUrl);
+		httpRedirection.setVm_port(bothPort);
+
+		VmHttpRedirection httpsRedirection = new VmHttpRedirection();
+		httpsRedirection.setUrl(httpsUrl);
+		httpsRedirection.setVm_port(bothPort);
+
+		vm.setHttp_redirections(Arrays
+				.asList(httpRedirection, httpsRedirection));
+	}
+
+	private void givenApplianceTypeWithHttpAndHttpsRedirectionIntoTheSamePort() {
+		ApplianceType applType = new ApplianceType();
+
+		ATPortMapping httpAndHttpsMapping = new ATPortMapping();
+		httpAndHttpsMapping.setPort(bothPort);
+		httpAndHttpsMapping.setService_name(bothName);
+		httpAndHttpsMapping.setHttp(true);
+		httpAndHttpsMapping.setHttps(true);
+		httpAndHttpsMapping.setId(bothId);
+		
+		applType.setPort_mappings(Arrays.asList(httpAndHttpsMapping));
+
+		when(air.getTypeFromVM(asiId)).thenReturn(applType);		
+	}
+
+	private void thenRedirectionWith2UrlsCreated() {
+		List<HttpRedirection> http = redirections.getHttp();
+		assertNotNull(http);
+		assertEquals(http.size(), 1);
+
+		HttpRedirection httpRedirection = http.get(0);
+		assertEquals(httpRedirection.getId(), bothId);
+		assertEquals(httpRedirection.getName(), bothName);
+		assertEquals(httpRedirection.getToPort(), bothPort);
+		
+		assertEquals(httpRedirection.getUrls().size(), 2);
+		assertEquals(httpRedirection.getUrls().get(0), httpUrl);
+		assertEquals(httpRedirection.getUrls().get(1), httpsUrl);
+	}
+
+	@Test
 	public void shouldGetNatASIRedirections() throws Exception {
-		 givenWorkflowWithNatRedirection();
-		 whenGetRedirections();
-		 thenNatRedirectionCreated();
+		givenWorkflowWithNatRedirection();
+		whenGetRedirections();
+		thenNatRedirectionCreated();
 	}
 
 	private void givenWorkflowWithNatRedirection() {
 		givenApplianceType();
 		Vms vm = givenWorflowWithOneVm(WorkflowType.development);
-		
+
 		PortMapping pm = new PortMapping();
 		pm.setHeadnode_ip(headnodeIp);
 		pm.setHeadnode_port(headnodePort);
 		pm.setHttp(false);
 		pm.setService_name(natName);
 		pm.setVm_port(natPort);
-		
+
 		vm.setInternal_port_mappings(Arrays.asList(pm));
 	}
 
@@ -196,12 +256,12 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		assertNotNull(nat);
 		assertEquals(nat.size(), 1);
 	}
-	
+
 	@Test
 	public void shouldGetRedirectionForWorkflowInProduction() throws Exception {
-		 givenWorkflowInProduction();
-		 whenGetRedirections();
-		 thanEmptyRedirectionsReceived();
+		givenWorkflowInProduction();
+		whenGetRedirections();
+		thanEmptyRedirectionsReceived();
 	}
 
 	private void givenWorkflowInProduction() {
@@ -210,11 +270,11 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		vm.setInternal_port_mappings(new ArrayList<PortMapping>());
 		vm.setHttp_redirections(new ArrayList<VmHttpRedirection>());
 	}
-	
-	private void thanEmptyRedirectionsReceived() {		
-		assertNotNull(redirections.getHttp());		
+
+	private void thanEmptyRedirectionsReceived() {
+		assertNotNull(redirections.getHttp());
 		assertEquals(redirections.getHttp().size(), 0);
-		
+
 		assertNotNull(redirections.getNat());
 		assertEquals(redirections.getNat().size(), 0);
 	}

@@ -146,7 +146,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			HttpRedirection httpRedirection = new HttpRedirection();
 			httpRedirection.setName("http_redirection" + i);
 			httpRedirection.setToPort(28080 + i);
-			httpRedirection.setUrl("http://aaa/" + i);
+			httpRedirection.setUrls(Arrays.asList("http://aaa/" + i));
 			httpRedirections.add(httpRedirection);
 		}
 		redirections.setHttp(httpRedirections);
@@ -182,7 +182,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			HttpRedirection httpRedirection = redirections.getHttp().get(i);
 			assertEquals(httpRedirection.getName(), "http_redirection" + i);
 			assertEquals(httpRedirection.getToPort().intValue(), 28080 + i);
-			assertEquals(httpRedirection.getUrl(), "http://aaa/" + i);
+			assertEquals(httpRedirection.getUrls().get(0), "http://aaa/" + i);
 		}
 	}
 

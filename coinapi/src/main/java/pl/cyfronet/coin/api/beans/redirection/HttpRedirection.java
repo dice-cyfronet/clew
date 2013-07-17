@@ -16,6 +16,8 @@
 
 package pl.cyfronet.coin.api.beans.redirection;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
  *
@@ -25,7 +27,8 @@ public class HttpRedirection {
 	private String id;
 	private String name;
 	private Integer toPort;
-	private String url;
+	private List<String> urls;
+	private boolean https;
 	
 	public String getId() {
 		return id;
@@ -51,17 +54,25 @@ public class HttpRedirection {
 		this.toPort = toPort;
 	}
 
-	public String getUrl() {
-		return url;
+	public List<String> getUrls() {
+		return urls;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUrls(List<String> urls) {
+		this.urls = urls;
+	}
+
+	public boolean isHttps() {
+		return https;
+	}
+
+	public void setHttps(boolean https) {
+		this.https = https;
 	}
 
 	@Override
 	public String toString() {
 		return "HttpRedirection [id=" + id + ", name=" + name + ", toPort="
-				+ toPort + ", url=" + url + "]";
+				+ toPort + ", urls=" + urls + ", https=" + https + "]";
 	}
 }
