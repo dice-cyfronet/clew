@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
-import pl.cyfronet.coin.api.beans.Redirection;
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.beans.redirection.HttpRedirection;
 import pl.cyfronet.coin.api.beans.redirection.NatRedirection;
 import pl.cyfronet.coin.api.beans.redirection.Redirections;
@@ -31,15 +31,16 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 
 	private String username;
 	private String contextId;
+	private String asiIdentifier;
 	private String asiId;
 	private Vms asi;
 
 	public GetAsiRedirectionsAction(ActionFactory actionFactory,
-			String username, String contextId, String asiId) {
+			String username, String contextId, String asiIdentifier) {
 		super(actionFactory);
 		this.username = username;
 		this.contextId = contextId;
-		this.asiId = asiId;
+		this.asiIdentifier = asiIdentifier;
 	}
 
 	@Override
@@ -49,25 +50,33 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 		Redirections redirections = new Redirections();
 		redirections.setHttp(getHttpRedirections());
 		redirections.setNat(getNatRedirections());
-		
+
 		return redirections;
-	}	
+	}
 
 	private void findAsi() {
-		asi = getAsi();
+		asi = getAsi();		
 		if (asi == null) {
 			throw new AtomicServiceInstanceNotFoundException();
 		}
+		asiId = asi.getVms_id();
 	}
 
 	private Vms getAsi() {
 		Action<WorkflowDetail> getWfDetailAct = getActionFactory()
 				.createGetWorkflowDetailAction(contextId, username);
 		WorkflowDetail wfd = getWfDetailAct.execute();
-
-		for (Vms instance : wfd.getVms()) {
-			if (instance.getVms_id().equals(asiId)) {
-				return instance;
+		if (wfd.getWorkflow_type() == WorkflowType.development) {
+			for (Vms instance : wfd.getVms()) {
+				if (instance.getVms_id().equals(asiIdentifier)) {
+					return instance;
+				}
+			}
+		} else {
+			for (Vms instance : wfd.getVms()) {
+				if (instance.getConfiguration().equals(asiIdentifier)) {
+					return instance;
+				}
 			}
 		}
 		return null;
@@ -128,7 +137,7 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 					// wrong ip - skipping.
 				}
 			}
-			//no public ip returning first one.
+			// no public ip returning first one.
 			return ips.get(0);
 		}
 		return null;
@@ -144,7 +153,7 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 		}
 		return null;
 	}
-	
+
 	private List<NatRedirection> getNatRedirections() {
 		List<NatRedirection> natRedirections = new ArrayList<>();
 		List<PortMapping> pms = asi.getInternal_port_mappings();
@@ -161,7 +170,7 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 			natRedirection.setType(RedirectionType.TCP);
 			natRedirections.add(natRedirection);
 		}
-		
+
 		return natRedirections;
 	}
 }

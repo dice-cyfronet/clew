@@ -4,6 +4,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	
 	private void givenWorkflowAsiWithPrivateIp() {
 		givenApplianceType();
-		Vms vm = givenWorflowWithOneVm();
+		Vms vm = givenWorflowWithOneVm(WorkflowType.development);
 		
 		VmHttpRedirection httpRedirection = new VmHttpRedirection();
 		httpRedirection.setUrl(httpUrl);
@@ -96,17 +97,21 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		when(air.getTypeFromVM(asiId)).thenReturn(applType);
 	}
 	
-	private Vms givenWorflowWithOneVm() {
+	private Vms givenWorflowWithOneVm(WorkflowType type) {
 		WorkflowDetail wd = new WorkflowDetail();
 		wd.setId(contextId);
 		wd.setVph_username(username);
-		wd.setWorkflow_type(WorkflowType.development);
+		wd.setWorkflow_type(type);
 		
 		Vms vm = new Vms();
 		vm.setAppliance_type("type1");
 		vm.setAppliance_type_name("type1 name");
 		vm.setName("vm1");
-		vm.setVms_id(asiId);
+		if(type == WorkflowType.development) {
+			vm.setVms_id(asiId);
+		} else {
+			vm.setConfiguration(asiId);
+		}
 		
 		Specs specs = new Specs();
 		specs.setIp(Arrays.asList("10.100.8.34", "149.156.8.34"));
@@ -158,7 +163,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 
 	private void givenWorkflowAsiWithPublicIp() {
 		givenApplianceType();
-		givenWorflowWithOneVm();
+		givenWorflowWithOneVm(WorkflowType.development);
 	}
 
 	private void thenRedirectionWithDirectUrlCreated() {
@@ -174,7 +179,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 
 	private void givenWorkflowWithNatRedirection() {
 		givenApplianceType();
-		Vms vm = givenWorflowWithOneVm();
+		Vms vm = givenWorflowWithOneVm(WorkflowType.development);
 		
 		PortMapping pm = new PortMapping();
 		pm.setHeadnode_ip(headnodeIp);
@@ -190,5 +195,27 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		List<NatRedirection> nat = redirections.getNat();
 		assertNotNull(nat);
 		assertEquals(nat.size(), 1);
+	}
+	
+	@Test
+	public void shouldGetRedirectionForWorkflowInProduction() throws Exception {
+		 givenWorkflowInProduction();
+		 whenGetRedirections();
+		 thanEmptyRedirectionsReceived();
+	}
+
+	private void givenWorkflowInProduction() {
+		givenApplianceType();
+		Vms vm = givenWorflowWithOneVm(WorkflowType.portal);
+		vm.setInternal_port_mappings(new ArrayList<PortMapping>());
+		vm.setHttp_redirections(new ArrayList<VmHttpRedirection>());
+	}
+	
+	private void thanEmptyRedirectionsReceived() {		
+		assertNotNull(redirections.getHttp());		
+		assertEquals(redirections.getHttp().size(), 0);
+		
+		assertNotNull(redirections.getNat());
+		assertEquals(redirections.getNat().size(), 0);
 	}
 }
