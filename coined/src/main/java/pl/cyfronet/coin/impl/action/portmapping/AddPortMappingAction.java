@@ -19,14 +19,16 @@ public class AddPortMappingAction extends AirAction<String> {
 	private String serviceName;
 	private int port;
 	private boolean http;
+	private boolean https;
 
 	public AddPortMappingAction(ActionFactory actionFactory, String asId,
-			String serviceName, int port, boolean http) {
+			String serviceName, int port, boolean http, boolean https) {
 		super(actionFactory);
 		this.asId = asId;
 		this.serviceName = serviceName;
 		this.port = port;
 		this.http = http;
+		this.https = https;
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class AddPortMappingAction extends AirAction<String> {
 			logger.debug("Adding port mapping {} port {} http {} for {}",
 					new Object[] { serviceName, port, http, asId });
 			return getAir().addPortMapping("rest", asId, serviceName, port,
-					http);
+					http, https);
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
 				logger.warn("Atomic Service {} not found", asId);

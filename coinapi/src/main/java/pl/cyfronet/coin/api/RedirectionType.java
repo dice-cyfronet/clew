@@ -25,5 +25,7 @@ public enum RedirectionType {
 	
 	UDP,
 	
-	HTTP
+	HTTP,
+	
+	HTTPS
 }

@@ -18,6 +18,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	private String serviceName = "my_service";
 	private int port = 80;
 	private boolean http = true;
+	private boolean https = true;
 	private String givenRedirectionId = "redirectionId";
 	private String redirectionId;
 
@@ -29,19 +30,19 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenExistingAS() {
-		when(air.addPortMapping("rest", asId, serviceName, port, http))
+		when(air.addPortMapping("rest", asId, serviceName, port, http, https))
 				.thenReturn(givenRedirectionId);
 	}
 
 	private void whenAddPortMapping() {
 		Action<String> action = actionFactory.createAddPortMappingAction(asId,
-				serviceName, port, http);
+				serviceName, port, http, https);
 		redirectionId = action.execute();
 	}
 
 	private void thenRedirectionAdded() {
 		verify(air, times(1)).addPortMapping("rest", asId, serviceName, port,
-				http);
+				http, https);
 		assertEquals(redirectionId, givenRedirectionId);
 	}
 
@@ -57,7 +58,7 @@ public class AddPortMappingActionTest extends ActionTest {
 	}
 
 	private void givenNonExistingAS() {
-		when(air.addPortMapping("rest", asId, serviceName, port, http))
+		when(air.addPortMapping("rest", asId, serviceName, port, http, https))
 				.thenThrow(getAirException(404));
 	}
 }

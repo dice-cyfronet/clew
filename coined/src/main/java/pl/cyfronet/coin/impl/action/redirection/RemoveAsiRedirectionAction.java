@@ -15,6 +15,7 @@ import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
+import pl.cyfronet.dyrealla.api.proxy.HttpProtocol;
 
 public class RemoveAsiRedirectionAction extends
 		AsiRedirectionAction<Class<Void>> {
@@ -57,7 +58,7 @@ public class RemoveAsiRedirectionAction extends
 	private void removeHttpPortMapping(String serviceName, int port) {
 		try {
 			getHttpRedirectionService().unregisterHttpService(getContextId(),
-					getAsiId(), serviceName, port);
+					getAsiId(), serviceName, port, HttpProtocol.HTTP);
 		} catch (VirtualMachineNotFoundException e) {
 			logger.error("ASI VM not found", e);
 			throw new AtomicServiceInstanceNotFoundException();

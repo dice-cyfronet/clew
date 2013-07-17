@@ -10,6 +10,7 @@ import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import pl.cyfronet.coin.api.RedirectionType;
@@ -19,19 +20,27 @@ import pl.cyfronet.coin.api.exception.WorkflowNotInDevelopmentModeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
+import pl.cyfronet.dyrealla.api.proxy.HttpProtocol;
 
 public class AddAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
-	private String serviceName = "myRedirection";	
+	private String serviceName = "myRedirection";
 	private String atId = "developmentApplianceTypeId";
 	private String givenRedirectionId = "rId";
 	private String redirectionId;
 
-	@Test
-	public void shouldCreateHttpRedirection() throws Exception {
+	@DataProvider
+	Object[][] getHttpType() {
+		return new Object[][] { { RedirectionType.HTTP },
+				{ RedirectionType.HTTPS } };
+	}
+
+	@Test(dataProvider = "getHttpType")
+	public void shouldCreateHttpRedirection(RedirectionType type)
+			throws Exception {
 		givenAsiInDevelopmentMode();
-		whenAddAsiHttpRedirection();
-		thenRedirectionAddedToAirAndRegisteredInProxy();
+		whenAddAsiRedirection(type);
+		thenRedirectionAddedToAirAndRegisteredInProxy(type);
 	}
 
 	private void givenAsiInDevelopmentMode() {
@@ -43,26 +52,36 @@ public class AddAsiRedirectionActionTest extends AsiRedirectionActionTest {
 		workflowDetails.setVms(Arrays.asList(asi));
 
 		when(
-				air.addPortMapping(eq("rest"), eq(atId), eq(serviceName), eq(port),
-						anyBoolean())).thenReturn(givenRedirectionId);
+				air.addPortMapping(eq("rest"), eq(atId), eq(serviceName),
+						eq(port), anyBoolean(), anyBoolean())).thenReturn(
+				givenRedirectionId);
 	}
 
 	private void whenAddAsiHttpRedirection() {
-		addAsiRedirection(RedirectionType.HTTP);
+		whenAddAsiRedirection(RedirectionType.HTTP);
 	}
 
-	private void addAsiRedirection(RedirectionType type) {
+	private void whenAddAsiRedirection(RedirectionType type) {
 		Action<String> action = actionFactory.createAddAsiRedirectionAction(
 				username, contextId, asiId, serviceName, port, type);
 		redirectionId = action.execute();
 	}
 
-	private void thenRedirectionAddedToAirAndRegisteredInProxy()
-			throws Exception {
-		verify(air, times(1)).addPortMapping("rest", atId, serviceName, port, true);
+	private void thenRedirectionAddedToAirAndRegisteredInProxy(
+			RedirectionType type) throws Exception {
+		verify(air, times(1)).addPortMapping("rest", atId, serviceName, port,
+				type == RedirectionType.HTTP, type == RedirectionType.HTTPS);
 		verify(httpRedirectionService, times(1)).registerHttpService(contextId,
-				asiId, port, serviceName);
+				asiId, port, serviceName, getHttpProtocol(type));
 		assertEquals(redirectionId, givenRedirectionId);
+	}
+
+	private HttpProtocol getHttpProtocol(RedirectionType type) {
+		if (type == RedirectionType.HTTPS) {
+			return HttpProtocol.HTTPS;
+		} else {
+			return HttpProtocol.HTTP;
+		}
 	}
 
 	@Test
@@ -73,12 +92,13 @@ public class AddAsiRedirectionActionTest extends AsiRedirectionActionTest {
 	}
 
 	private void whenAddAsiTCPRedirection() {
-		addAsiRedirection(RedirectionType.TCP);
+		whenAddAsiRedirection(RedirectionType.TCP);
 	}
 
 	private void thenRedirectionAddedToAirAndRegisteredInDnat()
 			throws Exception {
-		verify(air, times(1)).addPortMapping("rest", atId, serviceName, port, false);
+		verify(air, times(1)).addPortMapping("rest", atId, serviceName, port,
+				false, false);
 		verify(dnatRedirectionService, times(1)).addPortRedirection(asiId,
 				port, Protocol.TCP, serviceName);
 		assertEquals(redirectionId, givenRedirectionId);

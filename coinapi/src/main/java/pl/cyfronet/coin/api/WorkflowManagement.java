@@ -32,10 +32,10 @@ import javax.ws.rs.core.MediaType;
 import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.beans.redirection.Redirections;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
@@ -140,7 +140,7 @@ public interface WorkflowManagement {
 	@GET
 	@Path("/{contextId}/atomic_services/{asiId}/redirections")
 	@Produces({ MediaType.APPLICATION_JSON })
-	List<Redirection> getRedirections(@PathParam("contextId") String contextId,
+	Redirections getRedirections(@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException;
 

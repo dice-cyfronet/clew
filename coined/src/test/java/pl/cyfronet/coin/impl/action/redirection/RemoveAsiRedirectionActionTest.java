@@ -13,6 +13,7 @@ import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
+import pl.cyfronet.dyrealla.api.proxy.HttpProtocol;
 
 public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
@@ -63,7 +64,7 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 	private void thenHttpRedirectionRemoved() throws Exception {
 		verify(air).removePortMapping(redirectionId);
 		verify(httpRedirectionService).unregisterHttpService(contextId, asiId,
-				serviceName, port);
+				serviceName, port, HttpProtocol.HTTP);
 	}
 
 	@Test

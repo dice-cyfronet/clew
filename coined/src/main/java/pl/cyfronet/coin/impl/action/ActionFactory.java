@@ -266,23 +266,21 @@ public class ActionFactory {
 	@Deprecated
 	public Action<List<Redirection>> createGetAsiRedirectionsActionOld(
 			String contextId, String username, String asiId) {
-		return new GetAsiRedirectionsActionOld(this, contextId, username, asiId,
-				proxyHost, proxyPort);
+		return new GetAsiRedirectionsActionOld(this, contextId, username,
+				asiId, proxyHost, proxyPort);
 	}
 
 	public Action<Redirections> createGetAsiRedirectionsAction(String username,
 			String contextId, String asiId) {
 		return new GetAsiRedirectionsAction(this, username, contextId, asiId);
 	}
-	
+
 	public Action<String> createAddAsiRedirectionAction(String username,
 			String contextId, String asiId, String serviceName, int port,
 			RedirectionType type) {
 		AddAsiRedirectionAction action = new AddAsiRedirectionAction(this,
 				httpRedirectionService, dnatRedirectionService, username,
-				contextId, asiId);
-		action.setRedirectionDetails(serviceName, port,
-				type == RedirectionType.HTTP);
+				contextId, asiId, serviceName, port, type);
 		return action;
 	}
 
@@ -326,8 +324,9 @@ public class ActionFactory {
 	// port mapping
 
 	public Action<String> createAddPortMappingAction(String asId,
-			String serviceName, int port, boolean http) {
-		return new AddPortMappingAction(this, asId, serviceName, port, http);
+			String serviceName, int port, boolean http, boolean https) {
+		return new AddPortMappingAction(this, asId, serviceName, port, http,
+				https);
 	}
 
 	public Action<List<ATPortMapping>> createGetPortMappingsAction(
@@ -382,5 +381,5 @@ public class ActionFactory {
 
 	public void setCoinBaseUrl(String coinBaseUrl) {
 		this.coinBaseUrl = coinBaseUrl;
-	}	
+	}
 }
