@@ -371,22 +371,30 @@ html,body {
 
 							<p>The structure of the returned JSON includes:</p>
 							<ul>
-								<li><strong>id</strong> - redirection id</li>
-								<li><strong>name</strong> - redirection name</li>
-								<li><strong>toPort</strong> - internal atomic service port
-									this redirection is pointing to</li>
-								<li><strong>fromPort</strong> - public redirection port</li>
-								<li><strong>host</strong> - public redirection host</li>
-								<li><strong>type</strong> - redirection type (<i>HTTP</i>
-									or <i>TCP</i>)</li>
-								<li><strong>postfix</strong> - if <i>HTTP</i> redirection
-									than combination of <i>host</i>:<i>port</i>/<i>postfix</i>
-									composes redirection link</li>
+							    <li><strong>http</strong> - http redirections collection with elements in following format:
+								    <ul>								
+										<li><strong>id</strong> - redirection id</li>
+										<li><strong>name</strong> - redirection name</li>
+										<li><strong>toPort</strong> - internal atomic service port
+											this redirection is pointing to</li>									
+										<li><strong>urls</strong> - list of redirection urls</li>
+									</ul>
+								</li>
+								<li><strong>nat</strong> - nat redirections collection with elements in following format:
+								    <ul>								
+										<li><strong>id</strong> - redirection id</li>
+										<li><strong>name</strong> - redirection name</li>
+										<li><strong>toPort</strong> - internal atomic service port
+											this redirection is pointing to</li>	
+										<li><strong>fromPort</strong> - public redirection port</li>	
+										<li><strong>host</strong> - public redirection host</li>									
+									</ul>
+								</li>
 							</ul>
 							<p>
 								The operation returns the <strong>200</strong> status code on
-								success, <strong>404</strong> when Atomic Service instance or
-								endpoint does not exist and the <strong>400</strong> status code
+								success, <strong>404</strong> when Atomic Service instance does 
+								not exist and the <strong>400</strong> status code
 								and problem explanation when failed.
 							</p>
 						</div>
@@ -409,7 +417,7 @@ html,body {
 								</li>
 								<li>(required) <strong>toPort</strong> - redirection target port
 								</li>
-								<li>(required) <strong>type</strong> - redirection type (TCP, UDP, HTTP)
+								<li>(required) <strong>type</strong> - redirection type (TCP, UDP, HTTP, HTTPS, HTTP_AND_HTTPS)
 								</li>
 							</ul>
 
