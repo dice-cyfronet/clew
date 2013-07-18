@@ -104,7 +104,7 @@ public class AuthService extends TimerTask {
 
 	private void cleanCache() {
 		synchronized (cache) {
-			logger.info("Clearing AuthService cache");
+			logger.debug("Clearing AuthService cache");
 			for (Iterator<Map.Entry<String, UserDetails>> it = cache.entrySet()
 					.iterator(); it.hasNext();) {
 				Map.Entry<String, UserDetails> entry = it.next();
@@ -113,7 +113,7 @@ public class AuthService extends TimerTask {
 					it.remove();
 				}
 			}
-			logger.info("{} entries in cache after cache cleared", cache.size());
+			logger.debug("{} entries in cache after cache cleared", cache.size());
 		}
 	}
 
