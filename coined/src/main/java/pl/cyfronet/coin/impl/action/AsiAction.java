@@ -46,8 +46,12 @@ public abstract class AsiAction<T> extends WorkflowAction<T> {
 		WorkflowDetail wd = getUserWorkflow(contextId, getUsername());
 		List<Vms> vms = wd.getVms();
 		if (vms != null) {
-			for (Vms vm : vms) {
-				if (vm.getVms_id().equals(asiId)) {
+			for (Vms vm : vms) {				
+				if (wd.getWorkflow_type() == WorkflowType.development) {
+					if(vm.getVms_id().equals(asiId)) {
+						return vm.getAppliance_type();
+					}
+				} else if (vm.getConfiguration().equals(asiId)) {
 					return vm.getAppliance_type();
 				}
 			}
