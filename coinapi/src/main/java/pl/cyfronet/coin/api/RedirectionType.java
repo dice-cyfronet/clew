@@ -29,5 +29,13 @@ public enum RedirectionType {
 	
 	HTTPS,
 	
-	HTTP_AND_HTTPS
+	HTTP_AND_HTTPS;
+	
+	public boolean isHttp() {
+		return this == HTTP || this == HTTP_AND_HTTPS; 
+	}
+	
+	public boolean isHttps() {
+		return this == HTTPS || this == HTTP_AND_HTTPS;
+	}
 }

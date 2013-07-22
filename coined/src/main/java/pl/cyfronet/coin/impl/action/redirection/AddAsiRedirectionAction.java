@@ -53,27 +53,17 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 				new Object[] { atId, serviceName, port, type });
 
 		String redirectionId = getActionFactory().createAddPortMappingAction(
-				atId, serviceName, port, isHttp(), isHttps()).execute();
+				atId, serviceName, port, type.isHttp(), type.isHttps()).execute();
 
 		logger.debug("Added redirection id {}", redirectionId);
 
-		if (isHttp() || isHttps()) {
+		if (type.isHttp() || type.isHttps()) {
 			addHttpRedirection();
 		} else {
 			addDnatRedirection();
 		}
 
 		return redirectionId;
-	}
-
-	private boolean isHttp() {
-		return type == RedirectionType.HTTP
-				|| type == RedirectionType.HTTP_AND_HTTPS;
-	}
-
-	private boolean isHttps() {
-		return type == RedirectionType.HTTPS
-				|| type == RedirectionType.HTTP_AND_HTTPS;
 	}
 
 	private String getAsiApplianceType() {
@@ -102,11 +92,11 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 	private void addHttpRedirection() {
 		try {
 			logger.debug("Adding http redirection using DyReAlla");
-			if (isHttp()) {
+			if (type.isHttp()) {
 				getHttpRedirectionService().registerHttpService(getContextId(),
 						getAsiId(), port, serviceName, HttpProtocol.HTTP);
 			}
-			if (isHttps()) {
+			if (type.isHttps()) {
 				getHttpRedirectionService().registerHttpService(getContextId(),
 						getAsiId(), port, serviceName, HttpProtocol.HTTPS);
 			}
