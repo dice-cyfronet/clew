@@ -28,7 +28,6 @@ public class HttpRedirection {
 	private String name;
 	private Integer toPort;
 	private List<String> urls;
-	private boolean https;
 	
 	public String getId() {
 		return id;
@@ -62,17 +61,9 @@ public class HttpRedirection {
 		this.urls = urls;
 	}
 
-	public boolean isHttps() {
-		return https;
-	}
-
-	public void setHttps(boolean https) {
-		this.https = https;
-	}
-
 	@Override
 	public String toString() {
 		return "HttpRedirection [id=" + id + ", name=" + name + ", toPort="
-				+ toPort + ", urls=" + urls + ", https=" + https + "]";
+				+ toPort + ", urls=" + urls + "]";
 	}
 }

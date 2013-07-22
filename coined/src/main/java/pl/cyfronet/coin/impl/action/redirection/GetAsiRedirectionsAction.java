@@ -101,7 +101,6 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 				httpRedirection.setId(atpm.getId());
 				httpRedirection.setName(atpm.getService_name());
 				httpRedirection.setToPort(atpm.getPort());
-				httpRedirection.setHttps(atpm.isHttps());
 				httpRedirection.setUrls(getUrls(atpm));
 
 				httpRedirections.add(httpRedirection);
