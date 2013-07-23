@@ -83,33 +83,38 @@ public class StartWorkflowAction extends AtomicServiceWorkflowAction<String> {
 			workflow.setType(WorkflowType.workflow);
 		}
 
-		WorkflowType type = workflow.getType();
-		if (type == WorkflowType.portal || type == WorkflowType.development) {
-			try {
-				List<WorkflowBaseInfo> workflows = getWorkflows();
-				for (WorkflowBaseInfo wInfo : workflows) {
-					if (wInfo.getType() == type) {
-						logger.warn("Cannot start two {} workflows", type);
-						throw new WorkflowStartException(String.format(
-								"Cannot start two %s workflows", type));
+		// synchronize workflow creation for one user.
+		synchronized (getUsername()) {
+			WorkflowType type = workflow.getType();
+			if (type == WorkflowType.portal || type == WorkflowType.development) {
+				try {
+					List<WorkflowBaseInfo> workflows = getWorkflows();
+					for (WorkflowBaseInfo wInfo : workflows) {
+						if (wInfo.getType() == type) {
+							logger.warn("Cannot start two {} workflows", type);
+							throw new WorkflowStartException(String.format(
+									"Cannot start two %s workflows", type));
+						}
 					}
-				}
-			} catch (WebApplicationException e) {
-				// 400 is thrown if user is not know by AIR. Most probably user
-				// is starting workflow for the first time.
-				if (e.getResponse().getStatus() != 400) {
-					if (e instanceof WorkflowStartException) {
-						throw e;
+				} catch (WebApplicationException e) {
+					// 400 is thrown if user is not know by AIR. Most probably
+					// user
+					// is starting workflow for the first time.
+					if (e.getResponse().getStatus() != 400) {
+						if (e instanceof WorkflowStartException) {
+							throw e;
+						}
+						throw new WorkflowStartException(
+								"Unable to register new workflow in AIR");
 					}
-					throw new WorkflowStartException(
-							"Unable to register new workflow in AIR");
 				}
 			}
-		}
 
-		// FIXME error handling
-		contextId = getAir().startWorkflow(workflow.getName(), getUsername(),
-				workflow.getDescription(), priority, workflow.getType());
+			// FIXME error handling
+			contextId = getAir().startWorkflow(workflow.getName(),
+					getUsername(), workflow.getDescription(), priority,
+					workflow.getType());
+		}
 		List<String> ids = workflow.getAsConfigIds();
 
 		if (ids != null && ids.size() > 0) {
