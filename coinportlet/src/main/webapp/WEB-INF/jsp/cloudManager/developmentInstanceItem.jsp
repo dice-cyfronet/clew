@@ -105,6 +105,8 @@
 	    									html += '<small> (' + creds[3] + ')</small>';
 	    								}
 		    							
+		    							html += '<br/>';
+		    							
 		    							if(creds[0] == 'ssh') {
 		    								html += '<span style="font-size: small; font-style: italic; display: block; margin-top: 10px;">' +
 		    										'Login using the root account (e.g. <span style="font-style: normal; font-family: ' +
