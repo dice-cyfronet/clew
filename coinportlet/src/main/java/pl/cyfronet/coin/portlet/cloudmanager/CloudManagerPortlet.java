@@ -100,7 +100,6 @@ public class CloudManagerPortlet {
 	static final String MODEL_BEAN_WEBAPP_ENDPOINTS = "webappEndpoints";
 	static final String MODEL_BEAN_USER_KEYS = "userKeyList";
 	static final String MODEL_BEAN_UPLOAD_KEY_REQUEST = "uploadKeyRequest";
-	static final String MODEL_BEAN_ASI_REDIRECTIONS = "asiRedirections";
 	static final String MODEL_BEAN_WS_ENDPOINTS = "wsEndpoints";
 	static final String MODEL_BEAN_ENDPOINTS = "endpoints";
 	static final String MODEL_BEAN_ADD_ENDPOINT_REQUEST = "addEndpointRequest";
@@ -557,6 +556,7 @@ public class CloudManagerPortlet {
 								iasr.setAtomicServiceId(atomicServiceId);
 								iasr.setFormFields(new ArrayList<FormField>());
 								iasr.setUrls(redirection.getUrls());
+								log.debug("HTTP redirection urls: {}", redirection.getUrls());
 								
 								if(endpoint.getInvocationPath() != null) {
 									Pattern pattern = Pattern.compile("\\{(.+?)\\}");
@@ -595,7 +595,8 @@ public class CloudManagerPortlet {
 			model.addAttribute(MODEL_BEAN_AUTH_ENDPOINT_LINKS, createEndpointLinks(endpoints, redirections.getHttp(), true, request, false));
 			model.addAttribute(MODEL_BEAN_WEBAPP_ENDPOINTS, webAppEndpoints);
 			model.addAttribute(MODEL_BEAN_WS_ENDPOINTS, wsEndpoints);
-			model.addAttribute(MODEL_BEAN_ASI_REDIRECTIONS, redirections);
+			model.addAttribute(MODEL_BEAN_HTTP_REDIRECTIONS, redirections.getHttp());
+			model.addAttribute(MODEL_BEAN_NAT_REDIRECTIONS, redirections.getNat());
 		} else {
 			model.addAttribute(MODEL_BEAN_AS_INVOCATION_POSSIBLE, false);
 			model.addAttribute(MODEL_BEAN_NEGATIVE_MESSAGE,
@@ -955,7 +956,7 @@ public class CloudManagerPortlet {
 		Map<String, String> redirectionTypes = new HashMap<>();
 		
 		for(RedirectionType type : RedirectionType.values()) {
-			if(type != RedirectionType.UDP) {
+			if(type != RedirectionType.UDP && type != RedirectionType.HTTP && type != RedirectionType.HTTPS) {
 				redirectionTypes.put(type.name(), messages.getMessage("cloud.manager.portlet.redirection." + type + ".label", null, null));
 			}
 		}

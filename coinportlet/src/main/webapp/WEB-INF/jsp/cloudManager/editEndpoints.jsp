@@ -7,16 +7,20 @@
 	<portlet:param name="action" value="addRedirection"/>
 </portlet:actionURL>
 
-<h2>Installed applications</h2>
+<h2><spring:message code='cloud.manager.portlet.external.interfaces.label'/></h2>
 <c:choose>
 	<c:when test="${fn:length(httpRedirections) > 0 or fn:length(natRedirections) > 0}">
 		<c:forEach var="redirection" items="${httpRedirections}">
 			<div class="row-fluid row-hover">
 				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;"">
-					<strong>${redirection.name} (${redirection.type})</strong>
+					<strong>${redirection.name} (<spring:message code='cloud.manager.portlet.redirection.HTTP_AND_HTTPS.label'/>)</strong>
 				</div>
 				<div class="span8">
-					<spring:message code="cloud.manager.portlet.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
+					<c:forEach var="url" items="${redirection.urls}" varStatus="status">
+						${url}
+						<spring:message code="cloud.manager.portlet.http.redirection.description.template" arguments="${url},${redirection.toPort}"/>
+						<c:if test="${ not status.last}">,</c:if>
+					</c:forEach>
 				</div>
 				<div class="span2">
 					<portlet:actionURL var="removeRedirection">
@@ -41,7 +45,7 @@
 		</c:forEach>
 		<c:forEach var="redirection" items="${natRedirections}">
 			<div class="row-fluid row-hover">
-				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;"">
+				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;">
 					<strong>${redirection.name} (${redirection.type})</strong>
 				</div>
 				<div class="span8">

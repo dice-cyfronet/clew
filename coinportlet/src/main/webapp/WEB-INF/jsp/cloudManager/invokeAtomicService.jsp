@@ -7,10 +7,10 @@
 <c:if test="${negativeMessage != null}">
 	<div class="text-error">${negativeMessage}</div>
 </c:if>
-<c:if test="${asiRedirections != null and fn:length(asiRedirections) > 0}">
+<c:if test="${natRedirections != null and fn:length(natRedirections) > 0}">
 	<span style="font-style: italic; margin-top: 10px; display: block;"><spring:message code="cloud.manager.portlet.invocation.redirections.label"/></span>
 	<dl>
-		<c:forEach var="red" items="${asiRedirections}">
+		<c:forEach var="red" items="${natRedirections}">
 			<dt><spring:message code="cloud.manager.portlet.invocation.redirection.host" arguments="${red.name}"/></dt>
 			<dd>${red.host}</dd>
 			<dt><spring:message code="cloud.manager.portlet.invocation.redirection.port" arguments="${red.name}"/></dt>
@@ -70,9 +70,12 @@ ${fn:escapeXml(ws.descriptor)}
 		<form:hidden path="configurationId"/>
 		<form:hidden path="atomicServiceId"/>
 		<form:hidden path="invocationPath"/>
-		<form:hidden path="postfix"/>
-		<form:hidden path="port"/>
-		<form:hidden path="host"/>
+		<c:forEach var="url" items="${invokeAtomicServiceRequest.urls}" varStatus="index">
+			<form:hidden path="urls[${index.index}]"/>
+		</c:forEach>
+		<c:forEach var="url" items="${invokeAtomicServiceRequest.urls}" varStatus="index">
+			${url}<br/>
+		</c:forEach>
 		<fieldset>
 			<legend>Invocation details</legend>
 			
