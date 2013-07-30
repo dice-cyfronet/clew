@@ -29,7 +29,12 @@ public class NatRedirection {
 	private Integer fromPort;
 	private String host;
 	private RedirectionType type;
-	
+
+	/**
+	 * @see #1942
+	 */
+	private boolean direct;
+
 	public String getId() {
 		return id;
 	}
@@ -78,9 +83,18 @@ public class NatRedirection {
 		this.type = type;
 	}
 
+	public boolean isDirect() {
+		return direct;
+	}
+
+	public void setDirect(boolean direct) {
+		this.direct = direct;
+	}
+
 	@Override
 	public String toString() {
 		return "NatRedirection [id=" + id + ", name=" + name + ", toPort="
-				+ toPort + ", fromPort=" + fromPort + ", host=" + host + "]";
+				+ toPort + ", fromPort=" + fromPort + ", host=" + host
+				+ ", type=" + type + ", direct=" + direct + "]";
 	}
 }

@@ -55,7 +55,7 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 	}
 
 	private void findAsi() {
-		asi = getAsi();		
+		asi = getAsi();
 		if (asi == null) {
 			throw new AtomicServiceInstanceNotFoundException();
 		}
@@ -121,22 +121,21 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 
 	private List<String> getDirectUrl(ATPortMapping atpm) {
 		List<String> urls = new ArrayList<>();
-		if(atpm.isHttp()) {
+		if (atpm.isHttp()) {
 			urls.add(String.format("http://%s:%s", getAsiIp(), atpm.getPort()));
 		}
-		
-		if(atpm.isHttps()) {
+
+		if (atpm.isHttps()) {
 			urls.add(String.format("https://%s:%s", getAsiIp(), atpm.getPort()));
 		}
-		
+
 		return urls;
 	}
 
 	private String getAsiIp() {
-		if (asi.getSpecs() != null && asi.getSpecs().getIp() != null
-				&& asi.getSpecs().getIp().size() > 0) {
-			List<String> ips = asi.getSpecs().getIp();
-			for (String ip : ips) {
+		List<String> ips = getIps();
+		if (ips.size() > 0) {
+			for (String ip : getIps()) {
 				try {
 					if (!InetAddress.getByName(ip).isSiteLocalAddress()) {
 						return ip;
@@ -149,6 +148,15 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 			return ips.get(0);
 		}
 		return null;
+	}
+
+	private List<String> getIps() {
+		List<String> ips = new ArrayList<>();
+		if (asi.getSpecs() != null && asi.getSpecs().getIp() != null
+				&& asi.getSpecs().getIp().size() > 0) {
+			ips = asi.getSpecs().getIp();
+		}
+		return ips;
 	}
 
 	private List<String> getProxyUrl(ATPortMapping atpm) {
@@ -177,9 +185,16 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 			natRedirection.setName(pm.getService_name());
 			natRedirection.setToPort(pm.getVm_port());
 			natRedirection.setType(RedirectionType.TCP);
+			//#1942
+			natRedirection.setDirect(isDirect(pm.getHeadnode_ip()));
+
 			natRedirections.add(natRedirection);
 		}
 
 		return natRedirections;
+	}
+
+	private boolean isDirect(String ip) {
+		return getIps().contains(ip);
 	}
 }

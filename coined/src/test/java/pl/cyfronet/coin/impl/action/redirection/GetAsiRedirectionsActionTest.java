@@ -2,7 +2,9 @@ package pl.cyfronet.coin.impl.action.redirection;
 
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +54,9 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	private Integer bothPort = 81;
 	private String bothName = "both";
 	private String bothId ="bothId";
+	private String publicIp = "149.156.8.34";
+	private int publicPort = 24;
+	private String publicNatName = "public";
 
 	@Test
 	public void shouldGetHttpRedirectionsForVmWithPrivateIp() throws Exception {
@@ -119,7 +124,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		}
 
 		Specs specs = new Specs();
-		specs.setIp(Arrays.asList("10.100.8.34", "149.156.8.34"));
+		specs.setIp(Arrays.asList("10.100.8.34", publicIp));
 
 		vm.setSpecs(specs);
 
@@ -234,7 +239,7 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 	public void shouldGetNatASIRedirections() throws Exception {
 		givenWorkflowWithNatRedirection();
 		whenGetRedirections();
-		thenNatRedirectionCreated();
+		thenNatRedirectionsCreated();
 	}
 
 	private void givenWorkflowWithNatRedirection() {
@@ -248,13 +253,26 @@ public class GetAsiRedirectionsActionTest extends ActionTest {
 		pm.setService_name(natName);
 		pm.setVm_port(natPort);
 
-		vm.setInternal_port_mappings(Arrays.asList(pm));
+		PortMapping publicPm = new PortMapping();
+		publicPm.setHeadnode_ip(publicIp);
+		publicPm.setHeadnode_port(publicPort);
+		publicPm.setHttp(false);
+		publicPm.setService_name(publicNatName );
+		publicPm.setVm_port(publicPort);
+
+		vm.setInternal_port_mappings(Arrays.asList(pm, publicPm));
 	}
 
-	private void thenNatRedirectionCreated() {
+	private void thenNatRedirectionsCreated() {
 		List<NatRedirection> nat = redirections.getNat();
 		assertNotNull(nat);
-		assertEquals(nat.size(), 1);
+		assertEquals(nat.size(), 2);
+
+		assertEquals(nat.get(0).getName(), natName);
+		assertFalse(nat.get(0).isDirect());
+
+		assertEquals(nat.get(1).getName(), publicNatName);
+		assertTrue(nat.get(1).isDirect());
 	}
 
 	@Test
