@@ -9,8 +9,37 @@
 
 <h2>Installed applications</h2>
 <c:choose>
-	<c:when test="${fn:length(redirections) > 0}">
-		<c:forEach var="redirection" items="${redirections}">
+	<c:when test="${fn:length(httpRedirections) > 0 or fn:length(natRedirections) > 0}">
+		<c:forEach var="redirection" items="${httpRedirections}">
+			<div class="row-fluid row-hover">
+				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;"">
+					<strong>${redirection.name} (${redirection.type})</strong>
+				</div>
+				<div class="span8">
+					<spring:message code="cloud.manager.portlet.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
+				</div>
+				<div class="span2">
+					<portlet:actionURL var="removeRedirection">
+						<portlet:param name="action" value="removeRedirection"/>
+						<portlet:param name="atomicServiceInstanceId" value="${addRedirectionRequest.atomicServiceInstanceId}"/>
+						<portlet:param name="redirectionId" value="${redirection.id}"/>
+						<portlet:param name="workflowId" value="${addRedirectionRequest.workflowId}"/>
+					</portlet:actionURL>
+					<c:set var="removeConfirmation">removeRedirection-${redirection.id}</c:set>
+					<a id="${removeConfirmation}" href='${removeRedirection}'><spring:message code='cloud.manager.portlet.remove.redirection.label'/></a>
+					<script type="text/javascript">
+						jQuery(document).ready(function() {
+							jQuery('#${removeConfirmation}').click(function() {
+								if(!confirm("<spring:message code='cloud.manager.portlet.remove.redirection.confirmation.label'/>")) {
+									return false;
+								}
+							});
+    					});
+					</script>
+				</div>
+			</div>
+		</c:forEach>
+		<c:forEach var="redirection" items="${natRedirections}">
 			<div class="row-fluid row-hover">
 				<div class="span2 text-right" style="font-size: larger; word-wrap: break-word;"">
 					<strong>${redirection.name} (${redirection.type})</strong>

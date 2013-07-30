@@ -11,6 +11,8 @@ public class ATPortMapping {
 
 	private boolean http;
 
+	private boolean https;
+	
 	public String getId() {
 		return id;
 	}
@@ -43,9 +45,17 @@ public class ATPortMapping {
 		this.http = http;
 	}
 
+	public boolean isHttps() {
+		return https;
+	}
+
+	public void setHttps(boolean https) {
+		this.https = https;
+	}
+
 	@Override
 	public String toString() {
 		return "ATPortMapping [id=" + id + ", port=" + port + ", service_name="
-				+ service_name + ", http=" + http + "]";
+				+ service_name + ", http=" + http + ", https=" + https + "]";
 	}
 }

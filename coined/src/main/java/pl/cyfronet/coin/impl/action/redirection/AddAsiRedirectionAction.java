@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
@@ -17,6 +18,7 @@ import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
+import pl.cyfronet.dyrealla.api.proxy.HttpProtocol;
 
 public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 
@@ -25,21 +27,19 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 
 	private String serviceName;
 	private int port;
-	private boolean http;
 	private WorkflowDetail wd;
+	private RedirectionType type;
 
 	public AddAsiRedirectionAction(ActionFactory actionFactory,
 			DyReAllaProxyManagerService httpRedirectionService,
 			DyReAllaDNATManagerService dnatRedirectionService, String username,
-			String contextId, String asiId) {
+			String contextId, String asiId, String serviceName, int port,
+			RedirectionType type) {
 		super(actionFactory, httpRedirectionService, dnatRedirectionService,
 				username, contextId, asiId);
-	}
-
-	public void setRedirectionDetails(String serviceName, int port, boolean http) {
 		this.serviceName = serviceName;
 		this.port = port;
-		this.http = http;
+		this.type = type;
 	}
 
 	@Override
@@ -49,14 +49,15 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 		checkIfWorkflowInDevelopmentMode();
 
 		String atId = getAsiApplianceType();
-		logger.debug("Adding port mapping into {} AT: {} port {} http {}",
-				new Object[] { atId, serviceName, port, http });
+		logger.debug("Adding port mapping into {} AT: {} port {} type {}",
+				new Object[] { atId, serviceName, port, type });
+
 		String redirectionId = getActionFactory().createAddPortMappingAction(
-				atId, serviceName, port, http).execute();
+				atId, serviceName, port, type.isHttp(), type.isHttps()).execute();
 
 		logger.debug("Added redirection id {}", redirectionId);
 
-		if (http) {
+		if (type.isHttp() || type.isHttps()) {
 			addHttpRedirection();
 		} else {
 			addDnatRedirection();
@@ -91,8 +92,14 @@ public class AddAsiRedirectionAction extends AsiRedirectionAction<String> {
 	private void addHttpRedirection() {
 		try {
 			logger.debug("Adding http redirection using DyReAlla");
-			getHttpRedirectionService().registerHttpService(getContextId(),
-					getAsiId(), port, serviceName);
+			if (type.isHttp()) {
+				getHttpRedirectionService().registerHttpService(getContextId(),
+						getAsiId(), port, serviceName, HttpProtocol.HTTP);
+			}
+			if (type.isHttps()) {
+				getHttpRedirectionService().registerHttpService(getContextId(),
+						getAsiId(), port, serviceName, HttpProtocol.HTTPS);
+			}
 		} catch (VirtualMachineNotFoundException e) {
 			logger.error("VM for ASI not found", e);
 			throw new AtomicServiceInstanceNotFoundException();

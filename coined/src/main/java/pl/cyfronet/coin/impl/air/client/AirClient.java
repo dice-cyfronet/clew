@@ -90,8 +90,8 @@ public interface AirClient {
 	@PUT
 	@Path("/appliance_type/{asId}")
 	void updateAtomicService(@PathParam("asId") String asId,
-			@FormParam("") ApplianceTypeRequest updatedAs, 
-			@FormParam("appliance_preferences[cpu]") Float cpu, 
+			@FormParam("") ApplianceTypeRequest updatedAs,
+			@FormParam("appliance_preferences[cpu]") Float cpu,
 			@FormParam("appliance_preferences[disk]") Integer disk,
 			@FormParam("appliance_preferences[memory]") Integer memory);
 
@@ -224,7 +224,8 @@ public interface AirClient {
 	String addPortMapping(@FormParam("client") String client,
 			@PathParam("asId") String asId,
 			@FormParam("service_name") String serviceName,
-			@FormParam("port") int port, @FormParam("http") boolean http);
+			@FormParam("port") int port, @FormParam("http") boolean http,
+			@FormParam("https") boolean https);
 
 	@DELETE
 	@Path("/port_mapping/{portMappingId}")

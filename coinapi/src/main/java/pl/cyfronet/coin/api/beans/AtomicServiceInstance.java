@@ -31,6 +31,10 @@ public class AtomicServiceInstance extends StatusBean {
 
 	private String atomicServiceName;
 	
+	/**
+	 * @deprecated Will be removed in 1.7
+	 */
+	@Deprecated
 	private List<Redirection> redirections;
 
 	private String configurationId;
@@ -73,14 +77,18 @@ public class AtomicServiceInstance extends StatusBean {
 
 	/**
 	 * @return the redirections
+	 * @deprecated Will be removed in 1.7
 	 */
+	@Deprecated
 	public List<Redirection> getRedirections() {
 		return redirections;
 	}
 
 	/**
 	 * @param redirections the redirections to set
+	 * @deprecated Will be removed in 1.7
 	 */
+	@Deprecated
 	public void setRedirections(List<Redirection> redirections) {
 		this.redirections = redirections;
 	}

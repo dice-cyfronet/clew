@@ -15,6 +15,8 @@
  */
 package pl.cyfronet.coin.api.beans;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -25,6 +27,12 @@ public class Endpoint {
 	private String invocationPath;
 	private Integer port;
 	private EndpointType type;
+
+	/**
+	 * @since 1.6
+	 * @see #1833
+	 */
+	private List<String> urls;
 
 	public String getDescription() {
 		return description;
@@ -74,16 +82,22 @@ public class Endpoint {
 		this.id = id;
 	}
 
+	public List<String> getUrls() {
+		return urls;
+	}
+
+	public void setUrls(List<String> urls) {
+		this.urls = urls;
+	}
+
 	@Override
 	public String toString() {
 		return "Endpoint [id=" + id + ", description=" + description
 				+ ", descriptor=" + descriptor + ", invocationPath="
-				+ invocationPath + ", port=" + port + ", type=" + type + "]";
+				+ invocationPath + ", port=" + port + ", type=" + type
+				+ ", urls=" + urls + "]";
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -97,12 +111,10 @@ public class Endpoint {
 				+ ((invocationPath == null) ? 0 : invocationPath.hashCode());
 		result = prime * result + ((port == null) ? 0 : port.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((urls == null) ? 0 : urls.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -138,6 +150,11 @@ public class Endpoint {
 		} else if (!port.equals(other.port))
 			return false;
 		if (type != other.type)
+			return false;
+		if (urls == null) {
+			if (other.urls != null)
+				return false;
+		} else if (!urls.equals(other.urls))
 			return false;
 		return true;
 	}

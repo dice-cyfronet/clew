@@ -161,7 +161,7 @@ public class WorkflowManagementImplOld extends UsernameAwareService implements
 			AtomicServiceInstanceNotFoundException {
 		validateId(contextId);
 		Action<List<Redirection>> action = actionFactory
-				.createGetAsiRedirectionsAction(contextId, getUsername(), asiId);
+				.createGetAsiRedirectionsActionOld(contextId, getUsername(), asiId);
 		return action.execute();
 	}
 

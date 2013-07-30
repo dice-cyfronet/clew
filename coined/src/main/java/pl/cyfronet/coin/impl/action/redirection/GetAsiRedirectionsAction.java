@@ -1,30 +1,16 @@
-/*
- * Copyright 2012 ACC CYFRONET AGH
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package pl.cyfronet.coin.impl.action.redirection;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import pl.cyfronet.coin.api.RedirectionType;
-import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.WorkflowType;
+import pl.cyfronet.coin.api.beans.redirection.HttpRedirection;
+import pl.cyfronet.coin.api.beans.redirection.NatRedirection;
+import pl.cyfronet.coin.api.beans.redirection.Redirections;
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
@@ -32,102 +18,168 @@ import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
+import pl.cyfronet.coin.impl.air.client.VmHttpRedirection;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
- * @author <a href="mailto:t.bartynski@cyfronet.pl">Tomek Bartyński</a>
+ * @since 1.6
+ * @see #1726
  */
-public class GetAsiRedirectionsAction extends
-		ReadOnlyAirAction<List<Redirection>> {
+public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GetAsiRedirectionsAction.class);
-
-	private String asiId;
-	private String contextId;
 	private String username;
-	private String proxyHost;
-	private int proxyPort;
+	private String contextId;
+	private String asiIdentifier;
+	private String asiId;
+	private Vms asi;
 
 	public GetAsiRedirectionsAction(ActionFactory actionFactory,
-			String contextId, String username, String asiId, String proxyHost,
-			int proxyPort) {
+			String username, String contextId, String asiIdentifier) {
 		super(actionFactory);
-		this.contextId = contextId;
 		this.username = username;
-		this.asiId = asiId;
-		this.proxyHost = proxyHost;
-		this.proxyPort = proxyPort;
+		this.contextId = contextId;
+		this.asiIdentifier = asiIdentifier;
 	}
 
 	@Override
-	public List<Redirection> execute() throws CloudFacadeException {
-		List<Redirection> redirections = new ArrayList<>();
+	public Redirections execute() throws CloudFacadeException {
+		findAsi();
+
+		Redirections redirections = new Redirections();
+		redirections.setHttp(getHttpRedirections());
+		redirections.setNat(getNatRedirections());
+
+		return redirections;
+	}
+
+	private void findAsi() {
+		asi = getAsi();		
+		if (asi == null) {
+			throw new AtomicServiceInstanceNotFoundException();
+		}
+		asiId = asi.getVms_id();
+	}
+
+	private Vms getAsi() {
 		Action<WorkflowDetail> getWfDetailAct = getActionFactory()
 				.createGetWorkflowDetailAction(contextId, username);
 		WorkflowDetail wfd = getWfDetailAct.execute();
-		if (wfd.getVms() == null || wfd.getVms().isEmpty()) {
-			return redirections;
-		}
-		Redirection red = null;
-		String initConfId = null;
-		for (Vms asi : wfd.getVms()) {
-			if (asi.getVms_id().equals(asiId)) {
-				initConfId = asi.getConfiguration();
-				if (initConfId == null) {
-					String msg = "Error while getting redirection for ASI "
-							+ asiId
-							+ " because ASI does not have a valid init conf id";
-					logger.error(msg);
-					throw new CloudFacadeException(msg);
+		if (wfd.getWorkflow_type() == WorkflowType.development) {
+			for (Vms instance : wfd.getVms()) {
+				if (instance.getVms_id().equals(asiIdentifier)) {
+					return instance;
 				}
-				List<PortMapping> pms = asi.getInternal_port_mappings();
-				if (pms == null) {
-					break;
+			}
+		} else {
+			for (Vms instance : wfd.getVms()) {
+				if (instance.getConfiguration().equals(asiIdentifier)) {
+					return instance;
 				}
-				for (PortMapping pm : pms) {
-					red = new Redirection();
-					red.setId(pm.getId());
-					red.setFromPort(pm.getHeadnode_port());
-					red.setHost(pm.getHeadnode_ip());
-					red.setName(pm.getService_name());
-					red.setToPort(pm.getVm_port());
-					red.setType(RedirectionType.TCP);
-					redirections.add(red);
-				}
-				break;
 			}
 		}
+		return null;
+	}
+
+	private List<HttpRedirection> getHttpRedirections() {
+		List<HttpRedirection> httpRedirections = new ArrayList<>();
 
 		ApplianceType applType = getAir().getTypeFromVM(asiId);
 		if (applType == null) {
-			return redirections;
+			return httpRedirections;
 		}
+
 		List<ATPortMapping> atpms = applType.getPort_mappings();
 		if (atpms == null || atpms.isEmpty()) {
-			return redirections;
+			return httpRedirections;
 		}
+
 		for (ATPortMapping atpm : atpms) {
-			if (atpm.isHttp()) {
-				red = new Redirection();
-				red.setId(atpm.getId());
-				red.setFromPort(proxyPort);
-				red.setHost(proxyHost);
-				red.setName(atpm.getService_name());
-				if (wfd.getWorkflow_type() == WorkflowType.development) {
-					red.setPostfix(contextId + "/" + asiId + "/"
-							+ atpm.getService_name());
-				} else {
-					red.setPostfix(contextId + "/" + initConfId + "/"
-							+ atpm.getService_name());
-				}
-				red.setToPort(atpm.getPort());
-				red.setType(RedirectionType.HTTP);
-				redirections.add(red);
+			if (atpm.isHttp() || atpm.isHttps()) {
+				HttpRedirection httpRedirection = new HttpRedirection();
+				httpRedirection.setId(atpm.getId());
+				httpRedirection.setName(atpm.getService_name());
+				httpRedirection.setToPort(atpm.getPort());
+				httpRedirection.setUrls(getUrls(atpm));
+
+				httpRedirections.add(httpRedirection);
 			}
 		}
-		return redirections;
+
+		return httpRedirections;
+	}
+
+	private List<String> getUrls(ATPortMapping atpm) {
+		List<String> urls = getProxyUrl(atpm);
+		if (urls == null || urls.size() == 0) {
+			urls = getDirectUrl(atpm);
+		}
+
+		return urls;
+	}
+
+	private List<String> getDirectUrl(ATPortMapping atpm) {
+		List<String> urls = new ArrayList<>();
+		if(atpm.isHttp()) {
+			urls.add(String.format("http://%s:%s", getAsiIp(), atpm.getPort()));
+		}
+		
+		if(atpm.isHttps()) {
+			urls.add(String.format("https://%s:%s", getAsiIp(), atpm.getPort()));
+		}
+		
+		return urls;
+	}
+
+	private String getAsiIp() {
+		if (asi.getSpecs() != null && asi.getSpecs().getIp() != null
+				&& asi.getSpecs().getIp().size() > 0) {
+			List<String> ips = asi.getSpecs().getIp();
+			for (String ip : ips) {
+				try {
+					if (!InetAddress.getByName(ip).isSiteLocalAddress()) {
+						return ip;
+					}
+				} catch (UnknownHostException e) {
+					// wrong ip - skipping.
+				}
+			}
+			// no public ip returning first one.
+			return ips.get(0);
+		}
+		return null;
+	}
+
+	private List<String> getProxyUrl(ATPortMapping atpm) {
+		List<String> urls = new ArrayList<>();
+		if (asi.getHttp_redirections() != null) {
+			for (VmHttpRedirection httpRedirection : asi.getHttp_redirections()) {
+				if (httpRedirection.getVm_port() == atpm.getPort()) {
+					urls.add(httpRedirection.getUrl());
+				}
+			}
+		}
+		return urls;
+	}
+
+	private List<NatRedirection> getNatRedirections() {
+		List<NatRedirection> natRedirections = new ArrayList<>();
+		List<PortMapping> pms = asi.getInternal_port_mappings();
+		if (pms == null) {
+			return natRedirections;
+		}
+		for (PortMapping pm : pms) {
+			NatRedirection natRedirection = new NatRedirection();
+			natRedirection.setId(pm.getId());
+			natRedirection.setFromPort(pm.getHeadnode_port());
+			natRedirection.setHost(pm.getHeadnode_ip());
+			natRedirection.setName(pm.getService_name());
+			natRedirection.setToPort(pm.getVm_port());
+			natRedirection.setType(RedirectionType.TCP);
+			natRedirections.add(natRedirection);
+		}
+
+		return natRedirections;
 	}
 }

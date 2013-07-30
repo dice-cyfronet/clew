@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
+import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.workflow.WorkflowActionTest;
@@ -34,7 +35,7 @@ public class GetPortMappingsActionTest extends WorkflowActionTest {
 	}
 
 	private void givenAsiStarted() {
-		givenWorkflowStarted();
+		givenWorkflowStarted(WorkflowType.development);
 
 		Vms vm = new Vms();
 		vm.setVms_id(asiId);

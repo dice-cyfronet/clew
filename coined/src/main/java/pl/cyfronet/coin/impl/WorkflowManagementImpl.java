@@ -15,7 +15,9 @@
  */
 package pl.cyfronet.coin.impl;
 
-import static pl.cyfronet.coin.impl.utils.Validator.*;
+import static pl.cyfronet.coin.impl.utils.Validator.validateASName;
+import static pl.cyfronet.coin.impl.utils.Validator.validateId;
+import static pl.cyfronet.coin.impl.utils.Validator.validateRedirectionName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.beans.redirection.Redirections;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
 import pl.cyfronet.coin.api.exception.EndpointNotFoundException;
@@ -158,12 +161,12 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 	}
 
 	@Override
-	public List<Redirection> getRedirections(String contextId, String asiId)
+	public Redirections getRedirections(String contextId, String asiId)
 			throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException {
 		validateId(contextId);
-		Action<List<Redirection>> action = actionFactory
-				.createGetAsiRedirectionsAction(contextId, getUsername(), asiId);
+		Action<Redirections> action = actionFactory
+				.createGetAsiRedirectionsAction(getUsername(), contextId, asiId);
 		return action.execute();
 	}
 

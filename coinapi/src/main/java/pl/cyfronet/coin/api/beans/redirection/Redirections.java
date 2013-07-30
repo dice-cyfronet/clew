@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 ACC CYFRONET AGH
+ * Copyright 2013 ACC CYFRONET AGH
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -14,28 +14,41 @@
  * the License.
  */
 
-package pl.cyfronet.coin.api;
+package pl.cyfronet.coin.api.beans.redirection;
+
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
+ *
  */
-public enum RedirectionType {
+@XmlRootElement
+public class Redirections {
 
-	TCP,
+	List<HttpRedirection> http;
 	
-	UDP,
-	
-	HTTP,
-	
-	HTTPS,
-	
-	HTTP_AND_HTTPS;
-	
-	public boolean isHttp() {
-		return this == HTTP || this == HTTP_AND_HTTPS; 
+	List<NatRedirection> nat;
+
+	public List<HttpRedirection> getHttp() {
+		return http;
 	}
-	
-	public boolean isHttps() {
-		return this == HTTPS || this == HTTP_AND_HTTPS;
+
+	public void setHttp(List<HttpRedirection> http) {
+		this.http = http;
+	}
+
+	public List<NatRedirection> getNat() {
+		return nat;
+	}
+
+	public void setNat(List<NatRedirection> nat) {
+		this.nat = nat;
+	}
+
+	@Override
+	public String toString() {
+		return "Redirections [http=" + http + ", nat=" + nat + "]";
 	}
 }

@@ -13,6 +13,7 @@ import pl.cyfronet.coin.impl.air.client.ATPortMapping;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.Vms;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
+import pl.cyfronet.dyrealla.api.proxy.HttpProtocol;
 
 public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
@@ -28,10 +29,10 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 	}
 
 	private void givenAsiInDevelopmentModeWithHttpRedirection() {
-		givenAsiInDevelopmentModeWithRedirection(true);
+		givenAsiInDevelopmentModeWithRedirection(true, false);
 	}
 
-	private void givenAsiInDevelopmentModeWithRedirection(boolean http) {
+	private void givenAsiInDevelopmentModeWithRedirection(boolean http, boolean https) {
 		givenWorkflowStarted(WorkflowType.development);
 
 		Vms vm = new Vms();
@@ -44,6 +45,7 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 
 		ATPortMapping portMapping = new ATPortMapping();
 		portMapping.setHttp(http);
+		portMapping.setHttps(https);
 		portMapping.setId(redirectionId);
 		portMapping.setPort(port);
 		portMapping.setService_name(serviceName);
@@ -63,7 +65,36 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 	private void thenHttpRedirectionRemoved() throws Exception {
 		verify(air).removePortMapping(redirectionId);
 		verify(httpRedirectionService).unregisterHttpService(contextId, asiId,
-				serviceName, port);
+				serviceName, port, HttpProtocol.HTTP);
+	}
+
+	@Test
+	public void shouldRemoveHttpsRedirection() throws Exception {
+		givenAsiInDevelopmentModeWithHttpsRedirection();
+		whenRemoveRedirection();
+		thenHttpsRedirectionRemoved();
+	}
+	
+	private void givenAsiInDevelopmentModeWithHttpsRedirection() {
+		givenAsiInDevelopmentModeWithRedirection(false, true);
+	}
+
+	private void thenHttpsRedirectionRemoved() throws Exception {
+		verify(air).removePortMapping(redirectionId);
+		verify(httpRedirectionService).unregisterHttpService(contextId, asiId,
+				serviceName, port, HttpProtocol.HTTPS);
+	}
+
+	@Test
+	public void shouldRemoveHttpAndHttpsRemoved() throws Exception {
+		givenAsiInDevelopmentModeWithHttpAndHttpsRedirection();
+		whenRemoveRedirection();
+		thenHttpRedirectionRemoved();
+		thenHttpsRedirectionRemoved();
+	}
+	
+	private void givenAsiInDevelopmentModeWithHttpAndHttpsRedirection() {
+		givenAsiInDevelopmentModeWithRedirection(true, true);
 	}
 
 	@Test
@@ -74,7 +105,7 @@ public class RemoveAsiRedirectionActionTest extends AsiRedirectionActionTest {
 	}
 
 	private void givenAsiInDevelopmentModeWithTCPRedirection() {
-		givenAsiInDevelopmentModeWithRedirection(false);
+		givenAsiInDevelopmentModeWithRedirection(false, false);
 	}
 
 	private void thenTCPRedirectionRemoved() throws Exception {

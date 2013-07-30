@@ -34,6 +34,7 @@ import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
 import pl.cyfronet.coin.api.beans.WorkflowStartRequest;
+import pl.cyfronet.coin.api.beans.redirection.Redirections;
 import pl.cyfronet.coin.impl.action.as.AddInitialConfigurationAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceAction;
 import pl.cyfronet.coin.impl.action.as.CreateAtomicServiceInAirAction;
@@ -62,6 +63,7 @@ import pl.cyfronet.coin.impl.action.portmapping.GetPortMappingsAction;
 import pl.cyfronet.coin.impl.action.portmapping.RemovePortMappingAction;
 import pl.cyfronet.coin.impl.action.redirection.AddAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsAction;
+import pl.cyfronet.coin.impl.action.redirection.GetAsiRedirectionsActionOld;
 import pl.cyfronet.coin.impl.action.redirection.RemoveAsiRedirectionAction;
 import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowAction;
 import pl.cyfronet.coin.impl.action.workflow.GetUserWorkflowsAction;
@@ -258,10 +260,19 @@ public class ActionFactory {
 
 	// redirections
 
-	public Action<List<Redirection>> createGetAsiRedirectionsAction(
+	/**
+	 * @deprecated will be removed in CF 1.7 release
+	 */
+	@Deprecated
+	public Action<List<Redirection>> createGetAsiRedirectionsActionOld(
 			String contextId, String username, String asiId) {
-		return new GetAsiRedirectionsAction(this, contextId, username, asiId,
-				proxyHost, proxyPort);
+		return new GetAsiRedirectionsActionOld(this, contextId, username,
+				asiId, proxyHost, proxyPort);
+	}
+
+	public Action<Redirections> createGetAsiRedirectionsAction(String username,
+			String contextId, String asiId) {
+		return new GetAsiRedirectionsAction(this, username, contextId, asiId);
 	}
 
 	public Action<String> createAddAsiRedirectionAction(String username,
@@ -269,9 +280,7 @@ public class ActionFactory {
 			RedirectionType type) {
 		AddAsiRedirectionAction action = new AddAsiRedirectionAction(this,
 				httpRedirectionService, dnatRedirectionService, username,
-				contextId, asiId);
-		action.setRedirectionDetails(serviceName, port,
-				type == RedirectionType.HTTP);
+				contextId, asiId, serviceName, port, type);
 		return action;
 	}
 
@@ -315,8 +324,9 @@ public class ActionFactory {
 	// port mapping
 
 	public Action<String> createAddPortMappingAction(String asId,
-			String serviceName, int port, boolean http) {
-		return new AddPortMappingAction(this, asId, serviceName, port, http);
+			String serviceName, int port, boolean http, boolean https) {
+		return new AddPortMappingAction(this, asId, serviceName, port, http,
+				https);
 	}
 
 	public Action<List<ATPortMapping>> createGetPortMappingsAction(

@@ -15,6 +15,7 @@ import pl.cyfronet.dyrealla.api.VirtualMachineNotFoundException;
 import pl.cyfronet.dyrealla.api.dnat.DyReAllaDNATManagerService;
 import pl.cyfronet.dyrealla.api.dnat.Protocol;
 import pl.cyfronet.dyrealla.api.proxy.DyReAllaProxyManagerService;
+import pl.cyfronet.dyrealla.api.proxy.HttpProtocol;
 
 public class RemoveAsiRedirectionAction extends
 		AsiRedirectionAction<Class<Void>> {
@@ -41,8 +42,9 @@ public class RemoveAsiRedirectionAction extends
 		logger.debug("Removing redirection: {} -> {}", serviceName, portMapping);
 
 		logger.debug("Removing redirection using DyReAlla");
-		if (portMapping.isHttp()) {
-			removeHttpPortMapping(serviceName, port);
+		if (portMapping.isHttp() || portMapping.isHttps()) {
+			removeHttpPortMapping(serviceName, port, portMapping.isHttp(),
+					portMapping.isHttps());
 		} else {
 			removeDnatPortMapping(port);
 		}
@@ -54,10 +56,22 @@ public class RemoveAsiRedirectionAction extends
 		return Void.TYPE;
 	}
 
-	private void removeHttpPortMapping(String serviceName, int port) {
+	private void removeHttpPortMapping(String serviceName, int port,
+			boolean http, boolean https) {
+		if (http) {
+			removeHttpPortMapping(serviceName, port, HttpProtocol.HTTP);
+		}
+
+		if (https) {
+			removeHttpPortMapping(serviceName, port, HttpProtocol.HTTPS);
+		}
+	}
+
+	private void removeHttpPortMapping(String serviceName, int port,
+			HttpProtocol protocol) {
 		try {
 			getHttpRedirectionService().unregisterHttpService(getContextId(),
-					getAsiId(), serviceName, port);
+					getAsiId(), serviceName, port, protocol);
 		} catch (VirtualMachineNotFoundException e) {
 			logger.error("ASI VM not found", e);
 			throw new AtomicServiceInstanceNotFoundException();

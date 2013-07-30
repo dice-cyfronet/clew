@@ -41,7 +41,9 @@ import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
 import pl.cyfronet.coin.api.beans.EndpointType;
-import pl.cyfronet.coin.api.beans.Redirection;
+import pl.cyfronet.coin.api.beans.redirection.HttpRedirection;
+import pl.cyfronet.coin.api.beans.redirection.NatRedirection;
+import pl.cyfronet.coin.api.beans.redirection.Redirections;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceInUseException;
 import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
@@ -72,7 +74,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	@Qualifier("workflowManagementClient")
 	private WorkflowManagement workflowManagement;
 
-	private List<Redirection> redirections;
+	private Redirections redirections;
 
 	private String host = "host.com";
 
@@ -127,24 +129,35 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	}
 
 	private void givenAsiRedirections(int nr) {
-		List<Redirection> asiRedirections = new ArrayList<Redirection>();
+		Redirections redirections = new Redirections();
+		List<HttpRedirection> httpRedirections = new ArrayList<>();
+		List<NatRedirection> natRedirections = new ArrayList<>();
+		
+		
 		for (int i = 0; i < nr; i++) {
-			Redirection redirection = new Redirection();
-			redirection.setFromPort(18080 + i);
-			redirection.setToPort(8080 + i);
-			redirection.setName("redirection" + i);
-			redirection.setType(i % 2 == 0 ? RedirectionType.HTTP
-					: RedirectionType.TCP);
-			redirection.setHost(host);
-			asiRedirections.add(redirection);
+			NatRedirection natRedirection = new NatRedirection();
+			natRedirection.setFromPort(18080 + i);
+			natRedirection.setToPort(8080 + i);
+			natRedirection.setName("nat_redirection" + i);
+			natRedirection.setType(RedirectionType.TCP);
+			natRedirection.setHost(host);
+			natRedirections.add(natRedirection);
+			
+			HttpRedirection httpRedirection = new HttpRedirection();
+			httpRedirection.setName("http_redirection" + i);
+			httpRedirection.setToPort(28080 + i);
+			httpRedirection.setUrls(Arrays.asList("http://aaa/" + i));
+			httpRedirections.add(httpRedirection);
 		}
-
-		Action<List<Redirection>> action = mock(Action.class);
-		when(action.execute()).thenReturn(asiRedirections);
+		redirections.setHttp(httpRedirections);
+		redirections.setNat(natRedirections);
+		
+		Action<Redirections> action = mock(Action.class);
+		when(action.execute()).thenReturn(redirections);
 
 		when(
-				actionFactory.createGetAsiRedirectionsAction(contextId,
-						username, asiId)).thenReturn(action);
+				actionFactory.createGetAsiRedirectionsAction(
+						username, contextId, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -155,19 +168,21 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 	private void thenRedirectionsReceived(int nr) {
 		thenActionExecuted();
 		assertNotNull(redirections);
-		assertEquals(redirections.size(), nr);
+		assertEquals(redirections.getHttp().size(), nr);
+		assertEquals(redirections.getNat().size(), nr);		
 
 		for (int i = 0; i < nr; i++) {
-			Redirection redirection = redirections.get(i);
-			assertEquals(redirection.getToPort().intValue(), 8080 + i);
-			assertEquals(redirection.getFromPort().intValue(), 18080 + i);
-			assertEquals(redirection.getHost(), host);
-			assertEquals(redirection.getName(), "redirection" + i);
-			assertEquals(redirection.getType(),
-					i % 2 == 0 ? RedirectionType.HTTP : RedirectionType.TCP);
-			assertEquals(redirection.getType() == RedirectionType.HTTP,
-					i % 2 == 0);
-
+			NatRedirection natRedirection = redirections.getNat().get(i);
+			assertEquals(natRedirection.getToPort().intValue(), 8080 + i);
+			assertEquals(natRedirection.getFromPort().intValue(), 18080 + i);
+			assertEquals(natRedirection.getHost(), host);
+			assertEquals(natRedirection.getName(), "nat_redirection" + i);
+			assertEquals(natRedirection.getType(), RedirectionType.TCP);
+			
+			HttpRedirection httpRedirection = redirections.getHttp().get(i);
+			assertEquals(httpRedirection.getName(), "http_redirection" + i);
+			assertEquals(httpRedirection.getToPort().intValue(), 28080 + i);
+			assertEquals(httpRedirection.getUrls().get(0), "http://aaa/" + i);
 		}
 	}
 
@@ -189,12 +204,12 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 	private void givenExceptionThrownByGetAsiRedirectionsAction(
 			CloudFacadeException exception) {
-		Action<List<Redirection>> action = mock(Action.class);
+		Action<Redirections> action = mock(Action.class);
 		when(action.execute()).thenThrow(exception);
 
 		when(
-				actionFactory.createGetAsiRedirectionsAction(contextId,
-						username, asiId)).thenReturn(action);
+				actionFactory.createGetAsiRedirectionsAction(
+						username, contextId, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
