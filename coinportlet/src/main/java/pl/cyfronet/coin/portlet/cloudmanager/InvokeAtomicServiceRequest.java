@@ -9,29 +9,9 @@ public class InvokeAtomicServiceRequest {
 	private String configurationId;
 	private String atomicServiceId;
 	private List<FormField> formFields;
+	private List<String> urls;
 	private String invocationPath;
-	private String postfix;
-	private Integer port;
-	private String host;
-	
-	public String getPostfix() {
-		return postfix;
-	}
-	public void setPostfix(String postfix) {
-		this.postfix = postfix;
-	}
-	public Integer getPort() {
-		return port;
-	}
-	public void setPort(Integer port) {
-		this.port = port;
-	}
-	public String getHost() {
-		return host;
-	}
-	public void setHost(String host) {
-		this.host = host;
-	}
+
 	public String getMethod() {
 		return method;
 	}
@@ -68,20 +48,24 @@ public class InvokeAtomicServiceRequest {
 	public void setFormFields(List<FormField> formFields) {
 		this.formFields = formFields;
 	}
-	public String getInvocationPath() {
-		return invocationPath;
-	}
-	public void setInvocationPath(String invocationPath) {
-		this.invocationPath = invocationPath;
-	}
 	@Override
 	public String toString() {
 		return "InvokeAtomicServiceRequest [method=" + method
 				+ ", atomicServiceInstanceId=" + atomicServiceInstanceId
 				+ ", workflowId=" + workflowId + ", configurationId="
 				+ configurationId + ", atomicServiceId=" + atomicServiceId
-				+ ", formFields=" + formFields + ", invocationPath="
-				+ invocationPath + ", postfix=" + postfix + ", port=" + port
-				+ ", host=" + host + "]";
+				+ ", formFields=" + formFields + ", urls=" + getUrls() + "]";
+	}
+	public List<String> getUrls() {
+		return urls;
+	}
+	public void setUrls(List<String> urls) {
+		this.urls = urls;
+	}
+	public String getInvocationPath() {
+		return invocationPath;
+	}
+	public void setInvocationPath(String invocationPath) {
+		this.invocationPath = invocationPath;
 	}
 }
