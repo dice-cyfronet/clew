@@ -45,7 +45,7 @@
 			<portlet:param name="workflowId" value="${workflowId}"/>
 		</portlet:renderURL>
 		<c:set var="editEndpointsId">editEndpoints-${atomicServiceInstance.id}</c:set>
-		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;">Installed applications and endpoints</a><br/>
+		<a id="${editEndpointsId}" href="${editEndpoints}" style="visibility: hidden;"><spring:message code="cloud.manager.portlet.asi.external.interfaces.label"/></a><br/>
 		
 		<portlet:renderURL var="invokeAtomicService">
 			<portlet:param name="action" value="invokeAtomicService"/>
