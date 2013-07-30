@@ -49,7 +49,14 @@
 					<strong>${redirection.name} (${redirection.type})</strong>
 				</div>
 				<div class="span8">
-					<spring:message code="cloud.manager.portlet.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
+					<c:choose>
+						<c:when test="${redirection.direct}">
+							<spring:message code="cloud.manager.portlet.direct.interface.description.template" arguments="${redirection.host},${redirection.fromPort}"/>
+						</c:when>
+						<c:otherwise>
+							<spring:message code="cloud.manager.portlet.redirection.description.template" arguments="${redirection.host},${redirection.fromPort},${redirection.toPort}"/>
+						</c:otherwise>
+					</c:choose>
 				</div>
 				<div class="span2">
 					<portlet:actionURL var="removeRedirection">
