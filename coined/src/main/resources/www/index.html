@@ -229,7 +229,7 @@ html,body {
 							
 							<div class="ui-state-error ui-corner-all deprecation-warning">
 								<strong>redirections</strong> will be removed in the next Cloud Facade (1.7.0) release! 
-								Use <strong>GET /workflow/{workflowId}/atomic_services/{asiId}/redirections</strong> instead.
+								Use <strong>GET /workflow/{workflowId}/atomic_services/{initConfId}/redirections</strong> instead.
 							</div>
 						</div>
 						<h3>
@@ -250,17 +250,17 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflows/{workflowId}/atomic_services/{asiId}</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflows/{workflowId}/atomic_services/{initConfId}</strong>
 								- gets the JSON structure workflow atomic service instance
-								identified by workflowId and asiId</a>
+								identified by workflowId and initConfId</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> - workflow id
 									(acquired when starting the workflow)
 								</li>
-								<li>(required) <strong>asiId</strong> - atomic service
-									instance id
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration id
 								</li>
 							</ul>
 							<p>The structure of the returned JSON includes:</p>
@@ -302,7 +302,7 @@ html,body {
 							
 							<div class="ui-state-error ui-corner-all deprecation-warning">
 								<strong>redirections</strong> will be removed in the next Cloud Facade (1.7.0) release! 
-								Use <strong>GET /workflow/{workflowId}/atomic_services/{asiId}/redirections</strong> instead.
+								Use <strong>GET /workflow/{workflowId}/atomic_services/{initConfId}/redirections</strong> instead.
 							</div>
 						</div>						
 						<h3>
@@ -348,15 +348,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}</strong>
 								- remove atomic service from workflow</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service instance id
-								</li>
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration</li>
 							</ul>
 
 							<p>
@@ -367,16 +367,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/redirections</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/redirections</strong>
 								- gets information about Atomic Service instance redirections</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service
-									instance id
-								</li>
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration</li>
 							</ul>
 
 							<p>The structure of the returned JSON includes:</p>
@@ -410,15 +409,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/redirections</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/redirections</strong>
 								- reates new Atomic Service instance redirection</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service
-									instance id
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration
 								</li>
 							</ul>
 
@@ -440,15 +439,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/redirections/{redirectionId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/redirections/{redirectionId}</strong>
 								- deletes Atomic Service instance redirection</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service
-									instance id
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration
 								</li>
 								<li>(required) <strong>redirectionId</strong> atomic
 									service instance endpoint id
@@ -463,15 +462,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/endpoints</strong>
+							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/endpoints</strong>
 								- gets information about Atomic Service instance endpoints</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service
-									instance id
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration
 								</li>
 							</ul>
 
@@ -497,15 +496,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/endpoints</strong>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/endpoints</strong>
 								- reates new Atomic Service instance endpoint</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service
-									instance id
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration
 								</li>
 							</ul>
 
@@ -529,15 +528,15 @@ html,body {
 							</p>
 						</div>
 						<h3>
-							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{asiId}/endpoints/{endpointId}</strong>
+							<a href="#"><strong class="method">DELETE</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/endpoints/{endpointId}</strong>
 								- deletes Atomic Service instance endpoint</a>
 						</h3>
 						<div>
 							<ul>
 								<li>(required) <strong>workflowId</strong> workflow id
 								</li>
-								<li>(required) <strong>asiId</strong> atomic service
-									instance id
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration
 								</li>
 								<li>(required) <strong>endpointId</strong> atomic service
 									instance endpoint id
