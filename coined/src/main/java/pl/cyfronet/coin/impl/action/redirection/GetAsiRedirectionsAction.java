@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.cyfronet.coin.api.RedirectionType;
-import pl.cyfronet.coin.api.beans.WorkflowType;
 import pl.cyfronet.coin.api.beans.redirection.HttpRedirection;
 import pl.cyfronet.coin.api.beans.redirection.NatRedirection;
 import pl.cyfronet.coin.api.beans.redirection.Redirections;
@@ -66,17 +65,10 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 		Action<WorkflowDetail> getWfDetailAct = getActionFactory()
 				.createGetWorkflowDetailAction(contextId, username);
 		WorkflowDetail wfd = getWfDetailAct.execute();
-		if (wfd.getWorkflow_type() == WorkflowType.development) {
-			for (Vms instance : wfd.getVms()) {
-				if (instance.getVms_id().equals(asiIdentifier)) {
-					return instance;
-				}
-			}
-		} else {
-			for (Vms instance : wfd.getVms()) {
-				if (instance.getConfiguration().equals(asiIdentifier)) {
-					return instance;
-				}
+		for (Vms instance : wfd.getVms()) {
+			if (asiIdentifier.equals(instance.getVms_id())
+					|| asiIdentifier.equals(instance.getConfiguration())) {
+				return instance;
 			}
 		}
 		return null;
@@ -185,7 +177,7 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 			natRedirection.setName(pm.getService_name());
 			natRedirection.setToPort(pm.getVm_port());
 			natRedirection.setType(RedirectionType.TCP);
-			//#1942
+			// #1942
 			natRedirection.setDirect(isDirect(pm.getHeadnode_ip()));
 
 			natRedirections.add(natRedirection);
