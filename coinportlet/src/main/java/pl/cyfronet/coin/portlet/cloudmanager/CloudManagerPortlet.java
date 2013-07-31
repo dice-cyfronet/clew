@@ -677,20 +677,21 @@ public class CloudManagerPortlet {
 	}
 	
 	@ResourceMapping("accessMethods")
-	public void getAccessMethods(@RequestParam(PARAM_WORKFLOW_ID) String workflowId,
+	public void doResourceAccessMethods(@RequestParam(PARAM_WORKFLOW_ID) String workflowId,
 			@RequestParam(PARAM_ATOMIC_SERVICE_INSTANCE_ID) String instanceId,
 			PortletRequest request, ResourceResponse response) {
 		log.trace("Processing atomic service instance access methods request for workflow [{}] and instance [{}]",
 				new String[] {workflowId, instanceId});
 		
 		AtomicServiceInstance asi = clientFactory.getWorkflowManagement(request).getWorkflowAtomicServiceInstance(workflowId, instanceId);
+		Redirections redirections = clientFactory.getWorkflowManagement(request).getRedirections(workflowId, instanceId);
 		boolean accessMethodsRetrieved = false;
 
 		try {
-			if(asi.getRedirections() != null && asi.getRedirections().size() > 0) {
+			if(redirections.getNat() != null && redirections.getNat().size() > 0) {
 				StringBuilder builder = new StringBuilder();
 				
-				for(Redirection redirection : asi.getRedirections()) {
+				for(NatRedirection redirection : redirections.getNat()) {
 					if(redirection.getName() != null) {
 						builder.append(redirection.getName()).append(":")
 								.append(redirection.getHost()).append(":")
