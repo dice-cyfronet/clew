@@ -17,7 +17,6 @@
 				</div>
 				<div class="span8">
 					<c:forEach var="url" items="${redirection.urls}" varStatus="status">
-						${url}
 						<spring:message code="cloud.manager.portlet.http.redirection.description.template" arguments="${url},${redirection.toPort}"/>
 						<c:if test="${ not status.last}">,</c:if>
 					</c:forEach>
