@@ -20,9 +20,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.AtomicServiceNotFoundException;
 import pl.cyfronet.coin.impl.air.client.ATEndpoint;
 import pl.cyfronet.coin.impl.air.client.ApplianceType;
+import pl.cyfronet.coin.impl.air.client.Vms;
+import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -71,4 +74,17 @@ public abstract class AirAction<T> extends BaseAction<T> {
 		}
 	}
 
+	protected Vms getAsi(String username, String contextId, String asiIdentifier)
+			throws AtomicServiceInstanceNotFoundException {
+		Action<WorkflowDetail> getWfDetailAct = getActionFactory()
+				.createGetWorkflowDetailAction(contextId, username);
+		WorkflowDetail wfd = getWfDetailAct.execute();
+		for (Vms instance : wfd.getVms()) {
+			if (asiIdentifier.equals(instance.getVms_id())
+					|| asiIdentifier.equals(instance.getConfiguration())) {
+				return instance;
+			}
+		}
+		throw new AtomicServiceInstanceNotFoundException();
+	}
 }

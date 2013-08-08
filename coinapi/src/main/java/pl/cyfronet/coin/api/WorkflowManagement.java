@@ -126,9 +126,7 @@ public interface WorkflowManagement {
 	void removeAtomicServiceFromWorkflow(
 			@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId)
-			throws WorkflowNotFoundException, CloudFacadeException;	
-
-	// redirections
+			throws WorkflowNotFoundException, CloudFacadeException;		
 
 	@GET
 	@Path("/{contextId}/atomic_services/{asiId}")
@@ -136,6 +134,15 @@ public interface WorkflowManagement {
 			@PathParam("contextId") String contextId,
 			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
 			AtomicServiceInstanceNotFoundException;
+	
+	@POST
+	@Path("/{contextId}/atomic_services/{asiId}/restart")
+	void restartAtomicServiceInstance(
+			@PathParam("contextId") String contextId,
+			@PathParam("asiId") String asiId) throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException, WorkflowNotInDevelopmentModeException;
+	
+	// redirections
 	
 	@GET
 	@Path("/{contextId}/atomic_services/{asiId}/redirections")

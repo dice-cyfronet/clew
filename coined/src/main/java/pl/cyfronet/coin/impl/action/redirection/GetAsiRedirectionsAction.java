@@ -9,9 +9,7 @@ import pl.cyfronet.coin.api.RedirectionType;
 import pl.cyfronet.coin.api.beans.redirection.HttpRedirection;
 import pl.cyfronet.coin.api.beans.redirection.NatRedirection;
 import pl.cyfronet.coin.api.beans.redirection.Redirections;
-import pl.cyfronet.coin.api.exception.AtomicServiceInstanceNotFoundException;
 import pl.cyfronet.coin.api.exception.CloudFacadeException;
-import pl.cyfronet.coin.impl.action.Action;
 import pl.cyfronet.coin.impl.action.ActionFactory;
 import pl.cyfronet.coin.impl.action.ReadOnlyAirAction;
 import pl.cyfronet.coin.impl.air.client.ATPortMapping;
@@ -19,7 +17,6 @@ import pl.cyfronet.coin.impl.air.client.ApplianceType;
 import pl.cyfronet.coin.impl.air.client.PortMapping;
 import pl.cyfronet.coin.impl.air.client.VmHttpRedirection;
 import pl.cyfronet.coin.impl.air.client.Vms;
-import pl.cyfronet.coin.impl.air.client.WorkflowDetail;
 
 /**
  * @author <a href="mailto:mkasztelnik@gmail.com">Marek Kasztelnik</a>
@@ -54,24 +51,8 @@ public class GetAsiRedirectionsAction extends ReadOnlyAirAction<Redirections> {
 	}
 
 	private void findAsi() {
-		asi = getAsi();
-		if (asi == null) {
-			throw new AtomicServiceInstanceNotFoundException();
-		}
+		asi = getAsi(username, contextId, asiIdentifier);
 		asiId = asi.getVms_id();
-	}
-
-	private Vms getAsi() {
-		Action<WorkflowDetail> getWfDetailAct = getActionFactory()
-				.createGetWorkflowDetailAction(contextId, username);
-		WorkflowDetail wfd = getWfDetailAct.execute();
-		for (Vms instance : wfd.getVms()) {
-			if (asiIdentifier.equals(instance.getVms_id())
-					|| asiIdentifier.equals(instance.getConfiguration())) {
-				return instance;
-			}
-		}
-		return null;
 	}
 
 	private List<HttpRedirection> getHttpRedirections() {

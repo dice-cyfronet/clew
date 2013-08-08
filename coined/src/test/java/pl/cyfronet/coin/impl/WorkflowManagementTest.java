@@ -132,8 +132,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		Redirections redirections = new Redirections();
 		List<HttpRedirection> httpRedirections = new ArrayList<>();
 		List<NatRedirection> natRedirections = new ArrayList<>();
-		
-		
+
 		for (int i = 0; i < nr; i++) {
 			NatRedirection natRedirection = new NatRedirection();
 			natRedirection.setFromPort(18080 + i);
@@ -142,7 +141,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			natRedirection.setType(RedirectionType.TCP);
 			natRedirection.setHost(host);
 			natRedirections.add(natRedirection);
-			
+
 			HttpRedirection httpRedirection = new HttpRedirection();
 			httpRedirection.setName("http_redirection" + i);
 			httpRedirection.setToPort(28080 + i);
@@ -151,13 +150,13 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		}
 		redirections.setHttp(httpRedirections);
 		redirections.setNat(natRedirections);
-		
+
 		Action<Redirections> action = mock(Action.class);
 		when(action.execute()).thenReturn(redirections);
 
 		when(
-				actionFactory.createGetAsiRedirectionsAction(
-						username, contextId, asiId)).thenReturn(action);
+				actionFactory.createGetAsiRedirectionsAction(username,
+						contextId, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -169,7 +168,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		thenActionExecuted();
 		assertNotNull(redirections);
 		assertEquals(redirections.getHttp().size(), nr);
-		assertEquals(redirections.getNat().size(), nr);		
+		assertEquals(redirections.getNat().size(), nr);
 
 		for (int i = 0; i < nr; i++) {
 			NatRedirection natRedirection = redirections.getNat().get(i);
@@ -178,7 +177,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 			assertEquals(natRedirection.getHost(), host);
 			assertEquals(natRedirection.getName(), "nat_redirection" + i);
 			assertEquals(natRedirection.getType(), RedirectionType.TCP);
-			
+
 			HttpRedirection httpRedirection = redirections.getHttp().get(i);
 			assertEquals(httpRedirection.getName(), "http_redirection" + i);
 			assertEquals(httpRedirection.getToPort().intValue(), 28080 + i);
@@ -208,8 +207,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		when(action.execute()).thenThrow(exception);
 
 		when(
-				actionFactory.createGetAsiRedirectionsAction(
-						username, contextId, asiId)).thenReturn(action);
+				actionFactory.createGetAsiRedirectionsAction(username,
+						contextId, asiId)).thenReturn(action);
 		currentAction = action;
 	}
 
@@ -265,8 +264,8 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 
 		thenActionExecuted();
 
-	}	
-	
+	}
+
 	private void givenNotKnownWorkflow() {
 		givenRemoveASError(new WorkflowNotFoundException());
 	}
@@ -278,7 +277,7 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		givenRemoveASAction(action);
 
 	}
-	
+
 	@Test
 	public void shouldThrowExceptionWhileRemovingASWhichIsNotFound()
 			throws Exception {
@@ -323,12 +322,12 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (AtomicServiceInstanceInUseException e) {
 			// OK - should be thrown
 		}
-			
+
 		thenActionExecuted();
 	}
-	
+
 	private void givenRemoveSavingASIFromWorkflow() {
-		givenRemoveASError(new AtomicServiceInstanceInUseException());		
+		givenRemoveASError(new AtomicServiceInstanceInUseException());
 	}
 
 	@Test
@@ -408,6 +407,29 @@ public class WorkflowManagementTest extends AbstractServiceTest {
 		} catch (WebApplicationException e) {
 			assertEquals(e.getResponse().getStatus(), 400);
 		}
+	}
+
+	@Test
+	public void shouldRestartAtomicServiceInstance() throws Exception {
+		givenWorkflowWithASI();
+		whenRestartASI();
+		thenASIRestarted();
+
+	}
+
+	private void givenWorkflowWithASI() {
+		Action<Class<Void>> action = mock(Action.class);
+		when(actionFactory.createRestartAsiAction(username, contextId, asiId))
+				.thenReturn(action);
+		currentAction = action;
+	}
+
+	private void whenRestartASI() throws Exception {
+		workflowManagement.restartAtomicServiceInstance(contextId, asiId);
+	}
+
+	private void thenASIRestarted() {
+		thenActionExecuted();
 	}
 
 	// redirections

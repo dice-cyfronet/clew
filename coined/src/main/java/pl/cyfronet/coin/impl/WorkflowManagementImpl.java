@@ -32,7 +32,6 @@ import pl.cyfronet.coin.api.WorkflowManagement;
 import pl.cyfronet.coin.api.beans.AddAsWithKeyToWorkflow;
 import pl.cyfronet.coin.api.beans.AtomicServiceInstance;
 import pl.cyfronet.coin.api.beans.Endpoint;
-import pl.cyfronet.coin.api.beans.Redirection;
 import pl.cyfronet.coin.api.beans.UserWorkflows;
 import pl.cyfronet.coin.api.beans.Workflow;
 import pl.cyfronet.coin.api.beans.WorkflowBaseInfo;
@@ -87,7 +86,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		} catch (WorkflowNotFoundException e) {
 			throw new WebApplicationException(404);
 		}
-	}	
+	}
 
 	@Override
 	public void addAtomicServiceToWorkflow(String contextId,
@@ -117,6 +116,19 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 		Action<Class<Void>> action = actionFactory
 				.createRemoveAtomicServiceFromWorkflowAction(username,
 						workflowId, asConfigId);
+		action.execute();
+	}
+
+	@Override
+	public void restartAtomicServiceInstance(String contextId, String asConfigId)
+			throws WorkflowNotFoundException,
+			AtomicServiceInstanceNotFoundException,
+			WorkflowNotInDevelopmentModeException {
+		String username = getUsername();
+		logger.info("{} restarts {} atomic service from {} workflow",
+				new Object[] { username, asConfigId, contextId });
+		Action<Class<Void>> action = actionFactory.createRestartAsiAction(
+				username, contextId, asConfigId);
 		action.execute();
 	}
 
@@ -177,7 +189,7 @@ public class WorkflowManagementImpl extends UsernameAwareService implements
 			AtomicServiceInstanceNotFoundException,
 			WorkflowNotInDevelopmentModeException {
 		validateRedirectionName(name);
-		String username = getUsername();		
+		String username = getUsername();
 		logger.info(
 				"{} adds new redirection for {} ASI belonging to {} workflow [{}:{} {} type]",
 				new Object[] { username, asiId, contextId, name, port, type });
