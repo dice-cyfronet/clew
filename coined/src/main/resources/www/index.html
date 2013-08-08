@@ -367,6 +367,25 @@ html,body {
 							</p>
 						</div>
 						<h3>
+							<a href="#"><strong class="method">POST</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/restart</strong>
+								- restart Atomic Service instance (available only in development mode)</a>
+						</h3>
+						<div>
+							<ul>
+								<li>(required) <strong>workflowId</strong> workflow id
+								</li>
+								<li>(required) <strong>initConfId</strong> - atomic service
+									initial configuration</li>
+							</ul>
+							
+							<p>
+								The operation returns the <strong>204</strong> status code on
+								success, <strong>404</strong> when Atomic Service instance does 
+								not exist and the <strong>403</strong> status code
+								when restart were tried to perform on production workflow.
+							</p>
+						</div>
+						<h3>
 							<a href="#"><strong class="method">GET</strong> <strong>/workflow/{workflowId}/atomic_services/{initConfId}/redirections</strong>
 								- gets information about Atomic Service instance redirections</a>
 						</h3>
