@@ -12,14 +12,75 @@
 	</parent>
 
 	<artifactId>coinclew</artifactId>
+	<packaging>war</packaging>
 
 	<name>CORS Cloud Facade Web Client</name>
+	
+	<build>
+		<finalName>clew</finalName>
+		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>${gwt.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<runTarget>clew-test.html</runTarget>
+					<modules>
+						<module>pl.cyfronet.coin.clew.clew</module>
+					</modules>
+					<buildOutputDirectory>${project.build.directory}/${project.build.finalName}</buildOutputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<!-- web.xml is a dummy making the GWT plugin happy -->
+					<warSourceExcludes>WEB-INF/web.xml</warSourceExcludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
-		<!-- Cloud Facade dependencies -->
+		<!-- GWT dependencies -->
 		<dependency>
-			<groupId>pl.cyfronet.coin</groupId>
-			<artifactId>coinapi</artifactId>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
