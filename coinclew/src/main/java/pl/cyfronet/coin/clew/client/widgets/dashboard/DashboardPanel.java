@@ -20,8 +20,4 @@ public class DashboardPanel extends Composite implements View {
 		this.presenter = presenter;
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-
-	public DashboardPanel(String firstName) {
-		initWidget(uiBinder.createAndBindUi(this));
-	}
 }

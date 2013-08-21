@@ -15,5 +15,5 @@
 	
 	<!-- Logging configuration -->
 	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
-	<set-property name="gwt.logging.logLevel" value="INFO"/>
+	<set-property name="gwt.logging.logLevel" value="FINE"/>
 </module>
