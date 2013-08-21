@@ -12,4 +12,8 @@
 	<source path="client"/>
 	
 	<entry-point class="pl.cyfronet.coin.clew.client.ClewEntryPoint"/>
+	
+	<!-- Logging configuration -->
+	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+	<set-property name="gwt.logging.logLevel" value="INFO"/>
 </module>
