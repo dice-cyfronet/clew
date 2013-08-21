@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN"
+	"http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
 <module rename-to="clew">
 	<inherits name="com.google.gwt.user.User"/>
+	<inherits name="pl.cyfronet.coin.coinapi"/>
+	<inherits name="com.googlecode.gwt.crypto.Crypto"/>
+	<inherits name="org.fusesource.restygwt.RestyGWT" />
+	
 	<source path="client"/>
+	
 	<entry-point class="pl.cyfronet.coin.clew.client.ClewEntryPoint"/>
 </module>
