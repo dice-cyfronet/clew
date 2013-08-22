@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.di;
 
 import pl.cyfronet.coin.clew.client.controller.ClewController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPanel;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.Presenter;
@@ -12,6 +13,7 @@ public class ClewClientModule extends AbstractGinModule {
 	@Override
 	protected void configure() {
 		bind(ClewController.class).in(Singleton.class);
+		bind(CloudFacadeController.class).in(Singleton.class);
 		
 		configureViewsAndPresenters();
 	}
