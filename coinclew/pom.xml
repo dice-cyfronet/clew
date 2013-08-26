@@ -18,9 +18,18 @@
 	
 	<properties>
 		<gwt.version>2.5.1</gwt.version>
-		<gwt.bootstrap.version>2.2.1.0</gwt.bootstrap.version>
+		<gwt.bootstrap.version>2.3.2.0-SNAPSHOT</gwt.bootstrap.version>
 		<gwt.gin.version>2.1.0</gwt.gin.version>
 	</properties>
+	
+	<repositories>
+		<repository>
+			<id>gwt-bootstrap-snapshot</id>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots><enabled>true</enabled></snapshots>
+			<releases><enabled>false</enabled></releases>
+		</repository>
+	</repositories>
 	
 	<build>
 		<finalName>clew</finalName>
