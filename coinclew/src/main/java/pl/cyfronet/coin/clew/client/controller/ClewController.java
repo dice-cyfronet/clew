@@ -20,6 +20,7 @@ public class ClewController {
 	
 	public void start() {
 		RootPanel.get().add(dashboardPresenter.getWidget());
+		dashboardPresenter.load();
 		log.info("CLEW application successfully loaded");
 	}
 }

@@ -6,4 +6,6 @@ public interface Presenter {
 	void onFilter(String text);
 	void onStartSelected();
 	void onStartSingle(int i);
+	void onInstanceDetailsShow(int i);
+	void onInstanceShutdown(int i);
 }

@@ -1,14 +1,21 @@
 package pl.cyfronet.coin.clew.client.widgets.dashboard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.fusesource.restygwt.client.JsonCallback;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.Resource;
 
+import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance.Status;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.Collapse;
 import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
@@ -16,6 +23,8 @@ import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -23,10 +32,13 @@ import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -41,16 +53,22 @@ public class DashboardPanel extends Composite implements View {
 	@UiField Icon appListSpinner;
 	@UiField TextBox filterAppsBox;
 	@UiField Button startSelectedApps;
+	@UiField FlexTable instances;
 	
 	private Provider<Presenter> presenter;
 	private Timer filterTimer;
+	private DashboardMessages messages;
+	private Map<Integer, Collapse> collapsables;
 
 	@Inject
-	public DashboardPanel(Provider<Presenter> presenter) {
+	public DashboardPanel(Provider<Presenter> presenter, DashboardMessages messages) {
 		this.presenter = presenter;
+		this.messages = messages;
 		initWidget(uiBinder.createAndBindUi(this));
+		collapsables = new HashMap<Integer, Collapse>();
+		init();
 	}
-	
+
 	@UiHandler("showStartAppModal")
 	void onShowStartAppModal(ClickEvent event) {
 		presenter.get().onShowStartAppModal();
@@ -137,11 +155,6 @@ public class DashboardPanel extends Composite implements View {
 	}
 
 	@Override
-	public void addText(int i, int j, String text) {
-		appsTable.setText(i, j, text);
-	}
-
-	@Override
 	public void setAppVisibility(int i, boolean visible) {
 		appsTable.getRowFormatter().setVisible(i, visible);
 	}
@@ -173,5 +186,134 @@ public class DashboardPanel extends Composite implements View {
 			startButton.setEnabled(true);
 			startButton.setIcon(IconType.PLAY);
 		}
+	}
+
+	@Override
+	public void addAppDescription(int i, String description) {
+		appsTable.setText(i, 3, description);
+	}
+
+	@Override
+	public void addAppName(int i, String name) {
+		appsTable.setHTML(i, 2, "<strong>" + name + "</strong>");
+	}
+
+	@Override
+	public void setInstanceName(int i, String name) {
+		instances.setText(getDetailsRow(i), 0, name);
+	}
+
+	@Override
+	public void setInstanceIp(int i, String ip) {
+		instances.setText(getDetailsRow(i), 1, ip);
+	}
+	
+	@Override
+	public void setInstanceActionsAndDetails(final int i) {
+		ButtonGroup buttonGroup = new ButtonGroup();
+		Button detailsButton = new Button("", IconType.ALIGN_JUSTIFY);
+		detailsButton.setSize(ButtonSize.MINI);
+		detailsButton.setType(ButtonType.WARNING);
+		detailsButton.setTitle(messages.getDetailsButtonTooltip());
+		detailsButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.get().onInstanceDetailsShow(i);
+			}
+		});
+		buttonGroup.add(detailsButton);
+		
+		Button shutdownButton = new Button("", IconType.OFF);
+		shutdownButton.setSize(ButtonSize.MINI);
+		shutdownButton.setType(ButtonType.DANGER);
+		shutdownButton.setTitle(messages.getShutdownButtonTooltip());
+		shutdownButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.get().onInstanceShutdown(i);
+			}
+		});
+		buttonGroup.add(shutdownButton);
+		instances.setWidget(getDetailsRow(i), 5, buttonGroup);
+		instances.getFlexCellFormatter().setColSpan(getCollapsibleRow(i), 0, 6);
+		
+		FlowPanel collapse = new FlowPanel();
+		collapse.add(new Label("Instance details"));
+		Collapse details = new Collapse();
+		details.add(collapse);
+		instances.setWidget(getCollapsibleRow(i), 0, details);
+		instances.getCellFormatter().getElement(getCollapsibleRow(i), 0).getStyle().setBorderStyle(BorderStyle.NONE);
+		collapsables.put(i, details);
+	}
+
+	@Override
+	public void setInstanceStatus(int i, Status status) {
+		instances.setText(getDetailsRow(i), 4, status != null ? status.toString() : null);
+	}
+
+	@Override
+	public void setInstanceSpec(int i, String spec) {
+		instances.setText(getDetailsRow(i), 3, spec);
+	}
+
+	@Override
+	public void setInstanceLocation(int i, String location) {
+		instances.setText(getDetailsRow(i), 2, location);
+	}
+	
+	@Override
+	public void confirmShutdown(Command command) {
+		if  (Window.confirm(messages.getShutdownConfirmationMessage())) {
+			command.execute();
+		}
+	}
+	
+	@Override
+	public void toggleInstanceDetails(int i) {
+		collapsables.get(i).toggle();
+	}
+	
+	private void init() {
+		Element caption = DOM.createCaption();
+		caption.setInnerText(messages.getInstancesTableCaption());
+		instances.getElement().appendChild(caption);
+		
+		Element header = DOM.createTHead();
+		instances.getElement().appendChild(header);
+		
+		Element tr = DOM.createTR();
+		header.appendChild(tr);
+		
+		Element nameHeader = DOM.createTH();
+		nameHeader.setInnerText(messages.getInstanceNameHeader());
+		tr.appendChild(nameHeader);
+		
+		Element ipHeader = DOM.createTH();
+		ipHeader.setInnerText(messages.getInstanceIpHeader());
+		tr.appendChild(ipHeader);
+		
+		Element locationHeader = DOM.createTH();
+		locationHeader.setInnerText(messages.getInstanceLocationHeader());
+		tr.appendChild(locationHeader);
+		
+		Element specHeader = DOM.createTH();
+		specHeader.setInnerText(messages.getInstanceSpecHeader());
+		tr.appendChild(specHeader);
+		
+		Element statusHeader = DOM.createTH();
+		statusHeader.setInnerText(messages.getInstanceStatusHeader());
+		tr.appendChild(statusHeader);
+		
+		Element actionsHeader = DOM.createTH();
+		actionsHeader.setInnerText(messages.getInstanceActionsHeader());
+		tr.appendChild(actionsHeader);
+	}
+	
+	private int getDetailsRow(int i) {
+		return i * 2;
+	}
+	
+	private int getCollapsibleRow(int i) {
+		return i * 2 + 1;
 	}
 }

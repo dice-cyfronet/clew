@@ -18,6 +18,7 @@
 		<b:TabPanel>
 			<b:Tab heading="Applications" active="true">
 				<b:Button ui:field="showStartAppModal" icon="PLAY" type="SUCCESS"><ui:text from="{messages.startNewAppButtonLabel}"/></b:Button>
+				<g:FlexTable ui:field="instances" styleName="table table-condensed"/>
 			</b:Tab>
 			<b:Tab heading="Workflows">
 			</b:Tab>
