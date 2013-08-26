@@ -19,6 +19,8 @@ import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.constants.IconRotate;
+import com.github.gwtbootstrap.client.ui.constants.IconSize;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
@@ -130,6 +132,7 @@ public class DashboardPanel extends Composite implements View {
 	@Override
 	public void setAppsSpinnerVisible(boolean visible) {
 		appListSpinner.setVisible(visible);
+		appListSpinner.setSpin(visible);
 	}
 
 	@Override

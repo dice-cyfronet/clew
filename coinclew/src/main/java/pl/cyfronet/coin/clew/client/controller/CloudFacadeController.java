@@ -15,14 +15,20 @@ public class CloudFacadeController {
 		void processAtomicServiceInstances(List<AtomicServiceInstance> atomicServiceInstances);
 	}
 	
-	public List<AtomicService> getAtomicServices() {
-		List<AtomicService> services = new ArrayList<AtomicService>();
+	public interface AtomicServiceCallback {
+		void processAtomicService(List<AtomicService> atomicServices);
+	}
+	
+	public void getAtomicServices(final AtomicServiceCallback atomicServiceCallback) {
+		final List<AtomicService> services = new ArrayList<AtomicService>();
 		
 		for (int i = 0; i < 20; i++) {
 			services.add(new AtomicService("Atomic service " + i, "Atomic service " + i + " description"));
 		}
 		
-		return services;
+		if (atomicServiceCallback != null) {
+			atomicServiceCallback.processAtomicService(services);
+		}
 	}
 
 	public void startAtomicServices(List<String> startIds, final Command command) {
@@ -47,7 +53,9 @@ public class CloudFacadeController {
 			instances.add(asi);
 		}
 		
-		atomicServiceInstancesCallback.processAtomicServiceInstances(instances);
+		if (atomicServiceInstancesCallback != null) {
+			atomicServiceInstancesCallback.processAtomicServiceInstances(instances);
+		}
 	}
 
 	public void shutdownAtomicServiceInstance(Command afterShutdown) {

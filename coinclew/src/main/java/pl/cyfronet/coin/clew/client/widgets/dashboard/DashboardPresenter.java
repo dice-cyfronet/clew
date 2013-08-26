@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServiceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServiceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicService;
 import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance;
@@ -94,19 +95,24 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		view.clearAppsTable();
 		view.setAppsSpinnerVisible(true);
 		
-		atomicServices = cloudFacadeController.getAtomicServices();
-		view.setAppsSpinnerVisible(false);
-		
-		int i = 0;
-		appChecks.clear();
-		
-		for(AtomicService atomicService : atomicServices) {
-			view.addStartButton(i);
-			appChecks.add(view.addCheckButton(i));
-			view.addAppName(i, atomicService.getName());
-			view.addAppDescription(i, atomicService.getDescription());
-			i++;
-		}
+		cloudFacadeController.getAtomicServices(new AtomicServiceCallback() {
+			@Override
+			public void processAtomicService(List<AtomicService> atomicServices) {
+				DashboardPresenter.this.atomicServices = atomicServices;
+				view.setAppsSpinnerVisible(false);
+				
+				int i = 0;
+				appChecks.clear();
+				
+				for(AtomicService atomicService : atomicServices) {
+					view.addStartButton(i);
+					appChecks.add(view.addCheckButton(i));
+					view.addAppName(i, atomicService.getName());
+					view.addAppDescription(i, atomicService.getDescription());
+					i++;
+				}
+			}
+		});
 	}
 
 	@Override

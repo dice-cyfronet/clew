@@ -28,7 +28,7 @@
 				<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}" addStyleNames="{style.right}"/>
 			</g:HTMLPanel>
 			<g:HTMLPanel addStyleNames="{style.clear} {style.center}">
-				<b:Icon ui:field="appListSpinner" type="SPINNER" visible="false"/>
+				<b:Icon ui:field="appListSpinner" type="SPINNER" visible="false" size="LARGE"/>
 				<g:FlexTable ui:field="appsTable" styleName="table table-striped table-condensed"/>
 			</g:HTMLPanel>
 			<b:ModalFooter>
