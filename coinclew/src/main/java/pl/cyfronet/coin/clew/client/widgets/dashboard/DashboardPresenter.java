@@ -1,10 +1,14 @@
 package pl.cyfronet.coin.clew.client.widgets.dashboard;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicService;
 
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 
@@ -16,10 +20,14 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		void addStartButton(int i);
 		void addCheckButton(int i);
 		void addText(int i, int j, String text);
+		void setAppVisibility(int i, boolean b);
 	}
+	
+	private final static Logger log = LoggerFactory.getLogger(DashboardPresenter.class);
 	
 	private View view;
 	private CloudFacadeController cloudFacadeController;
+	private List<AtomicService> atomicServices;
 	
 	@Inject
 	public DashboardPresenter(View view, CloudFacadeController cloudFacadeController) {
@@ -43,22 +51,34 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		view.clearAppsTable();
 		view.setAppsSpinnerVisible(true);
 		
-		new Timer() {
-			
-			@Override
-			public void run() {
-				view.setAppsSpinnerVisible(false);
-				int i = 0;
-				
-				for(AtomicService atomicService : cloudFacadeController.getAtomicServices()) {
-					//TODO - refactor this!
-					view.addStartButton(i);
-					view.addCheckButton(i);
-					view.addText(i, 2, atomicService.getName());
-					view.addText(i, 3, atomicService.getDescription());
-					i++;
-				}
+		atomicServices = cloudFacadeController.getAtomicServices();
+		view.setAppsSpinnerVisible(false);
+		
+		int i = 0;
+		
+		for(AtomicService atomicService : atomicServices) {
+			view.addStartButton(i);
+			view.addCheckButton(i);
+			view.addText(i, 2, atomicService.getName());
+			view.addText(i, 3, atomicService.getDescription());
+			i++;
+		}
+	}
+
+	@Override
+	public void onFilter(String text) {
+		log.debug("Filtering apps for {}", text);
+		int i = 0;
+		
+		for (AtomicService atomicService : atomicServices) {
+			if (atomicService.getName() != null && atomicService.getName().contains(text) ||
+					atomicService.getDescription() != null && atomicService.getDescription().contains(text)) {
+				view.setAppVisibility(i, true);
+			} else {
+				view.setAppVisibility(i, false);
 			}
-		}.schedule(2000);
+			
+			i++;
+		}
 	}
 }

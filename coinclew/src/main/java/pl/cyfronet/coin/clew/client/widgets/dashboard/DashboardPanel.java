@@ -10,16 +10,19 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -31,11 +34,13 @@ public class DashboardPanel extends Composite implements View {
 	private static DashboardPanelUiBinder uiBinder = GWT.create(DashboardPanelUiBinder.class);
 	interface DashboardPanelUiBinder extends UiBinder<Widget, DashboardPanel> {}
 	
-	private Provider<Presenter> presenter;
-
 	@UiField Modal startAppPopup;
 	@UiField FlexTable appsTable;
 	@UiField Icon appListSpinner;
+	@UiField TextBox filterAppsBox;
+	
+	private Provider<Presenter> presenter;
+	private Timer filterTimer;
 
 	@Inject
 	public DashboardPanel(Provider<Presenter> presenter) {
@@ -56,6 +61,23 @@ public class DashboardPanel extends Composite implements View {
 	@UiHandler("startAppPopup")
 	void onStartAppModalShown(ShownEvent event) {
 		presenter.get().onStartAppModalShown();
+	}
+	
+	@UiHandler("filterAppsBox")
+	void onFilter(KeyUpEvent event) {
+		if (filterTimer != null) {
+			filterTimer.cancel();
+		} else {
+			filterTimer = new Timer() {
+				@Override
+				public void run() {
+					presenter.get().onFilter(filterAppsBox.getText());
+					filterTimer = null;
+				}
+			};
+		}
+		
+		filterTimer.schedule(500);
 	}
 	
 	@Deprecated
@@ -106,5 +128,10 @@ public class DashboardPanel extends Composite implements View {
 	@Override
 	public void addText(int i, int j, String text) {
 		appsTable.setText(i, j, text);
+	}
+
+	@Override
+	public void setAppVisibility(int i, boolean visible) {
+		appsTable.getRowFormatter().setVisible(i, visible);
 	}
 }

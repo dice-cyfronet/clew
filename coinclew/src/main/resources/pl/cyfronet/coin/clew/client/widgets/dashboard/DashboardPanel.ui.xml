@@ -10,6 +10,9 @@
 		.clear {
 			clear: both;
 		}
+		.center {
+			text-align: center;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<b:TabPanel>
@@ -23,7 +26,7 @@
 			<g:HTMLPanel>
 				<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}" addStyleNames="{style.right}"/>
 			</g:HTMLPanel>
-			<g:HTMLPanel addStyleNames="{style.clear}">
+			<g:HTMLPanel addStyleNames="{style.clear} {style.center}">
 				<b:Icon ui:field="appListSpinner" type="SPINNER" visible="false"/>
 				<g:FlexTable ui:field="appsTable" styleName="table table-striped table-condensed"/>
 			</g:HTMLPanel>

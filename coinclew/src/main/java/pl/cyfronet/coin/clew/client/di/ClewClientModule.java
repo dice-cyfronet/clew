@@ -19,7 +19,7 @@ public class ClewClientModule extends AbstractGinModule {
 	}
 
 	private void configureViewsAndPresenters() {
-		bind(DashboardPresenter.View.class).to(DashboardPanel.class);
-		bind(Presenter.class).to(DashboardPresenter.class);
+		bind(DashboardPresenter.View.class).to(DashboardPanel.class).in(Singleton.class);
+		bind(Presenter.class).to(DashboardPresenter.class).in(Singleton.class);
 	}
 }
