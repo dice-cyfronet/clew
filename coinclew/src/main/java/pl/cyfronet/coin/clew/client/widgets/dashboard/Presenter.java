@@ -4,4 +4,6 @@ public interface Presenter {
 	void onShowStartAppModal();
 	void onStartAppModalShown();
 	void onFilter(String text);
+	void onStartSelected();
+	void onStartSingle(int i);
 }

@@ -6,6 +6,8 @@ public class AtomicService {
 	private String description;
 	
 	public AtomicService(String name, String description) {
+		//TODO(DH): temporary
+		this.id = name;
 		this.name = name;
 		this.description = description;
 	}

@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.dashboard;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +11,8 @@ import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicService;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 
@@ -18,9 +22,12 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		void clearAppsTable();
 		void setAppsSpinnerVisible(boolean visible);
 		void addStartButton(int i);
-		void addCheckButton(int i);
+		HasValue<Boolean> addCheckButton(int i);
 		void addText(int i, int j, String text);
 		void setAppVisibility(int i, boolean b);
+		void setStartSelectedWidgetBusyState(boolean b);
+		void hideStartAppPopup();
+		void setStartAppWidgetBusyState(int i, boolean b);
 	}
 	
 	private final static Logger log = LoggerFactory.getLogger(DashboardPresenter.class);
@@ -28,11 +35,13 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	private View view;
 	private CloudFacadeController cloudFacadeController;
 	private List<AtomicService> atomicServices;
+	private List<HasValue<Boolean>> appChecks;
 	
 	@Inject
 	public DashboardPresenter(View view, CloudFacadeController cloudFacadeController) {
 		this.view = view;
 		this.cloudFacadeController = cloudFacadeController;
+		appChecks = new ArrayList<HasValue<Boolean>>();
 	}
 	
 	@Override
@@ -55,10 +64,11 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		view.setAppsSpinnerVisible(false);
 		
 		int i = 0;
+		appChecks.clear();
 		
 		for(AtomicService atomicService : atomicServices) {
 			view.addStartButton(i);
-			view.addCheckButton(i);
+			appChecks.add(view.addCheckButton(i));
 			view.addText(i, 2, atomicService.getName());
 			view.addText(i, 3, atomicService.getDescription());
 			i++;
@@ -80,5 +90,42 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 			
 			i++;
 		}
+	}
+
+	@Override
+	public void onStartSelected() {
+		List<String> startIds = new ArrayList<String>();
+		int i = 0;
+		
+		for (HasValue<Boolean> selected : appChecks) {
+			if (selected.getValue()) {
+				startIds.add(atomicServices.get(i).getId());
+			}
+			
+			i++;
+		}
+		
+		log.info("Starting atomic services with ids {}", startIds);
+		view.setStartSelectedWidgetBusyState(true);
+		cloudFacadeController.startAtomicServices(startIds, new Command() {
+			@Override
+			public void execute() {
+				view.setStartSelectedWidgetBusyState(false);
+				view.hideStartAppPopup();
+			}
+		});
+	}
+
+	@Override
+	public void onStartSingle(final int i) {
+		log.info("Starting single atomic service {}", atomicServices.get(i).getId());
+		view.setStartAppWidgetBusyState(i, true);
+		cloudFacadeController.startAtomicServices(
+				Arrays.asList(atomicServices.get(i).getId()), new Command() {
+					@Override
+					public void execute() {
+						view.setStartAppWidgetBusyState(i, false);
+					}
+				});
 	}
 }

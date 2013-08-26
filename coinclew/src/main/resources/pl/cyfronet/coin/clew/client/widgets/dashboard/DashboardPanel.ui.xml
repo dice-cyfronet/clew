@@ -31,7 +31,7 @@
 				<g:FlexTable ui:field="appsTable" styleName="table table-striped table-condensed"/>
 			</g:HTMLPanel>
 			<b:ModalFooter>
-				<b:Button ui:field="startSelectedApps" type="PRIMARY"><ui:text from="{messages.startSelectedAppsButtonLabel}"/></b:Button>
+				<b:Button ui:field="startSelectedApps" type="PRIMARY" icon="PLAY"><ui:text from="{messages.startSelectedAppsButtonLabel}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>
 	</g:HTMLPanel>
