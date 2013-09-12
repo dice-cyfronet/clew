@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServiceCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServicesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServiceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicService;
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance;
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicService;
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance.Status;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -95,7 +95,7 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		view.clearAppsTable();
 		view.setAppsSpinnerVisible(true);
 		
-		cloudFacadeController.getAtomicServices(new AtomicServiceCallback() {
+		cloudFacadeController.getAtomicServices(new AtomicServicesCallback() {
 			@Override
 			public void processAtomicService(List<AtomicService> atomicServices) {
 				DashboardPresenter.this.atomicServices = atomicServices;

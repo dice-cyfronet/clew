@@ -7,7 +7,7 @@ import org.fusesource.restygwt.client.JsonCallback;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.Resource;
 
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance.Status;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -19,8 +19,6 @@ import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.IconRotate;
-import com.github.gwtbootstrap.client.ui.constants.IconSize;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
@@ -70,10 +68,27 @@ public class DashboardPanel extends Composite implements View {
 		collapsables = new HashMap<Integer, Collapse>();
 		init();
 	}
+	
+	@Deprecated
+	void onCors() {
+		Resource r = new Resource("http://149.156.9.177:3000/api/v1/appliance_sets?private_token=secret");
+		r.get().send(new JsonCallback() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, JSONValue response) {
+				Window.alert(response.toString());
+			}
+		});
+	}
 
 	@UiHandler("showStartAppModal")
 	void onShowStartAppModal(ClickEvent event) {
-		presenter.get().onShowStartAppModal();
+//		presenter.get().onShowStartAppModal();
+		onCors();
 	}
 	
 	@UiHandler("startSelectedApps")
@@ -101,22 +116,6 @@ public class DashboardPanel extends Composite implements View {
 		}
 		
 		filterTimer.schedule(500);
-	}
-	
-	@Deprecated
-	void onCors(ClickEvent event) {
-		Resource r = new Resource("http://localhost:3000/api/v1/appliance_sets");
-		r.get().send(new JsonCallback() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, JSONValue response) {
-				Window.alert(response.toString());
-			}
-		});
 	}
 
 	@Override

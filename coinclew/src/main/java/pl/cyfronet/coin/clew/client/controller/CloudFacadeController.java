@@ -3,23 +3,46 @@ package pl.cyfronet.coin.clew.client.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicService;
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance;
-import pl.cyfronet.coin.clew.client.controller.beans.cf.AtomicServiceInstance.Status;
+import org.fusesource.restygwt.client.JsonCallback;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.Resource;
 
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicService;
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance.Status;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 
 public class CloudFacadeController {
 	public interface AtomicServiceInstancesCallback {
 		void processAtomicServiceInstances(List<AtomicServiceInstance> atomicServiceInstances);
 	}
 	
-	public interface AtomicServiceCallback {
+	public interface AtomicServicesCallback {
 		void processAtomicService(List<AtomicService> atomicServices);
 	}
 	
-	public void getAtomicServices(final AtomicServiceCallback atomicServiceCallback) {
+	@Deprecated
+	void onCors(ClickEvent event) {
+		Resource r = new Resource("http://localhost:3000/api/v1/appliance_sets");
+		r.get().send(new JsonCallback() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, JSONValue response) {
+				Window.alert(response.toString());
+			}
+		});
+	}
+	
+	public void getAtomicServices(final AtomicServicesCallback atomicServiceCallback) {
 		final List<AtomicService> services = new ArrayList<AtomicService>();
 		
 		for (int i = 0; i < 20; i++) {

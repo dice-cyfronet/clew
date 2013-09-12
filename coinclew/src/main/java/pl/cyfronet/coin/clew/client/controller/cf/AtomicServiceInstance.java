@@ -1,4 +1,4 @@
-package pl.cyfronet.coin.clew.client.controller.beans.cf;
+package pl.cyfronet.coin.clew.client.controller.cf;
 
 public class AtomicServiceInstance {
 	public enum Status {
