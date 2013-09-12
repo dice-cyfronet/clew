@@ -1,7 +1,6 @@
-.project
-.settings
-target
+/.settings
+/.project
+*/.*
+/coinclew/gwt-unitCache
+/coinclew/www-test
 */target
-*/test-output
-/.classpath
-coined/src/test/resources/password.properties
