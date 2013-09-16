@@ -3,10 +3,6 @@ package pl.cyfronet.coin.clew.client.widgets.dashboard;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.fusesource.restygwt.client.JsonCallback;
-import org.fusesource.restygwt.client.Method;
-import org.fusesource.restygwt.client.Resource;
-
 import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter.View;
 
@@ -20,7 +16,6 @@ import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.event.ShownEvent;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -28,7 +23,6 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
