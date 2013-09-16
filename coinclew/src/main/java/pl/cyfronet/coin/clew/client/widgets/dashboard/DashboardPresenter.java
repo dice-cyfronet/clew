@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServicesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AtomicServiceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicService;
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -48,9 +48,9 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	
 	private View view;
 	private CloudFacadeController cloudFacadeController;
-	private List<AtomicService> atomicServices;
+	private List<ApplianceType> applianceTypes;
 	private List<HasValue<Boolean>> appChecks;
-	private List<AtomicServiceInstance> instances;
+	private List<ApplianceTypeInstance> instances;
 	
 	@Inject
 	public DashboardPresenter(View view, CloudFacadeController cloudFacadeController) {
@@ -60,13 +60,13 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	}
 	
 	public void load() {
-		cloudFacadeController.getAtomicServiceInstances(new AtomicServiceInstancesCallback() {
+		cloudFacadeController.getApplianceTypeInstances(new ApplianceTypeInstancesCallback() {
 			@Override
-			public void processAtomicServiceInstances(List<AtomicServiceInstance> atomicServiceInstances) {
+			public void processApplianceTypeInstances(List<ApplianceTypeInstance> atomicServiceInstances) {
 				instances = atomicServiceInstances;
 				int i = 0;
 				
-				for (AtomicServiceInstance asi : instances) {
+				for (ApplianceTypeInstance asi : instances) {
 					view.setInstanceName(i, asi.getName());
 					view.setInstanceIp(i, asi.getIp());
 					view.setInstanceLocation(i, asi.getLocation());
@@ -86,25 +86,19 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 
 	@Override
 	public void onShowStartAppModal() {
-		view.showStartAppPopup();
-		onStartAppModalShown();
-	}
-
-	@Override
-	public void onStartAppModalShown() {
 		view.clearAppsTable();
 		view.setAppsSpinnerVisible(true);
-		
-		cloudFacadeController.getAtomicServices(new AtomicServicesCallback() {
+		view.showStartAppPopup();
+		cloudFacadeController.getApplianceTypes(new ApplianceTypesCallback() {
 			@Override
-			public void processAtomicService(List<AtomicService> atomicServices) {
-				DashboardPresenter.this.atomicServices = atomicServices;
+			public void processApplianceTypes(List<ApplianceType> applianceTypes) {
+				DashboardPresenter.this.applianceTypes = applianceTypes;
 				view.setAppsSpinnerVisible(false);
 				
 				int i = 0;
 				appChecks.clear();
 				
-				for(AtomicService atomicService : atomicServices) {
+				for(ApplianceType atomicService : applianceTypes) {
 					view.addStartButton(i);
 					appChecks.add(view.addCheckButton(i));
 					view.addAppName(i, atomicService.getName());
@@ -120,9 +114,9 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		log.debug("Filtering apps for {}", text);
 		int i = 0;
 		
-		for (AtomicService atomicService : atomicServices) {
-			if (atomicService.getName() != null && atomicService.getName().contains(text) ||
-					atomicService.getDescription() != null && atomicService.getDescription().contains(text)) {
+		for (ApplianceType applianceType : applianceTypes) {
+			if (applianceType.getName() != null && applianceType.getName().contains(text) ||
+					applianceType.getDescription() != null && applianceType.getDescription().contains(text)) {
 				view.setAppVisibility(i, true);
 			} else {
 				view.setAppVisibility(i, false);
@@ -139,15 +133,15 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		
 		for (HasValue<Boolean> selected : appChecks) {
 			if (selected.getValue()) {
-				startIds.add(atomicServices.get(i).getId());
+				startIds.add(applianceTypes.get(i).getId());
 			}
 			
 			i++;
 		}
 		
-		log.info("Starting atomic services with ids {}", startIds);
+		log.info("Starting appliance types with ids {}", startIds);
 		view.setStartSelectedWidgetBusyState(true);
-		cloudFacadeController.startAtomicServices(startIds, new Command() {
+		cloudFacadeController.startApplianceTypes(startIds, new Command() {
 			@Override
 			public void execute() {
 				view.setStartSelectedWidgetBusyState(false);
@@ -158,10 +152,10 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 
 	@Override
 	public void onStartSingle(final int i) {
-		log.info("Starting single atomic service {}", atomicServices.get(i).getId());
+		log.info("Starting single appliance type {}", applianceTypes.get(i).getId());
 		view.setStartAppWidgetBusyState(i, true);
-		cloudFacadeController.startAtomicServices(
-				Arrays.asList(atomicServices.get(i).getId()), new Command() {
+		cloudFacadeController.startApplianceTypes(
+				Arrays.asList(applianceTypes.get(i).getId()), new Command() {
 					@Override
 					public void execute() {
 						view.setStartAppWidgetBusyState(i, false);
@@ -180,7 +174,7 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		view.confirmShutdown(new Command() {
 			@Override
 			public void execute() {
-				cloudFacadeController.shutdownAtomicServiceInstance(new Command() {
+				cloudFacadeController.shutdownApplianceTypeInstance(new Command() {
 					@Override
 					public void execute() {
 						Window.alert("Handle post-shutdown action");

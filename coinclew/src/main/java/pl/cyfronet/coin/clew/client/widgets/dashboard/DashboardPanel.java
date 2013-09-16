@@ -7,7 +7,7 @@ import org.fusesource.restygwt.client.JsonCallback;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.Resource;
 
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -68,37 +68,15 @@ public class DashboardPanel extends Composite implements View {
 		collapsables = new HashMap<Integer, Collapse>();
 		init();
 	}
-	
-	@Deprecated
-	void onCors() {
-		Resource r = new Resource("http://149.156.9.177:3000/api/v1/appliance_sets?private_token=secret");
-		r.get().send(new JsonCallback() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, JSONValue response) {
-				Window.alert(response.toString());
-			}
-		});
-	}
 
 	@UiHandler("showStartAppModal")
 	void onShowStartAppModal(ClickEvent event) {
-//		presenter.get().onShowStartAppModal();
-		onCors();
+		presenter.get().onShowStartAppModal();
 	}
 	
 	@UiHandler("startSelectedApps")
 	void onStartSelected(ClickEvent event) {
 		presenter.get().onStartSelected();
-	}
-	
-	@UiHandler("startAppPopup")
-	void onStartAppModalShown(ShownEvent event) {
-		presenter.get().onStartAppModalShown();
 	}
 	
 	@UiHandler("filterAppsBox")

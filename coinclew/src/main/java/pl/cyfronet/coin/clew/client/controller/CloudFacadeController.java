@@ -5,25 +5,37 @@ import java.util.List;
 
 import org.fusesource.restygwt.client.JsonCallback;
 import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.Resource;
 
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicService;
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.AtomicServiceInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypesService;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.inject.Inject;
 
 public class CloudFacadeController {
-	public interface AtomicServiceInstancesCallback {
-		void processAtomicServiceInstances(List<AtomicServiceInstance> atomicServiceInstances);
+	public interface ApplianceTypeInstancesCallback {
+		void processApplianceTypeInstances(List<ApplianceTypeInstance> applianceTypeInstances);
 	}
 	
-	public interface AtomicServicesCallback {
-		void processAtomicService(List<AtomicService> atomicServices);
+	public interface ApplianceTypesCallback {
+		void processApplianceTypes(List<ApplianceType> applianceTypes);
+	}
+	
+	private ApplianceTypesService applianceTypesService;
+	
+	@Inject
+	public CloudFacadeController(ApplianceTypesService applianceTypesService) {
+		this.applianceTypesService = applianceTypesService;
+		
 	}
 	
 	@Deprecated
@@ -42,19 +54,23 @@ public class CloudFacadeController {
 		});
 	}
 	
-	public void getAtomicServices(final AtomicServicesCallback atomicServiceCallback) {
-		final List<AtomicService> services = new ArrayList<AtomicService>();
-		
-		for (int i = 0; i < 20; i++) {
-			services.add(new AtomicService("Atomic service " + i, "Atomic service " + i + " description"));
-		}
-		
-		if (atomicServiceCallback != null) {
-			atomicServiceCallback.processAtomicService(services);
-		}
+	public void getApplianceTypes(final ApplianceTypesCallback atomicServiceCallback) {
+		applianceTypesService.getApplianceTypes(new MethodCallback<ApplianceTypesResponse>() {
+			@Override
+			public void onSuccess(Method method, ApplianceTypesResponse response) {
+				if (atomicServiceCallback != null) {
+					atomicServiceCallback.processApplianceTypes(response.getApplianceTypes());
+				}
+			}
+			
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+		});
 	}
 
-	public void startAtomicServices(List<String> startIds, final Command command) {
+	public void startApplianceTypes(List<String> startIds, final Command command) {
 		new Timer() {
 			@Override
 			public void run() {
@@ -63,11 +79,11 @@ public class CloudFacadeController {
 		}.schedule(2000);
 	}
 
-	public void getAtomicServiceInstances(AtomicServiceInstancesCallback atomicServiceInstancesCallback) {
-		List<AtomicServiceInstance> instances = new ArrayList<AtomicServiceInstance>();
+	public void getApplianceTypeInstances(ApplianceTypeInstancesCallback applianceTypeInstancesCallback) {
+		List<ApplianceTypeInstance> instances = new ArrayList<ApplianceTypeInstance>();
 		
 		for (int i = 0; i < 20; i++) {
-			AtomicServiceInstance asi = new AtomicServiceInstance();
+			ApplianceTypeInstance asi = new ApplianceTypeInstance();
 			asi.setName("Atomic service instance " + i);
 			asi.setIp("192.168.1." + (i + 1));
 			asi.setLocation("CYFRONET");
@@ -76,12 +92,12 @@ public class CloudFacadeController {
 			instances.add(asi);
 		}
 		
-		if (atomicServiceInstancesCallback != null) {
-			atomicServiceInstancesCallback.processAtomicServiceInstances(instances);
+		if (applianceTypeInstancesCallback != null) {
+			applianceTypeInstancesCallback.processApplianceTypeInstances(instances);
 		}
 	}
 
-	public void shutdownAtomicServiceInstance(Command afterShutdown) {
+	public void shutdownApplianceTypeInstance(Command afterShutdown) {
 		//TODO(DH): handle shutdown
 		afterShutdown.execute();
 	}

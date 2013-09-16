@@ -1,9 +1,8 @@
 package pl.cyfronet.coin.clew.client.controller.cf;
 
-public class AtomicServiceInstance {
+public class ApplianceTypeInstance {
 	public enum Status {
-		booting,
-		running
+		booting
 	}
 	
 	private String name;
