@@ -9,7 +9,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance.Status;
 
@@ -27,10 +27,10 @@ public class CloudFacadeController {
 		void processApplianceTypes(List<ApplianceType> applianceTypes);
 	}
 	
-	private ApplianceTypesService applianceTypesService;
+	private ApplianceTypeService applianceTypesService;
 	
 	@Inject
-	public CloudFacadeController(ApplianceTypesService applianceTypesService) {
+	public CloudFacadeController(ApplianceTypeService applianceTypesService) {
 		this.applianceTypesService = applianceTypesService;
 		
 	}

@@ -3,13 +3,13 @@ package pl.cyfronet.coin.clew.client.di.providers;
 import org.fusesource.restygwt.client.Defaults;
 
 import pl.cyfronet.coin.clew.client.ClewProperties;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class ApplianceTypesSerivceProvider implements Provider<ApplianceTypesService> {
+public class ApplianceTypesSerivceProvider implements Provider<ApplianceTypeService> {
 	private ClewProperties clewProperties;
 	
 	@Inject
@@ -18,9 +18,9 @@ public class ApplianceTypesSerivceProvider implements Provider<ApplianceTypesSer
 	}
 	
 	@Override
-	public ApplianceTypesService get() {
+	public ApplianceTypeService get() {
 		Defaults.setServiceRoot(clewProperties.getCloudFacadeRootUrl());
 		
-		return GWT.create(ApplianceTypesService.class);
+		return GWT.create(ApplianceTypeService.class);
 	}
 }

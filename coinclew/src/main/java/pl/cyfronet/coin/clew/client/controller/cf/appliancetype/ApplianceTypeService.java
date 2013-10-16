@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
 
-public interface ApplianceTypesService extends RestService {
+public interface ApplianceTypeService extends RestService {
 	@GET
 	@Path("appliance_types?private_token=secret")
 	void getApplianceTypes(MethodCallback<ApplianceTypesResponse> methodCallback);

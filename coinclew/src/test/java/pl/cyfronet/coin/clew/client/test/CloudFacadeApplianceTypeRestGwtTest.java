@@ -7,7 +7,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceTypeRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType.Visibility;
@@ -16,7 +16,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 
 public class CloudFacadeApplianceTypeRestGwtTest extends GWTTestCase {
-	private ApplianceTypesService applianceTypes;
+	private ApplianceTypeService applianceTypes;
 	
 	@Override
 	public String getModuleName() {
@@ -26,14 +26,13 @@ public class CloudFacadeApplianceTypeRestGwtTest extends GWTTestCase {
 	@Override
 	protected void gwtSetUp() throws Exception {
 		Defaults.setServiceRoot("http://localhost:3000/api/v1");
-		applianceTypes = GWT.create(ApplianceTypesService.class);
+		applianceTypes = GWT.create(ApplianceTypeService.class);
 	}
 
 	public void testApplianceTypesRetrieval() {
 		applianceTypes.getApplianceTypes(new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onSuccess(Method method, ApplianceTypesResponse response) {
-				System.out.println("Response: " + response);
 				assertNotNull(response);
 				assertNotNull(response.getApplianceTypes());
 				finishTest();
@@ -42,6 +41,7 @@ public class CloudFacadeApplianceTypeRestGwtTest extends GWTTestCase {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				System.err.println("Error: " + exception.getMessage());
+				System.err.println("Response error: " + method.getResponse().getText());
 				fail();
 				finishTest();
 			}
