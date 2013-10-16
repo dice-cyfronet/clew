@@ -3,7 +3,7 @@ package pl.cyfronet.coin.clew.client.widgets.dashboard;
 import java.util.HashMap;
 import java.util.Map;
 
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance.Status;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;

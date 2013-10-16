@@ -1,10 +1,9 @@
-package pl.cyfronet.coin.clew.client.controller.cf;
+package pl.cyfronet.coin.clew.client.controller.cf.appliancetype;
 
 
 public class ApplianceType extends NewApplianceType {
 	private String id;
-	
-	
+
 	public String getId() {
 		return id;
 	}

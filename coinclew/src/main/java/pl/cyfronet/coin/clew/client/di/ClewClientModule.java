@@ -2,7 +2,7 @@ package pl.cyfronet.coin.clew.client.di;
 
 import pl.cyfronet.coin.clew.client.controller.ClewController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypesService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesService;
 import pl.cyfronet.coin.clew.client.di.providers.ApplianceTypesSerivceProvider;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPanel;
 import pl.cyfronet.coin.clew.client.widgets.dashboard.DashboardPresenter;

@@ -3,7 +3,7 @@ package pl.cyfronet.coin.clew.client.di.providers;
 import org.fusesource.restygwt.client.Defaults;
 
 import pl.cyfronet.coin.clew.client.ClewProperties;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypesService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesService;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.inject.Inject;

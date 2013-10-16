@@ -11,9 +11,9 @@ import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance.Status;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;

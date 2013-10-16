@@ -5,8 +5,8 @@ import java.util.List;
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.NewApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasText;

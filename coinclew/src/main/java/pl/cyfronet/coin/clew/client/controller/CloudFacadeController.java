@@ -6,12 +6,12 @@ import java.util.List;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypeInstance.Status;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypesResponse;
-import pl.cyfronet.coin.clew.client.controller.cf.ApplianceTypesService;
-import pl.cyfronet.coin.clew.client.controller.cf.NewApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance.Status;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
@@ -84,22 +84,6 @@ public class CloudFacadeController {
 	}
 
 	public void addApplianceType(NewApplianceType newApplianceType, final Command after) {
-		applianceTypesService.addApplianceType(newApplianceType, new MethodCallback<Void>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
-				
-				if (after != null) {
-					after.execute();
-				}
-			}
-
-			@Override
-			public void onSuccess(Method method, Void response) {
-				if (after != null) {
-					after.execute();
-				}
-			}
-		});
+		
 	}
 }

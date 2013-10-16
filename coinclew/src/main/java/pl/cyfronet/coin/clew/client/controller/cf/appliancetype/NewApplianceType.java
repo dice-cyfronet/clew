@@ -1,15 +1,20 @@
-package pl.cyfronet.coin.clew.client.controller.cf;
+package pl.cyfronet.coin.clew.client.controller.cf.appliancetype;
 
 import java.util.List;
 
 import org.fusesource.restygwt.client.Json;
 
 public class NewApplianceType {
+	public enum Visibility {
+		unpublished,
+		published
+	}
+	
 	private String name;
 	private String description;
 	private boolean shared;
 	private boolean scalable;
-	private String visibility;
+	private Visibility visibility;
 	@Json(name = "preference_cpu")
 	private String preferenceCpu;
 	@Json(name = "preference_memory")
@@ -54,13 +59,6 @@ public class NewApplianceType {
 	}
 	public void setScalable(boolean scalable) {
 		this.scalable = scalable;
-	}
-	
-	public String getVisibility() {
-		return visibility;
-	}
-	public void setVisibility(String visibility) {
-		this.visibility = visibility;
 	}
 	
 	public String getPreferenceCpu() {
@@ -131,7 +129,7 @@ public class NewApplianceType {
 	public String toString() {
 		return "NewApplianceType [name=" + name + ", description="
 				+ description + ", shared=" + shared + ", scalable=" + scalable
-				+ ", visibility=" + visibility + ", preferenceCpu="
+				+ ", visibility=" + getVisibility() + ", preferenceCpu="
 				+ preferenceCpu + ", preferenceMemory=" + preferenceMemory
 				+ ", preferenceDisk=" + preferenceDisk + ", author=" + author
 				+ ", securityProxy=" + securityProxy + ", applianceIds="
@@ -141,5 +139,12 @@ public class NewApplianceType {
 				+ applianceConfigurationTemplateIds
 				+ ", virtualMachineTemplateIds=" + virtualMachineTemplateIds
 				+ "]";
+	}
+	
+	public Visibility getVisibility() {
+		return visibility;
+	}
+	public void setVisibility(Visibility visibility) {
+		this.visibility = visibility;
 	}
 }
