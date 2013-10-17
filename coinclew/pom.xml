@@ -66,7 +66,7 @@
 					</modules>
 					<buildOutputDirectory>${project.build.directory}/${project.build.finalName}</buildOutputDirectory>
 					<!-- GWT test names pattern -->
-					<includes>**/*GwtTest.java</includes>
+					<includes>**/*GwtTestSuite.java</includes>
 				</configuration>
 			</plugin>
 			<plugin>

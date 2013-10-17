@@ -15,7 +15,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSetRe
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
 
-public class CloudFacadeAplianceSetRestGwtTest extends GWTTestCase {
+public class CloudFacadeApplianceSetRestGwtTest extends GWTTestCase {
 	private ApplianceSetService applianceSets;
 
 	@Override
