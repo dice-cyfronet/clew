@@ -24,7 +24,7 @@ public class CloudFacadeUserKeyRestGwtTest extends GWTTestCase {
 	
 	@Override
 	protected void gwtSetUp() throws Exception {
-		Defaults.setServiceRoot("http://localhost:3000/api/v1");
+		Defaults.setServiceRoot(ClewGwtTestSuite.CLOUD_FACADE_URL);
 		userKeys = GWT.create(UserKeyService.class);
 	}
 	

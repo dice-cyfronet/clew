@@ -1,17 +1,22 @@
 package pl.cyfronet.coin.clew.client.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstanceRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstanceService;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstancesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstanceRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance.Status;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
@@ -19,20 +24,28 @@ import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 
 public class CloudFacadeController {
-	public interface ApplianceTypeInstancesCallback {
-		void processApplianceTypeInstances(List<ApplianceTypeInstance> applianceTypeInstances);
+	public interface ApplianceInstancesCallback {
+		void processApplianceInstances(List<ApplianceInstance> applianceInstances);
 	}
 	
 	public interface ApplianceTypesCallback {
 		void processApplianceTypes(List<ApplianceType> applianceTypes);
 	}
 	
+	public interface ApplianceSetCallback {
+		void processApplianceSet(ApplianceSet applianceSet);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
+	private ApplianceInstanceService applianceInstancesService;
+	private ApplianceSetService applianceSetService;
 	
 	@Inject
-	public CloudFacadeController(ApplianceTypeService applianceTypesService) {
+	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
+			ApplianceSetService applianceSetService) {
 		this.applianceTypesService = applianceTypesService;
-		
+		this.applianceInstancesService = applianceInstancesService;
+		this.applianceSetService = applianceSetService;
 	}
 	
 	public void getApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
@@ -52,38 +65,55 @@ public class CloudFacadeController {
 	}
 
 	public void startApplianceTypes(List<String> startIds, final Command command) {
-		new Timer() {
+		ensurePortalApplianceSet(new ApplianceSetCallback() {
 			@Override
-			public void run() {
-				command.execute();
+			public void processApplianceSet(ApplianceSet applianceSet) {
+				NewApplianceInstance applianceInstance = new NewApplianceInstance();
+				applianceInstance.setApplianceSetId(applianceSet.getId());
+				NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
+				
+				applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
+					@Override
+					public void onFailure(Method method, Throwable exception) {
+						Window.alert(exception.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Method method, ApplianceInstanceRequestResponse response) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
 			}
-		}.schedule(2000);
+		});
 	}
 
-	public void getApplianceTypeInstances(ApplianceTypeInstancesCallback applianceTypeInstancesCallback) {
-		List<ApplianceTypeInstance> instances = new ArrayList<ApplianceTypeInstance>();
-		
-		for (int i = 0; i < 20; i++) {
-			ApplianceTypeInstance asi = new ApplianceTypeInstance();
-			asi.setName("Atomic service instance " + i);
-			asi.setIp("192.168.1." + (i + 1));
-			asi.setLocation("CYFRONET");
-			asi.setSpec("6 cores, 8GB RAM, 300GB disk");
-			asi.setStatus(Status.booting);
-			instances.add(asi);
-		}
-		
-		if (applianceTypeInstancesCallback != null) {
-			applianceTypeInstancesCallback.processApplianceTypeInstances(instances);
-		}
+	public void getApplianceInstances(final ApplianceInstancesCallback applianceInstancesCallback) {
+		applianceInstancesService.getApplianceInstances(new MethodCallback<ApplianceInstancesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceInstancesResponse response) {
+				if (applianceInstancesCallback != null) {
+					applianceInstancesCallback.processApplianceInstances(response.getApplianceInstances());
+				}
+			}
+		});
 	}
 
-	public void shutdownApplianceTypeInstance(Command afterShutdown) {
+	public void shutdownApplianceInstance(Command afterShutdown) {
 		//TODO(DH): handle shutdown
 		afterShutdown.execute();
 	}
 
 	public void addApplianceType(NewApplianceType newApplianceType, final Command after) {
+		
+	}
+	
+	private void ensurePortalApplianceSet(ApplianceSetCallback applianceSetCallback) {
 		
 	}
 }

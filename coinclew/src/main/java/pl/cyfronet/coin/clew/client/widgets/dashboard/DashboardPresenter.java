@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.Status;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeInstance.Status;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -50,7 +50,7 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	private CloudFacadeController cloudFacadeController;
 	private List<ApplianceType> applianceTypes;
 	private List<HasValue<Boolean>> appChecks;
-	private List<ApplianceTypeInstance> instances;
+	private List<ApplianceInstance> instances;
 	
 	@Inject
 	public DashboardPresenter(View view, CloudFacadeController cloudFacadeController) {
@@ -60,18 +60,19 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	}
 	
 	public void load() {
-		cloudFacadeController.getApplianceTypeInstances(new ApplianceTypeInstancesCallback() {
+		cloudFacadeController.getApplianceInstances(new ApplianceInstancesCallback() {
 			@Override
-			public void processApplianceTypeInstances(List<ApplianceTypeInstance> atomicServiceInstances) {
-				instances = atomicServiceInstances;
+			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
+				instances = applianceInstances;
 				int i = 0;
 				
-				for (ApplianceTypeInstance asi : instances) {
-					view.setInstanceName(i, asi.getName());
-					view.setInstanceIp(i, asi.getIp());
-					view.setInstanceLocation(i, asi.getLocation());
-					view.setInstanceSpec(i, asi.getSpec());
-					view.setInstanceStatus(i, asi.getStatus());
+				for (ApplianceInstance asi : instances) {
+					view.setInstanceName(i, asi.getId());
+//					view.setInstanceName(i, asi.getName());
+//					view.setInstanceIp(i, asi.getIp());
+//					view.setInstanceLocation(i, asi.getLocation());
+//					view.setInstanceSpec(i, asi.getSpec());
+//					view.setInstanceStatus(i, asi.getStatus());
 					view.setInstanceActionsAndDetails(i);
 					i++;
 				}
@@ -174,7 +175,7 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		view.confirmShutdown(new Command() {
 			@Override
 			public void execute() {
-				cloudFacadeController.shutdownApplianceTypeInstance(new Command() {
+				cloudFacadeController.shutdownApplianceInstance(new Command() {
 					@Override
 					public void execute() {
 						Window.alert("Handle post-shutdown action");

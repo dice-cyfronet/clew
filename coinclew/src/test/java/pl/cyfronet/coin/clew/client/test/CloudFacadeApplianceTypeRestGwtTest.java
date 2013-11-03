@@ -25,7 +25,7 @@ public class CloudFacadeApplianceTypeRestGwtTest extends GWTTestCase {
 	
 	@Override
 	protected void gwtSetUp() throws Exception {
-		Defaults.setServiceRoot("http://localhost:3000/api/v1");
+		Defaults.setServiceRoot(ClewGwtTestSuite.CLOUD_FACADE_URL);
 		applianceTypes = GWT.create(ApplianceTypeService.class);
 	}
 

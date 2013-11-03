@@ -11,14 +11,14 @@ import org.fusesource.restygwt.client.RestService;
 
 public interface ApplianceSetService extends RestService {
 	@GET
-	@Path("appliance_sets?private_token=secret")
+	@Path("appliance_sets?private_token=XFZVRpda3VVb_K9cfLcy")
 	void getApplianceSets(MethodCallback<ApplianceSetsResponse> methodCallback);
 	
 	@POST
-	@Path("appliance_sets?private_token=secret")
+	@Path("appliance_sets?private_token=XFZVRpda3VVb_K9cfLcy")
 	void addApplianceSet(NewApplianceSetRequest newApplianceSetRequest, MethodCallback<ApplianceSetRequestResponse> methodCallback);
 	
 	@DELETE
-	@Path("appliance_sets/{id}?private_token=secret")
+	@Path("appliance_sets/{id}?private_token=XFZVRpda3VVb_K9cfLcy")
 	void deleteApplianceSet(@PathParam("id") String appliancesetId, MethodCallback<Void> methodCallback);
 }

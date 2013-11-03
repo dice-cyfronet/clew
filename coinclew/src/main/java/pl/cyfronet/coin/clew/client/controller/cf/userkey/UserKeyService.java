@@ -11,14 +11,14 @@ import org.fusesource.restygwt.client.RestService;
 
 public interface UserKeyService extends RestService {
 	@GET
-	@Path("user_keys?private_token=secret")
+	@Path("user_keys?private_token=XFZVRpda3VVb_K9cfLcy")
 	void getUserKeys(MethodCallback<UserKeysResponse> methodCallback);
 	
 	@POST
-	@Path("user_keys?private_token=secret")
+	@Path("user_keys?private_token=XFZVRpda3VVb_K9cfLcy")
 	void addUserKey(NewUserKeyRequest userKeyRequest, MethodCallback<UserKeyRequestResponse> methodCallback);
 	
 	@DELETE
-	@Path("user_keys/{id}?private_token=secret")
+	@Path("user_keys/{id}?private_token=XFZVRpda3VVb_K9cfLcy")
 	void deleteUserKey(@PathParam("id") String keyId, MethodCallback<Void> methodCallback);
 }

@@ -12,19 +12,19 @@ import org.fusesource.restygwt.client.RestService;
 
 public interface ApplianceTypeService extends RestService {
 	@GET
-	@Path("appliance_types?private_token=secret")
+	@Path("appliance_types?private_token=XFZVRpda3VVb_K9cfLcy")
 	void getApplianceTypes(MethodCallback<ApplianceTypesResponse> methodCallback);
 	
 	@POST
-	@Path("appliance_types?private_token=secret")
+	@Path("appliance_types?private_token=XFZVRpda3VVb_K9cfLcy")
 	void addApplianceType(NewApplianceTypeRequest newApplianceType, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
 	
 	@PUT
-	@Path("appliance_types/{id}?private_token=secret")
+	@Path("appliance_types/{id}?private_token=XFZVRpda3VVb_K9cfLcy")
 	void updateApplianceType(@PathParam("id") String id,
 			ApplianceTypeRequestResponse applianceType, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
 	
 	@DELETE
-	@Path("appliance_types/{id}?private_token=secret")
+	@Path("appliance_types/{id}?private_token=XFZVRpda3VVb_K9cfLcy")
 	void deleteApplianceType(@PathParam("id") String id, MethodCallback<Void> methodCallback);
 }
