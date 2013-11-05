@@ -5,6 +5,12 @@ import java.util.List;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationsResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.NewApplianceConfiguration;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.NewApplianceConfigurationRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstanceRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstanceService;
@@ -19,7 +25,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesRe
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 
@@ -36,16 +41,26 @@ public class CloudFacadeController {
 		void processApplianceSet(ApplianceSet applianceSet);
 	}
 	
+	public interface ApplianceConfigurationsCallback {
+		void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigrations);
+	}
+	
+	public interface ApplianceConfigurationCallback {
+		void processApplianceConfiguration(ApplianceConfiguration applianceConfiguration);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
+	private ApplianceConfigurationService applianceConfigurationService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
-			ApplianceSetService applianceSetService) {
+			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
+		this.applianceConfigurationService = applianceConfigurationService;
 	}
 	
 	public void getApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
@@ -115,5 +130,43 @@ public class CloudFacadeController {
 	
 	private void ensurePortalApplianceSet(ApplianceSetCallback applianceSetCallback) {
 		
+	}
+
+	public void getInitialConfigurations(String applianceTypeId, final ApplianceConfigurationsCallback applianceConfigurationsCallback) {
+		applianceConfigurationService.getApplianceConfigurations(applianceTypeId, new MethodCallback<ApplianceConfigurationsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceConfigurationsResponse response) {
+				if (applianceConfigurationsCallback != null) {
+					applianceConfigurationsCallback.processApplianceConfigurations(response.getApplianceConfigurations());
+				}
+			}
+		});
+	}
+
+	public void addApplianceConfiguration(String applianceTypeId, String name, String payload, final ApplianceConfigurationCallback applianceConfigurationCallback) {
+		NewApplianceConfigurationRequest newApplianceConfigurationRequest = new NewApplianceConfigurationRequest();
+		NewApplianceConfiguration applianceConfiguration = new ApplianceConfiguration();
+		applianceConfiguration.setApplianceTypeId(applianceTypeId);
+		applianceConfiguration.setName(name);
+		applianceConfiguration.setPayload(payload);
+		newApplianceConfigurationRequest.setApplianceConfiguration(applianceConfiguration);
+		applianceConfigurationService.addApplianceConfiguration(newApplianceConfigurationRequest, new MethodCallback<ApplianceConfigurationRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceConfigurationRequestResponse response) {
+				if (applianceConfigurationCallback != null) {
+					applianceConfigurationCallback.processApplianceConfiguration(response.getApplianceConfiguration());
+				}
+			}
+		});
 	}
 }

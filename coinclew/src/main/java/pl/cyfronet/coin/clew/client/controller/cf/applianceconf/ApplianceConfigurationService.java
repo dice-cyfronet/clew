@@ -18,7 +18,7 @@ public interface ApplianceConfigurationService extends RestService {
 	
 	@POST
 	@Path("appliance_configuration_templates?private_token=" + CloudFacadeKey.KEY)
-	void addApplianceConfiguration(NewApplianceConfigurationRequest newApplianceInstanceRequest, MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
+	void addApplianceConfiguration(NewApplianceConfigurationRequest newApplianceConfigurationRequest, MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
 	
 	@DELETE
 	@Path("appliance_configuration_templates/{id}?private_token=" + CloudFacadeKey.KEY)

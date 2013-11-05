@@ -8,7 +8,7 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<b:Button ui:field="showNewApplianceTypeModal" type="SUCCESS"><ui:text from="{messages.showApplianceTypeModalButtonLabel}"/></b:Button>
-		<g:HTMLPanel ui:field="applianceTypeList"/>
+		<g:FlexTable ui:field="applianceTypeList" styleName="table table-condensed"/>
 		<b:Modal ui:field="addApplianceTypeModal"  title="{messages.newApplianceTypeDetailsHeader}" animation="true">
 			<b:Form type="HORIZONTAL">
 				<b:Fieldset>
@@ -28,6 +28,33 @@
 			</b:Form>
 			<b:ModalFooter>
 				<b:Button ui:field="addApplianceType" type="SUCCESS" icon="PLUS"><ui:text from="{messages.addNewApplianceTypeButtonLabel}"/></b:Button>
+			</b:ModalFooter>
+		</b:Modal>
+		<b:Modal ui:field="initialConfigurationsModal" title="{messages.initialConfigurationsModalTitle}" animation="true">
+			<g:FlexTable ui:field="initialConfigurationList" styleName="table table-condensed"/>
+			<b:Label ui:field="noInitialConfigurationsLabel"><ui:text from="{messages.noInitialConfigurationsLabel}"/></b:Label>
+			<b:Form type="HORIZONTAL">
+				<b:Fieldset>
+					<b:ControlGroup>
+						<b:ControlLabel for="initialConfigurationName"><ui:text from="{messages.initialConfigurationNameLabel}"/></b:ControlLabel>
+						<b:Controls>
+							<b:TextBox ui:field="initialConfigurationName"/>
+						</b:Controls>
+					</b:ControlGroup>
+					<b:ControlGroup>
+						<b:ControlLabel for="initialConfigurationPayload"><ui:text from="{messages.initialConfigurationPayloadLabel}"/></b:ControlLabel>
+						<b:Controls>
+							<b:TextArea ui:field="initialConfigurationPayload"/>
+						</b:Controls>
+					</b:ControlGroup>
+				</b:Fieldset>
+				<b:ControlGroup addStyleNames="text-right">
+					<b:Button ui:field="addInitialConfiguration" type="SUCCESS" icon="PLUS"><ui:text from="{messages.addInitialConfigurationButtonLabel}"/></b:Button>
+				</b:ControlGroup>
+			</b:Form>
+			<b:Label ui:field="initialConfigurationErrorLabel" type="WARNING"/>
+			<b:ModalFooter>
+				<b:Button ui:field="closeInitialConfigurationModal"><ui:text from="{messages.closeInitialConfigurationModalButtonLabel}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>
 	</g:HTMLPanel>

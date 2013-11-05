@@ -8,4 +8,11 @@ public interface DevMessages extends Messages {
 	String addNewApplianceTypeButtonLabel();
 	String applianceTypeNameLabel();
 	String applianceTypeDescriptionLabel();
+	String initialConfigurationsModalTitle();
+	String initialConfigurationNameLabel();
+	String initialConfigurationPayloadLabel();
+	String addInitialConfigurationButtonLabel();
+	String noInitialConfigurationsLabel();
+	String closeInitialConfigurationModalButtonLabel();
+	String initialConfigurationNameOrPayloadEmpty();
 }
