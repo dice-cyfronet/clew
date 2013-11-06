@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.fusesource.restygwt.client.Method;
@@ -18,7 +19,12 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstanceRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetService;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetsResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSetRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
@@ -79,26 +85,40 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypes(List<String> startIds, final Command command) {
+	public void startApplianceTypes(final List<String> configurationTemplateIds, final Command command) {
 		ensurePortalApplianceSet(new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
-				NewApplianceInstance applianceInstance = new NewApplianceInstance();
-				applianceInstance.setApplianceSetId(applianceSet.getId());
-				NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
+				final List<String> started = new ArrayList<String>();
+				final List<String> failed = new ArrayList<String>();
 				
-				applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
-					@Override
-					public void onFailure(Method method, Throwable exception) {
-						Window.alert(exception.getMessage());
-					}
+				for (final String configurationTemplateId : configurationTemplateIds) {
+					NewApplianceInstance applianceInstance = new NewApplianceInstance();
+					applianceInstance.setApplianceSetId(applianceSet.getId());
+					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
+					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
+					applianceInstanceRequest.setApplianceInstance(applianceInstance);
+					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
+						@Override
+						public void onFailure(Method method, Throwable exception) {
+							failed.add(configurationTemplateId);
+							Window.alert(exception.getMessage());
+							checkReturn();
+						}
 
-					@Override
-					public void onSuccess(Method method, ApplianceInstanceRequestResponse response) {
-						// TODO Auto-generated method stub
+						@Override
+						public void onSuccess(Method method, ApplianceInstanceRequestResponse response) {
+							started.add(configurationTemplateId);
+							checkReturn();
+						}
 						
-					}
-				});
+						private void checkReturn() {
+							if (started.size() + failed.size() == configurationTemplateIds.size() && command != null) {
+								command.execute();
+							}
+						}
+					});
+				}
 			}
 		});
 	}
@@ -119,7 +139,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void shutdownApplianceInstance(Command afterShutdown) {
+	public void shutdownApplianceInstance(String applianceInstanceId, Command afterShutdown) {
 		//TODO(DH): handle shutdown
 		afterShutdown.execute();
 	}
@@ -128,8 +148,45 @@ public class CloudFacadeController {
 		
 	}
 	
-	private void ensurePortalApplianceSet(ApplianceSetCallback applianceSetCallback) {
-		
+	private void ensurePortalApplianceSet(final ApplianceSetCallback applianceSetCallback) {
+		applianceSetService.getApplianceSets(new MethodCallback<ApplianceSetsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceSetsResponse response) {
+				for (ApplianceSet applianceSet : response.getApplianceSets()) {
+					if (applianceSet.getType() == Type.portal && applianceSetCallback != null) {
+						applianceSetCallback.processApplianceSet(applianceSet);
+						
+						return;
+					}
+				}
+				
+				NewApplianceSet applianceSet = new NewApplianceSet();
+				applianceSet.setName("Portal set");
+				applianceSet.setPriority("50");
+				applianceSet.setType(Type.portal);
+				
+				NewApplianceSetRequest applianceSetRequest = new NewApplianceSetRequest();
+				applianceSetRequest.setApplianceSet(applianceSet);
+				applianceSetService.addApplianceSet(applianceSetRequest, new MethodCallback<ApplianceSetRequestResponse>() {
+					@Override
+					public void onFailure(Method method, Throwable exception) {
+						Window.alert(exception.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Method method, ApplianceSetRequestResponse response) {
+						if (applianceSetCallback != null) {
+							applianceSetCallback.processApplianceSet(response.getApplianceSet());
+						}
+					}
+				});
+			}
+		});
 	}
 
 	public void getInitialConfigurations(String applianceTypeId, final ApplianceConfigurationsCallback applianceConfigurationsCallback) {

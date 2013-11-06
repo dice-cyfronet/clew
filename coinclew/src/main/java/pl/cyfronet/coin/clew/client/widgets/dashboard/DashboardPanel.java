@@ -13,9 +13,11 @@ import com.github.gwtbootstrap.client.ui.Collapse;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -33,7 +35,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -289,5 +293,47 @@ public class DashboardPanel extends Composite implements View {
 	
 	private int getCollapsibleRow(int i) {
 		return i * 2 + 1;
+	}
+
+	@Override
+	public HasValue<Boolean> addInitialConfig(int row, String applianceTypeId, String configurationName) {
+		FlowPanel panel = null;
+		
+		if (!(appsTable.getWidget(row, 3) instanceof FlowPanel)) {
+			String description = appsTable.getText(row, 3);
+			panel = new FlowPanel();
+			panel.add(new HTML(description));
+			appsTable.setWidget(row, 3, panel);
+		} else {
+			panel = (FlowPanel) appsTable.getWidget(row, 3);
+		}
+		
+		RadioButton radio = new RadioButton(applianceTypeId, configurationName);
+		panel.add(radio);
+		
+		return radio;
+	}
+
+	@Override
+	public void enableStartButton(int j, boolean enabled) {
+		Button startButton = (Button) appsTable.getWidget(j, 0);
+		startButton.setEnabled(enabled);
+	}
+
+	@Override
+	public void enableCheckButton(int j, boolean enabled) {
+		CheckBox checkBox = (CheckBox) appsTable.getWidget(j, 1);
+		checkBox.setEnabled(enabled);
+	}
+
+	@Override
+	public void addNoConfigurationMessage(int j) {
+		String description = appsTable.getText(j, 3);
+		VerticalPanel panel = new VerticalPanel();
+		panel.add(new HTML(description));
+		
+		Label label = new Label(LabelType.WARNING, messages.getNoInitialConfigurationMessage());
+		panel.add(label);
+		appsTable.setWidget(j, 3, panel);
 	}
 }

@@ -17,4 +17,5 @@ public interface DashboardMessages extends Messages {
 	String getDetailsButtonTooltip();
 	String getShutdownButtonTooltip();
 	String getShutdownConfirmationMessage();
+	String getNoInitialConfigurationMessage();
 }

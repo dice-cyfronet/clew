@@ -2,15 +2,19 @@ package pl.cyfronet.coin.clew.client.widgets.dashboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.common.BasePresenter;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.Status;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
@@ -42,6 +46,10 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		void setInstanceLocation(int i, String location);
 		void confirmShutdown(Command command);
 		void toggleInstanceDetails(int i);
+		HasValue<Boolean> addInitialConfig(int row, String applianceTypeId, String configurationName);
+		void enableStartButton(int j, boolean b);
+		void enableCheckButton(int j, boolean b);
+		void addNoConfigurationMessage(int j);
 	}
 	
 	private final static Logger log = LoggerFactory.getLogger(DashboardPresenter.class);
@@ -51,12 +59,14 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	private List<ApplianceType> applianceTypes;
 	private List<HasValue<Boolean>> appChecks;
 	private List<ApplianceInstance> instances;
+	private Map<Integer, Map<String, HasValue<Boolean>>> initialConfigurationRadios;
 	
 	@Inject
 	public DashboardPresenter(View view, CloudFacadeController cloudFacadeController) {
 		this.view = view;
 		this.cloudFacadeController = cloudFacadeController;
 		appChecks = new ArrayList<HasValue<Boolean>>();
+		initialConfigurationRadios = new HashMap<Integer, Map<String, HasValue<Boolean>>>();
 	}
 	
 	public void load() {
@@ -99,11 +109,38 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 				int i = 0;
 				appChecks.clear();
 				
-				for(ApplianceType atomicService : applianceTypes) {
+				for(final ApplianceType applianceType : applianceTypes) {
 					view.addStartButton(i);
 					appChecks.add(view.addCheckButton(i));
-					view.addAppName(i, atomicService.getName());
-					view.addAppDescription(i, atomicService.getDescription());
+					view.addAppName(i, applianceType.getName());
+					view.addAppDescription(i, applianceType.getDescription());
+					
+					final int j = i;
+					cloudFacadeController.getInitialConfigurations(applianceType.getId(), new ApplianceConfigurationsCallback() {
+						@Override
+						public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigrations) {
+							if (applianceConfigrations.size() == 0) {
+								view.enableStartButton(j, false);
+								view.enableCheckButton(j, false);
+								view.addNoConfigurationMessage(j);
+							} else {
+								boolean firstChecked = false;
+								Map<String, HasValue<Boolean>> configs = new HashMap<String, HasValue<Boolean>>();
+								
+								for (ApplianceConfiguration applianceConfiguration : applianceConfigrations) {
+									HasValue<Boolean> check = view.addInitialConfig(j, applianceType.getId(), applianceConfiguration.getName());
+									configs.put(applianceConfiguration.getId(), check);
+									
+									if (!firstChecked) {
+										firstChecked = true;
+										check.setValue(true);
+									}
+								}
+								
+								initialConfigurationRadios.put(j, configs);
+							}
+						}
+					});
 					i++;
 				}
 			}
@@ -129,20 +166,24 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 
 	@Override
 	public void onStartSelected() {
-		List<String> startIds = new ArrayList<String>();
+		List<String> configurationTemplateIds = new ArrayList<String>();
 		int i = 0;
 		
 		for (HasValue<Boolean> selected : appChecks) {
 			if (selected.getValue()) {
-				startIds.add(applianceTypes.get(i).getId());
+				for (String initialConfigurationId : initialConfigurationRadios.get(i).keySet()) {
+					if (initialConfigurationRadios.get(i).get(initialConfigurationId).getValue()) {
+						configurationTemplateIds.add(applianceTypes.get(i).getId());
+					}
+				}
 			}
 			
 			i++;
 		}
 		
-		log.info("Starting appliance types with ids {}", startIds);
+		log.info("Starting appliance types with initial configuration ids {}", configurationTemplateIds);
 		view.setStartSelectedWidgetBusyState(true);
-		cloudFacadeController.startApplianceTypes(startIds, new Command() {
+		cloudFacadeController.startApplianceTypes(configurationTemplateIds, new Command() {
 			@Override
 			public void execute() {
 				view.setStartSelectedWidgetBusyState(false);
@@ -155,14 +196,21 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	public void onStartSingle(final int i) {
 		log.info("Starting single appliance type {}", applianceTypes.get(i).getId());
 		view.setStartAppWidgetBusyState(i, true);
-		cloudFacadeController.startApplianceTypes(
-				Arrays.asList(applianceTypes.get(i).getId()), new Command() {
-					@Override
-					public void execute() {
-						view.setStartAppWidgetBusyState(i, false);
-						view.hideStartAppPopup();
-					}
-				});
+		log.info("Initial configuration: {}", initialConfigurationRadios);
+		
+		for (String initialConfigurationId : initialConfigurationRadios.get(i).keySet()) {
+			if (initialConfigurationRadios.get(i).get(initialConfigurationId).getValue()) {
+				cloudFacadeController.startApplianceTypes(
+						Arrays.asList(initialConfigurationId), new Command() {
+							@Override
+							public void execute() {
+								view.setStartAppWidgetBusyState(i, false);
+								view.hideStartAppPopup();
+							}
+						});
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -171,14 +219,14 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 	}
 
 	@Override
-	public void onInstanceShutdown(int i) {
+	public void onInstanceShutdown(final int instanceIndex) {
 		view.confirmShutdown(new Command() {
 			@Override
 			public void execute() {
-				cloudFacadeController.shutdownApplianceInstance(new Command() {
+				cloudFacadeController.shutdownApplianceInstance(instances.get(instanceIndex).getId(), new Command() {
 					@Override
 					public void execute() {
-						Window.alert("Handle post-shutdown action");
+						
 					}
 				});
 			}});
