@@ -20,7 +20,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
@@ -50,6 +49,7 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		void enableStartButton(int j, boolean b);
 		void enableCheckButton(int j, boolean b);
 		void addNoConfigurationMessage(int j);
+		void hideInstanceRow(int instanceIndex);
 	}
 	
 	private final static Logger log = LoggerFactory.getLogger(DashboardPresenter.class);
@@ -67,12 +67,14 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 		this.cloudFacadeController = cloudFacadeController;
 		appChecks = new ArrayList<HasValue<Boolean>>();
 		initialConfigurationRadios = new HashMap<Integer, Map<String, HasValue<Boolean>>>();
+		bind();
 	}
-	
+
 	public void load() {
 		cloudFacadeController.getApplianceInstances(new ApplianceInstancesCallback() {
 			@Override
 			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
+				log.info("!!! {}", this);
 				instances = applianceInstances;
 				int i = 0;
 				
@@ -220,15 +222,21 @@ public class DashboardPresenter extends BasePresenter implements Presenter {
 
 	@Override
 	public void onInstanceShutdown(final int instanceIndex) {
+		log.debug("Shutting down instance with index {} and instances {}", instanceIndex, instances);
+		log.info("!!! {}", this);
 		view.confirmShutdown(new Command() {
 			@Override
 			public void execute() {
 				cloudFacadeController.shutdownApplianceInstance(instances.get(instanceIndex).getId(), new Command() {
 					@Override
 					public void execute() {
-						
+						view.hideInstanceRow(instanceIndex);
 					}
 				});
 			}});
+	}
+	
+	private void bind() {
+		
 	}
 }

@@ -9,6 +9,7 @@
 	<inherits name="com.google.gwt.inject.Inject"/>
 	<inherits name="com.github.gwtbootstrap.Bootstrap"/>
 	<inherits name="de.benediktmeurer.gwt.slf4j.jul.JUL"/>
+	<inherits name='com.mvp4g.Mvp4gModule'/>
 	
 	<source path="client"/>
 	<entry-point class="pl.cyfronet.coin.clew.client.ClewEntryPoint"/>

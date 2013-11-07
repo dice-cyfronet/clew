@@ -336,4 +336,10 @@ public class DashboardPanel extends Composite implements View {
 		panel.add(label);
 		appsTable.setWidget(j, 3, panel);
 	}
+
+	@Override
+	public void hideInstanceRow(int instanceIndex) {
+		// TODO Auto-generated method stub
+		
+	}
 }

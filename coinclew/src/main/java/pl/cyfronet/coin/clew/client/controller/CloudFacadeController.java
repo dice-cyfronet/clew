@@ -139,9 +139,20 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void shutdownApplianceInstance(String applianceInstanceId, Command afterShutdown) {
-		//TODO(DH): handle shutdown
-		afterShutdown.execute();
+	public void shutdownApplianceInstance(String applianceInstanceId, final Command afterShutdown) {
+		applianceInstancesService.deleteApplianceInstance(applianceInstanceId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (afterShutdown != null) {
+					afterShutdown.execute();
+				}
+			}
+		});
 	}
 
 	public void addApplianceType(NewApplianceType newApplianceType, final Command after) {
