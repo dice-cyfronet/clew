@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface IApplicationsView extends IsWidget {
 	public interface IApplicationsPresenter {
-		
+		void onStartInstance();
 	}
 
 	HasWidgets getInstanceContainer();

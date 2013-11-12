@@ -1,0 +1,37 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypeMessages" field="messages"/>
+	<ui:style>
+		.name {
+			text-align: left;
+			font-weight: bold;
+			width: 30%;
+			float: left;
+		}
+		.description {
+			width: 50%;
+			float: left;
+			text-align: left;
+		}
+		.control {
+			width: 10%;
+			float: left;
+			text-align: left;
+		}
+	</ui:style>
+	<g:FlowPanel>
+		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:FlowPanel addStyleNames="{style.description}">
+			<g:HTML ui:field="description"/>
+			<g:FlowPanel ui:field="initialConfigsContainer"/>
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.control}">
+			<b:Button ui:field="start" size="MINI" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"/>
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.control}">
+			<b:CheckBox ui:field="checked"/>
+		</g:FlowPanel>
+	</g:FlowPanel>
+</ui:UiBinder> 

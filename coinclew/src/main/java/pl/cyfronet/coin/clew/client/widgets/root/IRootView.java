@@ -11,4 +11,6 @@ public interface IRootView extends IsWidget {
 	void setMenu(IsWidget widget);
 	void setBody(IsWidget widget);
 	HasText getErrorLabel();
+	void addPopup(IsWidget widget);
+	void setErrorLabelVisible(boolean b);
 }

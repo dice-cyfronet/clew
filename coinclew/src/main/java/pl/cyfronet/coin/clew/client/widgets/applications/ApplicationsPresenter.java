@@ -23,6 +23,11 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 		this.cloudFacadeController = cloudFacadeController;
 	}
 	
+	@Override
+	public void onStartInstance() {
+		eventBus.showStartInstanceDialog();
+	}
+	
 	public void onStart() {
 		eventBus.setBody(view);
 		loadApplianceInstances();

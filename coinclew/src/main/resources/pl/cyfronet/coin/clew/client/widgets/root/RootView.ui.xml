@@ -5,8 +5,10 @@
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel>
-		<b:Label ui:field="errorLabel" type="WARNING"/>
+		<b:Label ui:field="errorLabel" type="WARNING" visible="false"/>
 		<g:FlowPanel ui:field="menuPanel"/>
-		<g:FlowPanel ui:field="bodyPanel" addStyleNames="text-center"/>
+		<hr/>
+		<g:FlowPanel ui:field="bodyPanel"/>
+		<g:FlowPanel ui:field="popups"/>
 	</g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

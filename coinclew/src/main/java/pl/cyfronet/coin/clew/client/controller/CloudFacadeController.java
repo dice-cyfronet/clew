@@ -87,7 +87,7 @@ public class CloudFacadeController {
 			
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
+				popupErrorHandler.displayError(exception.getMessage());
 			}
 		});
 	}

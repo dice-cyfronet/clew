@@ -28,9 +28,14 @@ public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implem
 		view.setBody(widget);
 	}
 	
+	public void onAddPopup(IsWidget widget) {
+		view.addPopup(widget);
+	}
+	
 	public void onDisplayError(ErrorCode errorCode) {
 		String errorMessage = messages.getString(errorCode.name());
 		view.getErrorLabel().setText(errorMessage);
+		view.setErrorLabelVisible(true);
 		
 		if (errorTimer != null) {
 			errorTimer.cancel();
@@ -40,6 +45,7 @@ public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implem
 			@Override
 			public void run() {
 				view.getErrorLabel().setText("");
+				view.setErrorLabelVisible(false);
 				errorTimer = null;
 			}
 		};

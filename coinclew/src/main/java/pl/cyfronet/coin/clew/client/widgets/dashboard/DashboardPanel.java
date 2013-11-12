@@ -107,7 +107,6 @@ public class DashboardPanel extends Composite implements View {
 	@Override
 	public void setAppsSpinnerVisible(boolean visible) {
 		appListSpinner.setVisible(visible);
-		appListSpinner.setSpin(visible);
 	}
 
 	@Override
