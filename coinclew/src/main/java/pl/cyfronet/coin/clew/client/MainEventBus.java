@@ -18,6 +18,9 @@ public interface MainEventBus extends EventBus {
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
+	void displayError(ErrorCode errorCode);
+	
+	@Event(handlers = RootPresenter.class)
 	void setMenu(IsWidget menu);
 	
 	@Event(handlers = RootPresenter.class)

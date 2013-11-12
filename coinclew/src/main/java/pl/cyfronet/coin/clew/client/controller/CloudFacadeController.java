@@ -35,8 +35,12 @@ import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 
 public class CloudFacadeController {
-	public interface ApplianceInstancesCallback {
-		void processApplianceInstances(List<ApplianceInstance> applianceInstances);
+	public abstract static class ApplianceInstancesCallback {
+		public abstract void processApplianceInstances(List<ApplianceInstance> applianceInstances);
+		
+		protected void onError(Throwable e) {
+			popupErrorHandler.displayError(e.getMessage());
+		}
 	}
 	
 	public interface ApplianceTypesCallback {
@@ -59,14 +63,17 @@ public class CloudFacadeController {
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
 	private ApplianceConfigurationService applianceConfigurationService;
+	private static PopupErrorHandler popupErrorHandler;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
-			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService) {
+			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService,
+			PopupErrorHandler popupErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
 		this.applianceConfigurationService = applianceConfigurationService;
+		CloudFacadeController.popupErrorHandler = popupErrorHandler;
 	}
 	
 	public void getApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
@@ -127,7 +134,9 @@ public class CloudFacadeController {
 		applianceInstancesService.getApplianceInstances(new MethodCallback<ApplianceInstancesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
+				if (applianceInstancesCallback != null) {
+					applianceInstancesCallback.onError(exception);
+				}
 			}
 
 			@Override

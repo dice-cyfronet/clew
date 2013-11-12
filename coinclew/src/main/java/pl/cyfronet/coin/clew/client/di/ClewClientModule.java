@@ -1,6 +1,5 @@
 package pl.cyfronet.coin.clew.client.di;
 
-import pl.cyfronet.coin.clew.client.controller.ClewController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.di.providers.ApplianceTypesSerivceProvider;
@@ -15,7 +14,6 @@ import com.google.inject.Singleton;
 public class ClewClientModule extends AbstractGinModule {
 	@Override
 	protected void configure() {
-		bind(ClewController.class).in(Singleton.class);
 		bind(CloudFacadeController.class).in(Singleton.class);
 		bind(ApplianceTypeService.class).toProvider(ApplianceTypesSerivceProvider.class).in(Singleton.class);
 		

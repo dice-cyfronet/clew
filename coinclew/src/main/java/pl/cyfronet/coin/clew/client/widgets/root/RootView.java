@@ -1,10 +1,12 @@
 package pl.cyfronet.coin.clew.client.widgets.root;
 
+import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
@@ -17,6 +19,7 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	
 	@UiField FlowPanel menuPanel;
 	@UiField FlowPanel bodyPanel;
+	@UiField Label errorLabel;
 
 	public RootView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -41,5 +44,10 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	public void setBody(IsWidget widget) {
 		bodyPanel.clear();
 		bodyPanel.add(widget);
+	}
+
+	@Override
+	public HasText getErrorLabel() {
+		return errorLabel;
 	}
 }

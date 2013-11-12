@@ -1,10 +1,12 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel>
+		<b:Label ui:field="errorLabel" type="WARNING"/>
 		<g:FlowPanel ui:field="menuPanel"/>
-		<g:FlowPanel ui:field="bodyPanel"/>
+		<g:FlowPanel ui:field="bodyPanel" addStyleNames="text-center"/>
 	</g:HTMLPanel>
 </ui:UiBinder> 
