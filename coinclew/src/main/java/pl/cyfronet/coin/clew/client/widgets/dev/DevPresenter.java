@@ -67,11 +67,11 @@ public class DevPresenter extends BasePresenter implements Presenter {
 		NewApplianceType newApplianceType = new NewApplianceType();
 		newApplianceType.setName(view.getNewApplianceTypeName().getText());
 		newApplianceType.setDescription(view.getNewApplianceTypeDescription().getText());
-		cloudFacadeController.addApplianceType(newApplianceType, new Command() {
-			@Override
-			public void execute() {
-				view.showNewApplianceModal(false);
-			}});
+//		cloudFacadeController.addApplianceType(newApplianceType, new Command() {
+//			@Override
+//			public void execute() {
+//				view.showNewApplianceModal(false);
+//			}});
 	}
 
 	@Override

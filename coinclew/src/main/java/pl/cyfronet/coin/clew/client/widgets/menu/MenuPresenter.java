@@ -21,6 +21,7 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 	public void onSwitchToApplicationsView() {
 		view.activateApplicationsMenuItem(true);
 		view.activateWorkflowsMenuItem(false);
+		eventBus.deactivateWorkflowsRefresh();
 	}
 
 	@Override

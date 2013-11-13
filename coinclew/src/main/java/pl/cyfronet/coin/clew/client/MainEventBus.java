@@ -47,4 +47,7 @@ public interface MainEventBus extends EventBus {
 
 	@Event(handlers = ApplicationsPresenter.class)
 	void refreshInstanceList();
+
+	@Event(handlers = WorkflowsPresenter.class)
+	void deactivateWorkflowsRefresh();
 }

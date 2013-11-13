@@ -64,6 +64,10 @@ public class CloudFacadeController {
 		void processApplianceSet(ApplianceSet applianceSet);
 	}
 	
+	public interface ApplianceSetsCallback {
+		void processApplianceSet(List<ApplianceSet> applianceSets);
+	}
+	
 	public interface ApplianceConfigurationsCallback {
 		void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations);
 	}
@@ -204,10 +208,6 @@ public class CloudFacadeController {
 			}
 		});
 	}
-
-	public void addApplianceType(NewApplianceType newApplianceType, final Command after) {
-		
-	}
 	
 	private void ensurePortalApplianceSet(final ApplianceSetCallback applianceSetCallback) {
 		applianceSetService.getApplianceSets(new MethodCallback<ApplianceSetsResponse>() {
@@ -315,6 +315,22 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, ComputeSiteRequestResponse response) {
 				if (computeSiteCallback != null) {
 					computeSiteCallback.processComputeSite(response.getComputeSite());
+				}
+			}
+		});
+	}
+
+	public void getApplianceSets(Type type, final ApplianceSetsCallback applianceSetsCallback) {
+		applianceSetService.getApplianceSets(type, new MethodCallback<ApplianceSetsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceSetsResponse response) {
+				if (applianceSetsCallback != null) {
+					applianceSetsCallback.processApplianceSet(response.getApplianceSets());
 				}
 			}
 		});

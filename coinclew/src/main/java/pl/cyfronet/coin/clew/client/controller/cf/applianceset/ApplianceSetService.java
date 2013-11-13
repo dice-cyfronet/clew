@@ -10,6 +10,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
 
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeKey;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 
 public interface ApplianceSetService extends RestService {
 	@GET
@@ -23,4 +24,8 @@ public interface ApplianceSetService extends RestService {
 	@DELETE
 	@Path("appliance_sets/{id}?private_token=" + CloudFacadeKey.KEY)
 	void deleteApplianceSet(@PathParam("id") String appliancesetId, MethodCallback<Void> methodCallback);
+	
+	@GET
+	@Path("appliance_sets?appliance_set_type={type}&private_token=" + CloudFacadeKey.KEY)
+	void getApplianceSets(@PathParam("type") Type workflowType, MethodCallback<ApplianceSetsResponse> methodCallback);
 }
