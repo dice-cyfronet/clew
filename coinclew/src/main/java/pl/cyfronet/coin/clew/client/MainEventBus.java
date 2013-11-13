@@ -50,4 +50,7 @@ public interface MainEventBus extends EventBus {
 
 	@Event(handlers = WorkflowsPresenter.class)
 	void deactivateWorkflowsRefresh();
+
+	@Event(handlers = WorkflowsPresenter.class)
+	void removeApplianceSet(String applianceSetId);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -331,6 +332,38 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, ApplianceSetsResponse response) {
 				if (applianceSetsCallback != null) {
 					applianceSetsCallback.processApplianceSet(response.getApplianceSets());
+				}
+			}
+		});
+	}
+
+	public void getApplianceInstances(String appliancesetId, final ApplianceInstancesCallback applianceInstancesCallback) {
+		applianceInstancesService.getApplianceInstances(appliancesetId, new MethodCallback<ApplianceInstancesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceInstancesResponse response) {
+				if (applianceInstancesCallback != null) {
+					applianceInstancesCallback.processApplianceInstances(response.getApplianceInstances());
+				}
+			}
+		});
+	}
+
+	public void shutdownApplianceSet(String applianceSetId, final Command command) {
+		applianceSetService.deleteApplianceSet(applianceSetId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (command != null) {
+					command.execute();
 				}
 			}
 		});

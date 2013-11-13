@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.workflows;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = WorkflowsView.class)
 public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventBus> implements IWorkflowsPresenter {
+	private static final int REFRESH_MILIS = 10000;
+	
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, ApplianceSetPresenter> applianceSetPresenters;
 	private Timer timer;
@@ -25,6 +28,7 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 	@Inject
 	public WorkflowsPresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
+		applianceSetPresenters = new HashMap<String, ApplianceSetPresenter>();
 	}
 	
 	public void onSwitchToWorkflowsView() {
@@ -60,7 +64,7 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 					};
 				}
 
-				timer.schedule(1000);
+				timer.schedule(REFRESH_MILIS);
 			}
 		});
 	}
@@ -69,6 +73,20 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 		if (timer != null) {
 			timer.cancel();
 			timer = null;
+		}
+	}
+	
+	public void onRemoveApplianceSet(String applianceSetId) {
+		ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSetId);
+		
+		if (presenter != null) {
+			eventBus.removeHandler(presenter);
+			applianceSetPresenters.remove(applianceSetId);
+			view.getWorkflowsContainer().remove(presenter.getView().asWidget());
+			
+			if (applianceSetPresenters.size() == 0) {
+				view.addNoWorkflowsLabel();
+			}
 		}
 	}
 }

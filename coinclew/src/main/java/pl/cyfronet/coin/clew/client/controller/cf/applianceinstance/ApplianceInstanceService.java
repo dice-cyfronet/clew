@@ -23,4 +23,8 @@ public interface ApplianceInstanceService extends RestService {
 	@DELETE
 	@Path("appliances/{id}?private_token=" + CloudFacadeKey.KEY)
 	void deleteApplianceInstance(@PathParam("id") String applianceInstanceId, MethodCallback<Void> methodCallback);
+
+	@GET
+	@Path("appliances?appliance_set_id={id}&private_token=" + CloudFacadeKey.KEY)
+	void getApplianceInstances(@PathParam("id") String appliancesetId, MethodCallback<ApplianceInstancesResponse> methodCallback);
 }
