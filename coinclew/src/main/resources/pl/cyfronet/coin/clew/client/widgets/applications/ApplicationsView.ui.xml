@@ -7,8 +7,35 @@
 		.center {
 			text-align: center;
 		}
+		.header {
+			font-weight: bold;
+			font-size: 1.1em;
+		}
+		.right {
+			text-align: right;
+		}
 	</ui:style>
 	<g:FlowPanel>
+		<b:Row ui:field="headerRow" visible="false">
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="3">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.specHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.ipHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.locationHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.statusHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="1">
+				<g:HTML addStyleNames="{style.header} {style.right}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
+			</b:Column>
+		</b:Row>
 		<g:FlowPanel ui:field="instanceContainer" addStyleNames="{style.center}"/>
 		<b:Button ui:field="startInstance" type="SUCCESS"><ui:text from="{messages.startInstanceButtonLabel}"/></b:Button>
 	</g:FlowPanel>

@@ -4,6 +4,7 @@ import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IAppl
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.Row;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,6 +25,7 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	
 	@UiField FlowPanel instanceContainer;
 	@UiField ApplicationsMessages messages;
+	@UiField Row headerRow;
 
 	public ApplicationsView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -64,5 +66,10 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	@Override
 	public IApplicationsPresenter getPresenter() {
 		return presenter;
+	}
+
+	@Override
+	public void showHeaderRow(boolean show) {
+		headerRow.setVisible(show);
 	}
 }

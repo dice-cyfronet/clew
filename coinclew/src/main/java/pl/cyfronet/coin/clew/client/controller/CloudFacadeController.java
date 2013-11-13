@@ -26,9 +26,16 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSetRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmService;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmsResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteService;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -49,6 +56,10 @@ public class CloudFacadeController {
 		void processApplianceTypes(List<ApplianceType> applianceTypes);
 	}
 	
+	public interface ApplianceTypeCallback {
+		void processApplianceType(ApplianceType applianceType);
+	}
+	
 	public interface ApplianceSetCallback {
 		void processApplianceSet(ApplianceSet applianceSet);
 	}
@@ -61,20 +72,32 @@ public class CloudFacadeController {
 		void processApplianceConfiguration(ApplianceConfiguration applianceConfiguration);
 	}
 	
+	public interface ApplianceVmsCallback {
+		void processApplianceVms(List<ApplianceVm> applianceVms);
+	}
+	
+	public interface ComputeSiteCallback {
+		void processComputeSite(ComputeSite computeSite);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
 	private ApplianceConfigurationService applianceConfigurationService;
 	private static PopupErrorHandler popupErrorHandler;
+	private ApplianceVmService applianceVmsService;
+	private ComputeSiteService computeSitesService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
 			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService,
-			PopupErrorHandler popupErrorHandler) {
+			ApplianceVmService applianceVmsService, ComputeSiteService computeSitesService, PopupErrorHandler popupErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
 		this.applianceConfigurationService = applianceConfigurationService;
+		this.applianceVmsService = applianceVmsService;
+		this.computeSitesService = computeSitesService;
 		CloudFacadeController.popupErrorHandler = popupErrorHandler;
 	}
 	
@@ -90,6 +113,22 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());
+			}
+		});
+	}
+	
+	public void getApplianceType(String applianceTypeId, final ApplianceTypeCallback applianceTypeCallback) {
+		applianceTypesService.getApplianceType(applianceTypeId, new MethodCallback<ApplianceTypeRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceTypeRequestResponse response) {
+				if (applianceTypeCallback != null) {
+					applianceTypeCallback.processApplianceType(response.getApplianceType());
+				}
 			}
 		});
 	}
@@ -244,6 +283,38 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, ApplianceConfigurationRequestResponse response) {
 				if (applianceConfigurationCallback != null) {
 					applianceConfigurationCallback.processApplianceConfiguration(response.getApplianceConfiguration());
+				}
+			}
+		});
+	}
+
+	public void getInstanceVms(String applianceInstanceId, final ApplianceVmsCallback applianceVmsCallback) {
+		applianceVmsService.getApplianceVms(new MethodCallback<ApplianceVmsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceVmsResponse response) {
+				if (applianceVmsCallback != null) {
+					applianceVmsCallback.processApplianceVms(response.getApplianceVms());
+				}
+			}
+		});
+	}
+
+	public void getComputeSite(String computeSiteId, final ComputeSiteCallback computeSiteCallback) {
+		computeSitesService.getComputeSite(computeSiteId, new MethodCallback<ComputeSiteRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ComputeSiteRequestResponse response) {
+				if (computeSiteCallback != null) {
+					computeSiteCallback.processComputeSite(response.getComputeSite());
 				}
 			}
 		});

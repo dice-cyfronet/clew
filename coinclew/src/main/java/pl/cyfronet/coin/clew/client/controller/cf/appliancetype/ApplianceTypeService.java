@@ -14,6 +14,10 @@ import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeKey;
 
 public interface ApplianceTypeService extends RestService {
 	@GET
+	@Path("appliance_types/{id}?private_token=" + CloudFacadeKey.KEY)
+	void getApplianceType(@PathParam("id") String id, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
+	
+	@GET
 	@Path("appliance_types?private_token=" + CloudFacadeKey.KEY)
 	void getApplianceTypes(MethodCallback<ApplianceTypesResponse> methodCallback);
 	

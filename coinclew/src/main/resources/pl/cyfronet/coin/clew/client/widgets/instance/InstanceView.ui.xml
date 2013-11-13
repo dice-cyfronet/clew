@@ -1,7 +1,38 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.instance.InstanceMessages" field="messages"/>
 	<ui:style>
+		.spacey-row {
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		.right {
+			text-align: right;
+		}
+		.left {
+			text-align: left;
+		}
 	</ui:style>
-	<g:HTMLPanel></g:HTMLPanel>
+	<b:Row addStyleNames="{style.spacey-row}">
+		<b:Column size="2">
+			<g:HTML ui:field="name" addStyleNames="{style.left}"/>
+		</b:Column>
+		<b:Column size="3">
+			<g:HTML ui:field="spec" addStyleNames="{style.left}"/>
+		</b:Column>
+		<b:Column size="2">
+			<g:HTML ui:field="ip" addStyleNames="{style.left}"/>
+		</b:Column>
+		<b:Column size="2">
+			<g:HTML ui:field="location" addStyleNames="{style.left}"/>
+		</b:Column>
+		<b:Column size="2">
+			<g:HTML ui:field="status" addStyleNames="{style.left}"/>
+		</b:Column>
+		<b:Column size="1" addStyleNames="{style.right}">
+			<b:Button ui:field="shutdown" icon="OFF" type="DANGER" size="MINI"></b:Button>
+		</b:Column>
+	</b:Row>
 </ui:UiBinder>

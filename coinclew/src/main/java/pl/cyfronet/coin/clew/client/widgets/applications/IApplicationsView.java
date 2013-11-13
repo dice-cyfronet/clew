@@ -12,4 +12,5 @@ public interface IApplicationsView extends IsWidget {
 	void showLoadingInicator();
 	void clearInstanceContainer();
 	void addNoInstancesLabel();
+	void showHeaderRow(boolean b);
 }
