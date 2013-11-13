@@ -337,8 +337,8 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getApplianceInstances(String appliancesetId, final ApplianceInstancesCallback applianceInstancesCallback) {
-		applianceInstancesService.getApplianceInstances(appliancesetId, new MethodCallback<ApplianceInstancesResponse>() {
+	public void getApplianceInstances(String applianceSetId, final ApplianceInstancesCallback applianceInstancesCallback) {
+		applianceInstancesService.getApplianceInstances(applianceSetId, new MethodCallback<ApplianceInstancesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());
@@ -364,6 +364,39 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, Void response) {
 				if (command != null) {
 					command.execute();
+				}
+			}
+		});
+	}
+
+	public void getPortalApplianceInstances(final ApplianceInstancesCallback applianceInstancesCallback) {
+		applianceSetService.getApplianceSets(Type.portal, new MethodCallback<ApplianceSetsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceSetsResponse response) {
+				if (response.getApplianceSets().size() > 0) {
+					ApplianceSet portalApplianceSet = response.getApplianceSets().get(0);
+					applianceInstancesService.getApplianceInstances(portalApplianceSet.getId(), new MethodCallback<ApplianceInstancesResponse>() {
+						@Override
+						public void onFailure(Method method, Throwable exception) {
+							popupErrorHandler.displayError(exception.getMessage());
+						}
+
+						@Override
+						public void onSuccess(Method method, ApplianceInstancesResponse response) {
+							if (applianceInstancesCallback != null) {
+								applianceInstancesCallback.processApplianceInstances(response.getApplianceInstances());
+							}
+						}
+					});
+				} else {
+					if (applianceInstancesCallback != null) {
+						applianceInstancesCallback.processApplianceInstances(new ArrayList<ApplianceInstance>());
+					}
 				}
 			}
 		});

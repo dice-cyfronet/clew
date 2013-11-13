@@ -64,7 +64,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	private void loadApplianceInstances() {
 		view.clearInstanceContainer();
 		view.showLoadingInicator();
-		cloudFacadeController.getApplianceInstances(new ApplianceInstancesCallback() {
+		cloudFacadeController.getPortalApplianceInstances(new ApplianceInstancesCallback() {
 			@Override
 			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
 				view.clearInstanceContainer();
