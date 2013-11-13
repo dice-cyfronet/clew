@@ -8,7 +8,6 @@ public interface IWorkflowsView extends IsWidget {
 		
 	}
 
-	void clearWorkflowContainer();
 	void addWorkflowProgressIndicator();
 	void addNoWorkflowsLabel();
 	HasWidgets getWorkflowsContainer();

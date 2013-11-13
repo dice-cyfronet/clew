@@ -37,12 +37,12 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 	}
 
 	private void loadWorkflows() {
-		view.clearWorkflowContainer();
+		view.getWorkflowsContainer().clear();
 		view.addWorkflowProgressIndicator();
 		cloudFacadeController.getApplianceSets(NewApplianceSet.Type.workflow, new ApplianceSetsCallback() {
 			@Override
 			public void processApplianceSet(List<ApplianceSet> applianceSets) {
-				view.clearWorkflowContainer();
+				view.getWorkflowsContainer().clear();
 				
 				if (applianceSets.size() == 0) {
 					view.addNoWorkflowsLabel();

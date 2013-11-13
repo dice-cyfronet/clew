@@ -23,11 +23,6 @@ public class WorkflowsView extends Composite implements IWorkflowsView {
 	}
 
 	@Override
-	public void clearWorkflowContainer() {
-		applianceSetContainer.clear();
-	}
-
-	@Override
 	public void addWorkflowProgressIndicator() {
 		Icon icon = new Icon(IconType.SPINNER);
 		icon.addStyleName("icon-spin");

@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.applianceset;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 	@Inject
 	public ApplianceSetPresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
+		instancePresenters = new HashMap<String, InstancePresenter>();
 	}
 
 	public void setApplianceSet(ApplianceSet applianceSet) {
