@@ -193,7 +193,7 @@ public class CloudFacadeController {
 		applianceInstancesService.deleteApplianceInstance(applianceInstanceId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
+				popupErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override

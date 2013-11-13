@@ -32,7 +32,7 @@
 			<g:HTML ui:field="status" addStyleNames="{style.left}"/>
 		</b:Column>
 		<b:Column size="1" addStyleNames="{style.right}">
-			<b:Button ui:field="shutdown" icon="OFF" type="DANGER" size="MINI"></b:Button>
+			<b:Button ui:field="shutdown" icon="OFF" type="DANGER" size="MINI" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"></b:Button>
 		</b:Column>
 	</b:Row>
 </ui:UiBinder>

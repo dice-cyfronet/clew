@@ -1,7 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.applications;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -18,12 +19,12 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = ApplicationsView.class)
 public class ApplicationsPresenter extends BasePresenter<IApplicationsView, MainEventBus> implements IApplicationsPresenter {
 	private CloudFacadeController cloudFacadeController;
-	private List<InstancePresenter> instancePresenters;
+	private Map<String, InstancePresenter> instancePresenters;
 
 	@Inject
 	public ApplicationsPresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
-		instancePresenters = new ArrayList<InstancePresenter>();
+		instancePresenters = new HashMap<String, InstancePresenter>();
 	}
 	
 	@Override
@@ -41,6 +42,21 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 		loadApplianceInstances();
 	}
 	
+	public void onRemoveInstance(String applianceInstanceId) {
+		InstancePresenter instancePresenter = instancePresenters.get(applianceInstanceId);
+		
+		if (instancePresenter != null) {
+			eventBus.removeHandler(instancePresenter);
+			view.getInstanceContainer().remove(instancePresenter.getView().asWidget());
+			instancePresenters.remove(applianceInstanceId);
+			
+			if (instancePresenters.size() == 0) {
+				view.showHeaderRow(false);
+				view.addNoInstancesLabel();
+			}
+		}
+	}
+	
 	private void loadApplianceInstances() {
 		view.clearInstanceContainer();
 		view.showLoadingInicator();
@@ -56,7 +72,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 					
 					for (ApplianceInstance applianceInstance : applianceInstances) {
 						InstancePresenter presenter = eventBus.addHandler(InstancePresenter.class);
-						instancePresenters.add(presenter);
+						instancePresenters.put(applianceInstance.getId(), presenter);
 						presenter.setInstance(applianceInstance);
 						view.getInstanceContainer().add(presenter.getView().asWidget());
 					}

@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface IInstanceView extends IsWidget {
 	public interface IInstancePresenter {
-		
+		void onShutdownClicked();
 	}
 
 	HasText getName();
@@ -14,4 +14,6 @@ public interface IInstanceView extends IsWidget {
 	HasText getIp();
 	HasText getLocation();
 	HasText getStatus();
+	void setShutdownBusyState(boolean busy);
+	boolean confirmInstanceShutdown();
 }

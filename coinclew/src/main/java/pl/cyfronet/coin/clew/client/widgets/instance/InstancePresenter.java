@@ -14,6 +14,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
+import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -21,6 +22,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	private CloudFacadeController cloudFacadeController;
+	private String applianceInstanceId;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController) {
@@ -28,6 +30,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	public void setInstance(ApplianceInstance applianceInstance) {
+		applianceInstanceId = applianceInstance.getId();
 		cloudFacadeController.getApplianceType(applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
 			@Override
 			public void processApplianceType(ApplianceType applianceType) {
@@ -55,5 +58,19 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			}
 			
 		});
+	}
+
+	@Override
+	public void onShutdownClicked() {
+		if (view.confirmInstanceShutdown()) {
+			view.setShutdownBusyState(true);
+			cloudFacadeController.shutdownApplianceInstance(applianceInstanceId, new Command() {
+				@Override
+				public void execute() {
+					view.setShutdownBusyState(false);
+					eventBus.removeInstance(applianceInstanceId);
+				}
+			});
+		}
 	}
 }

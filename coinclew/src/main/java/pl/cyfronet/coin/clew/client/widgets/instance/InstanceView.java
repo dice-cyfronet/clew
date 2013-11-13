@@ -1,16 +1,25 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
+
+import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
+import com.mvp4g.client.view.ReverseViewInterface;
 
-public class InstanceView extends Composite implements IInstanceView {
+public class InstanceView extends Composite implements IInstanceView, ReverseViewInterface<IInstancePresenter> {
 	private static InstanceViewUiBinder uiBinder = GWT.create(InstanceViewUiBinder.class);
 	interface InstanceViewUiBinder extends UiBinder<Widget, InstanceView> {}
+	
+	private IInstancePresenter presenter;
 	
 	@UiField HTML name;
 	@UiField HTML spec;
@@ -18,9 +27,25 @@ public class InstanceView extends Composite implements IInstanceView {
 	@UiField HTML ip;
 	@UiField HTML location;
 	@UiField HTML status;
+	@UiField Button shutdown;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
+	@UiHandler("shutdown")
+	void shutdownClicked(ClickEvent event) {
+		getPresenter().onShutdownClicked();
+	}
+	
+	@Override
+	public void setPresenter(IInstancePresenter presenter) {
+		this.presenter = presenter;
+	}
+
+	@Override
+	public IInstancePresenter getPresenter() {
+		return presenter;
 	}
 
 	@Override
@@ -51,5 +76,19 @@ public class InstanceView extends Composite implements IInstanceView {
 	@Override
 	public HasText getStatus() {
 		return status;
+	}
+
+	@Override
+	public void setShutdownBusyState(boolean busy) {
+		if (busy) {
+			shutdown.state().loading();
+		} else {
+			shutdown.state().reset();
+		}
+	}
+
+	@Override
+	public boolean confirmInstanceShutdown() {
+		return Window.confirm(messages.shutdownConfirmation());
 	}
 }
