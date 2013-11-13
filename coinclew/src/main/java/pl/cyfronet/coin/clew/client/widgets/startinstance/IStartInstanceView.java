@@ -13,4 +13,5 @@ public interface IStartInstanceView extends IsWidget {
 	void clearApplianceTypeContainer();
 	void addNoApplianceTypesLabel();
 	HasWidgets getApplianceTypeContainer();
+	void hide();
 }

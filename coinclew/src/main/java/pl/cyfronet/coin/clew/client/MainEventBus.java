@@ -38,4 +38,7 @@ public interface MainEventBus extends EventBus {
 
 	@Event(handlers = StartInstancePresenter.class)
 	void showStartInstanceDialog();
+
+	@Event(handlers = StartInstancePresenter.class)
+	void hideStartInstanceModal();
 }

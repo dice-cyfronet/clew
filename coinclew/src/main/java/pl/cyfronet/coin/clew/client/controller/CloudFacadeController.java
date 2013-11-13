@@ -33,7 +33,9 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class CloudFacadeController {
 	public abstract static class ApplianceInstancesCallback {
 		public abstract void processApplianceInstances(List<ApplianceInstance> applianceInstances);
@@ -52,7 +54,7 @@ public class CloudFacadeController {
 	}
 	
 	public interface ApplianceConfigurationsCallback {
-		void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigrations);
+		void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations);
 	}
 	
 	public interface ApplianceConfigurationCallback {
@@ -109,7 +111,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							Window.alert(exception.getMessage());
+							popupErrorHandler.displayError(exception.getMessage());
 							checkReturn();
 						}
 

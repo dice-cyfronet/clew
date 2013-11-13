@@ -57,4 +57,9 @@ public class StartInstanceView extends Composite implements IStartInstanceView {
 	public HasWidgets getApplianceTypeContainer() {
 		return applianceTypeContainer;
 	}
+
+	@Override
+	public void hide() {
+		startInstanceModal.hide();
+	}
 }

@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.startinstance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -16,11 +17,12 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = StartInstanceView.class)
 public class StartInstancePresenter extends BasePresenter<IStartInstanceView, MainEventBus> implements IStartInstancePresenter {
 	private CloudFacadeController cloudFacadeController;
+	private List<ApplianceTypePresenter> applianceTypePresenters;
 
 	@Inject
 	public StartInstancePresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
-		
+		applianceTypePresenters = new ArrayList<ApplianceTypePresenter>();
 	}
 	
 	public void onStart() {
@@ -41,11 +43,20 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 				} else {
 					for (ApplianceType applianceType : applianceTypes) {
 						ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
+						applianceTypePresenters.add(presenter);
 						presenter.setApplianceType(applianceType);
 						view.getApplianceTypeContainer().add(presenter.getView().asWidget());
 					}
 				}
 			}
 		});
+	}
+	
+	public void onHideStartInstanceModal() {
+		view.hide();
+		
+		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
+			eventBus.removeHandler(presenter);
+		}
 	}
 }
