@@ -15,24 +15,34 @@
 			text-align: left;
 		}
 	</ui:style>
-	<b:Row addStyleNames="{style.spacey-row}">
-		<b:Column size="2">
-			<g:HTML ui:field="name" addStyleNames="{style.left}"/>
-		</b:Column>
-		<b:Column size="3">
-			<g:HTML ui:field="spec" addStyleNames="{style.left}"/>
-		</b:Column>
-		<b:Column size="2">
-			<g:HTML ui:field="ip" addStyleNames="{style.left}"/>
-		</b:Column>
-		<b:Column size="2">
-			<g:HTML ui:field="location" addStyleNames="{style.left}"/>
-		</b:Column>
-		<b:Column size="2">
-			<g:HTML ui:field="status" addStyleNames="{style.left}"/>
-		</b:Column>
-		<b:Column size="1" addStyleNames="{style.right}">
-			<b:Button ui:field="shutdown" icon="OFF" type="DANGER" size="MINI" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"></b:Button>
-		</b:Column>
-	</b:Row>
+	<g:FlowPanel>
+		<b:Row addStyleNames="{style.spacey-row}">
+			<b:Column size="2">
+				<g:HTML ui:field="name" addStyleNames="{style.left}"/>
+			</b:Column>
+			<b:Column size="3">
+				<g:HTML ui:field="spec" addStyleNames="{style.left}"/>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML ui:field="ip" addStyleNames="{style.left}"/>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML ui:field="location" addStyleNames="{style.left}"/>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML ui:field="status" addStyleNames="{style.left}"/>
+			</b:Column>
+			<b:Column size="1" addStyleNames="{style.right}">
+				<b:ButtonGroup>
+					<b:Button ui:field="showDetails" icon="REORDER" type="WARNING" size="MINI" toggle="true"/>
+					<b:Button ui:field="shutdown" icon="OFF" type="DANGER" size="MINI" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"/>
+				</b:ButtonGroup>
+			</b:Column>
+		</b:Row>
+		<b:Collapse ui:field="collapse" defaultOpen="false">
+			<g:FlowPanel>
+				<b:Label>No details: TODO</b:Label>
+			</g:FlowPanel>
+		</b:Collapse>
+	</g:FlowPanel>
 </ui:UiBinder>

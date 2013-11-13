@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.widgets.instance;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Collapse;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -28,6 +29,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField HTML location;
 	@UiField HTML status;
 	@UiField Button shutdown;
+	@UiField Collapse collapse;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -36,6 +38,11 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiHandler("shutdown")
 	void shutdownClicked(ClickEvent event) {
 		getPresenter().onShutdownClicked();
+	}
+	
+	@UiHandler("showDetails")
+	void showDetailsClicked(ClickEvent event) {
+		collapse.toggle();
 	}
 	
 	@Override
