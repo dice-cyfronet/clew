@@ -1,5 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.startinstance;
 
+import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
+
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
@@ -9,18 +12,23 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import com.mvp4g.client.view.ReverseViewInterface;
 
-public class StartInstanceView extends Composite implements IStartInstanceView {
+public class StartInstanceView extends Composite implements IStartInstanceView, ReverseViewInterface<IStartInstancePresenter> {
 	private static StartInstanceViewUiBinder uiBinder = GWT.create(StartInstanceViewUiBinder.class);
 	interface StartInstanceViewUiBinder extends UiBinder<Widget, StartInstanceView> {}
+	
+	private IStartInstancePresenter presenter;
 	
 	@UiField Modal startInstanceModal;
 	@UiField FlowPanel applianceTypeContainer;
 	@UiField StartInstanceMessages messages;
+	@UiField Button startSelected;
 
 	public StartInstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -29,6 +37,21 @@ public class StartInstanceView extends Composite implements IStartInstanceView {
 	@UiHandler("close")
 	void closeClicked(ClickEvent event) {
 		startInstanceModal.hide();
+	}
+	
+	@UiHandler("startSelected")
+	void startSelectedClicked(ClickEvent event) {
+		getPresenter().onStartSelected();
+	}
+	
+	@Override
+	public void setPresenter(IStartInstancePresenter presenter) {
+		this.presenter = presenter;
+	}
+
+	@Override
+	public IStartInstancePresenter getPresenter() {
+		return presenter;
 	}
 
 	@Override
@@ -61,5 +84,19 @@ public class StartInstanceView extends Composite implements IStartInstanceView {
 	@Override
 	public void hide() {
 		startInstanceModal.hide();
+	}
+
+	@Override
+	public void showNoApplianceTypesSelected() {
+		Window.alert(messages.noSelectedApplianceTypes());
+	}
+
+	@Override
+	public void setStartSelectedBusyState(boolean busy) {
+		if (busy) {
+			startSelected.state().loading();
+		} else {
+			startSelected.state().reset();
+		}
 	}
 }

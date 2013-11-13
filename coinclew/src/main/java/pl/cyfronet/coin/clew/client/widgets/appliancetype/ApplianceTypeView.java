@@ -37,6 +37,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField ApplianceTypeMessages messages;
 	@UiField Button start;
 	@UiField FlowPanel initialConfigsContainer;
+	@UiField CheckBox checked;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -118,9 +119,11 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public void enableControls(boolean enable) {
 		start.setEnabled(enable);
-		
-		for (CheckBox checkbox : checkBoxes) {
-			checkbox.setEnabled(enable);
-		}
+		checked.setEnabled(enable);
+	}
+
+	@Override
+	public HasValue<Boolean> getChecked() {
+		return checked;
 	}
 }

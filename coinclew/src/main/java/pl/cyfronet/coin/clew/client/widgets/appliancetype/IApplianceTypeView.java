@@ -18,4 +18,5 @@ public interface IApplianceTypeView extends IsWidget {
 	void addNoInitialConfigsLabel();
 	HasValue<Boolean> addInitialConfigRadioBox(String radioName, String name);
 	void enableControls(boolean b);
+	HasValue<Boolean> getChecked();
 }

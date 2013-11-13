@@ -10,6 +10,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -57,6 +59,33 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		
 		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
 			eventBus.removeHandler(presenter);
+		}
+	}
+
+	@Override
+	public void onStartSelected() {
+		List<String> initialConfigurationIds = new ArrayList<String>();
+		
+		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
+			String initialConfigId = presenter.getSelectedInitialConfigId();
+			
+			if (initialConfigId != null) {
+				initialConfigurationIds.add(initialConfigId);
+			}
+		}
+		
+		if (initialConfigurationIds.size() == 0) {
+			view.showNoApplianceTypesSelected();
+		} else {
+			view.setStartSelectedBusyState(true);
+			cloudFacadeController.startApplianceTypes(initialConfigurationIds, new Command() {
+				@Override
+				public void execute() {
+					view.setStartSelectedBusyState(false);
+					view.hide();
+					eventBus.refreshInstanceList();
+				}
+			});
 		}
 	}
 }

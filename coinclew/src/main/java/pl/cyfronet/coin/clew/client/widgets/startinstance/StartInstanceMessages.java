@@ -6,4 +6,6 @@ public interface StartInstanceMessages extends Messages {
 	String closeButtonLabel();
 	String startInstanceModalHeader();
 	String noApplianceTypesLabel();
+	String startselectedButtonLabel();
+	String noSelectedApplianceTypes();
 }

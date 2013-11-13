@@ -44,4 +44,7 @@ public interface MainEventBus extends EventBus {
 
 	@Event(handlers = ApplicationsPresenter.class)
 	void removeInstance(String applianceInstanceId);
+
+	@Event(handlers = ApplicationsPresenter.class)
+	void refreshInstanceList();
 }

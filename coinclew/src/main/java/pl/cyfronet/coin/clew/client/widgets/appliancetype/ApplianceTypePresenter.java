@@ -91,7 +91,20 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 			public void execute() {
 				view.setStartButtonBusyState(false);
 				eventBus.hideStartInstanceModal();
+				eventBus.refreshInstanceList();
 			}
 		});
+	}
+
+	public String getSelectedInitialConfigId() {
+		if (view.getChecked().getValue()) {
+			for (String initialConfigId : initialConfigs.keySet()) {
+				if (initialConfigs.get(initialConfigId).getValue()) {
+					return initialConfigId;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

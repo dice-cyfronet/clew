@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface IStartInstanceView extends IsWidget {
 	interface IStartInstancePresenter {
-		
+		void onStartSelected();
 	}
 
 	void show();
@@ -14,4 +14,6 @@ public interface IStartInstanceView extends IsWidget {
 	void addNoApplianceTypesLabel();
 	HasWidgets getApplianceTypeContainer();
 	void hide();
+	void showNoApplianceTypesSelected();
+	void setStartSelectedBusyState(boolean b);
 }

@@ -57,6 +57,10 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 		}
 	}
 	
+	public void onRefreshInstanceList() {
+		loadApplianceInstances();
+	}
+	
 	private void loadApplianceInstances() {
 		view.clearInstanceContainer();
 		view.showLoadingInicator();
