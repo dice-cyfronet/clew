@@ -3,9 +3,14 @@ package pl.cyfronet.coin.clew.client.widgets.instance;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Collapse;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -21,6 +26,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	interface InstanceViewUiBinder extends UiBinder<Widget, InstanceView> {}
 	
 	private IInstancePresenter presenter;
+	private Button shutdown;
 	
 	@UiField HTML name;
 	@UiField HTML spec;
@@ -28,16 +34,11 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField HTML ip;
 	@UiField HTML location;
 	@UiField HTML status;
-	@UiField Button shutdown;
+	@UiField ButtonGroup controls;
 	@UiField Collapse collapse;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
-	}
-	
-	@UiHandler("shutdown")
-	void shutdownClicked(ClickEvent event) {
-		getPresenter().onShutdownClicked();
 	}
 	
 	@UiHandler("showDetails")
@@ -87,15 +88,33 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void setShutdownBusyState(boolean busy) {
-		if (busy) {
-			shutdown.state().loading();
-		} else {
-			shutdown.state().reset();
+		if (shutdown != null) {
+			if (busy) {
+				shutdown.state().loading();
+			} else {
+				shutdown.state().reset();
+			}
 		}
 	}
 
 	@Override
 	public boolean confirmInstanceShutdown() {
 		return Window.confirm(messages.shutdownConfirmation());
+	}
+
+	@Override
+	public void addShutdownControl() {
+		shutdown = new Button();
+		shutdown.setIcon(IconType.OFF);
+		shutdown.setType(ButtonType.DANGER);
+		shutdown.setSize(ButtonSize.MINI);
+		shutdown.setLoadingText("&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;");
+		shutdown.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().onShutdownClicked();
+			}
+		});
+		controls.add(shutdown);
 	}
 }

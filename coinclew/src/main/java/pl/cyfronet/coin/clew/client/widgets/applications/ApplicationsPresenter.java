@@ -72,7 +72,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 					for (ApplianceInstance applianceInstance : applianceInstances) {
 						InstancePresenter presenter = eventBus.addHandler(InstancePresenter.class);
 						instancePresenters.put(applianceInstance.getId(), presenter);
-						presenter.setInstance(applianceInstance);
+						presenter.setInstance(applianceInstance, true);
 						view.getInstanceContainer().add(presenter.getView().asWidget());
 					}
 				}

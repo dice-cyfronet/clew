@@ -29,13 +29,17 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		this.cloudFacadeController = cloudFacadeController;
 	}
 	
-	public void setInstance(ApplianceInstance applianceInstance) {
+	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown) {
 		applianceInstanceId = applianceInstance.getId();
 		cloudFacadeController.getApplianceType(applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
 			@Override
 			public void processApplianceType(ApplianceType applianceType) {
 				view.getName().setText(applianceType.getName());
 				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
+				
+				if (enableShutdown) {
+					view.addShutdownControl();
+				}
 			}
 		});
 		cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {

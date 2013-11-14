@@ -16,4 +16,5 @@ public interface IInstanceView extends IsWidget {
 	HasText getStatus();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
+	void addShutdownControl();
 }

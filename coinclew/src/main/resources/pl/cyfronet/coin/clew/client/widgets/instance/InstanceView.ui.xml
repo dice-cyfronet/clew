@@ -33,9 +33,8 @@
 				<g:HTML ui:field="status" addStyleNames="{style.left}"/>
 			</b:Column>
 			<b:Column size="1" addStyleNames="{style.right}">
-				<b:ButtonGroup>
+				<b:ButtonGroup ui:field="controls">
 					<b:Button ui:field="showDetails" icon="REORDER" type="WARNING" size="MINI" toggle="true"/>
-					<b:Button ui:field="shutdown" icon="OFF" type="DANGER" size="MINI" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"/>
 				</b:ButtonGroup>
 			</b:Column>
 		</b:Row>
