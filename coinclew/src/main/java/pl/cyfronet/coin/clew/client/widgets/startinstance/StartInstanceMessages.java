@@ -8,4 +8,5 @@ public interface StartInstanceMessages extends Messages {
 	String noApplianceTypesLabel();
 	String startselectedButtonLabel();
 	String noSelectedApplianceTypes();
+	String filterBoxPlaceholderLabel();
 }

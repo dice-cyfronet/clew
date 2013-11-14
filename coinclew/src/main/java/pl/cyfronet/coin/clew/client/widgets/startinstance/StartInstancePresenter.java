@@ -88,4 +88,17 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			});
 		}
 	}
+
+	@Override
+	public void onFilterTextChanged() {
+		String filterText = view.getFilter().getText();
+		
+		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
+			if (presenter.matchesFilter(filterText)) {
+				presenter.getView().asWidget().setVisible(true);
+			} else {
+				presenter.getView().asWidget().setVisible(false);
+			}
+		}
+	}
 }

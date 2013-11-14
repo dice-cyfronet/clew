@@ -25,7 +25,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, MainEventBus> implements IApplianceTypePresenter {
 	private static final Logger log = LoggerFactory.getLogger(ApplianceTypePresenter.class);
 	
-	private String applianceTypeId;
+	private ApplianceType applianceType;
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, HasValue<Boolean>> initialConfigs;
 	
@@ -36,7 +36,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	}
 
 	public void setApplianceType(ApplianceType applianceType) {
-		applianceTypeId = applianceType.getId();
+		this.applianceType = applianceType;
 		view.getName().setText(applianceType.getName());
 		
 		if (applianceType.getDescription().trim().isEmpty()) {
@@ -47,7 +47,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		
 		view.clearInitialConfigsContainer();
 		view.addInitialConfigsProgressIndicator();
-		cloudFacadeController.getInitialConfigurations(applianceTypeId, new ApplianceConfigurationsCallback() {
+		cloudFacadeController.getInitialConfigurations(applianceType.getId(), new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations) {
 				view.clearInitialConfigsContainer();
@@ -58,7 +58,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 					boolean firstChecked = false;
 					
 					for (ApplianceConfiguration config : applianceConfigurations) {
-						initialConfigs.put(config.getId(), view.addInitialConfigRadioBox(applianceTypeId, config.getName()));
+						initialConfigs.put(config.getId(), view.addInitialConfigRadioBox(ApplianceTypePresenter.this.applianceType.getId(), config.getName()));
 						
 						if (!firstChecked) {
 							initialConfigs.get(config.getId()).setValue(true);
@@ -84,7 +84,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 			}
 		}
 		
-		log.info("Starting appliance type with id {} and initial configuration id {}", applianceTypeId, initialConfigurationId);
+		log.info("Starting appliance type with id {} and initial configuration id {}", applianceType, initialConfigurationId);
 		view.setStartButtonBusyState(true);
 		cloudFacadeController.startApplianceTypes(Arrays.asList(new String[] {initialConfigurationId}), new Command() {
 			@Override
@@ -106,5 +106,10 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		}
 		
 		return null;
+	}
+
+	public boolean matchesFilter(String filterText) {
+		return applianceType.getName() != null && applianceType.getName().contains(filterText) ||
+				applianceType.getDescription() != null && applianceType.getDescription().contains(filterText);
 	}
 }
