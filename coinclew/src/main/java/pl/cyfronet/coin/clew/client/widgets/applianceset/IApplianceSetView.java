@@ -10,7 +10,7 @@ public interface IApplianceSetView extends IsWidget {
 	}
 
 	HasText getName();
-	void addNoInstancesLabel();
+	void showNoInstancesLabel(boolean show);
 	HasWidgets getInstanceContainer();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmShutdown();

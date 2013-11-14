@@ -1,6 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.workflows;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +21,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = WorkflowsView.class)
 public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventBus> implements IWorkflowsPresenter {
-	private static final int REFRESH_MILIS = 10000;
+	private static final int REFRESH_MILIS = 5000;
 	
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, ApplianceSetPresenter> applianceSetPresenters;
@@ -37,21 +39,40 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 	}
 
 	private void loadWorkflows() {
-		view.getWorkflowsContainer().clear();
-		view.addWorkflowProgressIndicator();
 		cloudFacadeController.getApplianceSets(NewApplianceSet.Type.workflow, new ApplianceSetsCallback() {
 			@Override
 			public void processApplianceSet(List<ApplianceSet> applianceSets) {
-				view.getWorkflowsContainer().clear();
-				
 				if (applianceSets.size() == 0) {
-					view.addNoWorkflowsLabel();
+					view.showNoWorkflowsLabel(true);
 				} else {
-					for (ApplianceSet applianceSet : applianceSets) {
-						ApplianceSetPresenter presenter = eventBus.addHandler(ApplianceSetPresenter.class);
+					view.showNoWorkflowsLabel(false);
+				}
+				
+				List<String> currentApplianceSets = new ArrayList<String>();
+				
+				for (ApplianceSet applianceSet : applianceSets) {
+					ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSet.getId());
+					
+					if (presenter == null) {
+						presenter = eventBus.addHandler(ApplianceSetPresenter.class);
 						applianceSetPresenters.put(applianceSet.getId(), presenter);
-						presenter.setApplianceSet(applianceSet);
 						view.getWorkflowsContainer().add(presenter.getView().asWidget());
+					}
+					
+					presenter.setApplianceSet(applianceSet);
+					currentApplianceSets.add(applianceSet.getId());
+				}
+				
+				//removing appliance sets which were not updated in the last request
+				for (Iterator<String> i = applianceSetPresenters.keySet().iterator(); i.hasNext(); ) {
+					String applianceSetId = i.next();
+					
+					if (!currentApplianceSets.contains(applianceSetId)) {
+						ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSetId);
+						presenter.cleanUp();
+						eventBus.removeHandler(presenter);
+						view.getWorkflowsContainer().remove(presenter.getView().asWidget());
+						i.remove();
 					}
 				}
 				
@@ -80,12 +101,13 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 		ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSetId);
 		
 		if (presenter != null) {
+			presenter.cleanUp();
 			eventBus.removeHandler(presenter);
 			applianceSetPresenters.remove(applianceSetId);
 			view.getWorkflowsContainer().remove(presenter.getView().asWidget());
 			
 			if (applianceSetPresenters.size() == 0) {
-				view.addNoWorkflowsLabel();
+				view.showNoWorkflowsLabel(true);
 			}
 		}
 	}

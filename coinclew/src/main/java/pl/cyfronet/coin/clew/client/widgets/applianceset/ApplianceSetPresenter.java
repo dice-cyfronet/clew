@@ -1,6 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.applianceset;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,21 +32,44 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 	}
 
 	public void setApplianceSet(ApplianceSet applianceSet) {
-		applianceSetId = applianceSet.getId();
-		view.getName().setText(applianceSet.getName());
+		if (applianceSetId == null) {
+			applianceSetId = applianceSet.getId();
+			view.getName().setText(applianceSet.getName());
+		}
+		
 		cloudFacadeController.getApplianceInstances(applianceSetId, new ApplianceInstancesCallback() {
 			@Override
 			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
-				view.getInstanceContainer().clear();
-				
 				if (applianceInstances.size() == 0) {
-					view.addNoInstancesLabel();
+					view.showNoInstancesLabel(true);
 				} else {
-					for (ApplianceInstance instance : applianceInstances) {
-						InstancePresenter presenter = eventBus.addHandler(InstancePresenter.class);
+					view.showNoInstancesLabel(false);
+				}
+				
+				List<String> currentInstances = new ArrayList<String>();
+				
+				for (ApplianceInstance instance : applianceInstances) {
+					InstancePresenter presenter = instancePresenters.get(instance.getId());
+					
+					if (presenter == null) {
+						presenter = eventBus.addHandler(InstancePresenter.class);
 						instancePresenters.put(instance.getId(), presenter);
 						view.getInstanceContainer().add(presenter.getView().asWidget());
-						presenter.setInstance(instance, false);
+					}
+					
+					presenter.setInstance(instance, false);
+					currentInstances.add(instance.getId());
+				}
+				
+				//removing those instances which were not sent during the last update
+				for (Iterator<String> i = instancePresenters.keySet().iterator(); i.hasNext(); ) {
+					String instanceId = i.next();
+					
+					if (!currentInstances.contains(instanceId)) {
+						InstancePresenter presenter = instancePresenters.get(instanceId);
+						eventBus.removeHandler(presenter);
+						view.getInstanceContainer().remove(presenter.getView().asWidget());
+						i.remove();
 					}
 				}
 			}
@@ -63,5 +88,15 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 				}
 			});
 		}
+	}
+
+	public void cleanUp() {
+		for (InstancePresenter instancePresenter : instancePresenters.values()) {
+			eventBus.removeHandler(instancePresenter);
+			view.getInstanceContainer().remove(instancePresenter.getView().asWidget());
+		}
+		
+		instancePresenters.clear();
+		view.showNoInstancesLabel(true);
 	}
 }

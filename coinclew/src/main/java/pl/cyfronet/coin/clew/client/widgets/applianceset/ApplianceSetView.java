@@ -23,6 +23,7 @@ public class ApplianceSetView extends Composite implements IApplianceSetView, Re
 	interface AppliancesetViewUiBinder extends UiBinder<Widget, ApplianceSetView> {}
 	
 	private IApplianceSetPresenter presenter;
+	private Label noInstanceLabel;
 
 	@UiField HTML name;
 	@UiField FlowPanel instancesContainer;
@@ -54,9 +55,18 @@ public class ApplianceSetView extends Composite implements IApplianceSetView, Re
 	}
 
 	@Override
-	public void addNoInstancesLabel() {
-		Label label = new Label(messages.noInstancesLabel());
-		instancesContainer.add(label);
+	public void showNoInstancesLabel(boolean show) {
+		if (show) {
+			if (noInstanceLabel == null) {
+				noInstanceLabel = new Label(messages.noInstancesLabel());
+				instancesContainer.add(noInstanceLabel);
+			}
+		} else {
+			if (noInstanceLabel != null) {
+				instancesContainer.remove(noInstanceLabel);
+				noInstanceLabel = null;
+			}
+		}
 	}
 
 	@Override

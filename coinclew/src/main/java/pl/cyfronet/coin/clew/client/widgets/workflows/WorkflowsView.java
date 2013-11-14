@@ -1,8 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.workflows;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -15,6 +13,8 @@ public class WorkflowsView extends Composite implements IWorkflowsView {
 	private static WorkflowsViewUiBinder uiBinder = GWT.create(WorkflowsViewUiBinder.class);
 	interface WorkflowsViewUiBinder extends UiBinder<Widget, WorkflowsView> {}
 	
+	private Label noWorkflowLabel;
+	
 	@UiField FlowPanel applianceSetContainer;
 	@UiField WorkflowsMessages messages;
 
@@ -23,16 +23,18 @@ public class WorkflowsView extends Composite implements IWorkflowsView {
 	}
 
 	@Override
-	public void addWorkflowProgressIndicator() {
-		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
-		applianceSetContainer.add(icon);
-	}
-
-	@Override
-	public void addNoWorkflowsLabel() {
-		Label label = new Label(messages.noApplianceSetsLabel());
-		applianceSetContainer.add(label);
+	public void showNoWorkflowsLabel(boolean show) {
+		if (show) {
+			if (noWorkflowLabel == null) {
+				noWorkflowLabel = new Label(messages.noApplianceSetsLabel());
+				applianceSetContainer.add(noWorkflowLabel);
+			}
+		} else {
+			if (noWorkflowLabel != null) {
+				applianceSetContainer.remove(noWorkflowLabel);
+				noWorkflowLabel = null;
+			}
+		}
 	}
 
 	@Override

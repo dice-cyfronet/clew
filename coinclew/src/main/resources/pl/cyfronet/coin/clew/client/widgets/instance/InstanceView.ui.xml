@@ -34,7 +34,7 @@
 			</b:Column>
 			<b:Column size="1" addStyleNames="{style.right}">
 				<b:ButtonGroup ui:field="controls">
-					<b:Button ui:field="showDetails" icon="REORDER" type="WARNING" size="MINI" toggle="true"/>
+					<b:Button ui:field="showDetails" icon="REORDER" type="WARNING" size="MINI" toggle="true" loadingText="&lt;"/>
 				</b:ButtonGroup>
 			</b:Column>
 		</b:Row>
