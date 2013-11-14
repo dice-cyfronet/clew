@@ -9,6 +9,7 @@
 		<b:NavPills>
 			<b:NavLink ui:field="appsMenuItem"><ui:text from="{messages.appsMenuLabel}"/></b:NavLink>
 			<b:NavLink ui:field="wfsMenuItem"><ui:text from="{messages.wfsMenuLabel}"/></b:NavLink>
+			<b:NavLink ui:field="devMenuItem"><ui:text from="{messages.devMenuLabel}"/></b:NavLink>
 		</b:NavPills>
 	</g:HTMLPanel>
 </ui:UiBinder>

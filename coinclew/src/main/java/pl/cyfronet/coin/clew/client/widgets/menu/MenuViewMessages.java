@@ -5,4 +5,5 @@ import com.google.gwt.i18n.client.Messages;
 public interface MenuViewMessages extends Messages {
 	String appsMenuLabel();
 	String wfsMenuLabel();
+	String devMenuLabel();
 }

@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client;
 
 import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
+import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.menu.MenuPresenter;
 import pl.cyfronet.coin.clew.client.widgets.root.RootPresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.StartInstancePresenter;
@@ -37,6 +38,9 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = {MenuPresenter.class, WorkflowsPresenter.class}, historyConverter = TabHistoryConverter.class)
 	void switchToWorkflowsView();
+	
+	@Event(handlers = {MenuPresenter.class, DevelopmentPresenter.class}, historyConverter = TabHistoryConverter.class)
+	void switchToDevelopmentView();
 
 	@Event(handlers = StartInstancePresenter.class)
 	void showStartInstanceDialog();

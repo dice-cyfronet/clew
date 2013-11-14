@@ -20,6 +20,7 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	
 	@UiField NavLink appsMenuItem;
 	@UiField NavLink wfsMenuItem;
+	@UiField NavLink devMenuItem;
 	
 	public MenuView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -33,6 +34,11 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	@UiHandler("wfsMenuItem")
 	void wfsMenuItemClicked(ClickEvent event) {
 		getPresenter().onWorkflowsMenuItemClicked();
+	}
+	
+	@UiHandler("devMenuItem")
+	void devMenuItemClicked(ClickEvent event) {
+		getPresenter().onDevelopmentMenuItemClicked();
 	}
 
 	@Override
@@ -58,5 +64,10 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	@Override
 	public void activateApplicationsMenuItem(boolean activate) {
 		appsMenuItem.setActive(activate);
+	}
+
+	@Override
+	public void activateDevelopmentMenuItem(boolean activate) {
+		devMenuItem.setActive(activate);
 	}
 }

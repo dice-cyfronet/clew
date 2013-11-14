@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.development.DevelopmentMessages" field="messages"/>
+	<ui:style>
+		.header {
+			font-size: 1.2em;
+			padding-bottom: 10px;
+			padding-top: 10px;
+		}
+		.actions {
+			margin-top: 30px;
+		}
+		.action {
+			margin-right: 20px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
+		<g:FlowPanel ui:field="atomicServicesContainer"/>
+		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
+		<g:FlowPanel ui:field="runningInstancesContainer"/>
+		<g:FlowPanel addStyleNames="{style.actions}">
+			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
+			<b:Button ui:field="manageUserKeys" addStyleNames="{style.action}"><ui:text from="{messages.manageUserKeysButtonLabel}"/></b:Button>
+		</g:FlowPanel>
+	</g:HTMLPanel>
+</ui:UiBinder>
