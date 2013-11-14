@@ -31,11 +31,6 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	public void onStartInstance() {
 		eventBus.showStartInstanceDialog();
 	}
-	
-	public void onStart() {
-		eventBus.setBody(view);
-		loadApplianceInstances();
-	}
 
 	public void onSwitchToApplicationsView() {
 		eventBus.setBody(view);

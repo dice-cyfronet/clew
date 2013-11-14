@@ -9,13 +9,14 @@ import pl.cyfronet.coin.clew.client.widgets.workflows.WorkflowsPresenter;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.mvp4g.client.annotation.Event;
 import com.mvp4g.client.annotation.Events;
+import com.mvp4g.client.annotation.InitHistory;
 import com.mvp4g.client.annotation.Start;
-import com.mvp4g.client.event.EventBus;
+import com.mvp4g.client.event.EventBusWithLookup;
 
-@Events(startPresenter = RootPresenter.class)
-public interface MainEventBus extends EventBus {
+@Events(startPresenter = RootPresenter.class, historyOnStart = true)
+public interface MainEventBus extends EventBusWithLookup {
 	@Start
-	@Event(handlers = {MenuPresenter.class, ApplicationsPresenter.class, StartInstancePresenter.class})
+	@Event(handlers = {MenuPresenter.class, StartInstancePresenter.class})
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
@@ -30,10 +31,11 @@ public interface MainEventBus extends EventBus {
 	@Event(handlers = RootPresenter.class)
 	void addPopup(IsWidget widget);
 	
-	@Event(handlers = {MenuPresenter.class, ApplicationsPresenter.class})
+	@InitHistory
+	@Event(handlers = {MenuPresenter.class, ApplicationsPresenter.class}, historyConverter = TabHistoryConverter.class)
 	void switchToApplicationsView();
 
-	@Event(handlers = {MenuPresenter.class, WorkflowsPresenter.class})
+	@Event(handlers = {MenuPresenter.class, WorkflowsPresenter.class}, historyConverter = TabHistoryConverter.class)
 	void switchToWorkflowsView();
 
 	@Event(handlers = StartInstancePresenter.class)
