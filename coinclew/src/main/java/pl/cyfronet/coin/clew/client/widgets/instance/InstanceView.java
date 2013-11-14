@@ -104,17 +104,19 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void addShutdownControl() {
-		shutdown = new Button();
-		shutdown.setIcon(IconType.OFF);
-		shutdown.setType(ButtonType.DANGER);
-		shutdown.setSize(ButtonSize.MINI);
-		shutdown.setLoadingText("&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;");
-		shutdown.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				getPresenter().onShutdownClicked();
-			}
-		});
-		controls.add(shutdown);
+		if (shutdown == null) {
+			shutdown = new Button();
+			shutdown.setIcon(IconType.OFF);
+			shutdown.setType(ButtonType.DANGER);
+			shutdown.setSize(ButtonSize.MINI);
+			shutdown.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			shutdown.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onShutdownClicked();
+				}
+			});
+			controls.add(shutdown);
+		}
 	}
 }
