@@ -8,10 +8,14 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVmsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
@@ -60,8 +64,42 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
 				}
 			}
-			
 		});
+		cloudFacadeController.getHttpMappings(applianceInstance.getId(), new HttpMappingsCallback() {
+			@Override
+			public void processHttpMappings(List<HttpMapping> httpMappings) {
+				if (httpMappings.size() == 0) {
+					view.addNoWebApplicationsLabel();
+					view.addNoServicesLabel();
+				} else {
+					for (final HttpMapping httpMapping : httpMappings) {
+						cloudFacadeController.getEndpoints(httpMapping.getPortMappingTemplateId(), new EndpointsCallback() {
+							@Override
+							public void processEndpoints(List<Endpoint> endpoints) {
+								boolean webappsPresent = false;
+								boolean servicesPresent = false;
+								
+								for (Endpoint endpoint : endpoints) {
+									if (endpoint.getEndpointType().equals("webapp")) {
+										view.addWebApplication(httpMapping.getUrl());
+										webappsPresent = true;
+									} else if (endpoint.getEndpointType().equals("ws") || endpoint.getEndpointType().equals("rest")) {
+										view.addService(httpMapping.getUrl());
+										servicesPresent = true;
+									}
+								}
+								
+								if (!webappsPresent) {
+									view.addNoWebApplicationsLabel();
+								}
+								
+								if (!servicesPresent) {
+									view.addNoServicesLabel();
+								}
+							}});
+					}
+				}
+			}});
 	}
 
 	@Override

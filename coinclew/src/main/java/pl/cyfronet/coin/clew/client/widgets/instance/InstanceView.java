@@ -5,6 +5,7 @@ import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePres
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Collapse;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
@@ -15,7 +16,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,6 +39,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField HTML status;
 	@UiField ButtonGroup controls;
 	@UiField Collapse collapse;
+	@UiField FlowPanel webApplicationsContainer;
+	@UiField FlowPanel serviceContainer;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -118,5 +123,29 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			});
 			controls.add(shutdown);
 		}
+	}
+
+	@Override
+	public void addService(String url) {
+		Anchor anchor = new Anchor(url, url);
+		serviceContainer.add(anchor);
+	}
+
+	@Override
+	public void addWebApplication(String url) {
+		Anchor anchor = new Anchor(url, url);
+		webApplicationsContainer.add(anchor);
+	}
+
+	@Override
+	public void addNoServicesLabel() {
+		Label label = new Label(messages.noWebApplicationsLabel());
+		webApplicationsContainer.add(label);
+	}
+
+	@Override
+	public void addNoWebApplicationsLabel() {
+		Label label = new Label(messages.noServicesLabel());
+		serviceContainer.add(label);
 	}
 }

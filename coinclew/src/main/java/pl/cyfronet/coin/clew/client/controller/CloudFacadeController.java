@@ -6,7 +6,6 @@ import java.util.List;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -30,13 +29,21 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteService;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointService;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointsResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingService;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateService;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplatesResponse;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -85,6 +92,18 @@ public class CloudFacadeController {
 		void processComputeSite(ComputeSite computeSite);
 	}
 	
+	public interface PortMappingTemplatesCallback {
+		void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates);
+	}
+	
+	public interface HttpMappingsCallback {
+		void processHttpMappings(List<HttpMapping> httpMappings);
+	}
+	
+	public interface EndpointsCallback {
+		void processEndpoints(List<Endpoint> endpoints);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -92,17 +111,25 @@ public class CloudFacadeController {
 	private static PopupErrorHandler popupErrorHandler;
 	private ApplianceVmService applianceVmsService;
 	private ComputeSiteService computeSitesService;
+	private PortMappingTemplateService portMappingTemplateService;
+	private HttpMappingService httpMappingService;
+	private EndpointService endpointService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
 			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService,
-			ApplianceVmService applianceVmsService, ComputeSiteService computeSitesService, PopupErrorHandler popupErrorHandler) {
+			ApplianceVmService applianceVmsService, ComputeSiteService computeSitesService,
+			PortMappingTemplateService portMappingTemplateService, HttpMappingService httpMappingService,
+			EndpointService endpointService, PopupErrorHandler popupErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
 		this.applianceConfigurationService = applianceConfigurationService;
 		this.applianceVmsService = applianceVmsService;
 		this.computeSitesService = computeSitesService;
+		this.portMappingTemplateService = portMappingTemplateService;
+		this.httpMappingService = httpMappingService;
+		this.endpointService = endpointService;
 		CloudFacadeController.popupErrorHandler = popupErrorHandler;
 	}
 	
@@ -397,6 +424,54 @@ public class CloudFacadeController {
 					if (applianceInstancesCallback != null) {
 						applianceInstancesCallback.processApplianceInstances(new ArrayList<ApplianceInstance>());
 					}
+				}
+			}
+		});
+	}
+
+	public void getPortMappingTemplates(String applianceTypeId, final PortMappingTemplatesCallback portMappingTemplatesCallback) {
+		portMappingTemplateService.getPortMappingTemplates(applianceTypeId, new MethodCallback<PortMappingTemplatesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplatesResponse response) {
+				if (portMappingTemplatesCallback != null) {
+					portMappingTemplatesCallback.processPortMappingTemplates(response.getPortMappingTemplates());
+				}
+			}
+		});
+	}
+
+	public void getHttpMappings(String applianceInstanceId, final HttpMappingsCallback httpMappingsCallback) {
+		httpMappingService.getHttpMappings(applianceInstanceId, new MethodCallback<HttpMappingResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, HttpMappingResponse response) {
+				if (httpMappingsCallback != null) {
+					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+				}
+			}
+		});
+	}
+
+	public void getEndpoints(String portMappingTemplateId, final EndpointsCallback endpointsCallback) {
+		endpointService.getEndpoints(portMappingTemplateId, new MethodCallback<EndpointsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, EndpointsResponse response) {
+				if (endpointsCallback != null) {
+					endpointsCallback.processEndpoints(response.getEndpoints());
 				}
 			}
 		});

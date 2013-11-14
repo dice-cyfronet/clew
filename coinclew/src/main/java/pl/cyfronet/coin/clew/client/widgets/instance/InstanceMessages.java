@@ -5,4 +5,8 @@ import com.google.gwt.i18n.client.Messages;
 public interface InstanceMessages extends Messages {
 	String getSpec(String cpu, String ram, String disk);
 	String shutdownConfirmation();
+	String webApplicationsLabel();
+	String restApplicationsLabel();
+	String noServicesLabel();
+	String noWebApplicationsLabel();
 }

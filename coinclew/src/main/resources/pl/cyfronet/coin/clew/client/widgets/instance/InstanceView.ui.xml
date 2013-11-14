@@ -14,6 +14,15 @@
 		.left {
 			text-align: left;
 		}
+		.details-header {
+			font-size: 1.2em;
+			text-align: left;
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		.details {
+			margin-left: 50px;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<b:Row addStyleNames="{style.spacey-row}">
@@ -39,8 +48,11 @@
 			</b:Column>
 		</b:Row>
 		<b:Collapse ui:field="collapse" defaultOpen="false">
-			<g:FlowPanel>
-				<b:Label>No details: TODO</b:Label>
+			<g:FlowPanel addStyleNames="{style.details}">
+				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.webApplicationsLabel}"/></g:HTML>
+				<g:FlowPanel ui:field="webApplicationsContainer"/>
+				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.restApplicationsLabel}"/></g:HTML>
+				<g:FlowPanel ui:field="serviceContainer"/>
 			</g:FlowPanel>
 		</b:Collapse>
 	</g:FlowPanel>
