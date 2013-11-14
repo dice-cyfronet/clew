@@ -5,7 +5,7 @@
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.startinstance.StartInstanceMessages" field="messages"/>
 	<ui:style>
 	</ui:style>
-	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" animation="true" closeVisible="false" keyboard="false" width="1280">
+	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" animation="true" closeVisible="false" keyboard="false">
 		<g:FlowPanel ui:field="applianceTypeContainer" addStyleNames="text-center"/>
 		<b:ModalFooter>
 			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>

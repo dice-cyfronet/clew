@@ -12,6 +12,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
 
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;

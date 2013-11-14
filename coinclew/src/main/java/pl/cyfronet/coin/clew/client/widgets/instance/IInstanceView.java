@@ -17,8 +17,8 @@ public interface IInstanceView extends IsWidget {
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();
-	void addService(String url);
-	void addWebApplication(String url);
+	void addService(String httpUrl, String httpsUrl);
+	void addWebApplication(String httpUrl, String httpsUrl);
 	void addNoServicesLabel();
 	void addNoWebApplicationsLabel();
 }

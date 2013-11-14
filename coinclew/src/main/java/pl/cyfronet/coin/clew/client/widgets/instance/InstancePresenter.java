@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import java.util.Arrays;
 import java.util.List;
 
 import pl.cyfronet.coin.clew.client.ErrorCode;
@@ -10,12 +11,14 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVm
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
@@ -27,6 +30,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	private CloudFacadeController cloudFacadeController;
 	private String applianceInstanceId;
+	private boolean detailsRendered;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController) {
@@ -43,6 +47,77 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				
 				if (enableShutdown) {
 					view.addShutdownControl();
+				}
+				
+				if (!detailsRendered) {
+					detailsRendered = true;
+					cloudFacadeController.getPortMappingTemplates(applianceType.getId(), new PortMappingTemplatesCallback() {
+						@Override
+						public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
+							if (portMappingTemplates.size() == 0) {
+								view.addNoWebApplicationsLabel();
+								view.addNoServicesLabel();
+							} else {
+								for (PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+									if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(
+											portMappingTemplate.getApplicationProtocol())) {
+										cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
+											@Override
+											public void processEndpoints(final List<Endpoint> endpoints) {
+												if (endpoints.size() == 0) {
+													view.addNoWebApplicationsLabel();
+													view.addNoServicesLabel();
+												} else {
+													cloudFacadeController.getHttpMappings(applianceInstanceId, new HttpMappingsCallback() {
+														@Override
+														public void processHttpMappings(List<HttpMapping> httpMappings) {
+															if (httpMappings.size() == 0) {
+																view.addNoWebApplicationsLabel();
+																view.addNoServicesLabel();
+															} else {
+																boolean webApplicationPresent = false;
+																boolean servicePresent = false;
+																//TODO(DH): set endpoint name when available and fix invocation path when available
+																for (Endpoint endpoint : endpoints) {
+																	String httpUrl = null;
+																	String httpsUrl = null;
+																	
+																	for (HttpMapping httpMapping : httpMappings) {
+																		if (httpMapping.getApplicationProtocol().equals("http")) {
+																			httpUrl = httpMapping.getUrl() + "/invocation_path_todo";
+																		} else if (httpMapping.getApplicationProtocol().equals("https")) {
+																			httpsUrl = httpMapping.getUrl() + "/invocation_path_todo";
+																		}
+																	}
+																	
+																	if (endpoint.getEndpointType().equals("webapp")) {
+																		view.addWebApplication(httpUrl, httpsUrl);
+																		webApplicationPresent = true;
+																	} else {
+																		view.addService(httpUrl, httpsUrl);
+																		servicePresent = true;
+																	}
+																}
+																
+																if (!webApplicationPresent) {
+																	view.addNoWebApplicationsLabel();
+																}
+																
+																if (!servicePresent) {
+																	view.addNoServicesLabel();
+																}
+															}
+														}});
+												}
+											}});
+									} else {
+										view.addNoWebApplicationsLabel();
+										view.addNoServicesLabel();
+									}
+								}
+							}
+						}
+					});
 				}
 			}
 		});
@@ -65,41 +140,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 		});
-		cloudFacadeController.getHttpMappings(applianceInstance.getId(), new HttpMappingsCallback() {
-			@Override
-			public void processHttpMappings(List<HttpMapping> httpMappings) {
-				if (httpMappings.size() == 0) {
-					view.addNoWebApplicationsLabel();
-					view.addNoServicesLabel();
-				} else {
-					for (final HttpMapping httpMapping : httpMappings) {
-						cloudFacadeController.getEndpoints(httpMapping.getPortMappingTemplateId(), new EndpointsCallback() {
-							@Override
-							public void processEndpoints(List<Endpoint> endpoints) {
-								boolean webappsPresent = false;
-								boolean servicesPresent = false;
-								
-								for (Endpoint endpoint : endpoints) {
-									if (endpoint.getEndpointType().equals("webapp")) {
-										view.addWebApplication(httpMapping.getUrl());
-										webappsPresent = true;
-									} else if (endpoint.getEndpointType().equals("ws") || endpoint.getEndpointType().equals("rest")) {
-										view.addService(httpMapping.getUrl());
-										servicesPresent = true;
-									}
-								}
-								
-								if (!webappsPresent) {
-									view.addNoWebApplicationsLabel();
-								}
-								
-								if (!servicesPresent) {
-									view.addNoServicesLabel();
-								}
-							}});
-					}
-				}
-			}});
 	}
 
 	@Override

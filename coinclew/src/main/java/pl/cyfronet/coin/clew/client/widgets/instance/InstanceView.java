@@ -126,26 +126,44 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addService(String url) {
-		Anchor anchor = new Anchor(url, url);
-		serviceContainer.add(anchor);
+	public void addService(String httpUrl, String httpsUrl) {
+		FlowPanel anchors = new FlowPanel();
+		
+		if (httpUrl != null) {
+			anchors.add(new Anchor(httpUrl, httpUrl));
+		}
+		
+		if (httpsUrl != null) {
+			anchors.add(new Anchor(httpsUrl, httpsUrl));
+		}
+		
+		serviceContainer.add(anchors);
 	}
 
 	@Override
-	public void addWebApplication(String url) {
-		Anchor anchor = new Anchor(url, url);
-		webApplicationsContainer.add(anchor);
+	public void addWebApplication(String httpUrl, String httpsUrl) {
+		FlowPanel anchors = new FlowPanel();
+		
+		if (httpUrl != null) {
+			anchors.add(new Anchor(httpUrl, httpUrl));
+		}
+		
+		if (httpsUrl != null) {
+			anchors.add(new Anchor(httpsUrl, httpsUrl));
+		}
+		
+		webApplicationsContainer.add(anchors);
 	}
 
 	@Override
 	public void addNoServicesLabel() {
-		Label label = new Label(messages.noWebApplicationsLabel());
-		webApplicationsContainer.add(label);
+		Label label = new Label(messages.noServicesLabel());
+		serviceContainer.add(label);
 	}
 
 	@Override
 	public void addNoWebApplicationsLabel() {
-		Label label = new Label(messages.noServicesLabel());
-		serviceContainer.add(label);
+		Label label = new Label(messages.noWebApplicationsLabel());
+		webApplicationsContainer.add(label);
 	}
 }
