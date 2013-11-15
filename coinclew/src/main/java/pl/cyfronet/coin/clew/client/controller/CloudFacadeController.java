@@ -44,6 +44,12 @@ import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingService
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateService;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplatesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.userkey.NewUserKey;
+import pl.cyfronet.coin.clew.client.controller.cf.userkey.NewUserKeyRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
+import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyService;
+import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeysResponse;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -104,6 +110,15 @@ public class CloudFacadeController {
 		void processEndpoints(List<Endpoint> endpoints);
 	}
 	
+	public interface UserKeysCallback {
+		void processUserKeys(List<UserKey> userKeys);
+	}
+	
+	public interface KeyUploadCallback {
+		void onSuccess(UserKey userKey);
+		void onError(String errorMessage);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -114,13 +129,14 @@ public class CloudFacadeController {
 	private PortMappingTemplateService portMappingTemplateService;
 	private HttpMappingService httpMappingService;
 	private EndpointService endpointService;
+	private UserKeyService userKeyService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
 			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService,
 			ApplianceVmService applianceVmsService, ComputeSiteService computeSitesService,
 			PortMappingTemplateService portMappingTemplateService, HttpMappingService httpMappingService,
-			EndpointService endpointService, PopupErrorHandler popupErrorHandler) {
+			EndpointService endpointService, UserKeyService userKeyService, PopupErrorHandler popupErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -130,6 +146,7 @@ public class CloudFacadeController {
 		this.portMappingTemplateService = portMappingTemplateService;
 		this.httpMappingService = httpMappingService;
 		this.endpointService = endpointService;
+		this.userKeyService = userKeyService;
 		CloudFacadeController.popupErrorHandler = popupErrorHandler;
 	}
 	
@@ -472,6 +489,63 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, EndpointsResponse response) {
 				if (endpointsCallback != null) {
 					endpointsCallback.processEndpoints(response.getEndpoints());
+				}
+			}
+		});
+	}
+
+	public void getUserKeys(final UserKeysCallback userKeysCallback) {
+		userKeyService.getUserKeys(new MethodCallback<UserKeysResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, UserKeysResponse response) {
+				if (userKeysCallback != null) {
+					userKeysCallback.processUserKeys(response.getUserKeys());
+				}
+			}
+		});
+	}
+
+	public void uploadUserKey(String keyName, String keyContents, final KeyUploadCallback keyUploadCallback) {
+		NewUserKey userKey = new NewUserKey();
+		userKey.setName(keyName);
+		userKey.setPublicKey(keyContents);
+		
+		NewUserKeyRequest keyRequest = new NewUserKeyRequest();
+		keyRequest.setUserKey(userKey);
+		userKeyService.addUserKey(keyRequest, new MethodCallback<UserKeyRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				Window.alert("" + exception);
+				if (keyUploadCallback != null) {
+					keyUploadCallback.onError(exception.getMessage());
+				}
+			}
+
+			@Override
+			public void onSuccess(Method method, UserKeyRequestResponse response) {
+				if (keyUploadCallback != null) {
+					keyUploadCallback.onSuccess(response.getUserKey());
+				}
+			}
+		});
+	}
+
+	public void removeUserKey(String userKeyId, final Command after) {
+		userKeyService.deleteUserKey(userKeyId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (after != null) {
+					after.execute();
 				}
 			}
 		});

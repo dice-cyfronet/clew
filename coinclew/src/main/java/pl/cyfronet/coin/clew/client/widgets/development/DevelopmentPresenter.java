@@ -17,4 +17,9 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		view.addNoAtomicServicesLabel();
 		view.addNoRunningInstancesLabel();
 	}
+
+	@Override
+	public void onManageUserKeysClicked() {
+		eventBus.showKeyManagerDialog();
+	}
 }

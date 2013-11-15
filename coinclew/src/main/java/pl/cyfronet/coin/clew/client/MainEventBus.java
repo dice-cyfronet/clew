@@ -2,6 +2,7 @@ package pl.cyfronet.coin.clew.client;
 
 import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
+import pl.cyfronet.coin.clew.client.widgets.keymanager.KeyManagerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.menu.MenuPresenter;
 import pl.cyfronet.coin.clew.client.widgets.root.RootPresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.StartInstancePresenter;
@@ -17,7 +18,7 @@ import com.mvp4g.client.event.EventBusWithLookup;
 @Events(startPresenter = RootPresenter.class, historyOnStart = true)
 public interface MainEventBus extends EventBusWithLookup {
 	@Start
-	@Event(handlers = {MenuPresenter.class, StartInstancePresenter.class})
+	@Event(handlers = {MenuPresenter.class, StartInstancePresenter.class, KeyManagerPresenter.class})
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
@@ -59,4 +60,10 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = WorkflowsPresenter.class)
 	void removeApplianceSet(String applianceSetId);
+
+	@Event(handlers = KeyManagerPresenter.class)
+	void showKeyManagerDialog();
+
+	@Event(handlers = KeyManagerPresenter.class)
+	void removeUserKey(String id);
 }

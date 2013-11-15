@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.keymanager.KeyManagerMessages" field="messages"/>
+	<ui:style>
+		.keys {
+			text-align: center;
+			margin-bottom: 20px;
+			float: left;
+			width: 100%;
+		}
+		.hidden {
+			visibility: hidden;
+		}
+		.text-area {
+			resize: none;
+		}
+	</ui:style>
+	<b:Modal ui:field="keyModal" title="{messages.keyManagerModalLabel}"  animation="true" closeVisible="false" keyboard="false">
+		<g:FlowPanel ui:field="keyContainer" addStyleNames="{style.keys}"/>
+		<b:Form>
+			<b:ControlLabel><ui:text from="{messages.keyNameLabel}"/></b:ControlLabel>
+			<b:TextBox ui:field="keyName" placeholder="{messages.keyNamePlaceholder}" addStyleNames="input-block-level"/>
+			<b:ControlLabel><ui:text from="{messages.keyPayloadLabel}"/></b:ControlLabel>
+			<b:TextArea ui:field="keyPayload" placeholder="{messages.keyPayloadPlaceholder}" addStyleNames="input-block-level {style.text-area}"/>
+			<b:HelpBlock><ui:text from="{messages.keyHelp}"/></b:HelpBlock>
+			<b:Button ui:field="uploadKey" icon="KEY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
+		</b:Form>
+		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>
+		<b:ModalFooter>
+			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+</ui:UiBinder>
