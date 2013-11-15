@@ -1,0 +1,32 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.initialconfig.InitialConfigMessages" field="messages"/>
+	<ui:style>
+		.name {
+			text-align: left;
+			float: left;
+			width: 30%;
+		}
+		.container {
+			float: left;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+		.actions {
+			float:left;
+			width: 70%;
+			text-align: right;
+		}
+	</ui:style>
+	<g:HTMLPanel addStyleNames="{style.container}">
+		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:FlowPanel addStyleNames="{style.actions}">
+			<b:ButtonGroup>
+				<b:Button ui:field="edit" icon="PENCIL" size="MINI"/>
+				<b:Button ui:field="remove" icon="REMOVE" size="MINI" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"/>
+			</b:ButtonGroup>
+		</g:FlowPanel>
+	</g:HTMLPanel>
+</ui:UiBinder>

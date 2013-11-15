@@ -4,4 +4,8 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface InitialConfigsEditorMessages extends Messages {
 	String modalTitle();
+	String closeButtonLabel();
+	String noConfigsLabel();
+	String nameLabel();
+	String namePlaceholder();
 }

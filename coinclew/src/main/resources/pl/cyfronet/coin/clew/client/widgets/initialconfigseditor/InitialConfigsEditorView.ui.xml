@@ -4,7 +4,18 @@
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.initialconfigseditor.InitialConfigsEditorMessages" field="messages"/>
 	<ui:style>
+		.container {
+			text-align: center;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
+		<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
+		<b:Form>
+			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
+			<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
+		</b:Form>
+		<b:ModalFooter>
+			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
+		</b:ModalFooter>
 	</b:Modal>
 </ui:UiBinder>
