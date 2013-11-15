@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.development;
 
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface IDevelopmentView extends IsWidget {
@@ -7,6 +8,8 @@ public interface IDevelopmentView extends IsWidget {
 		void onManageUserKeysClicked();
 	}
 
-	void addNoRunningInstancesLabel();
-	void addNoAtomicServicesLabel();
+	void showNoRunningInstancesLabel(boolean show);
+	void showNoAtomicServicesLabel(boolean show);
+	HasWidgets getAtomicServicesContainer();
+	void addAtomicServiceProgressIndicator();
 }

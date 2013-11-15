@@ -5,9 +5,9 @@
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.development.DevelopmentMessages" field="messages"/>
 	<ui:style>
 		.header {
-			font-size: 1.2em;
+			font-size: 1.4em;
 			padding-bottom: 10px;
-			padding-top: 10px;
+			padding-top: 30px;
 		}
 		.actions {
 			margin-top: 30px;
@@ -15,12 +15,15 @@
 		.action {
 			margin-right: 20px;
 		}
+		.container {
+			text-align: center;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
-		<g:FlowPanel ui:field="atomicServicesContainer"/>
+		<g:FlowPanel ui:field="atomicServicesContainer" addStyleNames="{style.container}"/>
 		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
-		<g:FlowPanel ui:field="runningInstancesContainer"/>
+		<g:FlowPanel ui:field="runningInstancesContainer" addStyleNames="{style.container}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
 			<b:Button ui:field="manageUserKeys" addStyleNames="{style.action}"><ui:text from="{messages.manageUserKeysButtonLabel}"/></b:Button>
