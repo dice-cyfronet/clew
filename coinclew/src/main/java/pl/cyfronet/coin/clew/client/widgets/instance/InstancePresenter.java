@@ -77,16 +77,16 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 															} else {
 																boolean webApplicationPresent = false;
 																boolean servicePresent = false;
-																//TODO(DH): set endpoint name when available and fix invocation path when available
+																//TODO(DH): set endpoint name when available
 																for (Endpoint endpoint : endpoints) {
 																	String httpUrl = null;
 																	String httpsUrl = null;
 																	
 																	for (HttpMapping httpMapping : httpMappings) {
 																		if (httpMapping.getApplicationProtocol().equals("http")) {
-																			httpUrl = httpMapping.getUrl() + "/invocation_path_todo";
+																			httpUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
 																		} else if (httpMapping.getApplicationProtocol().equals("https")) {
-																			httpsUrl = httpMapping.getUrl() + "/invocation_path_todo";
+																			httpsUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
 																		}
 																	}
 																	

@@ -9,6 +9,8 @@ public class Endpoint {
 	@Json(name = "endpoint_type")
 	private String endpointType;
 	private String portMappingTemplateId;
+	@Json(name = "invocation_path")
+	private String invocationPath;
 	
 	public String getId() {
 		return id;
@@ -39,5 +41,11 @@ public class Endpoint {
 	}
 	public void setPortMappingTemplateId(String portMappingTemplateId) {
 		this.portMappingTemplateId = portMappingTemplateId;
+	}
+	public String getInvocationPath() {
+		return invocationPath;
+	}
+	public void setInvocationPath(String invocationPath) {
+		this.invocationPath = invocationPath;
 	}
 }
