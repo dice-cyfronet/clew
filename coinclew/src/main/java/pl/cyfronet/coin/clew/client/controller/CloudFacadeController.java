@@ -2,10 +2,12 @@ package pl.cyfronet.coin.clew.client.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -546,6 +548,47 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, Void response) {
 				if (after != null) {
 					after.execute();
+				}
+			}
+		});
+	}
+
+	public void removeInitialConfiguration(String initialConfigurationId, final Command command) {
+		applianceConfigurationService.deleteApplianceConfiguration(initialConfigurationId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (command != null) {
+					command.execute();
+				}
+			}
+		});
+	}
+
+	public void updateApplianceConfiguration(String configId,	String applianceTypeId, String configName,
+			String configPayload, final ApplianceConfigurationCallback applianceConfigurationCallback) {
+		ApplianceConfiguration applianceConfiguration = new ApplianceConfiguration();
+		applianceConfiguration.setId(configId);
+		applianceConfiguration.setName(configName);
+		applianceConfiguration.setPayload(configPayload);
+		applianceConfiguration.setApplianceTypeId(applianceTypeId);
+		
+		ApplianceConfigurationRequestResponse request = new ApplianceConfigurationRequestResponse();
+		request.setApplianceConfiguration(applianceConfiguration);
+		applianceConfigurationService.updateApplianceConfiguration(configId, request, new MethodCallback<ApplianceConfigurationRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceConfigurationRequestResponse response) {
+				if (applianceConfigurationCallback != null) {
+					applianceConfigurationCallback.processApplianceConfiguration(response.getApplianceConfiguration());
 				}
 			}
 		});

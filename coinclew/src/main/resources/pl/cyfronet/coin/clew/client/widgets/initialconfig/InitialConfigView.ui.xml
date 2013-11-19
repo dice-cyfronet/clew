@@ -3,7 +3,7 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.initialconfig.InitialConfigMessages" field="messages"/>
-	<ui:style>
+	<ui:style type="pl.cyfronet.coin.clew.client.widgets.initialconfig.InitialConfigView.Styles">
 		.name {
 			text-align: left;
 			float: left;
@@ -16,12 +16,21 @@
 		}
 		.actions {
 			float:left;
-			width: 70%;
+			width: 20%;
 			text-align: right;
+		}
+		.params {
+			float: left;
+			width: 50%;
+			text-align: left;
+		}
+		.param {
+			margin-right: 5px;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:FlowPanel ui:field="parameters" addStyleNames="{style.params}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup>
 				<b:Button ui:field="edit" icon="PENCIL" size="MINI"/>

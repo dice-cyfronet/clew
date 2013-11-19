@@ -8,4 +8,11 @@ public interface InitialConfigsEditorMessages extends Messages {
 	String noConfigsLabel();
 	String nameLabel();
 	String namePlaceholder();
+	String payloadLabel();
+	String payloadPlaceholder();
+	String processConfig();
+	String payloadHelp();
+	String nameOrPayloadEmpty();
+	String nameNotUnique();
+	String getEditLabel();
 }

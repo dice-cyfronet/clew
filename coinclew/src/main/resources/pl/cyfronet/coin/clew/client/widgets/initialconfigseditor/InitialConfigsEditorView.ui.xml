@@ -7,13 +7,32 @@
 		.container {
 			text-align: center;
 		}
+		.add-param {
+			margin-top: 5px;
+		}
+		.main-action {
+			text-align: right;
+		}
+		.text-area {
+			resize: none;
+		}
+		.hidden {
+			visibility: hidden;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
 		<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
 		<b:Form>
 			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
 			<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
+			<b:ControlLabel><ui:text from="{messages.payloadLabel}"/></b:ControlLabel>
+			<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
+			<b:HelpBlock><ui:text from="{messages.payloadHelp}"/></b:HelpBlock>
+			<g:FlowPanel addStyleNames="{style.main-action}">
+				<b:Button ui:field="process"><ui:text from="{messages.processConfig}"/></b:Button>
+			</g:FlowPanel>
 		</b:Form>
+		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>
 		<b:ModalFooter>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>

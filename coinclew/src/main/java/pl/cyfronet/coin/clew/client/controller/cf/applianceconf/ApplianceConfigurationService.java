@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.controller.cf.applianceconf;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -23,4 +24,8 @@ public interface ApplianceConfigurationService extends RestService {
 	@DELETE
 	@Path("appliance_configuration_templates/{id}?private_token=" + CloudFacadeKey.KEY)
 	void deleteApplianceConfiguration(@PathParam("id") String applianceConfigurationId, MethodCallback<Void> methodCallback);
+	
+	@PUT
+	@Path("appliance_configuration_templates/{id}?private_token=" + CloudFacadeKey.KEY)
+	void updateApplianceConfiguration(@PathParam("id") String configId, ApplianceConfigurationRequestResponse applianceConfigurationRequest, MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
 }
