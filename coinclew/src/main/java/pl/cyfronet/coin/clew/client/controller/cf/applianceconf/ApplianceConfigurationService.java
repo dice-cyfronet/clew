@@ -28,4 +28,8 @@ public interface ApplianceConfigurationService extends RestService {
 	@PUT
 	@Path("appliance_configuration_templates/{id}?private_token=" + CloudFacadeKey.KEY)
 	void updateApplianceConfiguration(@PathParam("id") String configId, ApplianceConfigurationRequestResponse applianceConfigurationRequest, MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
+
+	@GET
+	@Path("appliance_configuration_templates?id={ids}&private_token=" + CloudFacadeKey.KEY)
+	void getApplianceConfigurationsForIds(@PathParam("ids") String ids, MethodCallback<ApplianceConfigurationsResponse> methodCallback);
 }

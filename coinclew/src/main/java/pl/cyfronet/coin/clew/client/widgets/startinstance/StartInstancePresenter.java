@@ -11,7 +11,6 @@ import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -77,15 +76,8 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		if (initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
-			view.setStartSelectedBusyState(true);
-			cloudFacadeController.startApplianceTypes(initialConfigurationIds, new Command() {
-				@Override
-				public void execute() {
-					view.setStartSelectedBusyState(false);
-					view.hide();
-					eventBus.refreshInstanceList();
-				}
-			});
+			eventBus.startApplications(initialConfigurationIds);
+			view.hide();
 		}
 	}
 

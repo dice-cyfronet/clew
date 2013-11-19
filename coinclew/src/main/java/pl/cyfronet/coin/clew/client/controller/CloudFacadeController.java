@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -55,6 +57,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeysResponse;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.util.tools.shared.StringUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -592,5 +595,36 @@ public class CloudFacadeController {
 				}
 			}
 		});
+	}
+
+	public void getInitialConfigurations(List<String> initialConfigurationIds, final ApplianceConfigurationsCallback applianceConfigurationsCallback) {
+		String ids = join(initialConfigurationIds, ",");
+		applianceConfigurationService.getApplianceConfigurationsForIds(ids, new MethodCallback<ApplianceConfigurationsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceConfigurationsResponse response) {
+				if (applianceConfigurationsCallback != null) {
+					applianceConfigurationsCallback.processApplianceConfigurations(response.getApplianceConfigurations());
+				}
+			}
+		});
+	}
+
+	private String join(List<String> initialConfigurationIds, String delimiter) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (Iterator<String> i = initialConfigurationIds.iterator(); i.hasNext(); ) {
+			builder.append(i.next().trim());
+			
+			if (i.hasNext()) {
+				builder.append(delimiter);
+			}
+		}
+		
+		return builder.toString();
 	}
 }

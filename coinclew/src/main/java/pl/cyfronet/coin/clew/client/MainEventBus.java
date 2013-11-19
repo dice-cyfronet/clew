@@ -1,7 +1,10 @@
 package pl.cyfronet.coin.clew.client;
 
+import java.util.List;
+
 import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
+import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.InitialConfigEmbedPresenter;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigseditor.InitialConfigsEditorPresenter;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.KeyManagerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.menu.MenuPresenter;
@@ -20,7 +23,8 @@ import com.mvp4g.client.event.EventBusWithLookup;
 public interface MainEventBus extends EventBusWithLookup {
 	@Start
 	@Event(handlers = {MenuPresenter.class, StartInstancePresenter.class,
-			KeyManagerPresenter.class, InitialConfigsEditorPresenter.class})
+			KeyManagerPresenter.class, InitialConfigsEditorPresenter.class,
+			InitialConfigEmbedPresenter.class})
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
@@ -77,4 +81,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = InitialConfigsEditorPresenter.class)
 	void editInitialConfiguration(String initialConfigurationId);
+
+	@Event(handlers = InitialConfigEmbedPresenter.class)
+	void startApplications(List<String> initialConfigurationIds);
 }

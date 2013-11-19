@@ -84,16 +84,8 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 			}
 		}
 		
-		log.info("Starting appliance type with id {} and initial configuration id {}", applianceType, initialConfigurationId);
-		view.setStartButtonBusyState(true);
-		cloudFacadeController.startApplianceTypes(Arrays.asList(new String[] {initialConfigurationId}), new Command() {
-			@Override
-			public void execute() {
-				view.setStartButtonBusyState(false);
-				eventBus.hideStartInstanceModal();
-				eventBus.refreshInstanceList();
-			}
-		});
+		eventBus.hideStartInstanceModal();
+		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}));
 	}
 
 	public String getSelectedInitialConfigId() {
