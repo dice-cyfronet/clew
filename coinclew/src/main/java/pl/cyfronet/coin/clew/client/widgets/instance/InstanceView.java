@@ -6,12 +6,15 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Collapse;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -27,6 +30,11 @@ import com.mvp4g.client.view.ReverseViewInterface;
 public class InstanceView extends Composite implements IInstanceView, ReverseViewInterface<IInstancePresenter> {
 	private static InstanceViewUiBinder uiBinder = GWT.create(InstanceViewUiBinder.class);
 	interface InstanceViewUiBinder extends UiBinder<Widget, InstanceView> {}
+	interface Styles extends CssResource {
+		String anchor();
+		String descriptor();
+		String service();
+	}
 	
 	private IInstancePresenter presenter;
 	private Button shutdown;
@@ -41,6 +49,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField Collapse collapse;
 	@UiField FlowPanel webApplicationsContainer;
 	@UiField FlowPanel serviceContainer;
+	@UiField Styles style;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -126,33 +135,65 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addService(String httpUrl, String httpsUrl) {
-		FlowPanel anchors = new FlowPanel();
+	public void addService(String httpUrl, String httpsUrl, String descriptor) {
+		FlowPanel panel = new FlowPanel();
+		panel.addStyleName(style.service());
 		
 		if (httpUrl != null) {
-			anchors.add(new Anchor(httpUrl, httpUrl));
+			Anchor http = new Anchor(httpUrl, httpUrl);
+			http.addStyleName(style.anchor());
+			panel.add(http);
 		}
 		
 		if (httpsUrl != null) {
-			anchors.add(new Anchor(httpsUrl, httpsUrl));
+			Anchor https = new Anchor(httpsUrl, httpsUrl);
+			https.addStyleName(style.anchor());
+			panel.add(https);
 		}
 		
-		serviceContainer.add(anchors);
+		Button descriptorButton = new Button();
+		descriptorButton.setIcon(IconType.FILE);
+		descriptorButton.setType(ButtonType.INFO);
+		descriptorButton.addStyleName(style.descriptor());
+		descriptorButton.setSize(ButtonSize.MINI);
+		
+		if (descriptor != null && !descriptor.trim().isEmpty()) {
+			final Modal modal = new Modal();
+			modal.setTitle(messages.descriptorModalTitle());
+			modal.add(new HTML(descriptor));
+			panel.add(modal);
+			descriptorButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					modal.show();
+				}
+			});
+		} else {
+			descriptorButton.setEnabled(false);
+		}
+		
+		panel.add(descriptorButton);
+		serviceContainer.add(panel);
 	}
 
 	@Override
 	public void addWebApplication(String httpUrl, String httpsUrl) {
-		FlowPanel anchors = new FlowPanel();
+		FlowPanel panel = new FlowPanel();
+		panel.addStyleName(style.service());
 		
 		if (httpUrl != null) {
-			anchors.add(new Anchor(httpUrl, httpUrl));
+			Anchor http = new Anchor(httpUrl, httpUrl);
+			http.addStyleName(style.anchor());
+			panel.add(http);
 		}
 		
 		if (httpsUrl != null) {
-			anchors.add(new Anchor(httpsUrl, httpsUrl));
+			Anchor https = new Anchor(httpsUrl, httpsUrl);
+			https.addStyleName(style.anchor());
+			panel.add(https);
 		}
 		
-		webApplicationsContainer.add(anchors);
+		webApplicationsContainer.add(panel);
 	}
 
 	@Override

@@ -3,7 +3,7 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.instance.InstanceMessages" field="messages"/>
-	<ui:style>
+	<ui:style type="pl.cyfronet.coin.clew.client.widgets.instance.InstanceView.Styles">
 		.spacey-row {
 			padding-top: 10px;
 			padding-bottom: 10px;
@@ -22,6 +22,18 @@
 		}
 		.details {
 			margin-left: 50px;
+		}
+		.anchor {
+			float: left;
+			margin-right: 10px;
+		}
+		.descriptor {
+			float: right;
+		}
+		.service {
+			float: left;
+			width: 100%;
+			margin-top: 5px;
 		}
 	</ui:style>
 	<g:FlowPanel>

@@ -9,4 +9,5 @@ public interface InstanceMessages extends Messages {
 	String restApplicationsLabel();
 	String noServicesLabel();
 	String noWebApplicationsLabel();
+	String descriptorModalTitle();
 }
