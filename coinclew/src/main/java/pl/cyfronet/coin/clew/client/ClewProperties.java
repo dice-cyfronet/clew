@@ -5,5 +5,4 @@ import com.google.gwt.i18n.client.Constants;
 public interface ClewProperties extends Constants {
 	String getDashboardContainerId();
 	String getCloudFacadeRootUrl();
-	String getDevContainerId();
 }

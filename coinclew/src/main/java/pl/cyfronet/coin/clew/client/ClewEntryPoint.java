@@ -16,6 +16,12 @@ public class ClewEntryPoint implements EntryPoint {
 		
 		Mvp4gModule module = (Mvp4gModule) GWT.create(Mvp4gModule.class);
 		module.createAndStartModule();
-		RootPanel.get().add((Widget) module.getStartView());
+		RootPanel rootPanel = RootPanel.get(clewProperties.getDashboardContainerId());
+		
+		if (rootPanel == null) {
+			rootPanel = RootPanel.get();
+		}
+		
+		rootPanel.add((Widget) module.getStartView());
 	}
 }
