@@ -91,11 +91,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 																	}
 																	
 																	if (endpoint.getEndpointType().equals("webapp")) {
-																		view.addWebApplication(httpUrl, httpsUrl);
+																		view.addWebApplication(endpoint.getName(), httpUrl, httpsUrl);
 																		webApplicationPresent = true;
 																	} else {
-																		view.addService(httpUrl, httpsUrl,
-																				endpoint.getDescriptor());
+																		view.addService(endpoint.getName(), httpUrl, httpsUrl, endpoint.getDescriptor());
 																		servicePresent = true;
 																	}
 																}

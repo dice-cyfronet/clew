@@ -11,7 +11,6 @@ import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -34,6 +33,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		String anchor();
 		String descriptor();
 		String service();
+		String name();
 	}
 	
 	private IInstancePresenter presenter;
@@ -135,9 +135,13 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addService(String httpUrl, String httpsUrl, String descriptor) {
+	public void addService(String name, String httpUrl, String httpsUrl, String descriptor) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
+		
+		HTML nameWidget = new HTML(name);
+		panel.addStyleName(style.name());
+		panel.add(nameWidget);
 		
 		if (httpUrl != null) {
 			Anchor http = new Anchor(httpUrl, httpUrl);
@@ -177,9 +181,13 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addWebApplication(String httpUrl, String httpsUrl) {
+	public void addWebApplication(String name, String httpUrl, String httpsUrl) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
+		
+		HTML nameWidget = new HTML(name);
+		panel.addStyleName(style.name());
+		panel.add(nameWidget);
 		
 		if (httpUrl != null) {
 			Anchor http = new Anchor(httpUrl, httpUrl);

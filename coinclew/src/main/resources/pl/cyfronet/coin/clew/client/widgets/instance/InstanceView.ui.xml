@@ -35,6 +35,11 @@
 			width: 100%;
 			margin-top: 5px;
 		}
+		.name {
+			float: left;
+			margin-right: 10px;
+			font-weight: bold;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<b:Row addStyleNames="{style.spacey-row}">
