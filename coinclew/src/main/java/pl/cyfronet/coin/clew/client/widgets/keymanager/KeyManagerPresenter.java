@@ -32,6 +32,8 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 	}
 	
 	public void onShowKeyManagerDialog() {
+		view.getKeyName().setText("");
+		view.getKeyContents().setText("");
 		view.showModal(true);
 		loadKeys();
 	}
