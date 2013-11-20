@@ -6,4 +6,7 @@ public interface InitialConfigEmbedMessages extends Messages {
 	String modalTitle();
 	String closeButtonLabel();
 	String about();
+	String noParametersLabel();
+	String parameterValuePlaceholder();
+	String startButtonLabel();
 }

@@ -33,4 +33,8 @@ public interface ApplianceTypeService extends RestService {
 	@DELETE
 	@Path("appliance_types/{id}?private_token=" + CloudFacadeKey.KEY)
 	void deleteApplianceType(@PathParam("id") String id, MethodCallback<Void> methodCallback);
+
+	@GET
+	@Path("appliance_types?id={ids}&private_token=" + CloudFacadeKey.KEY)
+	void getApplianceTypesForIds(@PathParam("ids") String applianceTypeIds, MethodCallback<ApplianceTypesResponse> methodCallback);
 }
