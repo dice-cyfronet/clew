@@ -13,4 +13,6 @@ public interface KeyManagerMessages extends Messages {
 	String uploadKeyButtonLabel();
 	String keyHelp();
 	String nameOrContentsEmptyMessage();
+	String invalidKeyMessage();
+	String unknownErrorMessage();
 }

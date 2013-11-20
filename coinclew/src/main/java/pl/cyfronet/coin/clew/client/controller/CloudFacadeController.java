@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -118,7 +119,7 @@ public class CloudFacadeController {
 	
 	public interface KeyUploadCallback {
 		void onSuccess(UserKey userKey);
-		void onError(String errorMessage);
+		void onError(CloudFacadeErrorCodes errorCodes);
 	}
 	
 	private ApplianceTypeService applianceTypesService;
@@ -522,9 +523,19 @@ public class CloudFacadeController {
 		userKeyService.addUserKey(keyRequest, new MethodCallback<UserKeyRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert("" + exception);
+				//TODO(DH): replace with a generic error handler in future
+				if (exception instanceof FailedStatusCodeException) {
+					if (method.getResponse().getText() != null && method.getResponse().getText().contains("public_key")) {
+						if (keyUploadCallback != null) {
+							keyUploadCallback.onError(CloudFacadeErrorCodes.UserKeyInvalid);
+							
+							return;
+						}
+					}
+				}
+				
 				if (keyUploadCallback != null) {
-					keyUploadCallback.onError(exception.getMessage());
+					keyUploadCallback.onError(CloudFacadeErrorCodes.UnknownError);
 				}
 			}
 

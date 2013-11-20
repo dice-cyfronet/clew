@@ -8,10 +8,12 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.KeyUploadCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserKeysCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.userkey.UserKeyPresenter;
 
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -72,8 +74,15 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 				}
 
 				@Override
-				public void onError(String errorMessage) {
-					view.displayRequestError(errorMessage);
+				public void onError(CloudFacadeErrorCodes errorCode) {
+					switch (errorCode) {
+						case UserKeyInvalid:
+							view.displayInvalidKeyMessage();
+						break;
+						case UnknownError:
+							view.displayUnknownErrorMessage();
+					}
+					
 					view.setUploadBusyState(false);
 				}});
 		}

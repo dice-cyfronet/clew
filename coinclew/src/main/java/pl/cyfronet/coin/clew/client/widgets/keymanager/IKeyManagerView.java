@@ -19,5 +19,6 @@ public interface IKeyManagerView extends IsWidget {
 	void clearMessages();
 	void setUploadBusyState(boolean busy);
 	void displayNameOrContentsEmptyMessage();
-	void displayRequestError(String errorMessage);
+	void displayUnknownErrorMessage();
+	void displayInvalidKeyMessage();
 }

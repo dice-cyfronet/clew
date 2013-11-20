@@ -130,8 +130,14 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	}
 
 	@Override
-	public void displayRequestError(String errorMessage) {
-		errorLabel.setText(errorMessage);
+	public void displayUnknownErrorMessage() {
+		errorLabel.setText(messages.unknownErrorMessage());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public void displayInvalidKeyMessage() {
+		errorLabel.setText(messages.invalidKeyMessage());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 }
