@@ -22,6 +22,8 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	interface ApplicationsViewUiBinder extends UiBinder<Widget, ApplicationsView> {}
 	
 	private IApplicationsPresenter presenter;
+	private Icon loadingIndicator;
+	private Label noInstancesLabel;
 	
 	@UiField FlowPanel instanceContainer;
 	@UiField ApplicationsMessages messages;
@@ -42,20 +44,34 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	}
 
 	@Override
-	public void showLoadingInicator() {
-		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
-		instanceContainer.add(icon);
+	public void showLoadingInicator(boolean show) {
+		if (show) {
+			if (loadingIndicator == null) {
+				loadingIndicator = new Icon(IconType.SPINNER);
+				loadingIndicator.addStyleName("icon-spin");
+				instanceContainer.add(loadingIndicator);
+			}
+		} else {
+			if (loadingIndicator != null) {
+				instanceContainer.remove(loadingIndicator);
+				loadingIndicator = null;
+			}
+		}
 	}
 
 	@Override
-	public void clearInstanceContainer() {
-		instanceContainer.clear();
-	}
-
-	@Override
-	public void addNoInstancesLabel() {
-		instanceContainer.add(new Label(messages.noInstancesLabel()));
+	public void showNoInstancesLabel(boolean show) {
+		if (show) {
+			if (noInstancesLabel == null) {
+				noInstancesLabel = new Label(messages.noInstancesLabel());
+				instanceContainer.add(noInstancesLabel);
+			}
+		} else {
+			if (noInstancesLabel != null) {
+				instanceContainer.remove(noInstancesLabel);
+				noInstancesLabel = null;
+			}
+		}
 	}
 
 	@Override

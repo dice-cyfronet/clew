@@ -38,6 +38,13 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown) {
+		if (applianceInstanceId != null) {
+			//we are updating
+			updateView(applianceInstance);
+			
+			return;
+		}
+		
 		applianceInstanceId = applianceInstance.getId();
 		cloudFacadeController.getApplianceType(applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
 			@Override
@@ -154,5 +161,27 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			});
 		}
+	}
+	
+	private void updateView(ApplianceInstance applianceInstance) {
+		cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
+			@Override
+			public void processApplianceVms(List<ApplianceVm> applianceVms) {
+				if (applianceVms.size() > 0) {
+					//TODO(DH): for now details of the first VM are shown only
+					ApplianceVm applianceVm = applianceVms.get(0);
+					view.getIp().setText(applianceVm.getIp());
+					view.getStatus().setText(applianceVm.getState());
+					cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
+						@Override
+						public void processComputeSite(ComputeSite computeSite) {
+							view.getLocation().setText(computeSite.getName());
+						}
+					});
+				} else {
+					eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+				}
+			}
+		});
 	}
 }

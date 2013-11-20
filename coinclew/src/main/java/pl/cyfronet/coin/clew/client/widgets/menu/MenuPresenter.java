@@ -17,6 +17,7 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 		view.activateApplicationsMenuItem(false);
 		view.activateWorkflowsMenuItem(true);
 		view.activateDevelopmentMenuItem(false);
+		eventBus.deactivateApplicationsRefresh();
 	}
 	
 	public void onSwitchToApplicationsView() {
@@ -31,6 +32,7 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 		view.activateWorkflowsMenuItem(false);
 		view.activateDevelopmentMenuItem(true);
 		eventBus.deactivateWorkflowsRefresh();
+		eventBus.deactivateApplicationsRefresh();
 	}
 
 	@Override

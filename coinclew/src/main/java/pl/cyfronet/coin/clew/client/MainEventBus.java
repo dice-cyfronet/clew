@@ -84,4 +84,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = InitialConfigEmbedPresenter.class)
 	void startApplications(List<String> initialConfigurationIds);
+
+	@Event(handlers = ApplicationsPresenter.class)
+	void deactivateApplicationsRefresh();
 }
