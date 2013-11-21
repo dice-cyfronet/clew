@@ -4,6 +4,7 @@ import pl.cyfronet.coin.clew.client.widgets.menu.IMenuView.IMenuPresenter;
 
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -69,5 +70,14 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	@Override
 	public void activateDevelopmentMenuItem(boolean activate) {
 		devMenuItem.setActive(activate);
+	}
+
+	@Override
+	public void showDevTab(boolean show) {
+		if (show) {
+			devMenuItem.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		} else {
+			devMenuItem.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		}
 	}
 }

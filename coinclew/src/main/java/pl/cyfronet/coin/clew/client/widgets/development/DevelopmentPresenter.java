@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.widgets.development;
 import java.util.List;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
+import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
@@ -16,15 +17,19 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = DevelopmentView.class)
 public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEventBus> implements IDevelopmentPresenter {
 	private CloudFacadeController cloudFacadeController;
+	private MiTicketReader ticketReader;
 
 	@Inject
-	public DevelopmentPresenter(CloudFacadeController cloudFacadeController) {
+	public DevelopmentPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
+		this.ticketReader = ticketReader;
 	}
 	
 	public void onSwitchToDevelopmentView() {
-		eventBus.setBody(view);
-		loadDevelopmentResources();
+		if (ticketReader.isDeveloper()) {
+			eventBus.setBody(view);
+			loadDevelopmentResources();
+		}
 	}
 
 	@Override

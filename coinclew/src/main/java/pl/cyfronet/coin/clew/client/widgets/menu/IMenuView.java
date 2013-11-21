@@ -12,4 +12,5 @@ public interface IMenuView extends IsWidget {
 	void activateWorkflowsMenuItem(boolean activate);
 	void activateApplicationsMenuItem(boolean activate);
 	void activateDevelopmentMenuItem(boolean activate);
+	void showDevTab(boolean show);
 }

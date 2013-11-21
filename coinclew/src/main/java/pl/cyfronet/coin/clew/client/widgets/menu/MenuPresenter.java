@@ -1,18 +1,28 @@
 package pl.cyfronet.coin.clew.client.widgets.menu;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
+import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.widgets.menu.IMenuView.IMenuPresenter;
 
+import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = MenuView.class)
 public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implements IMenuPresenter {
+	private MiTicketReader ticketReader;
+
+	@Inject
+	public MenuPresenter(MiTicketReader ticketReader) {
+		this.ticketReader = ticketReader;
+	}
+	
 	public void onStart() {
+		authorizeMenuItems();
 		eventBus.setMenu(view);
 		view.activateApplicationsMenuItem(true);
 	}
-	
+
 	public void onSwitchToWorkflowsView() {
 		view.activateApplicationsMenuItem(false);
 		view.activateWorkflowsMenuItem(true);
@@ -28,11 +38,15 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 	}
 	
 	public void onSwitchToDevelopmentView() {
-		view.activateApplicationsMenuItem(false);
-		view.activateWorkflowsMenuItem(false);
-		view.activateDevelopmentMenuItem(true);
-		eventBus.deactivateWorkflowsRefresh();
-		eventBus.deactivateApplicationsRefresh();
+		if (ticketReader.isDeveloper()) {
+			view.activateApplicationsMenuItem(false);
+			view.activateWorkflowsMenuItem(false);
+			view.activateDevelopmentMenuItem(true);
+			eventBus.deactivateWorkflowsRefresh();
+			eventBus.deactivateApplicationsRefresh();
+		} else {
+			eventBus.switchToApplicationsView();
+		}
 	}
 
 	@Override
@@ -48,5 +62,11 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 	@Override
 	public void onDevelopmentMenuItemClicked() {
 		eventBus.switchToDevelopmentView();
+	}
+	
+	private void authorizeMenuItems() {
+		if (!ticketReader.isDeveloper()) {
+			view.showDevTab(false);
+		}
 	}
 }
