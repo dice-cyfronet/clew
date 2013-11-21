@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.userkey.UserKeyMessages" field="messages"/>
 	<ui:style>
 		.details {
 			float: left;
@@ -31,7 +32,7 @@
 			<g:HTML ui:field="fingerprint" addStyleNames="{style.fingerprint}"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="remove" icon="REMOVE" size="MINI" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"/>
+			<b:Button ui:field="remove" icon="REMOVE" size="MINI" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
 		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

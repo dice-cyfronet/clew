@@ -28,7 +28,7 @@
 			<g:FlowPanel ui:field="initialConfigsContainer"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
-			<b:Button ui:field="start" size="MINI" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" enabled="false"></b:Button>
+			<b:Button ui:field="start" size="MINI" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" enabled="false" title="{messages.startTooltip}"></b:Button>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
 			<b:CheckBox ui:field="checked" enabled="false"/>

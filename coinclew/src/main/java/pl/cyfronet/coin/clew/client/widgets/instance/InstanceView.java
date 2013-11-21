@@ -124,6 +124,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			shutdown.setType(ButtonType.DANGER);
 			shutdown.setSize(ButtonSize.MINI);
 			shutdown.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			shutdown.setTitle(messages.shutdownTooltip());
 			shutdown.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {

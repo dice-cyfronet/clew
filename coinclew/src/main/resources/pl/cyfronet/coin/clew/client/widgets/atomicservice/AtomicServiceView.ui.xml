@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServiceMessages" field="messages"/>
 	<ui:style>
 		.name {
 			float: left;
@@ -22,7 +23,7 @@
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI"/>
+			<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI" title="{messages.editInitialConfigsTooltip}"/>
 		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

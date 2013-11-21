@@ -10,4 +10,6 @@ public interface InstanceMessages extends Messages {
 	String noServicesLabel();
 	String noWebApplicationsLabel();
 	String descriptorModalTitle();
+	String detailsTooltip();
+	String shutdownTooltip();
 }
