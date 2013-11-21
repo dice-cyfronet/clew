@@ -4,7 +4,6 @@
 <module rename-to="clew">
 	<inherits name="com.google.gwt.user.User"/>
 	<inherits name="com.google.gwt.i18n.I18N"/>
-	<inherits name="com.googlecode.gwt.crypto.Crypto"/>
 	<inherits name="org.fusesource.restygwt.RestyGWT"/>
 	<inherits name="com.google.gwt.inject.Inject"/>
 	<inherits name="com.github.gwtbootstrap.Bootstrap"/>

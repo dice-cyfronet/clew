@@ -8,7 +8,6 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Cookies;
 import com.google.inject.Singleton;
-import com.googlecode.gwt.crypto.bouncycastle.util.encoders.Base64;
 
 @Singleton
 public class MiTicketReader {
@@ -27,13 +26,19 @@ public class MiTicketReader {
 	}
 
 	public String getTicket() {
-		return Cookies.getCookie("vph-tkt");
+		String ticket = Cookies.getCookie("vph-tkt");
+		
+		if (ticket != null) {
+			ticket = ticket.replaceAll("\"", "");
+		}
+		
+		return ticket;
 	}
 	
 	private List<String> getRoles() {
 		List<String> result = new ArrayList<String>();
 		String ticket = getTicket();
-		String decoded = new String(Base64.decode(ticket));
+		String decoded = decodeBase64(ticket);
 		
 		RegExp regexp = RegExp.compile(".*tokens=(.*?);.*");
 		MatchResult matchResult = regexp.exec(decoded);
@@ -46,4 +51,8 @@ public class MiTicketReader {
 		
 		return result;
 	}
+
+	private native String decodeBase64(String base64String) /*-{
+		return atob(base64String);
+	}-*/;
 }
