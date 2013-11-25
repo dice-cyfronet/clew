@@ -112,10 +112,13 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 			parameterValues.put(configId, values);
 		}
 		
+		view.setStartBusyState(true);
+		
 		if (developmentMode) {
 			cloudFacadeController.startApplianceTypesInDevelopment(parameterValues, new Command() {
 				@Override
 				public void execute() {
+					view.setStartBusyState(false);
 					view.showModal(false);
 					eventBus.refreshDevelopmentInstanceList();
 				}
@@ -124,6 +127,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 			cloudFacadeController.startApplianceTypes(parameterValues, new Command() {
 				@Override
 				public void execute() {
+					view.setStartBusyState(false);
 					view.showModal(false);
 					eventBus.refreshInstanceList();
 				}

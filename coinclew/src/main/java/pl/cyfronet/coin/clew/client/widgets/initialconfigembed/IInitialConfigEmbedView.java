@@ -15,4 +15,5 @@ public interface IInitialConfigEmbedView extends IsWidget {
 	void showLoadingProgress(boolean b);
 	Map<String, HasText> addParameters(String applianceTypeName, String configName, List<String> parameters);
 	void clearParameters();
+	void setStartBusyState(boolean b);
 }

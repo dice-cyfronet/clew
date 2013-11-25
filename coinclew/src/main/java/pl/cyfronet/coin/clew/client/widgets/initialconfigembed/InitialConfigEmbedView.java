@@ -6,6 +6,7 @@ import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.IInitialConfigEmbedView.IInitialConfigEmbedPresenter;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.Icon;
@@ -40,6 +41,7 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 	@UiField FlowPanel parameterContainer;
 	@UiField InitialConfigEmbedMessages messages;
 	@UiField Styles style;
+	@UiField Button start;
 
 	public InitialConfigEmbedView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -127,5 +129,14 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 	@Override
 	public void clearParameters() {
 		parameterContainer.clear();
+	}
+
+	@Override
+	public void setStartBusyState(boolean busy) {
+		if (busy) {
+			start.state().loading();
+		} else {
+			start.state().reset();
+		}
 	}
 }
