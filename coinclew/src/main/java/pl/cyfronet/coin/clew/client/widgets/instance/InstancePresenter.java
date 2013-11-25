@@ -22,13 +22,14 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappin
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
-	private CloudFacadeController cloudFacadeController;
+	protected CloudFacadeController cloudFacadeController;
 	private String applianceInstanceId;
 	private boolean detailsRendered;
 	
@@ -37,7 +38,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		this.cloudFacadeController = cloudFacadeController;
 	}
 	
-	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown) {
+	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean enableExternalInterfaces) {
 		if (applianceInstanceId != null) {
 			//we are updating
 			updateView(applianceInstance);
@@ -54,6 +55,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				
 				if (enableShutdown) {
 					view.addShutdownControl();
+				}
+				
+				if (enableExternalInterfaces) {
+					view.addExternalInterfacesControl();
 				}
 				
 				if (!detailsRendered) {
@@ -183,5 +188,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onExternalInterfacesClicked() {
+		Window.alert("show extenal interfaces modal");
 	}
 }

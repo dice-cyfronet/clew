@@ -4,7 +4,7 @@
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.development.DevelopmentMessages" field="messages"/>
 	<ui:style>
-		.header {
+		.sectionHeader {
 			font-size: 1.4em;
 			padding-bottom: 10px;
 			padding-top: 30px;
@@ -18,11 +18,38 @@
 		.container {
 			text-align: center;
 		}
+		.header {
+			font-weight: bold;
+			font-size: 1.1em;
+		}
+		.right {
+			text-align: right;
+		}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
+		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
 		<g:FlowPanel ui:field="atomicServicesContainer" addStyleNames="{style.container}"/>
-		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
+		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
+		<b:Row ui:field="headerRow" visible="false">
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="3">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.specHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.ipHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.locationHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="2">
+				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.statusHeader}"/></g:HTML>
+			</b:Column>
+			<b:Column size="1">
+				<g:HTML addStyleNames="{style.header} {style.right}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
+			</b:Column>
+		</b:Row>
 		<g:FlowPanel ui:field="runningInstancesContainer" addStyleNames="{style.container}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>

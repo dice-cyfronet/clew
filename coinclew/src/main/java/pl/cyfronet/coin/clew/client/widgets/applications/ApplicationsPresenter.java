@@ -97,7 +97,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 							view.getInstanceContainer().add(presenter.getView().asWidget());
 						}
 						
-						presenter.setInstance(applianceInstance, true);
+						presenter.setInstance(applianceInstance, true, false);
 					}
 					
 					if (timer == null) {

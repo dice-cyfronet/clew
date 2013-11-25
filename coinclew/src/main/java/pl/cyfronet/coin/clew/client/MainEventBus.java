@@ -55,7 +55,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	@Event(handlers = StartInstancePresenter.class)
 	void hideStartInstanceModal();
 
-	@Event(handlers = ApplicationsPresenter.class)
+	@Event(handlers = {ApplicationsPresenter.class, DevelopmentPresenter.class})
 	void removeInstance(String applianceInstanceId);
 
 	@Event(handlers = ApplicationsPresenter.class)

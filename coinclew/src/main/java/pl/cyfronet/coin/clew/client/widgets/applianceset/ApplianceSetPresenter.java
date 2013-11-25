@@ -57,7 +57,7 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 						view.getInstanceContainer().add(presenter.getView().asWidget());
 					}
 					
-					presenter.setInstance(instance, false);
+					presenter.setInstance(instance, false, false);
 					currentInstances.add(instance.getId());
 				}
 				

@@ -12,4 +12,5 @@ public interface InstanceMessages extends Messages {
 	String descriptorModalTitle();
 	String detailsTooltip();
 	String shutdownTooltip();
+	String externalInterfacesTooltip();
 }

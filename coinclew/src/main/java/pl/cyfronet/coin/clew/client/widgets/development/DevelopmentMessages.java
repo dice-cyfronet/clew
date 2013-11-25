@@ -9,4 +9,10 @@ public interface DevelopmentMessages extends Messages {
 	String noRunningInstanceLabel();
 	String startDevInstanceButtonLabel();
 	String manageUserKeysButtonLabel();
+	String nameHeader();
+	String specHeader();
+	String ipHeader();
+	String locationHeader();
+	String statusHeader();
+	String actionsHeader();
 }

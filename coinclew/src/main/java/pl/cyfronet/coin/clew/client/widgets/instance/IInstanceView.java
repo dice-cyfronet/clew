@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IInstanceView extends IsWidget {
 	public interface IInstancePresenter {
 		void onShutdownClicked();
+		void onExternalInterfacesClicked();
 	}
 
 	HasText getName();
@@ -21,4 +22,5 @@ public interface IInstanceView extends IsWidget {
 	void addWebApplication(String name, String httpUrl, String httpsUrl);
 	void addNoServicesLabel();
 	void addNoWebApplicationsLabel();
+	void addExternalInterfacesControl();
 }

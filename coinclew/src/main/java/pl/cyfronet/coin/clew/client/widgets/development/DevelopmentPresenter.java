@@ -1,6 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.development;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
@@ -11,8 +13,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServicePresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelopmentPresenter;
+import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
 
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -21,11 +23,13 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEventBus> implements IDevelopmentPresenter {
 	private CloudFacadeController cloudFacadeController;
 	private MiTicketReader ticketReader;
+	private Map<String, InstancePresenter> instancePresenters;
 
 	@Inject
 	public DevelopmentPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.ticketReader = ticketReader;
+		instancePresenters = new HashMap<String, InstancePresenter>();
 	}
 	
 	public void onSwitchToDevelopmentView() {
@@ -50,6 +54,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 
 	private void loadInstances() {
+		view.showNoRunningInstancesLabel(false);
 		view.getInstanceContainer().clear();
 		view.showInstanceLoadingIndicator(true);
 		cloudFacadeController.getDevelopmentApplianceInstances(new ApplianceInstancesCallback() {
@@ -61,7 +66,13 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 					view.showNoRunningInstancesLabel(true);
 				} else {
 					view.showNoRunningInstancesLabel(false);
-					Window.alert("Show " + applianceInstances.size() + " development instances.");
+					
+					for (ApplianceInstance instance : applianceInstances) {
+						InstancePresenter presenter = eventBus.addHandler(InstancePresenter.class);
+						instancePresenters.put(instance.getId(), presenter);
+						view.getInstanceContainer().add(presenter.getView().asWidget());
+						presenter.setInstance(instance, true, true);
+					}
 				}
 			}
 		});
@@ -92,5 +103,21 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	@Override
 	public void onStartDevInstance() {
 		eventBus.showStartInstanceDialog(true);
+	}
+	
+	public void onRemoveInstance(String applianceInstanceId) {
+		InstancePresenter instancePresenter = instancePresenters.get(applianceInstanceId);
+		
+		if (instancePresenter != null) {
+			eventBus.removeHandler(instancePresenter);
+			view.getInstanceContainer().remove(instancePresenter.getView().asWidget());
+			instancePresenters.remove(applianceInstanceId);
+			
+			if (instancePresenters.size() == 0) {
+				view.showHeaderRow(false);
+				view.showNoRunningInstancesLabel(true);
+//				onDeactivateApplicationsRefresh();
+			}
+		}
 	}
 }

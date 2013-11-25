@@ -15,4 +15,5 @@ public interface IDevelopmentView extends IsWidget {
 	void addAtomicServiceProgressIndicator();
 	HasWidgets getInstanceContainer();
 	void showInstanceLoadingIndicator(boolean show);
+	void showHeaderRow(boolean show);
 }

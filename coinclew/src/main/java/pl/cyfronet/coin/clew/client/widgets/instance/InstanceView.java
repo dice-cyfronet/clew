@@ -38,6 +38,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	
 	private IInstancePresenter presenter;
 	private Button shutdown;
+	private Button externalInterfaces;
 	
 	@UiField HTML name;
 	@UiField HTML spec;
@@ -215,5 +216,24 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void addNoWebApplicationsLabel() {
 		Label label = new Label(messages.noWebApplicationsLabel());
 		webApplicationsContainer.add(label);
+	}
+
+	@Override
+	public void addExternalInterfacesControl() {
+		if (externalInterfaces == null) {
+			externalInterfaces = new Button();
+			externalInterfaces.setIcon(IconType.ANCHOR);
+			externalInterfaces.setType(ButtonType.WARNING);
+			externalInterfaces.setSize(ButtonSize.MINI);
+			externalInterfaces.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			externalInterfaces.setTitle(messages.externalInterfacesTooltip());
+			externalInterfaces.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onExternalInterfacesClicked();
+				}
+			});
+			controls.insert(externalInterfaces, 1);
+		}
 	}
 }
