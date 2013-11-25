@@ -123,4 +123,9 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 		
 		return result;
 	}
+
+	@Override
+	public void clearParameters() {
+		parameterContainer.clear();
+	}
 }

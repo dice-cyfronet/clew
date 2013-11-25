@@ -51,6 +51,8 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 				}
 				
 				if (parametersPresent) {
+					view.clearParameters();
+					params.clear();
 					view.showLoadingProgress(true);
 					view.showModal(true);
 					cloudFacadeController.getApplianceTypes(collectApplianceTypeIds(applianceConfigurations), new ApplianceTypesCallback() {
