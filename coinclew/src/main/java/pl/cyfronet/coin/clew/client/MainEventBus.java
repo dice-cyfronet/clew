@@ -50,7 +50,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	void switchToDevelopmentView();
 
 	@Event(handlers = StartInstancePresenter.class)
-	void showStartInstanceDialog();
+	void showStartInstanceDialog(boolean developmentMode);
 
 	@Event(handlers = StartInstancePresenter.class)
 	void hideStartInstanceModal();
@@ -83,8 +83,11 @@ public interface MainEventBus extends EventBusWithLookup {
 	void editInitialConfiguration(String initialConfigurationId);
 
 	@Event(handlers = InitialConfigEmbedPresenter.class)
-	void startApplications(List<String> initialConfigurationIds);
+	void startApplications(List<String> initialConfigurationIds, boolean developmentMode);
 
 	@Event(handlers = ApplicationsPresenter.class)
 	void deactivateApplicationsRefresh();
+
+	@Event(handlers = DevelopmentPresenter.class)
+	void refreshDevelopmentInstanceList();
 }

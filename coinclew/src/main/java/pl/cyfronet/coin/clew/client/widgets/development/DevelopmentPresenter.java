@@ -5,11 +5,14 @@ import java.util.List;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServicePresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelopmentPresenter;
 
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -31,6 +34,10 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			loadDevelopmentResources();
 		}
 	}
+	
+	public void onRefreshDevelopmentInstanceList() {
+		loadInstances();
+	}
 
 	@Override
 	public void onManageUserKeysClicked() {
@@ -38,15 +45,29 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 	
 	private void loadDevelopmentResources() {
-		loadAtomicService();
+		loadAtomicServices();
 		loadInstances();
 	}
 
 	private void loadInstances() {
-		view.showNoRunningInstancesLabel(true);
+		view.getInstanceContainer().clear();
+		view.showInstanceLoadingIndicator(true);
+		cloudFacadeController.getDevelopmentApplianceInstances(new ApplianceInstancesCallback() {
+			@Override
+			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
+				view.showInstanceLoadingIndicator(false);
+				
+				if (applianceInstances.size() == 0) {
+					view.showNoRunningInstancesLabel(true);
+				} else {
+					view.showNoRunningInstancesLabel(false);
+					Window.alert("Show " + applianceInstances.size() + " development instances.");
+				}
+			}
+		});
 	}
 
-	private void loadAtomicService() {
+	private void loadAtomicServices() {
 		view.getAtomicServicesContainer().clear();
 		view.addAtomicServiceProgressIndicator();
 		cloudFacadeController.getApplianceTypes(new ApplianceTypesCallback() {
@@ -66,5 +87,10 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onStartDevInstance() {
+		eventBus.showStartInstanceDialog(true);
 	}
 }

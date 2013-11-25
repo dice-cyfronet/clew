@@ -15,7 +15,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigu
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -28,6 +27,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	private ApplianceType applianceType;
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, HasValue<Boolean>> initialConfigs;
+	private boolean developmentMode;
 	
 	@Inject
 	public ApplianceTypePresenter(CloudFacadeController cloudFacadeController) {
@@ -35,8 +35,9 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		initialConfigs = new HashMap<String, HasValue<Boolean>>();
 	}
 
-	public void setApplianceType(ApplianceType applianceType) {
+	public void setApplianceType(ApplianceType applianceType, boolean developmentMode) {
 		this.applianceType = applianceType;
+		this.developmentMode = developmentMode;
 		view.getName().setText(applianceType.getName());
 		
 		if (applianceType.getDescription().trim().isEmpty()) {
@@ -85,7 +86,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		}
 		
 		eventBus.hideStartInstanceModal();
-		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}));
+		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}), developmentMode);
 	}
 
 	public String getSelectedInitialConfigId() {

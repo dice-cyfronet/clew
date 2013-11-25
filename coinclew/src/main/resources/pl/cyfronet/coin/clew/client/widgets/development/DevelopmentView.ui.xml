@@ -25,7 +25,7 @@
 		<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
 		<g:FlowPanel ui:field="runningInstancesContainer" addStyleNames="{style.container}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}" enabled="false"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
+			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
 			<b:Button ui:field="manageUserKeys" addStyleNames="{style.action}"><ui:text from="{messages.manageUserKeysButtonLabel}"/></b:Button>
 		</g:FlowPanel>
 	</g:HTMLPanel>

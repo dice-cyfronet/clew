@@ -19,4 +19,6 @@ public interface IStartInstanceView extends IsWidget {
 	void showNoApplianceTypesSelected();
 	void setStartSelectedBusyState(boolean b);
 	HasText getFilter();
+	void setDevelopmentModeTitle();
+	void setPortalModeTitle();
 }

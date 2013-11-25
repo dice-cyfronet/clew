@@ -127,4 +127,14 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	public HasText getFilter() {
 		return filterAppsBox;
 	}
+
+	@Override
+	public void setDevelopmentModeTitle() {
+		startInstanceModal.setTitle(messages.startDevInstanceModalHeader());
+	}
+
+	@Override
+	public void setPortalModeTitle() {
+		startInstanceModal.setTitle(messages.startInstanceModalHeader());
+	}
 }

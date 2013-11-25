@@ -23,6 +23,7 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 	private IDevelopmentPresenter presenter;
 	private Label noInstancesLabel;
 	private Label noAtomicServicesLabel;
+	private Icon instanceLoadingIndicator;
 	
 	@UiField FlowPanel atomicServicesContainer;
 	@UiField FlowPanel runningInstancesContainer;
@@ -35,6 +36,11 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 	@UiHandler("manageUserKeys")
 	void manageUserKeysClicked(ClickEvent event) {
 		getPresenter().onManageUserKeysClicked();
+	}
+	
+	@UiHandler("startDevInstance")
+	void startDevInstanceClicked(ClickEvent event) {
+		getPresenter().onStartDevInstance();
 	}
 	
 	@Override
@@ -87,5 +93,26 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 		Icon icon = new Icon(IconType.SPINNER);
 		icon.addStyleName("icon-spin");
 		atomicServicesContainer.add(icon);
+	}
+
+	@Override
+	public HasWidgets getInstanceContainer() {
+		return runningInstancesContainer;
+	}
+
+	@Override
+	public void showInstanceLoadingIndicator(boolean show) {
+		if (show) {
+			if (instanceLoadingIndicator == null) {
+				instanceLoadingIndicator = new Icon(IconType.SPINNER);
+				instanceLoadingIndicator.addStyleName("icon-spin");
+				runningInstancesContainer.add(instanceLoadingIndicator);
+			}
+		} else {
+			if (instanceLoadingIndicator != null) {
+				runningInstancesContainer.remove(instanceLoadingIndicator);
+				instanceLoadingIndicator = null;
+			}
+		}
 	}
 }

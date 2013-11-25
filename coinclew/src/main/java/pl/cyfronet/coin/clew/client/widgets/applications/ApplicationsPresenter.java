@@ -33,7 +33,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	
 	@Override
 	public void onStartInstance() {
-		eventBus.showStartInstanceDialog();
+		eventBus.showStartInstanceDialog(false);
 	}
 
 	public void onSwitchToApplicationsView() {

@@ -23,6 +23,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmbedView, MainEventBus> implements IInitialConfigEmbedPresenter {
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, Map<String, HasText>> params;
+	private boolean developmentMode;
 
 	@Inject
 	public InitialConfigEmbedPresenter(CloudFacadeController cloudFacadeController) {
@@ -34,7 +35,8 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 		eventBus.addPopup(view);
 	}
 	
-	public void onStartApplications(final List<String> initialConfigurationIds) {
+	public void onStartApplications(final List<String> initialConfigurationIds, boolean developmentMode) {
+		this.developmentMode = developmentMode;
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
@@ -75,12 +77,21 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 						}
 					});
 				} else {
-					cloudFacadeController.startApplianceTypes(initialConfigurationIds, new Command() {
-						@Override
-						public void execute() {
-							eventBus.refreshInstanceList();
-						}
-					});
+					if (InitialConfigEmbedPresenter.this.developmentMode) {
+						cloudFacadeController.startApplianceTypesInDevelopment(initialConfigurationIds, new Command() {
+							@Override
+							public void execute() {
+								eventBus.refreshDevelopmentInstanceList();
+							}
+						});
+					} else {
+						cloudFacadeController.startApplianceTypes(initialConfigurationIds, new Command() {
+							@Override
+							public void execute() {
+								eventBus.refreshInstanceList();
+							}
+						});
+					}
 				}
 			}});
 	}
@@ -99,13 +110,23 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 			parameterValues.put(configId, values);
 		}
 		
-		cloudFacadeController.startApplianceTypes(parameterValues, new Command() {
-			@Override
-			public void execute() {
-				view.showModal(false);
-				eventBus.refreshInstanceList();
-			}
-		});
+		if (developmentMode) {
+			cloudFacadeController.startApplianceTypesInDevelopment(parameterValues, new Command() {
+				@Override
+				public void execute() {
+					view.showModal(false);
+					eventBus.refreshDevelopmentInstanceList();
+				}
+			});
+		} else {
+			cloudFacadeController.startApplianceTypes(parameterValues, new Command() {
+				@Override
+				public void execute() {
+					view.showModal(false);
+					eventBus.refreshInstanceList();
+				}
+			});
+		}
 	}
 	
 	private List<String> collectApplianceTypeIds(List<ApplianceConfiguration> applianceConfigurations) {

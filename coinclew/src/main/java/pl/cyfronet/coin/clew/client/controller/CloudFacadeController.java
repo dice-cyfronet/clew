@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,8 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -186,7 +189,7 @@ public class CloudFacadeController {
 	}
 
 	public void startApplianceTypes(final List<String> configurationTemplateIds, final Command command) {
-		ensurePortalApplianceSet(new ApplianceSetCallback() {
+		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
 				final List<String> started = new ArrayList<String>();
@@ -257,17 +260,17 @@ public class CloudFacadeController {
 		});
 	}
 	
-	private void ensurePortalApplianceSet(final ApplianceSetCallback applianceSetCallback) {
+	private void ensureApplianceSet(final Type type, final ApplianceSetCallback applianceSetCallback) {
 		applianceSetService.getApplianceSets(new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
+				popupErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
 			public void onSuccess(Method method, ApplianceSetsResponse response) {
 				for (ApplianceSet applianceSet : response.getApplianceSets()) {
-					if (applianceSet.getType() == Type.portal && applianceSetCallback != null) {
+					if (applianceSet.getType() == type && applianceSetCallback != null) {
 						applianceSetCallback.processApplianceSet(applianceSet);
 						
 						return;
@@ -277,14 +280,14 @@ public class CloudFacadeController {
 				NewApplianceSet applianceSet = new NewApplianceSet();
 				applianceSet.setName("Portal set");
 				applianceSet.setPriority("50");
-				applianceSet.setType(Type.portal);
+				applianceSet.setType(type);
 				
 				NewApplianceSetRequest applianceSetRequest = new NewApplianceSetRequest();
 				applianceSetRequest.setApplianceSet(applianceSet);
 				applianceSetService.addApplianceSet(applianceSetRequest, new MethodCallback<ApplianceSetRequestResponse>() {
 					@Override
 					public void onFailure(Method method, Throwable exception) {
-						Window.alert(exception.getMessage());
+						popupErrorHandler.displayError(exception.getMessage());
 					}
 
 					@Override
@@ -653,7 +656,7 @@ public class CloudFacadeController {
 	}
 
 	public void startApplianceTypes(final Map<String, Map<String, String>> parameterValues, final Command command) {
-		ensurePortalApplianceSet(new ApplianceSetCallback() {
+		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
 				final List<String> started = new ArrayList<String>();
@@ -688,6 +691,137 @@ public class CloudFacadeController {
 						}
 					});
 				}
+			}
+		});
+	}
+
+	public void getDevelopmentApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
+		applianceTypesService.getApplianceTypesForVisibility(join(Arrays.asList(new String[] {"developer", "all", "owner"}), ","), new MethodCallback<ApplianceTypesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceTypesResponse response) {
+				if (applianceTypesCallback != null) {
+					applianceTypesCallback.processApplianceTypes(response.getApplianceTypes());
+				}
+			}
+		});
+	}
+
+	public void getProductionApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
+		applianceTypesService.getApplianceTypesForVisibility(join(Arrays.asList(new String[] {"all", "owner"}), ","), new MethodCallback<ApplianceTypesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceTypesResponse response) {
+				if (applianceTypesCallback != null) {
+					applianceTypesCallback.processApplianceTypes(response.getApplianceTypes());
+				}
+			}
+		});
+	}
+
+	public void startApplianceTypesInDevelopment(final List<String> configurationTemplateIds, final Command command) {
+		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
+			@Override
+			public void processApplianceSet(ApplianceSet applianceSet) {
+				final List<String> started = new ArrayList<String>();
+				final List<String> failed = new ArrayList<String>();
+				
+				for (final String configurationTemplateId : configurationTemplateIds) {
+					NewApplianceInstance applianceInstance = new NewApplianceInstance();
+					applianceInstance.setApplianceSetId(applianceSet.getId());
+					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
+					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
+					applianceInstanceRequest.setApplianceInstance(applianceInstance);
+					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
+						@Override
+						public void onFailure(Method method, Throwable exception) {
+							failed.add(configurationTemplateId);
+							popupErrorHandler.displayError(exception.getMessage());
+							checkReturn();
+						}
+
+						@Override
+						public void onSuccess(Method method, ApplianceInstanceRequestResponse response) {
+							started.add(configurationTemplateId);
+							checkReturn();
+						}
+						
+						private void checkReturn() {
+							if (started.size() + failed.size() == configurationTemplateIds.size() && command != null) {
+								command.execute();
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	public void startApplianceTypesInDevelopment(final Map<String, Map<String, String>> parameterValues, final Command command) {
+		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
+			@Override
+			public void processApplianceSet(ApplianceSet applianceSet) {
+				final List<String> started = new ArrayList<String>();
+				final List<String> failed = new ArrayList<String>();
+				
+				for (final String configurationTemplateId : parameterValues.keySet()) {
+					NewApplianceInstance applianceInstance = new NewApplianceInstance();
+					applianceInstance.setApplianceSetId(applianceSet.getId());
+					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
+					applianceInstance.setParams(parameterValues.get(configurationTemplateId));
+					
+					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
+					applianceInstanceRequest.setApplianceInstance(applianceInstance);
+					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
+						@Override
+						public void onFailure(Method method, Throwable exception) {
+							failed.add(configurationTemplateId);
+							popupErrorHandler.displayError(exception.getMessage());
+							checkReturn();
+						}
+
+						@Override
+						public void onSuccess(Method method, ApplianceInstanceRequestResponse response) {
+							started.add(configurationTemplateId);
+							checkReturn();
+						}
+						
+						private void checkReturn() {
+							if (started.size() + failed.size() == parameterValues.keySet().size() && command != null) {
+								command.execute();
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	public void getDevelopmentApplianceInstances(final ApplianceInstancesCallback applianceInstancesCallback) {
+		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
+			@Override
+			public void processApplianceSet(ApplianceSet applianceSet) {
+				applianceInstancesService.getApplianceInstances(applianceSet.getId(), new MethodCallback<ApplianceInstancesResponse>() {
+					@Override
+					public void onFailure(Method method, Throwable exception) {
+						popupErrorHandler.displayError(exception.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Method method, ApplianceInstancesResponse response) {
+						if (applianceInstancesCallback != null) {
+							applianceInstancesCallback.processApplianceInstances(response.getApplianceInstances());
+						}
+					}
+				});
 			}
 		});
 	}

@@ -9,4 +9,5 @@ public interface StartInstanceMessages extends Messages {
 	String startselectedButtonLabel();
 	String noSelectedApplianceTypes();
 	String filterBoxPlaceholderLabel();
+	String startDevInstanceModalHeader();
 }

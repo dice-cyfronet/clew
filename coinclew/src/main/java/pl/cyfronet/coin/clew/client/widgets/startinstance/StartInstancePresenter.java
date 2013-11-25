@@ -10,7 +10,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
-import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -19,6 +18,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class StartInstancePresenter extends BasePresenter<IStartInstanceView, MainEventBus> implements IStartInstancePresenter {
 	private CloudFacadeController cloudFacadeController;
 	private List<ApplianceTypePresenter> applianceTypePresenters;
+	private boolean developmentMode;
 
 	@Inject
 	public StartInstancePresenter(CloudFacadeController cloudFacadeController) {
@@ -30,29 +30,53 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		eventBus.addPopup(view);
 	}
 	
-	public void onShowStartInstanceDialog() {
+	public void onShowStartInstanceDialog(boolean developmentMode) {
+		this.developmentMode = developmentMode;
+		setTitle();
 		view.clearApplianceTypeContainer();
 		view.showProgressIndicator();
 		view.show();
-		cloudFacadeController.getApplianceTypes(new ApplianceTypesCallback() {
-			@Override
-			public void processApplianceTypes(List<ApplianceType> applianceTypes) {
-				view.clearApplianceTypeContainer();
-				
-				if (applianceTypes.size() == 0) {
-					view.addNoApplianceTypesLabel();
-				} else {
-					for (ApplianceType applianceType : applianceTypes) {
-						ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
-						applianceTypePresenters.add(presenter);
-						presenter.setApplianceType(applianceType);
-						view.getApplianceTypeContainer().add(presenter.getView().asWidget());
-					}
+		
+		if (developmentMode) {
+			cloudFacadeController.getDevelopmentApplianceTypes(new ApplianceTypesCallback() {
+				@Override
+				public void processApplianceTypes(List<ApplianceType> applianceTypes) {
+					displayApplianceTypes(applianceTypes);
 				}
-			}
-		});
+			});
+		} else {
+			cloudFacadeController.getProductionApplianceTypes(new ApplianceTypesCallback() {
+				@Override
+				public void processApplianceTypes(List<ApplianceType> applianceTypes) {
+					displayApplianceTypes(applianceTypes);
+				}
+			});
+		}
 	}
 	
+	protected void displayApplianceTypes(List<ApplianceType> applianceTypes) {
+		view.clearApplianceTypeContainer();
+		
+		if (applianceTypes.size() == 0) {
+			view.addNoApplianceTypesLabel();
+		} else {
+			for (ApplianceType applianceType : applianceTypes) {
+				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
+				applianceTypePresenters.add(presenter);
+				presenter.setApplianceType(applianceType, developmentMode);
+				view.getApplianceTypeContainer().add(presenter.getView().asWidget());
+			}
+		}
+	}
+
+	private void setTitle() {
+		if (developmentMode) {
+			view.setDevelopmentModeTitle();
+		} else {
+			view.setPortalModeTitle();
+		}
+	}
+
 	public void onHideStartInstanceModal() {
 		view.hide();
 		
@@ -76,7 +100,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		if (initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
-			eventBus.startApplications(initialConfigurationIds);
+			eventBus.startApplications(initialConfigurationIds, developmentMode);
 			view.hide();
 		}
 	}
