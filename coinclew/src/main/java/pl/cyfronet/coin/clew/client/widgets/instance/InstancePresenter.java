@@ -192,6 +192,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 
 	@Override
 	public void onExternalInterfacesClicked() {
-		Window.alert("show extenal interfaces modal");
+		eventBus.showExternalInterfacesEditor(applianceInstanceId);
 	}
 }

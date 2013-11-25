@@ -1,0 +1,37 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.extinterfaces.ExternalInterfacesEditorMessages" field="messages"/>
+	<ui:style>
+		.center {
+			text-align: center;
+		}
+	</ui:style>
+	<b:Modal ui:field="modal"  title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
+		<b:TabPanel>
+			<b:Tab heading="{messages.externalInterfacesTabLabel}" active="true">
+				<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
+				<b:Form>
+					<b:ControlLabel><ui:text from="{messages.externalInterfaceName}"/></b:ControlLabel>
+					<b:TextBox ui:field="externalInterfaceName" placeholder="{messages.externalInterfacePlaceholder}" addStyleNames="input-block-level"/>
+					<b:ControlLabel><ui:text from="{messages.externalInterfacePortNumber}"/></b:ControlLabel>
+					<b:TextBox ui:field="externalInterfacePort" placeholder="{messages.externalInterfacePortNumberPlaceholder}" addStyleNames="input-block-level"/>
+					<b:ControlLabel><ui:text from="{messages.externalInterfaceType}"/></b:ControlLabel>
+					<b:ListBox ui:field="externalInterfaceType" addStyleNames="input-block-level">
+						<g:item value="http"><ui:text from="{messages.externalInterfaceHttpType}"/></g:item>
+						<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
+						<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
+					</b:ListBox>
+					<b:Button ui:field="addExternalInterface" icon="PLUS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
+				</b:Form>
+			</b:Tab>
+			<b:Tab heading="{messages.endpointsTabLabel}">
+				<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
+			</b:Tab>
+		</b:TabPanel>
+		<b:ModalFooter>
+			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+</ui:UiBinder>
