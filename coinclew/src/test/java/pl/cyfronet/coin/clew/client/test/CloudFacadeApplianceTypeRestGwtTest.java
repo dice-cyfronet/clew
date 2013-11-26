@@ -10,7 +10,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesRe
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceTypeRequest;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.NewApplianceType.Visibility;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -52,7 +51,7 @@ public class CloudFacadeApplianceTypeRestGwtTest extends GWTTestCase {
 	public void testAddUpdateDeleteApplianceType() {
 		final NewApplianceType newApplianceType = new NewApplianceType();
 		newApplianceType.setName(String.valueOf(System.currentTimeMillis()));
-		newApplianceType.setVisibility(Visibility.unpublished);
+		newApplianceType.setVisibleFor("all");
 		
 		NewApplianceTypeRequest applianceTypeRequest = new NewApplianceTypeRequest();
 		applianceTypeRequest.setApplianceType(newApplianceType);
@@ -69,7 +68,7 @@ public class CloudFacadeApplianceTypeRestGwtTest extends GWTTestCase {
 			public void onSuccess(Method method, ApplianceTypeRequestResponse applianceTypeResponse) {
 				assertNotNull(applianceTypeResponse.getApplianceType());
 				assertEquals(newApplianceType.getName(), applianceTypeResponse.getApplianceType().getName());
-				assertEquals(newApplianceType.getVisibility(), applianceTypeResponse.getApplianceType().getVisibility());
+				assertEquals(newApplianceType.getVisibleFor(), applianceTypeResponse.getApplianceType().getVisibleFor());
 				assertNull(applianceTypeResponse.getApplianceType().getDescription());
 				checkUpdate(applianceTypeResponse.getApplianceType());
 			}

@@ -10,8 +10,9 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -41,13 +42,22 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmsRespon
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteService;
+import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
+import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySetService;
+import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySetsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointService;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingService;
+import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
+import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMappingResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMappingService;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.NewPortMappingTemplate;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.NewPortMappingTemplateRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateService;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplatesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.NewUserKey;
@@ -58,6 +68,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyService;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeysResponse;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -125,6 +136,14 @@ public class CloudFacadeController {
 		void onError(CloudFacadeErrorCodes errorCodes);
 	}
 	
+	public interface DevelopmentModePropertySetCallback {
+		void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet);
+	}
+	
+	public interface PortMappingsCallback {
+		void processPortMappings(List<PortMapping> portMappings);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -136,13 +155,17 @@ public class CloudFacadeController {
 	private HttpMappingService httpMappingService;
 	private EndpointService endpointService;
 	private UserKeyService userKeyService;
+	private DevelopmentModePropertySetService developmentModePropertySetService;
+	private PortMappingService portMappingService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
 			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService,
 			ApplianceVmService applianceVmsService, ComputeSiteService computeSitesService,
 			PortMappingTemplateService portMappingTemplateService, HttpMappingService httpMappingService,
-			EndpointService endpointService, UserKeyService userKeyService, PopupErrorHandler popupErrorHandler) {
+			EndpointService endpointService, UserKeyService userKeyService,
+			DevelopmentModePropertySetService developmentModePropertySetService,
+			PortMappingService portMappingService, PopupErrorHandler popupErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -153,6 +176,8 @@ public class CloudFacadeController {
 		this.httpMappingService = httpMappingService;
 		this.endpointService = endpointService;
 		this.userKeyService = userKeyService;
+		this.developmentModePropertySetService = developmentModePropertySetService;
+		this.portMappingService = portMappingService;
 		CloudFacadeController.popupErrorHandler = popupErrorHandler;
 	}
 	
@@ -822,6 +847,202 @@ public class CloudFacadeController {
 						}
 					}
 				});
+			}
+		});
+	}
+
+	public void getDevelopmentModePropertySet(String applianceInstanceId, final DevelopmentModePropertySetCallback developmentModePropertySetCallback) {
+		developmentModePropertySetService.getDevelopmentModePropertySet(applianceInstanceId, new MethodCallback<DevelopmentModePropertySetsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, DevelopmentModePropertySetsResponse response) {
+				if (developmentModePropertySetCallback != null) {
+					if (response.getDevelopmentModePropertySets() != null && response.getDevelopmentModePropertySets().size() > 0) {
+						developmentModePropertySetCallback.processDeveopmentModePropertySet(response.getDevelopmentModePropertySets().get(0));
+					} else {
+						developmentModePropertySetCallback.processDeveopmentModePropertySet(null);
+					}
+				}
+			}});
+	}
+
+	public void getPortMappingTemplates(List<String> portMappingTemplateIds, final PortMappingTemplatesCallback portMappingTemplatesCallback) {
+		portMappingTemplateService.getPortMappingTemplatesForIds(join(portMappingTemplateIds, ","), new MethodCallback<PortMappingTemplatesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplatesResponse response) {
+				if (portMappingTemplatesCallback != null) {
+					portMappingTemplatesCallback.processPortMappingTemplates(response.getPortMappingTemplates());
+				}
+			}
+		});
+	}
+
+	public void getPortMappings(String applianceInstanceId, final PortMappingsCallback portMappingsCallback) {
+		portMappingService.getPortMappings(applianceInstanceId, new MethodCallback<PortMappingResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingResponse response) {
+				if (portMappingsCallback != null) {
+					portMappingsCallback.processPortMappings(response.getPortMappings());
+				}
+			}
+		});
+	}
+
+	public void removePortMapingTemplate(String mappingId, final Command command) {
+		portMappingTemplateService.removePortMappingTemplate(mappingId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (command != null) {
+					command.execute();
+				}
+			}
+		});
+	}
+
+	public void addPortMappingTemplate(String name, int portNumber, String transportProtocol, final String applicationProtocol, String developmentModePropertySetId, final Command command) {
+		NewPortMappingTemplate portMappingTemplate = new NewPortMappingTemplate();
+		portMappingTemplate.setServiceName(name);
+		portMappingTemplate.setTargetPort(portNumber);
+		portMappingTemplate.setTransportProtocol(transportProtocol);
+		portMappingTemplate.setApplicationProtocol(applicationProtocol);
+		portMappingTemplate.setDevelopmentModePropertySetId(developmentModePropertySetId);
+		
+		NewPortMappingTemplateRequest request = new NewPortMappingTemplateRequest();
+		request.setPortMapping(portMappingTemplate);
+		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
+
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplateRequestResponse response) {
+				//this operation requires a busy-waiting loop
+				if (applicationProtocol.equals("none")) {
+					//waiting for port mappings
+					waitForPortMappings(response.getPortMappingTemplate().getId(), command);
+				} else {
+					//waiting for http mappings
+					waitForHttpMappings(response.getPortMappingTemplate().getId(), command);
+				}
+			}
+		});
+	}
+
+	private void waitForHttpMappings(final String portMappingTemplateId, final Command command) {
+		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, HttpMappingResponse response) {
+				if (response.getHttpMappings().size() == 0) {
+					new Timer() {
+						@Override
+						public void run() {
+							waitForHttpMappings(portMappingTemplateId, command);
+						}
+					}.schedule(1000);
+				} else {
+					if (command != null) {
+						command.execute();
+					}
+				}
+			}
+		});
+	}
+
+	private void waitForPortMappings(final String portMappingTemplateId, final Command command) {
+		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingResponse response) {
+				if (response.getPortMappings().size() == 0) {
+					new Timer() {
+						@Override
+						public void run() {
+							waitForPortMappings(portMappingTemplateId, command);
+						}
+					}.schedule(1000);
+				} else {
+					if (command != null) {
+						command.execute();
+					}
+				}
+			}
+		});
+	}
+
+	public void getPortMappingTemplatesForDevelopmentModePropertySetId(String developmentModePropertySetId, final PortMappingTemplatesCallback portMappingTemplatesCallback) {
+		portMappingTemplateService.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySetId, new MethodCallback<PortMappingTemplatesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplatesResponse response) {
+				if (portMappingTemplatesCallback != null) {
+					portMappingTemplatesCallback.processPortMappingTemplates(response.getPortMappingTemplates());
+				}
+			}
+		});
+	}
+
+	public void getPortMappingsForPortMappingTemplateId(String portMappingTemplateId, final PortMappingsCallback portMappingsCallback) {
+		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingResponse response) {
+				if (portMappingsCallback != null) {
+					portMappingsCallback.processPortMappings(response.getPortMappings());
+				}
+			}
+		});
+	}
+
+	public void getHttpMappingsForPortMappingTemplateId(String portMappingTemplateId, final HttpMappingsCallback httpMappingsCallback) {
+		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());	
+			}
+
+			@Override
+			public void onSuccess(Method method, HttpMappingResponse response) {
+				if (httpMappingsCallback != null) {
+					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+				}
 			}
 		});
 	}

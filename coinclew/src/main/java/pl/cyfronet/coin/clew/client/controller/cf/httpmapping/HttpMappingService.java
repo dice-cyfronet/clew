@@ -15,4 +15,8 @@ public interface HttpMappingService extends RestService {
 	@GET
 	@Path("http_mappings?appliance_id={id}")
 	void getHttpMappings(@PathParam("id") String applianceId, MethodCallback<HttpMappingResponse> methodCallback);
+
+	@GET
+	@Path("http_mappings?port_mapping_template_id={id}")
+	void getHttpMappingsForPortMappingTemplateId(@PathParam("id") String portMappingTemplateId, MethodCallback<HttpMappingResponse> methodCallback);
 }

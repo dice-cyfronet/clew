@@ -11,11 +11,18 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String externalInterfacePlaceholder();
 	String externalInterfacePortNumber();
 	String externalInterfacePortNumberPlaceholder();
-	String externalInterfaceType();
+	String externalInterfaceTransportProtocol();
 	String addExternalInterfaceButtonLabel();
 	String externalInterfaceHttpType();
 	String externalInterfaceHttpsType();
 	String externalInterfaceHttpAndHttpsType();
 	String noExternalInterfacesLabel();
 	String noEndpointsLabel();
+	String externalInterfaceUdpProtocol();
+	String externalInterfaceTcpProtocol();
+	String externalInterfaceNoneType();
+	String getTcpUdpMapping(String publicIp, String sourcePort, int targetPort);
+	String externalInterfaceApplicationProtocol();
+	String wrongPortFormat();
+	String nameOrPortEmpty();
 }
