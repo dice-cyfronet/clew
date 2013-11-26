@@ -25,4 +25,18 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String externalInterfaceApplicationProtocol();
 	String wrongPortFormat();
 	String nameOrPortEmpty();
+	String endpointTypeLabel();
+	String restEndpointType();
+	String wsEndpointType();
+	String webappEndpointType();
+	String endpointNamePlaceholder();
+	String endpointName();
+	String endpointInvocationPath();
+	String endpointInvocationPathPlaceholder();
+	String endpointTargetPort();
+	String endpointDescription();
+	String endpointDescriptionPlaceholder();
+	String endpointDescriptor();
+	String endpointDescriptorPlaceholder();
+	String addEndpointButtonLabel();
 }

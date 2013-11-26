@@ -10,6 +10,7 @@ public interface IExternalInterfacesView extends IsWidget {
 		void onTransportProtocolChanged();
 		void onRemoveMapping(String mappingId);
 		void onAddExternalInterface();
+		void onAddEndpoint();
 	}
 
 	void showModal(boolean show);
@@ -30,4 +31,10 @@ public interface IExternalInterfacesView extends IsWidget {
 	void displayNameOrPortEmptyMessage();
 	void displayWrongPortFormatMessages();
 	void clearErrorMessages();
+	HasText getEndpointName();
+	HasText getInvocationPath();
+	HasValue<String> getEndpointType();
+	HasValue<String> getTargetPort();
+	HasText getEndpointDescription();
+	HasText getEndpointDescriptor();
 }

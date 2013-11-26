@@ -8,10 +8,12 @@ import java.util.Map;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
@@ -66,6 +68,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 						@Override
 						public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
 							view.showExternalInterfacesLoadingIndicator(false);
+							view.showEndpointsLoadingIndicator(false);
 
 							for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 								if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(portMappingTemplate.getApplicationProtocol())) {
@@ -105,6 +108,15 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 											}
 										}});
 								}
+								
+								cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
+									@Override
+									public void processEndpoints(List<Endpoint> endpoints) {
+										for (Endpoint endpoint : endpoints) {
+											//TODO
+										}
+									}
+								});
 							}
 						}});
 					}
@@ -171,5 +183,15 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 				});
 			}
 		}
+	}
+
+	@Override
+	public void onAddEndpoint() {
+		String name = view.getEndpointName().getText().trim();
+		String invocationPath = view.getInvocationPath().getText().trim();
+		String endpointType = view.getEndpointType().getValue();
+		String portMappingTemplateId = view.getTargetPort().getValue();
+		String description = view.getEndpointDescription().getText().trim();
+		String descriptor = view.getEndpointDescriptor().getText().trim();
 	}
 }

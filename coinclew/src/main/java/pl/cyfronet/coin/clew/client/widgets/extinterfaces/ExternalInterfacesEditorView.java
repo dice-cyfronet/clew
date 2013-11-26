@@ -7,10 +7,12 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
+import com.google.gwt.aria.client.TextboxRole;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -62,6 +64,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField TextBox externalInterfacePort;
 	@UiField Label errorLabel;
 	@UiField Styles style;
+	@UiField TextBox endpointName;
+	@UiField TextBox endpointInvocationPath;
+	@UiField ListBox endpointType;
+	@UiField ListBox endpointTargetPort;
+	@UiField TextArea endpointDescription;
+	@UiField TextArea endpointDescriptor;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -80,6 +88,11 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiHandler("addExternalInterface")
 	void addExternalInterfaceClicked(ClickEvent event) {
 		getPresenter().onAddExternalInterface();
+	}
+	
+	@UiHandler("addEndpoint")
+	void addEndpointClicked(ClickEvent event) {
+		getPresenter().onAddEndpoint();
 	}
 	
 	@Override
@@ -336,5 +349,83 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@Override
 	public void clearErrorMessages() {
 		errorLabel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+	}
+
+	@Override
+	public HasText getEndpointName() {
+		return endpointName;
+	}
+
+	@Override
+	public HasText getInvocationPath() {
+		return endpointInvocationPath;
+	}
+
+	@Override
+	public HasValue<String> getEndpointType() {
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(
+					ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return endpointType.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				endpointType.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+			}
+		};
+	}
+
+	@Override
+	public HasValue<String> getTargetPort() {
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(
+					ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return endpointTargetPort.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				endpointTargetPort.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+			}
+		};
+	}
+
+	@Override
+	public HasText getEndpointDescription() {
+		return endpointDescription;
+	}
+
+	@Override
+	public HasText getEndpointDescriptor() {
+		return endpointDescriptor;
 	}
 }

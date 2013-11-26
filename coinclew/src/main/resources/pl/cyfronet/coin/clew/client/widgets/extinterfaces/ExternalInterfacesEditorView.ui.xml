@@ -28,6 +28,9 @@
 			width: 20%;
 			text-align: right;
 		}
+		.noresize {
+			resize: none;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal"  title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
 		<b:TabPanel>
@@ -55,6 +58,25 @@
 			</b:Tab>
 			<b:Tab heading="{messages.endpointsTabLabel}">
 				<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
+				<b:Form>
+					<b:ControlLabel><ui:text from="{messages.endpointName}"/></b:ControlLabel>
+					<b:TextBox ui:field="endpointName" placeholder="{messages.endpointNamePlaceholder}" addStyleNames="input-block-level"/>
+					<b:ControlLabel><ui:text from="{messages.endpointTypeLabel}"/></b:ControlLabel>
+					<b:ListBox ui:field="endpointType" addStyleNames="input-block-level">
+						<g:item value="webapp"><ui:text from="{messages.webappEndpointType}"/></g:item>
+						<g:item value="rest"><ui:text from="{messages.restEndpointType}"/></g:item>
+						<g:item value="ws"><ui:text from="{messages.wsEndpointType}"/></g:item>
+					</b:ListBox>
+					<b:ControlLabel><ui:text from="{messages.endpointInvocationPath}"/></b:ControlLabel>
+					<b:TextBox ui:field="endpointInvocationPath" placeholder="{messages.endpointInvocationPathPlaceholder}" addStyleNames="input-block-level"/>
+					<b:ControlLabel><ui:text from="{messages.endpointTargetPort}"/></b:ControlLabel>
+					<b:ListBox ui:field="endpointTargetPort" addStyleNames="input-block-level"/>
+					<b:ControlLabel><ui:text from="{messages.endpointDescription}"/></b:ControlLabel>
+					<b:TextArea ui:field="endpointDescription" placeholder="{messages.endpointDescriptionPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+					<b:ControlLabel><ui:text from="{messages.endpointDescriptor}"/></b:ControlLabel>
+					<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+					<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
+				</b:Form>
 			</b:Tab>
 		</b:TabPanel>
 		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.invisible}"/>
