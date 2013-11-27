@@ -1,0 +1,54 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorMessages" field="messages"/>
+	<ui:style>
+	</ui:style>
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
+		<b:Form>
+			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
+			<b:TextBox ui:field="name" placeholder="{messages.namePlaceholder}" addStyleNames="input-block-level"/>
+			<b:ControlLabel><ui:text from="{messages.descriptionLabel}"/></b:ControlLabel>
+			<b:TextArea ui:field="description" placeholder="{messages.descriptionPlaceholder}" addStyleNames="input-block-level"/>
+			<b:CheckBox ui:field="shared"><ui:text from="{messages.sharedLabel}"/></b:CheckBox>
+			<b:CheckBox ui:field="scalable"><ui:text from="{messages.scalableLabel}"/></b:CheckBox>
+			<b:ControlLabel><ui:text from="{messages.visibleForLabel}"/></b:ControlLabel>
+			<b:ListBox ui:field="visibleFor" addStyleNames="input-block-level">
+				<g:item value="all"><ui:text from="{messages.visibilityAll}"/></g:item>
+				<g:item value="owner"><ui:text from="{messages.visibilityOwner}"/></g:item>
+				<g:item value="developer"><ui:text from="{messages.visibilityDeveloper}"/></g:item>
+			</b:ListBox>
+			<b:ControlLabel><ui:text from="{messages.coresLabel}"/></b:ControlLabel>
+			<b:ListBox ui:field="cores" addStyleNames="input-block-level">
+				<g:item value="0"><ui:text from="{messages.defaultValueLabel}"/></g:item>
+				<g:item value="1">1</g:item>
+				<g:item value="2">2</g:item>
+				<g:item value="4">4</g:item>
+				<g:item value="8">8</g:item>
+			</b:ListBox>
+			<b:ControlLabel><ui:text from="{messages.ramLabel}"/></b:ControlLabel>
+			<b:ListBox ui:field="ram" addStyleNames="input-block-level">
+				<g:item value="0"><ui:text from="{messages.defaultValueLabel}"/></g:item>
+				<g:item value="1">1</g:item>
+				<g:item value="2">2</g:item>
+				<g:item value="4">4</g:item>
+				<g:item value="8">8</g:item>
+				<g:item value="16">16</g:item>
+			</b:ListBox>
+			<b:ControlLabel><ui:text from="{messages.diskLabel}"/></b:ControlLabel>
+			<b:ListBox ui:field="disk" addStyleNames="input-block-level">
+				<g:item value="0"><ui:text from="{messages.defaultValueLabel}"/></g:item>
+				<g:item value="1">1</g:item>
+				<g:item value="5">5</g:item>
+				<g:item value="10">10</g:item>
+				<g:item value="20">20</g:item>
+				<g:item value="25">25</g:item>
+			</b:ListBox>
+			<b:Button ui:field="update" icon="REFRESH" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+		</b:Form>
+		<b:ModalFooter>
+			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+</ui:UiBinder>

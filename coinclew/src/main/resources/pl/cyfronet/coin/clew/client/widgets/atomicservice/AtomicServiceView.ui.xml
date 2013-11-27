@@ -23,7 +23,10 @@
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI" title="{messages.editInitialConfigsTooltip}"/>
+			<b:ButtonGroup>
+				<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI" title="{messages.editInitialConfigsTooltip}"/>
+				<b:Button ui:field="editProperties" icon="LIST_UL" size="MINI" title="{messages.editPropertiesTooltip}"/>
+			</b:ButtonGroup>
 		</g:FlowPanel>
 	</g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

@@ -20,4 +20,9 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 		this.applianceType = applianceType;
 		view.getName().setText(applianceType.getName());
 	}
+
+	@Override
+	public void onEditProperties() {
+		eventBus.showAtomicServiceEditor(applianceType.getId());
+	}
 }

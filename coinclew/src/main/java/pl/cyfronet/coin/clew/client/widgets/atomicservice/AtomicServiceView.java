@@ -28,6 +28,11 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	void editInitialConfigsClicked(ClickEvent event) {
 		getPresenter().onEditInitialConfigs();
 	}
+	
+	@UiHandler("editProperties")
+	void editPropertiesClicked(ClickEvent event) {
+		getPresenter().onEditProperties();
+	}
 
 	@Override
 	public void setPresenter(IAtomicServicePresenter presenter) {

@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IAtomicServiceView extends IsWidget {
 	interface IAtomicServicePresenter {
 		void onEditInitialConfigs();
+		void onEditProperties();
 	}
 
 	HasText getName();
