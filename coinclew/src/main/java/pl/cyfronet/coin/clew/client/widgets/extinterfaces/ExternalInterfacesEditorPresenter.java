@@ -8,6 +8,7 @@ import java.util.Map;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
@@ -31,11 +32,14 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 	private String applianceInstanceId;
 	private Map<String, IsWidget> mappings;
 	private String developmentModePropertySetId;
+	private Map<String, IsWidget> endpoints;
+	private boolean endpointsExist;
 
 	@Inject
 	public ExternalInterfacesEditorPresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
 		mappings = new HashMap<String, IsWidget>();
+		endpoints = new HashMap<String, IsWidget>();
 	}
 	
 	public void onStart() {
@@ -55,6 +59,9 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		view.getEndpointsContainer().clear();
 		view.showNoEndpointsLabel(false);
 		view.showEndpointsLoadingIndicator(true);
+		endpointsExist = false;
+		view.clearEndpointTargetPorts();
+		view.showEndpointTargetPortHelpBlock(true);
 		cloudFacadeController.getDevelopmentModePropertySet(applianceInstanceId, new DevelopmentModePropertySetCallback() {
 			@Override
 			public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
@@ -73,9 +80,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 								if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(portMappingTemplate.getApplicationProtocol())) {
 									//http mapping
+									view.addHttpMappingEndpointOption(portMappingTemplate.getId(), portMappingTemplate.getServiceName(), portMappingTemplate.getTargetPort());
+									view.showEndpointTargetPortHelpBlock(false);
 									cloudFacadeController.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new HttpMappingsCallback() {
 										@Override
-										public void processHttpMappings(List<HttpMapping> httpMappings) {
+										public void processHttpMappings(final List<HttpMapping> httpMappings) {
 											String httpUrl = null;
 											String httpsUrl = null;
 											
@@ -91,6 +100,37 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 													portMappingTemplate.getTargetPort(), portMappingTemplate.getTransportProtocol(),
 													httpUrl, httpsUrl, null, null);
 											mappings.put(portMappingTemplate.getId(), widget);
+											
+											//for http mappings there could be endpoints defined
+											cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
+												@Override
+												public void processEndpoints(List<Endpoint> endpoints) {
+													if (endpoints.size() == 0) {
+														if (!endpointsExist) {
+															view.showNoEndpointsLabel(true);
+														}
+													} else {
+														view.showNoEndpointsLabel(false);
+														endpointsExist = true;
+														
+														for (Endpoint endpoint : endpoints) {
+															String httpUrl = null;
+															String httpsUrl = null;
+															
+															for (HttpMapping httpMapping : httpMappings) {
+																if (httpMapping.getApplicationProtocol().equals("http")) {
+																	httpUrl = httpMapping.getUrl();
+																} else if (httpMapping.getApplicationProtocol().equals("https")) {
+																	httpsUrl = httpMapping.getUrl();
+																}
+															}
+															
+															IsWidget widget = view.addEndpoint(endpoint.getId(), endpoint.getName(), httpUrl, httpsUrl);
+															ExternalInterfacesEditorPresenter.this.endpoints.put(endpoint.getId(), widget);
+														}
+													}
+												}
+											});
 										}
 									});
 								} else {
@@ -108,15 +148,6 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 											}
 										}});
 								}
-								
-								cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
-									@Override
-									public void processEndpoints(List<Endpoint> endpoints) {
-										for (Endpoint endpoint : endpoints) {
-											//TODO
-										}
-									}
-								});
 							}
 						}});
 					}
@@ -190,8 +221,65 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		String name = view.getEndpointName().getText().trim();
 		String invocationPath = view.getInvocationPath().getText().trim();
 		String endpointType = view.getEndpointType().getValue();
-		String portMappingTemplateId = view.getTargetPort().getValue();
+		final String portMappingTemplateId = view.getTargetPort().getValue();
 		String description = view.getEndpointDescription().getText().trim();
 		String descriptor = view.getEndpointDescriptor().getText().trim();
+		
+		if (name.isEmpty() || invocationPath.isEmpty() || portMappingTemplateId.isEmpty()) {
+			view.displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage();
+		} else {
+			cloudFacadeController.addEndpoint(name, invocationPath, endpointType, portMappingTemplateId, description, descriptor, new EndpointCallback() {
+				@Override
+				public void processEndpoint(final Endpoint endpoint) {
+					view.showNoEndpointsLabel(false);
+					cloudFacadeController.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new HttpMappingsCallback() {
+						@Override
+						public void processHttpMappings(List<HttpMapping> httpMappings) {
+							String httpUrl = null;
+							String httpsUrl = null;
+							
+							for (HttpMapping httpMapping : httpMappings) {
+								if (httpMapping.getApplicationProtocol().equals("http")) {
+									httpUrl = addUrlPath(httpMapping.getUrl(), endpoint.getInvocationPath());
+								} else if (httpMapping.getApplicationProtocol().equals("https")) {
+									httpsUrl = addUrlPath(httpMapping.getUrl(), endpoint.getInvocationPath());
+								}
+							}
+							
+							IsWidget widget = view.addEndpoint(endpoint.getId(), endpoint.getName(), httpUrl, httpsUrl);
+							endpoints.put(endpoint.getId(), widget);
+						}
+					});
+				}});
+		}
+	}
+
+	@Override
+	public void onRemoveEndpoint(final String endpointId) {
+		cloudFacadeController.removeEndpoint(endpointId, new Command() {
+			@Override
+			public void execute() {
+				view.removeEndpoint(endpoints.get(endpointId));
+				
+				if (endpoints.size() == 0) {
+					view.showNoEndpointsLabel(true);
+				}
+			}
+		});
+	}
+	
+	private String addUrlPath(String url, String path) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(url);
+		
+		if (!url.endsWith("/") && !path.startsWith("/")) {
+			builder.append("/");
+		} else if (url.endsWith("/") && path.startsWith("/")) {
+			url = url.substring(0, url.length() - 1);
+		}
+		
+		builder.append(path);
+		
+		return builder.toString();
 	}
 }

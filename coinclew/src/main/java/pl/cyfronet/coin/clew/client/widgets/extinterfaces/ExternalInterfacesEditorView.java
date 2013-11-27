@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.IExternalInterfacesView.IExternalInterfacesPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.HelpBlock;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
@@ -70,6 +71,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField ListBox endpointTargetPort;
 	@UiField TextArea endpointDescription;
 	@UiField TextArea endpointDescriptor;
+	@UiField HelpBlock endpointTargetPortHelpBlock;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -427,5 +429,79 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@Override
 	public HasText getEndpointDescriptor() {
 		return endpointDescriptor;
+	}
+
+	@Override
+	public IsWidget addEndpoint(final String endpointId, String endpointName, String httpUrl, String httpsUrl) {
+		FlowPanel panel = new FlowPanel();
+		panel.addStyleName(style.mapping());
+		
+		HTML name = new HTML(endpointName);
+		name.addStyleName(style.name());
+		panel.add(name);
+
+		FlowPanel links = new FlowPanel();
+		links.addStyleName(style.links());
+		
+		if (httpUrl != null) {
+			Anchor httpAnchor = new Anchor("http", true, httpUrl);
+			links.add(httpAnchor);
+		}
+		
+		if (httpsUrl != null) {
+			if (links.getWidgetCount() > 0) {
+				links.add(new InlineHTML(",&nbsp;"));
+			}
+			
+			Anchor httpsAnchor = new Anchor("https", true, httpsUrl);
+			links.add(httpsAnchor);
+		}
+		
+		panel.add(links);
+		
+		Button removeButton = new Button();
+		removeButton.setIcon(IconType.REMOVE);
+		removeButton.setSize(ButtonSize.MINI);
+		removeButton.setType(ButtonType.DANGER);
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().onRemoveEndpoint(endpointId);
+			}
+		});
+		
+		FlowPanel actions = new FlowPanel();
+		actions.addStyleName(style.actions());
+		actions.add(removeButton);
+		panel.add(actions);
+		endpointContainer.add(panel);
+		
+		return panel;
+	}
+
+	@Override
+	public void removeEndpoint(IsWidget widget) {
+		endpointContainer.remove(widget);
+	}
+
+	@Override
+	public void addHttpMappingEndpointOption(String portMappintTemplateid, String serviceName, int targetPort) {
+		endpointTargetPort.addItem(serviceName + "(" + targetPort + ")", portMappintTemplateid);
+	}
+
+	@Override
+	public void showEndpointTargetPortHelpBlock(boolean show) {
+		endpointTargetPortHelpBlock.setVisible(show);
+	}
+
+	@Override
+	public void clearEndpointTargetPorts() {
+		endpointTargetPort.clear();
+	}
+
+	@Override
+	public void displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage() {
+		errorLabel.setText(messages.endpointNameInvocationPathOrPortMappingIdEmptyMessage());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 }

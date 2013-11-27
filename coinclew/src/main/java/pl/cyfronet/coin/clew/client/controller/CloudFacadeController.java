@@ -10,9 +10,6 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -46,8 +43,11 @@ import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.Development
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySetService;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySetsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointService;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointsResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.NewEndpoint;
+import pl.cyfronet.coin.clew.client.controller.cf.endpoint.NewEndpointRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingService;
@@ -142,6 +142,10 @@ public class CloudFacadeController {
 	
 	public interface PortMappingsCallback {
 		void processPortMappings(List<PortMapping> portMappings);
+	}
+	
+	public interface EndpointCallback {
+		void processEndpoint(Endpoint endpoint);
 	}
 	
 	private ApplianceTypeService applianceTypesService;
@@ -1042,6 +1046,49 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, HttpMappingResponse response) {
 				if (httpMappingsCallback != null) {
 					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+				}
+			}
+		});
+	}
+
+	public void removeEndpoint(String endpointId, final Command command) {
+		endpointService.deleteEndpoint(endpointId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (command != null) {
+					command.execute();
+				}
+			}
+		});
+	}
+
+	public void addEndpoint(String name, String invocationPath, String endpointType, String portMappingTemplateId,
+			String description, String descriptor, final EndpointCallback endpointCallback) {
+		NewEndpoint endpoint = new NewEndpoint();
+		endpoint.setName(name);
+		endpoint.setDescription(description);
+		endpoint.setDescriptor(descriptor);
+		endpoint.setEndpointType(endpointType);
+		endpoint.setInvocationPath(invocationPath);
+		endpoint.setPortMappingTemplateId(portMappingTemplateId);
+		
+		NewEndpointRequest request = new NewEndpointRequest();
+		request.setEndpoint(endpoint);
+		endpointService.addEndpoint(request, new MethodCallback<EndpointRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, EndpointRequestResponse response) {
+				if (endpointCallback != null) {
+					endpointCallback.processEndpoint(response.getEndpoint());
 				}
 			}
 		});

@@ -11,6 +11,7 @@ public interface IExternalInterfacesView extends IsWidget {
 		void onRemoveMapping(String mappingId);
 		void onAddExternalInterface();
 		void onAddEndpoint();
+		void onRemoveEndpoint(String endpointId);
 	}
 
 	void showModal(boolean show);
@@ -37,4 +38,10 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasValue<String> getTargetPort();
 	HasText getEndpointDescription();
 	HasText getEndpointDescriptor();
+	IsWidget addEndpoint(String endpointId, String name, String httpUrl, String httpsUrl);
+	void removeEndpoint(IsWidget isWidget);
+	void addHttpMappingEndpointOption(String id, String serviceName, int targetPort);
+	void showEndpointTargetPortHelpBlock(boolean show);
+	void clearEndpointTargetPorts();
+	void displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage();
 }

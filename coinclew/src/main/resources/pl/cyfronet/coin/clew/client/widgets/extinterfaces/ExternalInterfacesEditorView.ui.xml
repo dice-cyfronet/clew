@@ -17,6 +17,7 @@
 		.name {
 			float: left;
 			width: 20%;
+			font-weight: bold;
 		}
 		.links {
 			float: left;
@@ -71,6 +72,7 @@
 					<b:TextBox ui:field="endpointInvocationPath" placeholder="{messages.endpointInvocationPathPlaceholder}" addStyleNames="input-block-level"/>
 					<b:ControlLabel><ui:text from="{messages.endpointTargetPort}"/></b:ControlLabel>
 					<b:ListBox ui:field="endpointTargetPort" addStyleNames="input-block-level"/>
+					<b:HelpBlock ui:field="endpointTargetPortHelpBlock"><ui:text from="{messages.endpointTargetPortHelp}"/></b:HelpBlock>
 					<b:ControlLabel><ui:text from="{messages.endpointDescription}"/></b:ControlLabel>
 					<b:TextArea ui:field="endpointDescription" placeholder="{messages.endpointDescriptionPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
 					<b:ControlLabel><ui:text from="{messages.endpointDescriptor}"/></b:ControlLabel>
