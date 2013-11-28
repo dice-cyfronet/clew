@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -40,6 +41,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Button shutdown;
 	private Button externalInterfaces;
 	private Button saveButton;
+	private Label noAccessInfoLabel;
 	
 	@UiField HTML name;
 	@UiField HTML spec;
@@ -52,6 +54,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField FlowPanel webApplicationsContainer;
 	@UiField FlowPanel serviceContainer;
 	@UiField Styles style;
+	@UiField HTML accessInfoLabel;
+	@UiField FlowPanel accessInfoContainer;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -255,5 +259,41 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			});
 			controls.insert(saveButton, 0);
 		}
+	}
+
+	@Override
+	public void showNoAccessInfoLabel(boolean show) {
+		if (show) {
+			if (noAccessInfoLabel == null) {
+				noAccessInfoLabel = new Label(messages.noAccessInfos());
+				accessInfoContainer.add(noAccessInfoLabel);
+			}
+		} else {
+			if (noAccessInfoLabel != null) {
+				accessInfoContainer.remove(noAccessInfoLabel);
+				noAccessInfoLabel = null;
+			}
+		}
+	}
+
+	@Override
+	public void showAccessInfoSection() {
+		accessInfoLabel.setVisible(true);
+		accessInfoContainer.setVisible(true);
+	}
+
+	@Override
+	public void addAccessInfo(String serviceName, String publicIp, String port) {
+		FlowPanel panel = new FlowPanel();
+		panel.addStyleName(style.service());
+		
+		InlineHTML nameWidget = new InlineHTML(serviceName + ":&nbsp;");
+		panel.addStyleName(style.name());
+		panel.add(nameWidget);
+		
+		InlineHTML info = new InlineHTML(publicIp + ":" + port);
+		panel.add(info);
+		
+		accessInfoContainer.add(panel);
 	}
 }

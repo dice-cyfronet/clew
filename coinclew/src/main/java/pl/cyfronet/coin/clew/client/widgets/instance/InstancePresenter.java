@@ -12,16 +12,19 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSite
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
+import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -59,6 +62,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				if (developmentMode) {
 					view.addExternalInterfacesControl();
 					view.addSaveControl();
+					view.showAccessInfoSection();
+					view.showNoAccessInfoLabel(true);
 				}
 				
 				if (!detailsRendered) {
@@ -70,7 +75,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 								view.addNoWebApplicationsLabel();
 								view.addNoServicesLabel();
 							} else {
-								for (PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+								for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 									if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(
 											portMappingTemplate.getApplicationProtocol())) {
 										cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
@@ -125,6 +130,25 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 									} else {
 										view.addNoWebApplicationsLabel();
 										view.addNoServicesLabel();
+									}
+									
+									if (developmentMode) {
+										Window.alert("dev");
+										
+										if (portMappingTemplate.getTransportProtocol().equals("tcp") &&
+												portMappingTemplate.getApplicationProtocol().equals("none")) {
+											cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+												@Override
+												public void processPortMappings(List<PortMapping> portMappings) {
+													if (portMappings.size() > 0) {
+														view.showNoAccessInfoLabel(false);
+														
+														for (PortMapping portMapping : portMappings) {
+															view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+														}
+													}
+												}});
+										}
 									}
 								}
 							}

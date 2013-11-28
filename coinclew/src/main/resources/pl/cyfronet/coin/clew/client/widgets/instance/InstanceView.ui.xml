@@ -66,6 +66,8 @@
 		</b:Row>
 		<b:Collapse ui:field="collapse" defaultOpen="false">
 			<g:FlowPanel addStyleNames="{style.details}">
+				<g:HTML ui:field="accessInfoLabel" addStyleNames="{style.details-header}" visible="false"><ui:text from="{messages.accessInfoLabel}"/></g:HTML>
+				<g:FlowPanel ui:field="accessInfoContainer" visible="false"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.webApplicationsLabel}"/></g:HTML>
 				<g:FlowPanel ui:field="webApplicationsContainer"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.restApplicationsLabel}"/></g:HTML>
