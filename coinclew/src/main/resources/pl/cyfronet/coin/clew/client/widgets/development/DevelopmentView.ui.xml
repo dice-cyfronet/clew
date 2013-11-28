@@ -8,6 +8,8 @@
 			font-size: 1.4em;
 			padding-bottom: 10px;
 			padding-top: 30px;
+			float: left;
+			width: 100%;
 		}
 		.actions {
 			margin-top: 30px;
@@ -17,6 +19,8 @@
 		}
 		.container {
 			text-align: center;
+			float: left;
+			width: 100%;
 		}
 		.header {
 			font-weight: bold;

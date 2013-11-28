@@ -18,14 +18,15 @@
 		.container {
 			float: left;
 			width: 100%;
+			margin-top: 10px;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup>
-				<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI" title="{messages.editInitialConfigsTooltip}"/>
-				<b:Button ui:field="editProperties" icon="LIST_UL" size="MINI" title="{messages.editPropertiesTooltip}"/>
+				<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>
+				<b:Button ui:field="editProperties" icon="LIST_UL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
 	</g:HTMLPanel>
