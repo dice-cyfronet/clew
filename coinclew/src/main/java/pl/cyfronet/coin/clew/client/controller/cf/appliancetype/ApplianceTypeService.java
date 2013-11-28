@@ -25,7 +25,7 @@ public interface ApplianceTypeService extends RestService {
 	
 	@POST
 	@Path("appliance_types")
-	void addApplianceType(NewApplianceTypeRequest newApplianceType, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
+	void addApplianceType(SaveApplianceTypeRequest saveRequest, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
 	
 	@PUT
 	@Path("appliance_types/{id}")

@@ -11,6 +11,7 @@ import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ErrorCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -34,6 +35,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.SaveApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.SaveApplianceTypeRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmsResponse;
@@ -1120,6 +1123,41 @@ public class CloudFacadeController {
 			public void onFailure(Method method, Throwable exception) {
 				if (errorCallback != null) {
 					errorCallback.onError(CloudFacadeErrorCodes.ApplianceTypeUpdateError);
+				}
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceTypeRequestResponse response) {
+				if (applianceTypeCallback != null) {
+					applianceTypeCallback.processApplianceType(response.getApplianceType());
+				}
+			}
+		});
+	}
+
+	public void saveApplianceType(String applianceId, String name,
+			String description, boolean shared, boolean scalable,
+			String visibleFor, String cores, String ram, String disk,
+			final ApplianceTypeCallback applianceTypeCallback,
+			final ErrorCallback errorCallback) {
+		SaveApplianceType applianceType = new SaveApplianceType();
+		applianceType.setApplianceId(applianceId);
+		applianceType.setDescription(description);
+		applianceType.setShared(shared);
+		applianceType.setScalable(scalable);
+		applianceType.setVisibleFor(visibleFor);
+		applianceType.setPreferenceCpu(cores);
+		applianceType.setPreferenceMemory(ram);
+		applianceType.setPreferenceDisk(disk);
+		
+		SaveApplianceTypeRequest request = new SaveApplianceTypeRequest();
+		request.setApplianceType(applianceType);
+		
+		applianceTypesService.addApplianceType(request, new MethodCallback<ApplianceTypeRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				if (errorCallback != null) {
+					errorCallback.onError(CloudFacadeErrorCodes.ApplianceTypeSaveError);
 				}
 			}
 

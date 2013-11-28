@@ -13,4 +13,5 @@ public interface InstanceMessages extends Messages {
 	String detailsTooltip();
 	String shutdownTooltip();
 	String externalInterfacesTooltip();
+	String saveTooltip();
 }

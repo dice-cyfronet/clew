@@ -99,7 +99,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	void showExternalInterfacesEditor(String applianceInstanceId);
 
 	@Event(handlers = ApplianceTypeEditorPresenter.class)
-	void showAtomicServiceEditor(String applianceTypeId);
+	void showAtomicServiceEditor(String applianceTypeId, boolean saveMode);
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void updateApplianceTypeView(ApplianceType applianceType);

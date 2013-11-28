@@ -42,6 +42,7 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiField Label errorLabel;
 	@UiField ApplianceTypeEditorMessages messages;
 	@UiField Button update;
+	@UiField Button save;
 
 	public ApplianceTypeEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -50,6 +51,11 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiHandler("close")
 	void closeClicked(ClickEvent event) {
 		modal.hide();
+	}
+	
+	@UiHandler("save")
+	void saveClicked(ClickEvent event) {
+		getPresenter().onSave();
 	}
 	
 	@UiHandler("update")
@@ -284,6 +290,31 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@Override
 	public void displayGeneralError() {
 		errorLabel.setText(messages.updateErrorMessage());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public void showUpdateControl(boolean show) {
+		update.setVisible(show);
+	}
+
+	@Override
+	public void showSaveControl(boolean show) {
+		save.setVisible(show);
+	}
+
+	@Override
+	public void setSaveBusyState(boolean busy) {
+		if (busy) {
+			save.state().loading();
+		} else {
+			save.state().reset();
+		}
+	}
+
+	@Override
+	public void displayGeneralSaveError() {
+		errorLabel.setText(messages.saveErrorMessage());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 }

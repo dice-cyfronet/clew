@@ -48,7 +48,8 @@
 				<g:item value="20">20</g:item>
 				<g:item value="25">25</g:item>
 			</b:ListBox>
-			<b:Button ui:field="update" icon="REFRESH" type="WARNING" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
 		</b:Form>
 		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.invisible}"/>
 		<b:ModalFooter>

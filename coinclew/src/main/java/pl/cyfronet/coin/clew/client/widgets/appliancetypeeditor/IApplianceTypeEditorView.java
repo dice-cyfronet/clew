@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IApplianceTypeEditorView extends IsWidget {
 	interface IApplianceTypeEditorPresenter {
 		void onUpdate();
+		void onSave();
 	}
 
 	void showModal(boolean show);
@@ -22,4 +23,8 @@ public interface IApplianceTypeEditorView extends IsWidget {
 	void clearErrorMessages();
 	void setUpdateBusyState(boolean busy);
 	void displayGeneralError();
+	void showUpdateControl(boolean show);
+	void showSaveControl(boolean show);
+	void setSaveBusyState(boolean busy);
+	void displayGeneralSaveError();
 }

@@ -127,8 +127,12 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	public void onUpdateApplianceTypeView(ApplianceType applianceType) {
 		AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
 		
-		if (presenter != null) {
-			presenter.setApplianceType(applianceType);
+		if (presenter == null) {
+			presenter = eventBus.addHandler(AtomicServicePresenter.class);
+			atomicServicePresenters.put(applianceType.getId(), presenter);
+			view.getAtomicServicesContainer().add(presenter.getView().asWidget());
 		}
+		
+		presenter.setApplianceType(applianceType);
 	}
 }

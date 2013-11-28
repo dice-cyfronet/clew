@@ -16,6 +16,8 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEditorView, MainEventBus> implements IApplianceTypeEditorPresenter {
 	private CloudFacadeController cloudFacadeController;
 	private String applianceTypeId;
+	private String applianceId;
+	private boolean saveMode;
 
 	@Inject
 	public ApplianceTypeEditorPresenter(CloudFacadeController cloudFacadeController) {
@@ -26,10 +28,43 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		eventBus.addPopup(view);
 	}
 	
-	public void onShowAtomicServiceEditor(String applianceTypeId) {
-		this.applianceTypeId = applianceTypeId;
+	public void onShowAtomicServiceEditor(String applianceTypeOrInstanceId, boolean saveMode) {
+		if (saveMode) {
+			applianceId = applianceTypeOrInstanceId;
+		} else {
+			applianceTypeId = applianceTypeOrInstanceId;
+		}
+		
+		this.saveMode = saveMode;
 		view.showModal(true);
-		loadProperties();
+		applyMode();
+		
+		if (saveMode) {
+			clearControls();
+		} else {
+			loadProperties();
+		}
+	}
+
+	private void clearControls() {
+		view.getName().setText("");
+		view.getDescription().setText("");
+		view.getShared().setValue(false);
+		view.getScalable().setValue(false);
+		view.getVisibleFor().setValue("all");
+		view.getCores().setValue("0");
+		view.getRam().setValue("0");
+		view.getDisk().setValue("0");
+	}
+
+	private void applyMode() {
+		if (saveMode) {
+			view.showSaveControl(true);
+			view.showUpdateControl(false);
+		} else {
+			view.showSaveControl(false);
+			view.showUpdateControl(true);
+		}
 	}
 
 	private void loadProperties() {
@@ -78,6 +113,39 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 						public void onError(CloudFacadeErrorCodes errorCodes) {
 							view.setUpdateBusyState(false);
 							view.displayGeneralError();
+						}});
+		}
+	}
+
+	@Override
+	public void onSave() {
+		String name = view.getName().getText().trim();
+		String description = view.getDescription().getText().trim();
+		boolean shared = view.getShared().getValue();
+		boolean scalable = view.getScalable().getValue();
+		String visibleFor = view.getVisibleFor().getValue();
+		String cores = view.getCores().getValue();
+		String ram = view.getRam().getValue();
+		String disk = view.getDisk().getValue();
+		view.clearErrorMessages();
+		
+		if (name.isEmpty()) {
+			view.displayNameEmptyMessage();
+		} else {
+			view.setSaveBusyState(true);
+			cloudFacadeController.saveApplianceType(applianceId, name, description, shared, scalable,
+					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
+						@Override
+						public void processApplianceType(ApplianceType applianceType) {
+							view.setSaveBusyState(false);
+							view.showModal(false);
+							eventBus.updateApplianceTypeView(applianceType);
+						}
+					}, new ErrorCallback() {
+						@Override
+						public void onError(CloudFacadeErrorCodes errorCodes) {
+							view.setSaveBusyState(false);
+							view.displayGeneralSaveError();
 						}});
 		}
 	}

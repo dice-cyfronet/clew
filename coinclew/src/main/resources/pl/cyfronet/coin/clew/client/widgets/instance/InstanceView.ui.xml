@@ -60,7 +60,7 @@
 			</b:Column>
 			<b:Column size="1" addStyleNames="{style.right}">
 				<b:ButtonGroup ui:field="controls">
-					<b:Button ui:field="showDetails" icon="REORDER" type="WARNING" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>
+					<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>
 				</b:ButtonGroup>
 			</b:Column>
 		</b:Row>

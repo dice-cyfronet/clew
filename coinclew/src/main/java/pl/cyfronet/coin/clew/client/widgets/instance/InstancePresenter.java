@@ -22,7 +22,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappin
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -38,7 +37,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		this.cloudFacadeController = cloudFacadeController;
 	}
 	
-	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean enableExternalInterfaces) {
+	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
 		if (applianceInstanceId != null) {
 			//we are updating
 			updateView(applianceInstance);
@@ -57,8 +56,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.addShutdownControl();
 				}
 				
-				if (enableExternalInterfaces) {
+				if (developmentMode) {
 					view.addExternalInterfacesControl();
+					view.addSaveControl();
 				}
 				
 				if (!detailsRendered) {
@@ -193,5 +193,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	@Override
 	public void onExternalInterfacesClicked() {
 		eventBus.showExternalInterfacesEditor(applianceInstanceId);
+	}
+
+	@Override
+	public void onSave() {
+		eventBus.showAtomicServiceEditor(applianceInstanceId, true);
 	}
 }

@@ -7,6 +7,7 @@ public interface IInstanceView extends IsWidget {
 	public interface IInstancePresenter {
 		void onShutdownClicked();
 		void onExternalInterfacesClicked();
+		void onSave();
 	}
 
 	HasText getName();
@@ -23,4 +24,5 @@ public interface IInstanceView extends IsWidget {
 	void addNoServicesLabel();
 	void addNoWebApplicationsLabel();
 	void addExternalInterfacesControl();
+	void addSaveControl();
 }

@@ -39,6 +39,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private IInstancePresenter presenter;
 	private Button shutdown;
 	private Button externalInterfaces;
+	private Button saveButton;
 	
 	@UiField HTML name;
 	@UiField HTML spec;
@@ -233,7 +234,26 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 					getPresenter().onExternalInterfacesClicked();
 				}
 			});
-			controls.insert(externalInterfaces, 1);
+			controls.insert(externalInterfaces, 0);
+		}
+	}
+
+	@Override
+	public void addSaveControl() {
+		if (saveButton == null) {
+			saveButton = new Button();
+			saveButton.setIcon(IconType.SAVE);
+			saveButton.setType(ButtonType.WARNING);
+			saveButton.setSize(ButtonSize.MINI);
+			saveButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			saveButton.setTitle(messages.saveTooltip());
+			saveButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onSave();
+				}
+			});
+			controls.insert(saveButton, 0);
 		}
 	}
 }

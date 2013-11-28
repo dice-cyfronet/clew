@@ -23,6 +23,6 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 
 	@Override
 	public void onEditProperties() {
-		eventBus.showAtomicServiceEditor(applianceType.getId());
+		eventBus.showAtomicServiceEditor(applianceType.getId(), false);
 	}
 }

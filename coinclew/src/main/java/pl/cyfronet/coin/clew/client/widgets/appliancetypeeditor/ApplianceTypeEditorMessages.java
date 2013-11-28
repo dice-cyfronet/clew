@@ -22,4 +22,6 @@ public interface ApplianceTypeEditorMessages extends Messages {
 	String updateButtonLabel();
 	String nameEmptyMessage();
 	String updateErrorMessage();
+	String saveButtonLabel();
+	String saveErrorMessage();
 }
