@@ -19,6 +19,8 @@
 			text-align: left;
 			padding-top: 10px;
 			padding-bottom: 10px;
+			float: left;
+			width: 100%;
 		}
 		.details {
 			margin-left: 50px;
@@ -34,11 +36,17 @@
 			float: left;
 			width: 100%;
 			margin-top: 5px;
+			text-align: left;
 		}
 		.name {
 			float: left;
 			margin-right: 10px;
 			font-weight: bold;
+		}
+		.container {
+			float: left;
+			width: 100%;
+			padding-left: 20px;
 		}
 	</ui:style>
 	<g:FlowPanel>
@@ -67,11 +75,11 @@
 		<b:Collapse ui:field="collapse" defaultOpen="false">
 			<g:FlowPanel addStyleNames="{style.details}">
 				<g:HTML ui:field="accessInfoLabel" addStyleNames="{style.details-header}" visible="false"><ui:text from="{messages.accessInfoLabel}"/></g:HTML>
-				<g:FlowPanel ui:field="accessInfoContainer" visible="false"/>
+				<g:FlowPanel ui:field="accessInfoContainer" addStyleNames="{style.container}" visible="false"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.webApplicationsLabel}"/></g:HTML>
-				<g:FlowPanel ui:field="webApplicationsContainer"/>
+				<g:FlowPanel ui:field="webApplicationsContainer" addStyleNames="{style.container}"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.restApplicationsLabel}"/></g:HTML>
-				<g:FlowPanel ui:field="serviceContainer"/>
+				<g:FlowPanel ui:field="serviceContainer" addStyleNames="{style.container}"/>
 			</g:FlowPanel>
 		</b:Collapse>
 	</g:FlowPanel>

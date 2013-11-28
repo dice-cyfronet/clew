@@ -21,8 +21,8 @@ public interface IInstanceView extends IsWidget {
 	void addShutdownControl();
 	void addService(String name, String httpUrl, String httpsUrl, String descriptor);
 	void addWebApplication(String name, String httpUrl, String httpsUrl);
-	void addNoServicesLabel();
-	void addNoWebApplicationsLabel();
+	void showNoServicesLabel(boolean show);
+	void showNoWebApplicationsLabel(boolean show);
 	void addExternalInterfacesControl();
 	void addSaveControl();
 	void showNoAccessInfoLabel(boolean show);

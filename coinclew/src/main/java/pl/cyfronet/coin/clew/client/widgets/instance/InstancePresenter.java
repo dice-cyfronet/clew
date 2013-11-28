@@ -9,6 +9,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVmsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
@@ -17,6 +18,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
+import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
@@ -24,7 +26,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappin
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -68,92 +69,26 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				
 				if (!detailsRendered) {
 					detailsRendered = true;
-					cloudFacadeController.getPortMappingTemplates(applianceType.getId(), new PortMappingTemplatesCallback() {
-						@Override
-						public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-							if (portMappingTemplates.size() == 0) {
-								view.addNoWebApplicationsLabel();
-								view.addNoServicesLabel();
-							} else {
-								for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
-									if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(
-											portMappingTemplate.getApplicationProtocol())) {
-										cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
-											@Override
-											public void processEndpoints(final List<Endpoint> endpoints) {
-												if (endpoints.size() == 0) {
-													view.addNoWebApplicationsLabel();
-													view.addNoServicesLabel();
-												} else {
-													cloudFacadeController.getHttpMappings(applianceInstanceId, new HttpMappingsCallback() {
-														@Override
-														public void processHttpMappings(List<HttpMapping> httpMappings) {
-															if (httpMappings.size() == 0) {
-																view.addNoWebApplicationsLabel();
-																view.addNoServicesLabel();
-															} else {
-																boolean webApplicationPresent = false;
-																boolean servicePresent = false;
-																//TODO(DH): set endpoint name when available
-																for (Endpoint endpoint : endpoints) {
-																	String httpUrl = null;
-																	String httpsUrl = null;
-																	
-																	for (HttpMapping httpMapping : httpMappings) {
-																		if (httpMapping.getApplicationProtocol().equals("http")) {
-																			httpUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
-																		} else if (httpMapping.getApplicationProtocol().equals("https")) {
-																			httpsUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
-																		}
-																	}
-																	
-																	if (endpoint.getEndpointType().equals("webapp")) {
-																		view.addWebApplication(endpoint.getName(), httpUrl, httpsUrl);
-																		webApplicationPresent = true;
-																	} else {
-																		view.addService(endpoint.getName(), httpUrl, httpsUrl, endpoint.getDescriptor());
-																		servicePresent = true;
-																	}
-																}
-																
-																if (!webApplicationPresent) {
-																	view.addNoWebApplicationsLabel();
-																}
-																
-																if (!servicePresent) {
-																	view.addNoServicesLabel();
-																}
-															}
-														}});
-												}
-											}});
-									} else {
-										view.addNoWebApplicationsLabel();
-										view.addNoServicesLabel();
+					
+					if (developmentMode) {
+						cloudFacadeController.getDevelopmentModePropertySet(applianceInstanceId, new DevelopmentModePropertySetCallback() {
+							@Override
+							public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
+								cloudFacadeController.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySet.getId(), new PortMappingTemplatesCallback() {
+									@Override
+									public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
+										processportMappingTemplates(developmentMode, portMappingTemplates);
 									}
-									
-									if (developmentMode) {
-										Window.alert("dev");
-										
-										if (portMappingTemplate.getTransportProtocol().equals("tcp") &&
-												portMappingTemplate.getApplicationProtocol().equals("none")) {
-											cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
-												@Override
-												public void processPortMappings(List<PortMapping> portMappings) {
-													if (portMappings.size() > 0) {
-														view.showNoAccessInfoLabel(false);
-														
-														for (PortMapping portMapping : portMappings) {
-															view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
-														}
-													}
-												}});
-										}
-									}
-								}
+								});
+							}});
+					} else {
+						cloudFacadeController.getPortMappingTemplates(applianceType.getId(), new PortMappingTemplatesCallback() {
+							@Override
+							public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
+								processportMappingTemplates(developmentMode, portMappingTemplates);
 							}
-						}
-					});
+						});
+					}
 				}
 			}
 		});
@@ -176,6 +111,83 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 		});
+	}
+	
+	private void processportMappingTemplates(final boolean developmentMode, List<PortMappingTemplate> portMappingTemplates) {
+		if (portMappingTemplates.size() == 0) {
+			view.showNoWebApplicationsLabel(true);
+			view.showNoServicesLabel(true);
+		} else {
+			for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+				if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(
+						portMappingTemplate.getApplicationProtocol())) {
+					cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
+						@Override
+						public void processEndpoints(final List<Endpoint> endpoints) {
+							if (endpoints.size() == 0) {
+								view.showNoWebApplicationsLabel(true);
+								view.showNoServicesLabel(true);
+							} else {
+								cloudFacadeController.getHttpMappings(applianceInstanceId, new HttpMappingsCallback() {
+									@Override
+									public void processHttpMappings(List<HttpMapping> httpMappings) {
+										if (httpMappings.size() == 0) {
+											view.showNoWebApplicationsLabel(true);
+											view.showNoServicesLabel(true);
+										} else {
+											boolean webApplicationPresent = false;
+											boolean servicePresent = false;
+											//TODO(DH): set endpoint name when available
+											for (Endpoint endpoint : endpoints) {
+												String httpUrl = null;
+												String httpsUrl = null;
+												
+												for (HttpMapping httpMapping : httpMappings) {
+													if (httpMapping.getApplicationProtocol().equals("http")) {
+														httpUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
+													} else if (httpMapping.getApplicationProtocol().equals("https")) {
+														httpsUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
+													}
+												}
+												
+												if (endpoint.getEndpointType().equals("webapp")) {
+													view.addWebApplication(endpoint.getName(), httpUrl, httpsUrl);
+													webApplicationPresent = true;
+												} else {
+													view.addService(endpoint.getName(), httpUrl, httpsUrl, endpoint.getDescriptor());
+													servicePresent = true;
+												}
+											}
+											
+											view.showNoWebApplicationsLabel(!webApplicationPresent);
+											view.showNoServicesLabel(!servicePresent);
+										}
+									}});
+							}
+						}});
+				} else {
+					view.showNoWebApplicationsLabel(true);
+					view.showNoServicesLabel(true);
+				}
+				
+				if (developmentMode) {
+					if (portMappingTemplate.getTransportProtocol().equals("tcp") &&
+							portMappingTemplate.getApplicationProtocol().equals("none")) {
+						cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+							@Override
+							public void processPortMappings(List<PortMapping> portMappings) {
+								if (portMappings.size() > 0) {
+									view.showNoAccessInfoLabel(false);
+									
+									for (PortMapping portMapping : portMappings) {
+										view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+									}
+								}
+							}});
+					}
+				}
+			}
+		}
 	}
 
 	@Override

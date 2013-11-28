@@ -56,6 +56,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField Styles style;
 	@UiField HTML accessInfoLabel;
 	@UiField FlowPanel accessInfoContainer;
+	private Label noServiceLabel;
+	private Label noWebApplicationLabel;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -146,18 +148,18 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
-		HTML nameWidget = new HTML(name);
-		panel.addStyleName(style.name());
+		InlineHTML nameWidget = new InlineHTML(name + ":&nbsp;");
+		nameWidget.addStyleName(style.name());
 		panel.add(nameWidget);
 		
 		if (httpUrl != null) {
-			Anchor http = new Anchor(httpUrl, httpUrl);
+			Anchor http = new Anchor("http", httpUrl);
 			http.addStyleName(style.anchor());
 			panel.add(http);
 		}
 		
 		if (httpsUrl != null) {
-			Anchor https = new Anchor(httpsUrl, httpsUrl);
+			Anchor https = new Anchor("https", httpsUrl);
 			https.addStyleName(style.anchor());
 			panel.add(https);
 		}
@@ -192,18 +194,18 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
-		HTML nameWidget = new HTML(name);
-		panel.addStyleName(style.name());
+		InlineHTML nameWidget = new InlineHTML(name + ":&nbsp;");
+		nameWidget.addStyleName(style.name());
 		panel.add(nameWidget);
 		
 		if (httpUrl != null) {
-			Anchor http = new Anchor(httpUrl, httpUrl);
+			Anchor http = new Anchor("http", httpUrl);
 			http.addStyleName(style.anchor());
 			panel.add(http);
 		}
 		
 		if (httpsUrl != null) {
-			Anchor https = new Anchor(httpsUrl, httpsUrl);
+			Anchor https = new Anchor("https", httpsUrl);
 			https.addStyleName(style.anchor());
 			panel.add(https);
 		}
@@ -212,15 +214,33 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addNoServicesLabel() {
-		Label label = new Label(messages.noServicesLabel());
-		serviceContainer.add(label);
+	public void showNoServicesLabel(boolean show) {
+		if (show) {
+			if (noServiceLabel == null) {
+				noServiceLabel = new Label(messages.noServicesLabel());
+				serviceContainer.add(noServiceLabel);
+			}
+		} else {
+			if (noServiceLabel != null) {
+				serviceContainer.remove(noServiceLabel);
+				noServiceLabel = null;
+			}
+		}
 	}
 
 	@Override
-	public void addNoWebApplicationsLabel() {
-		Label label = new Label(messages.noWebApplicationsLabel());
-		webApplicationsContainer.add(label);
+	public void showNoWebApplicationsLabel(boolean show) {
+		if (show) {
+			if (noWebApplicationLabel == null) {
+				noWebApplicationLabel = new Label(messages.noWebApplicationsLabel());
+				webApplicationsContainer.add(noWebApplicationLabel);
+			}
+		} else {
+			if (noWebApplicationLabel != null) {
+				webApplicationsContainer.remove(noWebApplicationLabel);
+				noWebApplicationLabel = null;
+			}
+		}
 	}
 
 	@Override
@@ -288,7 +308,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		panel.addStyleName(style.service());
 		
 		InlineHTML nameWidget = new InlineHTML(serviceName + ":&nbsp;");
-		panel.addStyleName(style.name());
+		nameWidget.addStyleName(style.name());
 		panel.add(nameWidget);
 		
 		InlineHTML info = new InlineHTML(publicIp + ":" + port);
