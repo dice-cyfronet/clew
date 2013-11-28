@@ -2,12 +2,15 @@ package pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor;
 
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -25,6 +28,8 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	private static ApplianceTypeEditorViewUiBinder uiBinder = GWT.create(ApplianceTypeEditorViewUiBinder.class);
 	interface ApplianceTypeEditorViewUiBinder extends UiBinder<Widget, ApplianceTypeEditorView> {}
 	
+	private IApplianceTypeEditorPresenter presenter;
+	
 	@UiField Modal modal;
 	@UiField TextBox name;
 	@UiField TextArea description;
@@ -34,7 +39,9 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiField ListBox cores;
 	@UiField ListBox ram;
 	@UiField ListBox disk;
-	private IApplianceTypeEditorPresenter presenter;
+	@UiField Label errorLabel;
+	@UiField ApplianceTypeEditorMessages messages;
+	@UiField Button update;
 
 	public ApplianceTypeEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -251,5 +258,32 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 			public void setValue(String value, boolean fireEvents) {
 			}
 		};
+	}
+
+	@Override
+	public void displayNameEmptyMessage() {
+		errorLabel.setText(messages.nameEmptyMessage());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public void clearErrorMessages() {
+		errorLabel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		errorLabel.setText("");
+	}
+
+	@Override
+	public void setUpdateBusyState(boolean busy) {
+		if (busy) {
+			update.state().loading();
+		} else {
+			update.state().reset();
+		}
+	}
+
+	@Override
+	public void displayGeneralError() {
+		errorLabel.setText(messages.updateErrorMessage());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 }

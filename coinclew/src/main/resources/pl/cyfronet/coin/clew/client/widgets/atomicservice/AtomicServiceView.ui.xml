@@ -25,8 +25,8 @@
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup>
-				<b:Button ui:field="editInitialConfigs" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>
-				<b:Button ui:field="editProperties" icon="LIST_UL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
+				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
+				<b:Button ui:field="editInitialConfigs" icon="LIST_UL" size="MINI" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
 	</g:HTMLPanel>

@@ -18,4 +18,8 @@ public interface IApplianceTypeEditorView extends IsWidget {
 	HasValue<String> getDisk();
 	HasValue<String> getRam();
 	HasValue<String> getCores();
+	void displayNameEmptyMessage();
+	void clearErrorMessages();
+	void setUpdateBusyState(boolean busy);
+	void displayGeneralError();
 }

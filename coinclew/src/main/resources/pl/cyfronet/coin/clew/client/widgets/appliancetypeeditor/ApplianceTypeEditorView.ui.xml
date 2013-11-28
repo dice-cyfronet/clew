@@ -4,6 +4,9 @@
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorMessages" field="messages"/>
 	<ui:style>
+		.invisible {
+			visibility: hidden;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
 		<b:Form>
@@ -45,8 +48,9 @@
 				<g:item value="20">20</g:item>
 				<g:item value="25">25</g:item>
 			</b:ListBox>
-			<b:Button ui:field="update" icon="REFRESH" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+			<b:Button ui:field="update" icon="REFRESH" type="WARNING" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
 		</b:Form>
+		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.invisible}"/>
 		<b:ModalFooter>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>

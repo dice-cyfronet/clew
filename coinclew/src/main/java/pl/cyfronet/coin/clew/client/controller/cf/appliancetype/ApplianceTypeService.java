@@ -30,7 +30,7 @@ public interface ApplianceTypeService extends RestService {
 	@PUT
 	@Path("appliance_types/{id}")
 	void updateApplianceType(@PathParam("id") String id,
-			ApplianceTypeRequestResponse applianceType, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
+			ApplianceTypeRequestResponse applianceTypeRequest, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
 	
 	@DELETE
 	@Path("appliance_types/{id}")

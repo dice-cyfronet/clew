@@ -3,6 +3,8 @@ package pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ErrorCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
@@ -31,6 +33,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 	}
 
 	private void loadProperties() {
+		view.clearErrorMessages(); 
 		cloudFacadeController.getApplianceType(applianceTypeId, new ApplianceTypeCallback() {
 			@Override
 			public void processApplianceType(ApplianceType applianceType) {
@@ -48,7 +51,34 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 
 	@Override
 	public void onUpdate() {
-		// TODO Auto-generated method stub
+		String name = view.getName().getText().trim();
+		String description = view.getDescription().getText().trim();
+		boolean shared = view.getShared().getValue();
+		boolean scalable = view.getScalable().getValue();
+		String visibleFor = view.getVisibleFor().getValue();
+		String cores = view.getCores().getValue();
+		String ram = view.getRam().getValue();
+		String disk = view.getDisk().getValue();
+		view.clearErrorMessages();
 		
+		if (name.isEmpty()) {
+			view.displayNameEmptyMessage();
+		} else {
+			view.setUpdateBusyState(true);
+			cloudFacadeController.updateApplianceType(applianceTypeId, name, description, shared, scalable,
+					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
+						@Override
+						public void processApplianceType(ApplianceType applianceType) {
+							view.setUpdateBusyState(false);
+							view.showModal(false);
+							eventBus.updateApplianceTypeView(applianceType);
+						}
+					}, new ErrorCallback() {
+						@Override
+						public void onError(CloudFacadeErrorCodes errorCodes) {
+							view.setUpdateBusyState(false);
+							view.displayGeneralError();
+						}});
+		}
 	}
 }

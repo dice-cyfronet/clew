@@ -20,4 +20,6 @@ public interface ApplianceTypeEditorMessages extends Messages {
 	String ramLabel();
 	String diskLabel();
 	String updateButtonLabel();
+	String nameEmptyMessage();
+	String updateErrorMessage();
 }

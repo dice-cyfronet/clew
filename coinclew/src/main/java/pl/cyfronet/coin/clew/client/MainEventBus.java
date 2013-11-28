@@ -2,6 +2,7 @@ package pl.cyfronet.coin.clew.client;
 
 import java.util.List;
 
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorPresenter;
 import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
@@ -99,4 +100,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = ApplianceTypeEditorPresenter.class)
 	void showAtomicServiceEditor(String applianceTypeId);
+
+	@Event(handlers = DevelopmentPresenter.class)
+	void updateApplianceTypeView(ApplianceType applianceType);
 }

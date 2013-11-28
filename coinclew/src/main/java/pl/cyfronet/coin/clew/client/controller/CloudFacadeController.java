@@ -10,6 +10,7 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -146,6 +147,10 @@ public class CloudFacadeController {
 	
 	public interface EndpointCallback {
 		void processEndpoint(Endpoint endpoint);
+	}
+	
+	public interface ErrorCallback {
+		void onError(CloudFacadeErrorCodes errorCodes);
 	}
 	
 	private ApplianceTypeService applianceTypesService;
@@ -1089,6 +1094,39 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, EndpointRequestResponse response) {
 				if (endpointCallback != null) {
 					endpointCallback.processEndpoint(response.getEndpoint());
+				}
+			}
+		});
+	}
+
+	public void updateApplianceType(String applianceTypeId, String name, String description,
+			boolean shared, boolean scalable, String visibleFor, String cores,
+			String ram, String disk, final ApplianceTypeCallback applianceTypeCallback, final ErrorCallback errorCallback) {
+		ApplianceType applianceType = new ApplianceType();
+		applianceType.setId(applianceTypeId);
+		applianceType.setName(name);
+		applianceType.setDescription(description);
+		applianceType.setShared(shared);
+		applianceType.setScalable(scalable);
+		applianceType.setVisibleFor(visibleFor);
+		applianceType.setPreferenceCpu(cores);
+		applianceType.setPreferenceMemory(ram);
+		applianceType.setPreferenceDisk(disk);
+		
+		ApplianceTypeRequestResponse request = new ApplianceTypeRequestResponse();
+		request.setApplianceType(applianceType);
+		applianceTypesService.updateApplianceType(applianceTypeId, request, new MethodCallback<ApplianceTypeRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				if (errorCallback != null) {
+					errorCallback.onError(CloudFacadeErrorCodes.ApplianceTypeUpdateError);
+				}
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceTypeRequestResponse response) {
+				if (applianceTypeCallback != null) {
+					applianceTypeCallback.processApplianceType(response.getApplianceType());
 				}
 			}
 		});

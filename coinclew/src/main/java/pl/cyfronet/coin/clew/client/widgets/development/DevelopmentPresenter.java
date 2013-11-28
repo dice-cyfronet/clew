@@ -24,12 +24,14 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	private CloudFacadeController cloudFacadeController;
 	private MiTicketReader ticketReader;
 	private Map<String, InstancePresenter> instancePresenters;
+	private Map<String, AtomicServicePresenter> atomicServicePresenters;
 
 	@Inject
 	public DevelopmentPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.ticketReader = ticketReader;
 		instancePresenters = new HashMap<String, InstancePresenter>();
+		atomicServicePresenters = new HashMap<String, AtomicServicePresenter>();
 	}
 	
 	public void onSwitchToDevelopmentView() {
@@ -92,6 +94,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 					
 					for (ApplianceType applianceType : applianceTypes) {
 						AtomicServicePresenter presenter = eventBus.addHandler(AtomicServicePresenter.class);
+						atomicServicePresenters.put(applianceType.getId(), presenter);
 						view.getAtomicServicesContainer().add(presenter.getView().asWidget());
 						presenter.setApplianceType(applianceType);
 					}
@@ -118,6 +121,14 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				view.showNoRunningInstancesLabel(true);
 //				onDeactivateApplicationsRefresh();
 			}
+		}
+	}
+	
+	public void onUpdateApplianceTypeView(ApplianceType applianceType) {
+		AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
+		
+		if (presenter != null) {
+			presenter.setApplianceType(applianceType);
 		}
 	}
 }
