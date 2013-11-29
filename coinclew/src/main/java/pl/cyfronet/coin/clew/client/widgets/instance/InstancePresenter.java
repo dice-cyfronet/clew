@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,13 +36,17 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	protected CloudFacadeController cloudFacadeController;
 	private String applianceInstanceId;
 	private boolean detailsRendered;
+	private boolean developmentMode;
+	private List<String> accessInfos;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
+		accessInfos = new ArrayList<String>();
 	}
 	
 	public void setInstance(final ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
+		this.developmentMode = developmentMode;
 		if (applianceInstanceId != null) {
 			//we are updating
 			updateView(applianceInstance);
@@ -186,6 +191,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 									
 									for (PortMapping portMapping : portMappings) {
 										view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+										accessInfos.add(portMapping.getId());
 									}
 								}
 							}});
@@ -229,6 +235,44 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 		});
+		
+		if (developmentMode) {
+			cloudFacadeController.getDevelopmentModePropertySet(applianceInstanceId, new DevelopmentModePropertySetCallback() {
+				@Override
+				public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
+					cloudFacadeController.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySet.getId(), new PortMappingTemplatesCallback() {
+						@Override
+						public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
+							boolean hasAccess = false;
+							
+							for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+								if (portMappingTemplate.getTransportProtocol().equals("tcp") &&
+										portMappingTemplate.getApplicationProtocol().equals("none")) {
+									hasAccess = true;
+									view.showNoAccessInfoLabel(false);
+									cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+										@Override
+										public void processPortMappings(List<PortMapping> portMappings) {
+											if (portMappings.size() > 0) {
+												for (PortMapping portMapping : portMappings) {
+													if (!accessInfos.contains(portMapping.getId())) {
+														view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+														accessInfos.add(portMapping.getId());
+													}
+												}
+											}
+										}});
+								}
+							}
+							
+							if (!hasAccess) {
+								view.showNoAccessInfoLabel(true);
+							}
+						}
+					});
+				}
+			});
+		}
 	}
 
 	@Override

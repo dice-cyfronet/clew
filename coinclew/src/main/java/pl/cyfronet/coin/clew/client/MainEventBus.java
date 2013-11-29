@@ -111,4 +111,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = ApplianceDetailsPresenter.class)
 	void showApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues);
+
+	@Event(handlers = DevelopmentPresenter.class)
+	void deactivateDevelopmentRefresh();
 }

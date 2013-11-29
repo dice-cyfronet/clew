@@ -15,16 +15,20 @@ import pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServicePresenter
 import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
 
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = DevelopmentView.class)
 public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEventBus> implements IDevelopmentPresenter {
+	private static final int REFRESH_MILIS = 5000;
+	
 	private CloudFacadeController cloudFacadeController;
 	private MiTicketReader ticketReader;
 	private Map<String, InstancePresenter> instancePresenters;
 	private Map<String, AtomicServicePresenter> atomicServicePresenters;
+	private Timer timer;
 
 	@Inject
 	public DevelopmentPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
@@ -42,7 +46,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 	
 	public void onRefreshDevelopmentInstanceList() {
-		loadInstances();
+		loadInstances(true);
 	}
 
 	@Override
@@ -52,13 +56,24 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	
 	private void loadDevelopmentResources() {
 		loadAtomicServices();
-		loadInstances();
+		loadInstances(false);
+	}
+	
+	public void onDeactivateDevelopmentRefresh() {
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
 	}
 
-	private void loadInstances() {
+	private void loadInstances(boolean update) {
 		view.showNoRunningInstancesLabel(false);
-		view.getInstanceContainer().clear();
-		view.showInstanceLoadingIndicator(true);
+		
+		if (!update) {
+			view.getInstanceContainer().clear();
+			view.showInstanceLoadingIndicator(true);
+		}
+		
 		cloudFacadeController.getDevelopmentApplianceInstances(new ApplianceInstancesCallback() {
 			@Override
 			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
@@ -70,11 +85,28 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 					view.showNoRunningInstancesLabel(false);
 					
 					for (ApplianceInstance instance : applianceInstances) {
-						InstancePresenter presenter = eventBus.addHandler(InstancePresenter.class);
-						instancePresenters.put(instance.getId(), presenter);
-						view.getInstanceContainer().add(presenter.getView().asWidget());
+						
+						InstancePresenter presenter = instancePresenters.get(instance.getId());
+						
+						if (presenter == null) {
+							presenter = eventBus.addHandler(InstancePresenter.class);
+							instancePresenters.put(instance.getId(), presenter);
+							view.getInstanceContainer().add(presenter.getView().asWidget());
+						}
+						
 						presenter.setInstance(instance, true, true);
 					}
+					
+					if (timer == null) {
+						timer = new Timer() {
+							@Override
+							public void run() {
+								loadInstances(true);
+							}
+						};
+					}
+
+					timer.schedule(REFRESH_MILIS);
 				}
 			}
 		});
@@ -119,7 +151,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			if (instancePresenters.size() == 0) {
 				view.showHeaderRow(false);
 				view.showNoRunningInstancesLabel(true);
-//				onDeactivateApplicationsRefresh();
+				onDeactivateDevelopmentRefresh();
 			}
 		}
 	}
