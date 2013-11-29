@@ -26,6 +26,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -503,5 +504,10 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	public void displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage() {
 		errorLabel.setText(messages.endpointNameInvocationPathOrPortMappingIdEmptyMessage());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public void showCannotRemoveMappingMessage() {
+		Window.alert(messages.cannotRemoveMappingEndpointsExist());
 	}
 }

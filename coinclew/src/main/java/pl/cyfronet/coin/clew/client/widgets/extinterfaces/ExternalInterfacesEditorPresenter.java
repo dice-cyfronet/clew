@@ -70,6 +70,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 				if (developmentModePropertySet.getPortMappingTemplateIds().size() == 0) {
 					view.showExternalInterfacesLoadingIndicator(false);
 					view.showNoExternalInterfacesLabel(true);
+					view.showEndpointsLoadingIndicator(false);
+					view.showNoEndpointsLabel(true);
 				} else {
 					cloudFacadeController.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySet.getId(), new PortMappingTemplatesCallback() {
 						@Override
@@ -167,13 +169,22 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 
 	@Override
 	public void onRemoveMapping(final String mappingId) {
-		cloudFacadeController.removePortMapingTemplate(mappingId, new Command() {
+		cloudFacadeController.getEndpoints(mappingId, new EndpointsCallback() {
 			@Override
-			public void execute() {
-				view.removeMappingTemplate(mappings.remove(mappingId));
-				
-				if (mappings.size() == 0) {
-					view.showNoExternalInterfacesLabel(true);
+			public void processEndpoints(List<Endpoint> endpoints) {
+				if (endpoints.size() > 0) {
+					view.showCannotRemoveMappingMessage();
+				} else {
+					cloudFacadeController.removePortMapingTemplate(mappingId, new Command() {
+						@Override
+						public void execute() {
+							view.removeMappingTemplate(mappings.remove(mappingId));
+							
+							if (mappings.size() == 0) {
+								view.showNoExternalInterfacesLabel(true);
+							}
+						}
+					});
 				}
 			}
 		});
@@ -259,7 +270,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		cloudFacadeController.removeEndpoint(endpointId, new Command() {
 			@Override
 			public void execute() {
-				view.removeEndpoint(endpoints.get(endpointId));
+				view.removeEndpoint(endpoints.remove(endpointId));
 				
 				if (endpoints.size() == 0) {
 					view.showNoEndpointsLabel(true);
