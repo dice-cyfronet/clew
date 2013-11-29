@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsMessages" field="messages"/>
+	<ui:style>
+	</ui:style>
+	<b:Modal ui:field="modal" title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
+		<b:Form ui:field="form">
+			<b:ControlLabel><ui:text from="{messages.keysLabel}"/></b:ControlLabel>
+		</b:Form>
+		<b:Button ui:field="start" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startButtonLabel}"><ui:text from="{messages.startButtonLabel}"/></b:Button>
+		<b:ModalFooter>
+			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
+		</b:ModalFooter>
+	</b:Modal>
+</ui:UiBinder>

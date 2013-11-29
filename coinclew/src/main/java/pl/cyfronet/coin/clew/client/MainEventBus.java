@@ -1,8 +1,10 @@
 package pl.cyfronet.coin.clew.client;
 
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorPresenter;
 import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
@@ -28,7 +30,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	@Event(handlers = {MenuPresenter.class, StartInstancePresenter.class,
 			KeyManagerPresenter.class, InitialConfigsEditorPresenter.class,
 			InitialConfigEmbedPresenter.class, ExternalInterfacesEditorPresenter.class,
-			ApplianceTypeEditorPresenter.class})
+			ApplianceTypeEditorPresenter.class, ApplianceDetailsPresenter.class})
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
@@ -37,7 +39,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	@Event(handlers = RootPresenter.class)
 	void setMenu(IsWidget menu);
 	
-	@Event(handlers = RootPresenter.class)
+	@Event(handlers = RootPresenter.class)		
 	void setBody(IsWidget widget);
 	
 	@Event(handlers = RootPresenter.class)
@@ -103,4 +105,10 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void updateApplianceTypeView(ApplianceType applianceType);
+
+	@Event(handlers = ApplianceDetailsPresenter.class)
+	void showApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds);
+
+	@Event(handlers = ApplianceDetailsPresenter.class)
+	void showApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues);
 }

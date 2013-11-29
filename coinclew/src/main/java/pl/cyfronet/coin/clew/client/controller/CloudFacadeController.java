@@ -802,7 +802,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypesInDevelopment(final Map<String, Map<String, String>> parameterValues, final Command command) {
+	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String, Map<String, String>> parameterValues, final Command command) {
 		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -814,6 +814,11 @@ public class CloudFacadeController {
 					applianceInstance.setApplianceSetId(applianceSet.getId());
 					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
 					applianceInstance.setParams(parameterValues.get(configurationTemplateId));
+					applianceInstance.setUserKeyId(keyId);
+					
+					if (overrideNames != null && overrideNames.containsKey(configurationTemplateId)) {
+						applianceInstance.setName(overrideNames.get(configurationTemplateId));
+					}
 					
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
 					applianceInstanceRequest.setApplianceInstance(applianceInstance);

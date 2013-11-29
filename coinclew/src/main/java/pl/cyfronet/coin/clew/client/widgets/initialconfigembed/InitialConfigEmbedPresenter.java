@@ -80,12 +80,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 					});
 				} else {
 					if (InitialConfigEmbedPresenter.this.developmentMode) {
-						cloudFacadeController.startApplianceTypesInDevelopment(initialConfigurationIds, new Command() {
-							@Override
-							public void execute() {
-								eventBus.refreshDevelopmentInstanceList();
-							}
-						});
+						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds);
 					} else {
 						cloudFacadeController.startApplianceTypes(initialConfigurationIds, new Command() {
 							@Override
@@ -112,18 +107,11 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 			parameterValues.put(configId, values);
 		}
 		
-		view.setStartBusyState(true);
-		
 		if (developmentMode) {
-			cloudFacadeController.startApplianceTypesInDevelopment(parameterValues, new Command() {
-				@Override
-				public void execute() {
-					view.setStartBusyState(false);
-					view.showModal(false);
-					eventBus.refreshDevelopmentInstanceList();
-				}
-			});
+			view.showModal(false);
+			eventBus.showApplianceStartDetailsEditorForConfigParams(parameterValues);
 		} else {
+			view.setStartBusyState(true);
 			cloudFacadeController.startApplianceTypes(parameterValues, new Command() {
 				@Override
 				public void execute() {

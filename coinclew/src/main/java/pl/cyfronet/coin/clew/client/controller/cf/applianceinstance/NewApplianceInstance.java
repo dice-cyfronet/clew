@@ -10,6 +10,8 @@ public class NewApplianceInstance {
 	@Json(name = "appliance_set_id")
 	private String applianceSetId;
 	private Map<String, String> params;
+	private String name;
+	private String userKeyId;
 	
 	public String getConfigurationTemplateId() {
 		return configurationTemplateId;
@@ -28,5 +30,17 @@ public class NewApplianceInstance {
 	}
 	public void setParams(Map<String, String> params) {
 		this.params = params;
+	}
+	public String getUserKeyId() {
+		return userKeyId;
+	}
+	public void setUserKeyId(String userKeyId) {
+		this.userKeyId = userKeyId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 }
