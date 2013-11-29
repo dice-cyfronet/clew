@@ -377,7 +377,7 @@ public class CloudFacadeController {
 	}
 
 	public void getInstanceVms(String applianceInstanceId, final ApplianceVmsCallback applianceVmsCallback) {
-		applianceVmsService.getApplianceVms(new MethodCallback<ApplianceVmsResponse>() {
+		applianceVmsService.getApplianceVms(applianceInstanceId, new MethodCallback<ApplianceVmsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());

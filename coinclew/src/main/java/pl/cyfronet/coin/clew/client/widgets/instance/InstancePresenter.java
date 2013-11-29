@@ -41,7 +41,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		this.cloudFacadeController = cloudFacadeController;
 	}
 	
-	public void setInstance(ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
+	public void setInstance(final ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
 		if (applianceInstanceId != null) {
 			//we are updating
 			updateView(applianceInstance);
@@ -53,7 +53,12 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		cloudFacadeController.getApplianceType(applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
 			@Override
 			public void processApplianceType(ApplianceType applianceType) {
-				view.getName().setText(applianceType.getName());
+				if (applianceInstance.getName() != null && !applianceInstance.getName().isEmpty()) {
+					view.getName().setText(applianceInstance.getName());
+				} else {
+					view.getName().setText(applianceType.getName());
+				}
+				
 				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
 				
 				if (enableShutdown) {
