@@ -6,13 +6,18 @@
 	<ui:style>
 		.name {
 			float: left;
-			width: 30%;
+			width: 20%;
 			text-align: left;
 			font-size: 1.2em;
 		}
+		.author {
+			float: left;
+			width: 20%;
+			text-align: left;
+		}
 		.actions {
 			float:left;
-			width: 70%;
+			width: 60%;
 			text-align: right;
 		}
 		.container {
@@ -22,7 +27,8 @@
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
-		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:InlineHTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:InlineHTML ui:field="author" addStyleNames="{style.author}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup>
 				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>

@@ -1,7 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
 import com.mvp4g.client.annotation.Presenter;
@@ -9,20 +9,21 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = AtomicServiceView.class, multiple = true)
 public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, MainEventBus> implements IAtomicServicePresenter {
-	private ApplianceType applianceType;
+	private OwnedApplianceType applianceType;
 
 	@Override
 	public void onEditInitialConfigs() {
-		eventBus.showInitialConfigsEditor(applianceType.getId());
+		eventBus.showInitialConfigsEditor(applianceType.getApplianceType().getId());
 	}
 
-	public void setApplianceType(ApplianceType applianceType) {
+	public void setApplianceType(OwnedApplianceType applianceType) {
 		this.applianceType = applianceType;
-		view.getName().setText(applianceType.getName());
+		view.getName().setText(applianceType.getApplianceType().getName());
+		view.updateAuthor(applianceType.getUser().getFullName());
 	}
 
 	@Override
 	public void onEditProperties() {
-		eventBus.showAtomicServiceEditor(applianceType.getId(), false);
+		eventBus.showAtomicServiceEditor(applianceType.getApplianceType().getId(), false);
 	}
 }

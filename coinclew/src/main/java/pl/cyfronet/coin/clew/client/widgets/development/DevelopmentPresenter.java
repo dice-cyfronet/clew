@@ -8,10 +8,12 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.OwnedApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
-import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
+import pl.cyfronet.coin.clew.client.controller.cf.user.User;
+import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServicePresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
@@ -132,18 +134,18 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	private void loadAtomicServices() {
 		view.getAtomicServicesContainer().clear();
 		view.addAtomicServiceProgressIndicator();
-		cloudFacadeController.getApplianceTypes(new ApplianceTypesCallback() {
+		cloudFacadeController.getOwnedApplianceTypes(new OwnedApplianceTypesCallback() {
 			@Override
-			public void processApplianceTypes(List<ApplianceType> applianceTypes) {
+			public void processOwnedApplianceTypes(List<OwnedApplianceType> applianceTypes) {
 				if (applianceTypes.size() == 0) {
 					view.getAtomicServicesContainer().clear();
 					view.showNoAtomicServicesLabel(true);
 				} else {
 					view.getAtomicServicesContainer().clear();
 					
-					for (ApplianceType applianceType : applianceTypes) {
+					for (OwnedApplianceType applianceType : applianceTypes) {
 						AtomicServicePresenter presenter = eventBus.addHandler(AtomicServicePresenter.class);
-						atomicServicePresenters.put(applianceType.getId(), presenter);
+						atomicServicePresenters.put(applianceType.getApplianceType().getId(), presenter);
 						view.getAtomicServicesContainer().add(presenter.getView().asWidget());
 						presenter.setApplianceType(applianceType);
 					}
@@ -173,15 +175,23 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		}
 	}
 	
-	public void onUpdateApplianceTypeView(ApplianceType applianceType) {
-		AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
-		
-		if (presenter == null) {
-			presenter = eventBus.addHandler(AtomicServicePresenter.class);
-			atomicServicePresenters.put(applianceType.getId(), presenter);
-			view.getAtomicServicesContainer().add(presenter.getView().asWidget());
-		}
-		
-		presenter.setApplianceType(applianceType);
+	public void onUpdateApplianceTypeView(final ApplianceType applianceType) {
+		cloudFacadeController.getUser(applianceType.getAuthorId(), new UserCallback() {
+			@Override
+			public void processUser(User user) {
+				AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
+				
+				if (presenter == null) {
+					presenter = eventBus.addHandler(AtomicServicePresenter.class);
+					atomicServicePresenters.put(applianceType.getId(), presenter);
+					view.getAtomicServicesContainer().add(presenter.getView().asWidget());
+				}
+				
+				OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
+				ownedApplianceType.setApplianceType(applianceType);
+				ownedApplianceType.setUser(user);
+				
+				presenter.setApplianceType(ownedApplianceType);
+			}});
 	}
 }

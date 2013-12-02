@@ -10,4 +10,5 @@ public interface IAtomicServiceView extends IsWidget {
 	}
 
 	HasText getName();
+	void updateAuthor(String fullName);
 }

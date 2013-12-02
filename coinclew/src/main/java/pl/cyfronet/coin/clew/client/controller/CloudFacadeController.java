@@ -62,6 +62,10 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappin
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateService;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplatesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.user.User;
+import pl.cyfronet.coin.clew.client.controller.cf.user.UserRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.user.UserService;
+import pl.cyfronet.coin.clew.client.controller.cf.user.UsersResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.NewUserKey;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.NewUserKeyRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
@@ -69,6 +73,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyRequestResponse
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyService;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeysResponse;
 import pl.cyfronet.coin.clew.client.controller.overlay.MutableBoolean;
+import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 
 import com.google.gwt.user.client.Command;
@@ -164,6 +169,18 @@ public class CloudFacadeController {
 		void processRedirections(List<Redirection> redirections);
 	}
 	
+	public interface UsersCallback {
+		void processUsers(List<User> users);
+	}
+	
+	public interface UserCallback {
+		void processUser(User user);
+	}
+	
+	public interface OwnedApplianceTypesCallback {
+		void processOwnedApplianceTypes(List<OwnedApplianceType> ownedApplianceTypes);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -177,6 +194,7 @@ public class CloudFacadeController {
 	private UserKeyService userKeyService;
 	private DevelopmentModePropertySetService developmentModePropertySetService;
 	private PortMappingService portMappingService;
+	private UserService userService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -185,7 +203,7 @@ public class CloudFacadeController {
 			PortMappingTemplateService portMappingTemplateService, HttpMappingService httpMappingService,
 			EndpointService endpointService, UserKeyService userKeyService,
 			DevelopmentModePropertySetService developmentModePropertySetService,
-			PortMappingService portMappingService, PopupErrorHandler popupErrorHandler) {
+			PortMappingService portMappingService, UserService userService, PopupErrorHandler popupErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -198,6 +216,7 @@ public class CloudFacadeController {
 		this.userKeyService = userKeyService;
 		this.developmentModePropertySetService = developmentModePropertySetService;
 		this.portMappingService = portMappingService;
+		this.userService = userService;
 		CloudFacadeController.popupErrorHandler = popupErrorHandler;
 	}
 	
@@ -1156,6 +1175,7 @@ public class CloudFacadeController {
 			final ErrorCallback errorCallback) {
 		SaveApplianceType applianceType = new SaveApplianceType();
 		applianceType.setApplianceId(applianceId);
+		applianceType.setName(name);
 		applianceType.setDescription(description);
 		applianceType.setShared(shared);
 		applianceType.setScalable(scalable);
@@ -1277,5 +1297,83 @@ public class CloudFacadeController {
 		if (callback != null) {
 			callback.processRedirections(redirections);
 		}
+	}
+	
+	public void getUsers(List<String> userIds, final UsersCallback usersCallback) {
+		userService.getUsers(join(userIds, ","), new MethodCallback<UsersResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, UsersResponse response) {
+				if (usersCallback != null) {
+					usersCallback.processUsers(response.getUsers());
+				}
+			}
+		});
+	}
+	
+	public void getOwnedApplianceTypes(final OwnedApplianceTypesCallback callback) {
+		getApplianceTypes(new ApplianceTypesCallback() {
+			@Override
+			public void processApplianceTypes(final List<ApplianceType> applianceTypes) {
+				List<String> userIds = collectUserIds(applianceTypes);
+				getUsers(userIds, new UsersCallback() {
+					@Override
+					public void processUsers(List<User> users) {
+						List<OwnedApplianceType> result = new ArrayList<OwnedApplianceType>();
+						
+						for (ApplianceType applianceType : applianceTypes) {
+							OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
+							ownedApplianceType.setApplianceType(applianceType);
+							ownedApplianceType.setUser(getUser(applianceType.getAuthorId(), users));
+						}
+						
+						if (callback != null) {
+							callback.processOwnedApplianceTypes(result);
+						}
+					}
+
+					private User getUser(String authorId, List<User> users) {
+						for (User user : users) {
+							if (user.getId().equals(authorId)) {
+								return user;
+							}
+						}
+						
+						return null;
+					}
+				});
+			}
+
+			private List<String> collectUserIds(List<ApplianceType> applianceTypes) {
+				List<String> userIds = new ArrayList<String>();
+				
+				for (ApplianceType applianceType : applianceTypes) {
+					userIds.add(applianceType.getAuthorId());
+				}
+				
+				return userIds;
+			}
+		});
+	}
+
+	public void getUser(String userId, final UserCallback userCallback) {
+		userService.getUser(userId, new MethodCallback<UserRequestResponse>() {
+
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, UserRequestResponse response) {
+				if (userCallback != null) {
+					userCallback.processUser(response.getUser());
+				}
+			}
+		});
 	}
 }
