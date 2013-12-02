@@ -11,6 +11,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceIn
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServicePresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
@@ -63,6 +64,22 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		if (timer != null) {
 			timer.cancel();
 			timer = null;
+		}
+	}
+	
+	public void onExternalInterfacesChanged(String applianceInstanceId) {
+		InstancePresenter presenter = instancePresenters.get(applianceInstanceId);
+		
+		if (presenter != null) {
+			presenter.updateAccessInfo();
+		}
+	}
+	
+	public void onEndpointsChanged(String applianceInstanceId) {
+		InstancePresenter presenter = instancePresenters.get(applianceInstanceId);
+		
+		if (presenter != null) {
+			presenter.updateEndpoints();
 		}
 	}
 

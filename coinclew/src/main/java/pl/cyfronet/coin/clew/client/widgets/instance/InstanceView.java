@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -144,7 +145,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addService(String name, String httpUrl, String httpsUrl, String descriptor) {
+	public IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -187,10 +188,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		panel.add(descriptorButton);
 		serviceContainer.add(panel);
+		
+		return panel;
 	}
 
 	@Override
-	public void addWebApplication(String name, String httpUrl, String httpsUrl) {
+	public IsWidget addWebApplication(String name, String httpUrl, String httpsUrl) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -211,6 +214,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		}
 		
 		webApplicationsContainer.add(panel);
+		
+		return panel;
 	}
 
 	@Override
@@ -303,7 +308,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void addAccessInfo(String serviceName, String publicIp, String port) {
+	public IsWidget addAccessInfo(String serviceName, String publicIp, String port) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -313,7 +318,23 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		InlineHTML info = new InlineHTML(publicIp + ":" + port);
 		panel.add(info);
-		
 		accessInfoContainer.add(panel);
+		
+		return panel;
+	}
+
+	@Override
+	public void removeAccessInfo(IsWidget widget) {
+		accessInfoContainer.remove(widget);
+	}
+
+	@Override
+	public void removeWebapp(IsWidget widget) {
+		webApplicationsContainer.remove(widget);
+	}
+
+	@Override
+	public void removeService(IsWidget widget) {
+		serviceContainer.remove(widget);
 	}
 }

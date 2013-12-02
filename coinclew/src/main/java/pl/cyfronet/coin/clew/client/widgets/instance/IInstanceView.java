@@ -19,13 +19,16 @@ public interface IInstanceView extends IsWidget {
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();
-	void addService(String name, String httpUrl, String httpsUrl, String descriptor);
-	void addWebApplication(String name, String httpUrl, String httpsUrl);
+	IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor);
+	IsWidget addWebApplication(String name, String httpUrl, String httpsUrl);
 	void showNoServicesLabel(boolean show);
 	void showNoWebApplicationsLabel(boolean show);
 	void addExternalInterfacesControl();
 	void addSaveControl();
 	void showNoAccessInfoLabel(boolean show);
 	void showAccessInfoSection();
-	void addAccessInfo(String serviceName, String publicIp, String port);
+	IsWidget addAccessInfo(String serviceName, String publicIp, String port);
+	void removeAccessInfo(IsWidget isWidget);
+	void removeWebapp(IsWidget remove);
+	void removeService(IsWidget widget);
 }

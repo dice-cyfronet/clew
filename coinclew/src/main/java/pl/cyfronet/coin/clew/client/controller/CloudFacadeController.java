@@ -10,8 +10,6 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ErrorCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -70,6 +68,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeyService;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeysResponse;
+import pl.cyfronet.coin.clew.client.controller.overlay.MutableBoolean;
+import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
@@ -123,6 +123,10 @@ public class CloudFacadeController {
 		void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates);
 	}
 	
+	public interface PortMappingTemplateCallback {
+		void processPortMappingTemplate(PortMappingTemplate portMappingTemplate);
+	}
+	
 	public interface HttpMappingsCallback {
 		void processHttpMappings(List<HttpMapping> httpMappings);
 	}
@@ -154,6 +158,10 @@ public class CloudFacadeController {
 	
 	public interface ErrorCallback {
 		void onError(CloudFacadeErrorCodes errorCodes);
+	}
+	
+	public interface RedirectionsCallback {
+		void processRedirections(List<Redirection> redirections);
 	}
 	
 	private ApplianceTypeService applianceTypesService;
@@ -935,7 +943,8 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void addPortMappingTemplate(String name, int portNumber, String transportProtocol, final String applicationProtocol, String developmentModePropertySetId, final Command command) {
+	public void addPortMappingTemplate(String name, int portNumber, String transportProtocol,
+			final String applicationProtocol, String developmentModePropertySetId, final PortMappingTemplateCallback portMappingTemplateCallback) {
 		NewPortMappingTemplate portMappingTemplate = new NewPortMappingTemplate();
 		portMappingTemplate.setServiceName(name);
 		portMappingTemplate.setTargetPort(portNumber);
@@ -957,17 +966,17 @@ public class CloudFacadeController {
 				//this operation requires a busy-waiting loop
 				if (applicationProtocol.equals("none")) {
 					//waiting for port mappings
-					waitForPortMappings(response.getPortMappingTemplate().getId(), command);
+					waitForPortMappings(response.getPortMappingTemplate(), portMappingTemplateCallback);
 				} else {
 					//waiting for http mappings
-					waitForHttpMappings(response.getPortMappingTemplate().getId(), command);
+					waitForHttpMappings(response.getPortMappingTemplate(), portMappingTemplateCallback);
 				}
 			}
 		});
 	}
 
-	private void waitForHttpMappings(final String portMappingTemplateId, final Command command) {
-		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
+	private void waitForHttpMappings(final PortMappingTemplate portMappingTemplate, final PortMappingTemplateCallback portMappingTemplateCallback) {
+		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<HttpMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());
@@ -979,20 +988,20 @@ public class CloudFacadeController {
 					new Timer() {
 						@Override
 						public void run() {
-							waitForHttpMappings(portMappingTemplateId, command);
+							waitForHttpMappings(portMappingTemplate, portMappingTemplateCallback);
 						}
 					}.schedule(1000);
 				} else {
-					if (command != null) {
-						command.execute();
+					if (portMappingTemplateCallback != null) {
+						portMappingTemplateCallback.processPortMappingTemplate(portMappingTemplate);
 					}
 				}
 			}
 		});
 	}
 
-	private void waitForPortMappings(final String portMappingTemplateId, final Command command) {
-		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
+	private void waitForPortMappings(final PortMappingTemplate portMappingTemplate, final PortMappingTemplateCallback portMappingTemplateCallback) {
+		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());
@@ -1004,12 +1013,12 @@ public class CloudFacadeController {
 					new Timer() {
 						@Override
 						public void run() {
-							waitForPortMappings(portMappingTemplateId, command);
+							waitForPortMappings(portMappingTemplate, portMappingTemplateCallback);
 						}
 					}.schedule(1000);
 				} else {
-					if (command != null) {
-						command.execute();
+					if (portMappingTemplateCallback != null) {
+						portMappingTemplateCallback.processPortMappingTemplate(portMappingTemplate);
 					}
 				}
 			}
@@ -1173,5 +1182,100 @@ public class CloudFacadeController {
 				}
 			}
 		});
+	}
+	
+	public void getRedirectionsForApplianceType(String applianceTypeId, final RedirectionsCallback callback) {
+		getPortMappingTemplates(applianceTypeId, new PortMappingTemplatesCallback() {
+			@Override
+			public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
+				buildRedirections(portMappingTemplates, callback);
+			}
+		});
+	}
+	
+	public void getRedirectionsForDevPropertySetId(String devPropertySetId, final RedirectionsCallback callback) {
+		getPortMappingTemplatesForDevelopmentModePropertySetId(devPropertySetId, new PortMappingTemplatesCallback() {
+			@Override
+			public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
+				buildRedirections(portMappingTemplates, callback);
+			}
+		});
+	}
+
+	protected void buildRedirections(List<PortMappingTemplate> portMappingTemplates, final RedirectionsCallback callback) {
+		final List<Redirection> redirections = new ArrayList<Redirection>();
+		
+		if (portMappingTemplates.size() == 0 && callback != null) {
+			callback.processRedirections(redirections);
+		}
+		
+		final List<MutableBoolean> finishedCallbacks = new ArrayList<MutableBoolean>();
+		
+		for (PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+			final Redirection redirection = new Redirection();
+			redirection.setName(portMappingTemplate.getServiceName());
+			redirection.setTargetPort(portMappingTemplate.getTargetPort());
+			redirection.setProtocol(portMappingTemplate.getTransportProtocol());
+			redirections.add(redirection);
+			
+			if (Arrays.asList((new String[] {"http", "https", "http_https"})).contains(portMappingTemplate.getApplicationProtocol())) {
+				redirection.setHttp(true);
+				//fetching http mappings ...
+				final MutableBoolean httpMappingsFinished = new MutableBoolean();
+				finishedCallbacks.add(httpMappingsFinished);
+				getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new HttpMappingsCallback() {
+					@Override
+					public void processHttpMappings(List<HttpMapping> httpMappings) {
+						for (HttpMapping httpMapping : httpMappings) {
+							if ("http".equals(httpMapping.getApplicationProtocol())) {
+								redirection.setHttpUrl(httpMapping.getUrl());
+							} else if ("https".equals(httpMapping.getApplicationProtocol())) {
+								redirection.setHttpsUrl(httpMapping.getUrl());
+							}
+						}
+						
+						httpMappingsFinished.setValue(true);
+						checkRedirectionsReturn(finishedCallbacks, redirections, callback);
+					}
+				});
+				
+				//...  and endpoints
+				final MutableBoolean endpointsFinished = new MutableBoolean();
+				finishedCallbacks.add(endpointsFinished);
+				getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
+					@Override
+					public void processEndpoints(List<Endpoint> endpoints) {
+						redirection.setEndpoints(endpoints);
+						endpointsFinished.setValue(true);
+						checkRedirectionsReturn(finishedCallbacks, redirections, callback);
+					}
+				});
+			} else {
+				redirection.setHttp(false);
+				//fetching port mappings
+				final MutableBoolean portMappingsFinished = new MutableBoolean();
+				finishedCallbacks.add(portMappingsFinished);
+				getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+					@Override
+					public void processPortMappings(List<PortMapping> portMappings) {
+						redirection.setPortMappings(portMappings);
+						portMappingsFinished.setValue(true);
+						checkRedirectionsReturn(finishedCallbacks, redirections, callback);
+					}
+				});
+			}
+		}
+	}
+
+	private void checkRedirectionsReturn(List<MutableBoolean> finishedCallbacks, List<Redirection> redirections, RedirectionsCallback callback) {
+		for (MutableBoolean mutableBoolean : finishedCallbacks) {
+			if (!mutableBoolean.getValue()) {
+				return;
+			}
+		}
+		
+		if (callback != null) {
+			callback.processRedirections(redirections);
+		}
 	}
 }

@@ -11,6 +11,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.Development
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplateCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
@@ -137,6 +138,10 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 									});
 								} else {
 									//tcp or udp mapping
+									if (!endpointsExist) {
+										view.showNoEndpointsLabel(true);
+									}
+									
 									cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
 										@Override
 										public void processPortMappings(List<PortMapping> portMappings) {
@@ -183,6 +188,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							if (mappings.size() == 0) {
 								view.showNoExternalInterfacesLabel(true);
 							}
+							
+							eventBus.externalInterfacesChanged(applianceInstanceId);
 						}
 					});
 				}
@@ -211,9 +218,9 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 			if (portNumber > -1) {
 				view.setAddExternalInterfaceBusyState(true);
 				view.clearErrorMessages();
-				cloudFacadeController.addPortMappingTemplate(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, new Command() {
+				cloudFacadeController.addPortMappingTemplate(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, new PortMappingTemplateCallback() {
 					@Override
-					public void execute() {
+					public void processPortMappingTemplate(PortMappingTemplate portMappingTemplate) {
 						view.setAddExternalInterfaceBusyState(false);
 						view.getExternalInterfaceName().setText("");
 						view.getExternalInterfacePort().setText("");
@@ -221,6 +228,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 						view.getApplicationProtocol().setValue("none");
 						view.setApplicationProtocolEnabled(true);
 						loadExternalInterfacesAndEndpoints();
+						eventBus.externalInterfacesChanged(applianceInstanceId);
 					}
 				});
 			}
@@ -259,6 +267,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							
 							IsWidget widget = view.addEndpoint(endpoint.getId(), endpoint.getName(), httpUrl, httpsUrl);
 							endpoints.put(endpoint.getId(), widget);
+							eventBus.endpointsChanged(applianceInstanceId);
 						}
 					});
 				}});

@@ -114,4 +114,10 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void deactivateDevelopmentRefresh();
+
+	@Event(handlers = DevelopmentPresenter.class)
+	void externalInterfacesChanged(String applianceInstanceId);
+
+	@Event(handlers = DevelopmentPresenter.class)
+	void endpointsChanged(String applianceInstanceId);
 }

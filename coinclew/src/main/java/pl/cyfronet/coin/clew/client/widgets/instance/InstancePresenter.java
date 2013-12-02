@@ -1,8 +1,10 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -11,22 +13,19 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTy
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVmsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.HttpMappingsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RedirectionsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
-import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
-import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplate;
+import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -34,27 +33,32 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	protected CloudFacadeController cloudFacadeController;
-	private String applianceInstanceId;
 	private boolean detailsRendered;
+	private Map<String, IsWidget> accessInfos;
+	private Map<String, IsWidget> webapps;
+	private Map<String, IsWidget> services;
 	private boolean developmentMode;
-	private List<String> accessInfos;
+	private ApplianceInstance applianceInstance;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
-		accessInfos = new ArrayList<String>();
+		accessInfos = new HashMap<String, IsWidget>();
+		webapps = new HashMap<String, IsWidget>();
+		services = new HashMap<String, IsWidget>();
 	}
 	
 	public void setInstance(final ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
 		this.developmentMode = developmentMode;
-		if (applianceInstanceId != null) {
+		
+		if (this.applianceInstance != null) {
 			//we are updating
 			updateView(applianceInstance);
 			
 			return;
 		}
-		
-		applianceInstanceId = applianceInstance.getId();
+
+		this.applianceInstance = applianceInstance;
 		cloudFacadeController.getApplianceType(applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
 			@Override
 			public void processApplianceType(ApplianceType applianceType) {
@@ -74,31 +78,11 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.addExternalInterfacesControl();
 					view.addSaveControl();
 					view.showAccessInfoSection();
-					view.showNoAccessInfoLabel(true);
 				}
 				
 				if (!detailsRendered) {
 					detailsRendered = true;
-					
-					if (developmentMode) {
-						cloudFacadeController.getDevelopmentModePropertySet(applianceInstanceId, new DevelopmentModePropertySetCallback() {
-							@Override
-							public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
-								cloudFacadeController.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySet.getId(), new PortMappingTemplatesCallback() {
-									@Override
-									public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-										processportMappingTemplates(developmentMode, portMappingTemplates);
-									}
-								});
-							}});
-					} else {
-						cloudFacadeController.getPortMappingTemplates(applianceType.getId(), new PortMappingTemplatesCallback() {
-							@Override
-							public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-								processportMappingTemplates(developmentMode, portMappingTemplates);
-							}
-						});
-					}
+					displayDetails();
 				}
 			}
 		});
@@ -123,81 +107,108 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		});
 	}
 	
-	private void processportMappingTemplates(final boolean developmentMode, List<PortMappingTemplate> portMappingTemplates) {
-		if (portMappingTemplates.size() == 0) {
-			view.showNoWebApplicationsLabel(true);
-			view.showNoServicesLabel(true);
-		} else {
-			for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
-				if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(
-						portMappingTemplate.getApplicationProtocol())) {
-					cloudFacadeController.getEndpoints(portMappingTemplate.getId(), new EndpointsCallback() {
+	private void displayDetails() {
+		if (developmentMode) {
+			cloudFacadeController.getDevelopmentModePropertySet(applianceInstance.getId(), new DevelopmentModePropertySetCallback() {
+				@Override
+				public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
+					cloudFacadeController.getRedirectionsForDevPropertySetId(developmentModePropertySet.getId(), new RedirectionsCallback() {
 						@Override
-						public void processEndpoints(final List<Endpoint> endpoints) {
-							if (endpoints.size() == 0) {
-								view.showNoWebApplicationsLabel(true);
-								view.showNoServicesLabel(true);
-							} else {
-								cloudFacadeController.getHttpMappings(applianceInstanceId, new HttpMappingsCallback() {
-									@Override
-									public void processHttpMappings(List<HttpMapping> httpMappings) {
-										if (httpMappings.size() == 0) {
-											view.showNoWebApplicationsLabel(true);
-											view.showNoServicesLabel(true);
-										} else {
-											boolean webApplicationPresent = false;
-											boolean servicePresent = false;
-											//TODO(DH): set endpoint name when available
-											for (Endpoint endpoint : endpoints) {
-												String httpUrl = null;
-												String httpsUrl = null;
-												
-												for (HttpMapping httpMapping : httpMappings) {
-													if (httpMapping.getApplicationProtocol().equals("http")) {
-														httpUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
-													} else if (httpMapping.getApplicationProtocol().equals("https")) {
-														httpsUrl = httpMapping.getUrl() + endpoint.getInvocationPath();
-													}
-												}
-												
-												if (endpoint.getEndpointType().equals("webapp")) {
-													view.addWebApplication(endpoint.getName(), httpUrl, httpsUrl);
-													webApplicationPresent = true;
-												} else {
-													view.addService(endpoint.getName(), httpUrl, httpsUrl, endpoint.getDescriptor());
-													servicePresent = true;
-												}
-											}
-											
-											view.showNoWebApplicationsLabel(!webApplicationPresent);
-											view.showNoServicesLabel(!servicePresent);
-										}
-									}});
+						public void processRedirections(List<Redirection> redirections) {
+							displayRedirections(redirections, developmentMode);
+						}
+					});
+				}});
+		} else {
+			cloudFacadeController.getRedirectionsForApplianceType(applianceInstance.getApplianceTypeId(), new RedirectionsCallback() {
+				@Override
+				public void processRedirections(List<Redirection> redirections) {
+					displayRedirections(redirections, developmentMode);
+				}});
+		}
+	}
+	
+	private void displayRedirections(List<Redirection> redirections, boolean developmentMode) {
+		List<String> presentWebappIds = new ArrayList<String>();
+		List<String> presentServiceIds = new ArrayList<String>();
+		List<String> presentAccessInfos = new ArrayList<String>();
+		
+		for (Redirection redirection : redirections) {
+			if (redirection.isHttp()) {
+				if (redirection.getEndpoints() != null) {
+					for (Endpoint endpoint : redirection.getEndpoints()) {
+						if ("webapp".equals(endpoint.getEndpointType())) {
+							presentWebappIds.add(endpoint.getId());
+							
+							if (!webapps.keySet().contains(endpoint.getId())) {
+								IsWidget widget = view.addWebApplication(endpoint.getName(), redirection.getHttpUrl(), redirection.getHttpsUrl());
+								webapps.put(endpoint.getId(), widget);
 							}
-						}});
-				} else {
-					view.showNoWebApplicationsLabel(true);
-					view.showNoServicesLabel(true);
+						} else {
+							presentServiceIds.add(endpoint.getId());
+							
+							if (!services.keySet().contains(endpoint.getId())) {
+								IsWidget widget = view.addService(endpoint.getName(), redirection.getHttpUrl(), redirection.getHttpsUrl(), endpoint.getDescriptor());
+								services.put(endpoint.getId(), widget);
+							}
+						}
+					}
 				}
-				
-				if (developmentMode) {
-					if (portMappingTemplate.getTransportProtocol().equals("tcp") &&
-							portMappingTemplate.getApplicationProtocol().equals("none")) {
-						cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
-							@Override
-							public void processPortMappings(List<PortMapping> portMappings) {
-								if (portMappings.size() > 0) {
-									view.showNoAccessInfoLabel(false);
-									
-									for (PortMapping portMapping : portMappings) {
-										view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
-										accessInfos.add(portMapping.getId());
-									}
-								}
-							}});
+			} else if (developmentMode) {
+				//access info is displayed only in development mode
+				if (redirection.getPortMappings().size() > 0) {
+					//TODO(DH): for now only the first port mapping is used
+					PortMapping portMapping = redirection.getPortMappings().get(0);
+					presentAccessInfos.add(redirection.getId());
+					
+					if (!accessInfos.keySet().contains(redirection.getId())) {
+						IsWidget widget = view.addAccessInfo(redirection.getName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+						accessInfos.put(redirection.getId(), widget);
 					}
 				}
 			}
+		}
+		
+		for (Iterator<String> i = webapps.keySet().iterator(); i.hasNext();) {
+			String endpointId = i.next();
+			
+			if (!presentWebappIds.contains(endpointId)) {
+				view.removeWebapp(webapps.remove(endpointId));
+			}
+		}
+		
+		for (Iterator<String> i = services.keySet().iterator(); i.hasNext();) {
+			String endpointId = i.next();
+			
+			if (!presentServiceIds.contains(endpointId)) {
+				view.removeService(services.remove(endpointId));
+			}
+		}
+		
+		for (Iterator<String> i = accessInfos.keySet().iterator(); i.hasNext();) {
+			String redirectionId = i.next();
+			
+			if (!presentAccessInfos.contains(redirectionId)) {
+				view.removeAccessInfo(accessInfos.remove(redirectionId));
+			}
+		}
+		
+		if (presentWebappIds.size() == 0) {
+			view.showNoWebApplicationsLabel(true);
+		} else {
+			view.showNoWebApplicationsLabel(false);
+		}
+		
+		if (presentServiceIds.size() == 0) {
+			view.showNoServicesLabel(true);
+		} else {
+			view.showNoServicesLabel(false);
+		}
+		
+		if (presentAccessInfos.size() == 0) {
+			view.showNoAccessInfoLabel(true);
+		} else {
+			view.showNoAccessInfoLabel(false);
 		}
 	}
 
@@ -205,11 +216,11 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	public void onShutdownClicked() {
 		if (view.confirmInstanceShutdown()) {
 			view.setShutdownBusyState(true);
-			cloudFacadeController.shutdownApplianceInstance(applianceInstanceId, new Command() {
+			cloudFacadeController.shutdownApplianceInstance(applianceInstance.getId(), new Command() {
 				@Override
 				public void execute() {
 					view.setShutdownBusyState(false);
-					eventBus.removeInstance(applianceInstanceId);
+					eventBus.removeInstance(applianceInstance.getId());
 				}
 			});
 		}
@@ -235,53 +246,23 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 		});
-		
-		if (developmentMode) {
-			cloudFacadeController.getDevelopmentModePropertySet(applianceInstanceId, new DevelopmentModePropertySetCallback() {
-				@Override
-				public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
-					cloudFacadeController.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySet.getId(), new PortMappingTemplatesCallback() {
-						@Override
-						public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-							boolean hasAccess = false;
-							
-							for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
-								if (portMappingTemplate.getTransportProtocol().equals("tcp") &&
-										portMappingTemplate.getApplicationProtocol().equals("none")) {
-									hasAccess = true;
-									view.showNoAccessInfoLabel(false);
-									cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
-										@Override
-										public void processPortMappings(List<PortMapping> portMappings) {
-											if (portMappings.size() > 0) {
-												for (PortMapping portMapping : portMappings) {
-													if (!accessInfos.contains(portMapping.getId())) {
-														view.addAccessInfo(portMappingTemplate.getServiceName(), portMapping.getPublicIp(), portMapping.getSourcePort());
-														accessInfos.add(portMapping.getId());
-													}
-												}
-											}
-										}});
-								}
-							}
-							
-							if (!hasAccess) {
-								view.showNoAccessInfoLabel(true);
-							}
-						}
-					});
-				}
-			});
-		}
 	}
 
 	@Override
 	public void onExternalInterfacesClicked() {
-		eventBus.showExternalInterfacesEditor(applianceInstanceId);
+		eventBus.showExternalInterfacesEditor(applianceInstance.getId());
 	}
 
 	@Override
 	public void onSave() {
-		eventBus.showAtomicServiceEditor(applianceInstanceId, true);
+		eventBus.showAtomicServiceEditor(applianceInstance.getId(), true);
+	}
+
+	public void updateAccessInfo() {
+		displayDetails();
+	}
+
+	public void updateEndpoints() {
+		displayDetails();
 	}
 }
