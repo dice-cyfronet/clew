@@ -1329,6 +1329,7 @@ public class CloudFacadeController {
 							OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
 							ownedApplianceType.setApplianceType(applianceType);
 							ownedApplianceType.setUser(getUser(applianceType.getAuthorId(), users));
+							result.add(ownedApplianceType);
 						}
 						
 						if (callback != null) {
