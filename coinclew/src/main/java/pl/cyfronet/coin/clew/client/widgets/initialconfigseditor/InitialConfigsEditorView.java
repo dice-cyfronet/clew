@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
@@ -122,5 +123,10 @@ public class InitialConfigsEditorView extends Composite implements IInitialConfi
 		} else {
 			process.setText(messages.processConfig());
 		}
+	}
+
+	@Override
+	public boolean confirmRemoval() {
+		return Window.confirm(messages.removalConfirmMessage());
 	}
 }

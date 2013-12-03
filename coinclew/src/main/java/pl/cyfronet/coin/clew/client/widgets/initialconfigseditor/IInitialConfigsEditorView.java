@@ -19,4 +19,5 @@ public interface IInitialConfigsEditorView extends IsWidget {
 	void clearMessages();
 	void displayNameNotUniqueMessage();
 	void setEditLabel(boolean edit);
+	boolean confirmRemoval();
 }

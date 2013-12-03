@@ -42,24 +42,26 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 	}
 	
 	public void onRemoveInitialConfiguration(String initialConfigurationId) {
-		InitialConfigPresenter presenter = configPresenters.get(initialConfigurationId);
-		
-		if (presenter != null) {
-			eventBus.removeHandler(presenter);
-			configPresenters.remove(initialConfigurationId);
-			view.getContainer().remove(presenter.getView().asWidget());
-			configNames.remove(initialConfigurationId);
+		if (view.confirmRemoval()) {
+			InitialConfigPresenter presenter = configPresenters.get(initialConfigurationId);
 			
-			if (configPresenters.size() == 0) {
-				view.showNoConfigsLabel();
-			}
-			
-			if (initialConfigurationId.equals(editedConfigId)) {
-				view.clearMessages();
-				view.getName().setText("");
-				view.getPayload().setText("");
-				view.setEditLabel(false);
-				editedConfigId = null;
+			if (presenter != null) {
+				eventBus.removeHandler(presenter);
+				configPresenters.remove(initialConfigurationId);
+				view.getContainer().remove(presenter.getView().asWidget());
+				configNames.remove(initialConfigurationId);
+				
+				if (configPresenters.size() == 0) {
+					view.showNoConfigsLabel();
+				}
+				
+				if (initialConfigurationId.equals(editedConfigId)) {
+					view.clearMessages();
+					view.getName().setText("");
+					view.getPayload().setText("");
+					view.setEditLabel(false);
+					editedConfigId = null;
+				}
 			}
 		}
 	}

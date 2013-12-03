@@ -15,4 +15,5 @@ public interface InitialConfigsEditorMessages extends Messages {
 	String nameOrPayloadEmpty();
 	String nameNotUnique();
 	String getEditLabel();
+	String removalConfirmMessage();
 }
