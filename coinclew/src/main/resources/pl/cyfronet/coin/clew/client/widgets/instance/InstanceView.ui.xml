@@ -40,36 +40,73 @@
 		}
 		.name {
 			float: left;
-			margin-right: 10px;
 			font-weight: bold;
+			width: 10%;
+		}
+		.spec {
+			float: left;
+			width: 20%;
+		}
+		.ip {
+			float: left;
+			width: 20%;
+		}
+		.location {
+			float: left;
+			width: 20%;
+		}
+		.status {
+			float: left;
+			width: 20%;
+		}
+		.actions {
+			float: left;
+			width: 10%;
 		}
 		.container {
 			float: left;
 			width: 100%;
 			padding-left: 20px;
 		}
+		.panel {
+			float: left;
+			width: 100%;
+			padding: 10px 0px;
+		}
+		.panel:hover {
+			background-color: #F5F5F5;
+		}
 	</ui:style>
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.panel}">
+		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:HTML ui:field="spec" addStyleNames="{style.spec}"/>
+		<g:HTML ui:field="ip" addStyleNames="{style.ip}"/>
+		<g:HTML ui:field="location" addStyleNames="{style.location}"/>
+		<g:HTML ui:field="status" addStyleNames="{style.status}"/>
+		<g:FlowPanel addStyleNames="{style.actions}">
+			<b:ButtonGroup ui:field="controls">
+				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>
+			</b:ButtonGroup>
+		</g:FlowPanel>
+	
 		<b:Row addStyleNames="{style.spacey-row}">
 			<b:Column size="2">
-				<g:HTML ui:field="name" addStyleNames="{style.left}"/>
+				
 			</b:Column>
 			<b:Column size="3">
-				<g:HTML ui:field="spec" addStyleNames="{style.left}"/>
+				
 			</b:Column>
 			<b:Column size="2">
-				<g:HTML ui:field="ip" addStyleNames="{style.left}"/>
+				
 			</b:Column>
 			<b:Column size="2">
-				<g:HTML ui:field="location" addStyleNames="{style.left}"/>
+				
 			</b:Column>
 			<b:Column size="2">
-				<g:HTML ui:field="status" addStyleNames="{style.left}"/>
+				
 			</b:Column>
 			<b:Column size="1" addStyleNames="{style.right}">
-				<b:ButtonGroup ui:field="controls">
-					<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>
-				</b:ButtonGroup>
+				
 			</b:Column>
 		</b:Row>
 		<b:Collapse ui:field="collapse" defaultOpen="false">
