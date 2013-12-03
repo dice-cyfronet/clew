@@ -4,7 +4,6 @@ import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelo
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Row;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,7 +28,7 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 	@UiField FlowPanel atomicServicesContainer;
 	@UiField FlowPanel runningInstancesContainer;
 	@UiField DevelopmentMessages messages;
-	@UiField Row headerRow;
+	@UiField FlowPanel headerRow;
 
 	public DevelopmentView() {
 		initWidget(uiBinder.createAndBindUi(this));

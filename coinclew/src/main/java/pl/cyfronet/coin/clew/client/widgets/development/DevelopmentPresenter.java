@@ -91,6 +91,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		if (!update) {
 			view.getInstanceContainer().clear();
 			view.showInstanceLoadingIndicator(true);
+			view.showHeaderRow(false);
 		}
 		
 		cloudFacadeController.getDevelopmentApplianceInstances(new ApplianceInstancesCallback() {
@@ -100,8 +101,10 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				
 				if (applianceInstances.size() == 0) {
 					view.showNoRunningInstancesLabel(true);
+					view.showHeaderRow(false);
 				} else {
 					view.showNoRunningInstancesLabel(false);
+					view.showHeaderRow(true);
 					
 					for (ApplianceInstance instance : applianceInstances) {
 						
