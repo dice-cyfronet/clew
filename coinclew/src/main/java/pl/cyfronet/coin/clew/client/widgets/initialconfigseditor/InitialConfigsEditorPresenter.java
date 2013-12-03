@@ -53,6 +53,14 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 			if (configPresenters.size() == 0) {
 				view.showNoConfigsLabel();
 			}
+			
+			if (initialConfigurationId.equals(editedConfigId)) {
+				view.clearMessages();
+				view.getName().setText("");
+				view.getPayload().setText("");
+				view.setEditLabel(false);
+				editedConfigId = null;
+			}
 		}
 	}
 	
