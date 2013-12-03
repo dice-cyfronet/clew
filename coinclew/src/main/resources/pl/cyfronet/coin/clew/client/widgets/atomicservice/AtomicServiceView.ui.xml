@@ -4,20 +4,22 @@
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServiceMessages" field="messages"/>
 	<ui:style>
-		.name {
+		.title {
 			float: left;
-			width: 20%;
+			width: 70%;
 			text-align: left;
 			font-size: 1.2em;
 		}
+		.name {
+			
+		}
 		.author {
-			float: left;
-			width: 20%;
 			text-align: left;
+			font-size: 85%;
 		}
 		.actions {
 			float:left;
-			width: 60%;
+			width: 30%;
 			text-align: right;
 		}
 		.container {
@@ -27,8 +29,11 @@
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
-		<g:InlineHTML ui:field="name" addStyleNames="{style.name}"/>
-		<g:InlineHTML ui:field="author" addStyleNames="{style.author}"/>
+		<g:FlowPanel addStyleNames="{style.title}">
+			<g:InlineHTML ui:field="name" addStyleNames="{style.name}"/>
+			<g:InlineHTML>&nbsp;</g:InlineHTML>
+			<g:InlineHTML ui:field="author" addStyleNames="{style.author} muted"/>
+		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup>
 				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>

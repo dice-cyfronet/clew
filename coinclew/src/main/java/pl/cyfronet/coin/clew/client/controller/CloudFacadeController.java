@@ -10,6 +10,7 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.OwnedApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -1373,6 +1374,50 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, UserRequestResponse response) {
 				if (userCallback != null) {
 					userCallback.processUser(response.getUser());
+				}
+			}
+		});
+	}
+
+	public void getOwnedApplianceTypesForUser(String userLogin, final OwnedApplianceTypesCallback ownedApplianceTypesCallback) {
+		userService.getUserForLogin(userLogin, new MethodCallback<UsersResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, UsersResponse response) {
+				final List<OwnedApplianceType> result = new ArrayList<OwnedApplianceType>();
+				
+				if (response.getUsers().size() > 0) {
+					final User user = response.getUsers().get(0);
+					applianceTypesService.getApplianceTypesForUserId(user.getId(), new MethodCallback<ApplianceTypesResponse>() {
+						@Override
+						public void onFailure(Method method, Throwable exception) {
+							popupErrorHandler.displayError(exception.getMessage());
+						}
+
+						@Override
+						public void onSuccess(Method method, ApplianceTypesResponse response) {
+							for (ApplianceType applianceType : response.getApplianceTypes()) {
+								if (applianceType.getAuthorId().equals(user.getId())) {
+									OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
+									ownedApplianceType.setApplianceType(applianceType);
+									ownedApplianceType.setUser(user);
+									result.add(ownedApplianceType);
+								}
+							}
+							
+							if (ownedApplianceTypesCallback != null) {
+								ownedApplianceTypesCallback.processOwnedApplianceTypes(result);
+							}
+						}
+					});
+				} else {
+					if (ownedApplianceTypesCallback != null) {
+						ownedApplianceTypesCallback.processOwnedApplianceTypes(result);
+					}
 				}
 			}
 		});

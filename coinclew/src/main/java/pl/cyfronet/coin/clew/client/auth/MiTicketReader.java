@@ -35,6 +35,24 @@ public class MiTicketReader {
 		return ticket;
 	}
 	
+	public String getUserLogin() {
+		String ticket = getTicket();
+		
+		if (ticket != null) {
+			String decoded = decodeBase64(ticket);
+			RegExp regexp = RegExp.compile("^uid=(.*?);.*");
+			MatchResult matchResult = regexp.exec(decoded);
+			
+			if (matchResult.getGroupCount() > 1) {
+				String login = matchResult.getGroup(1);
+				
+				return login;
+			}
+		}
+		
+		return "dharezlak";
+	}
+	
 	private List<String> getRoles() {
 		List<String> result = new ArrayList<String>();
 		String ticket = getTicket();
