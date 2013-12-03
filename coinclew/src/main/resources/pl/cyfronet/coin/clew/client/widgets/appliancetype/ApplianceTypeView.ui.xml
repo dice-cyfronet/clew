@@ -11,17 +11,23 @@
 			float: left;
 		}
 		.description-panel {
-			width: 50%;
+			width: 55%;
 			float: left;
 			text-align: left;
 			font-size: 0.9em;
 		}
 		.description-text {
+			margin-left: 5px;
 			margin-right: 5px;
 			margin-bottom: 5px;
 		}
 		.control {
 			width: 10%;
+			float: left;
+			text-align: right;
+		}
+		.check {
+			width: 5%;
 			float: left;
 			text-align: left;
 		}
@@ -36,19 +42,26 @@
 		.config {
 			font-size: 0.9em;
 		}
+		.left-margin {
+			margin-left: 5px;
+		}
+		.init-conf-label {
+			margin-left: 5px;
+			font-style: italic;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.container}">
+		<g:FlowPanel addStyleNames="{style.check}">
+			<b:CheckBox ui:field="checked" enabled="false"/>
+		</g:FlowPanel>
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
 		<g:FlowPanel addStyleNames="{style.description-panel}">
 			<g:HTML ui:field="description" addStyleNames="{style.description-text}"/>
-			<b:Strong><ui:text from="{messages.pickInitConfigLabel}"/>:</b:Strong>
-			<g:FlowPanel ui:field="initialConfigsContainer"/>
+			<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>
+			<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
 			<b:Button ui:field="start" size="MINI" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" enabled="false" title="{messages.startTooltip}"></b:Button>
-		</g:FlowPanel>
-		<g:FlowPanel addStyleNames="{style.control}">
-			<b:CheckBox ui:field="checked" enabled="false"/>
 		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder> 
