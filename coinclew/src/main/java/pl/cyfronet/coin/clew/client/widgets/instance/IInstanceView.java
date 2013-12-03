@@ -11,7 +11,7 @@ public interface IInstanceView extends IsWidget {
 	}
 
 	HasText getName();
-	HasText getSpec();
+//	HasText getSpec();
 	String getSpecStanza(String cpu, String ram, String disk);
 	HasText getIp();
 	HasText getLocation();

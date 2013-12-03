@@ -41,7 +41,7 @@
 		.name {
 			float: left;
 			font-weight: bold;
-			width: 10%;
+			width: 30%;
 		}
 		.spec {
 			float: left;
@@ -79,7 +79,7 @@
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.panel}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
-		<g:HTML ui:field="spec" addStyleNames="{style.spec}"/>
+		<!-- <g:HTML ui:field="spec" addStyleNames="{style.spec}"/> -->
 		<g:HTML ui:field="ip" addStyleNames="{style.ip}"/>
 		<g:HTML ui:field="location" addStyleNames="{style.location}"/>
 		<g:HTML ui:field="status" addStyleNames="{style.status}"/>
@@ -88,27 +88,6 @@
 				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
-	
-		<b:Row addStyleNames="{style.spacey-row}">
-			<b:Column size="2">
-				
-			</b:Column>
-			<b:Column size="3">
-				
-			</b:Column>
-			<b:Column size="2">
-				
-			</b:Column>
-			<b:Column size="2">
-				
-			</b:Column>
-			<b:Column size="2">
-				
-			</b:Column>
-			<b:Column size="1" addStyleNames="{style.right}">
-				
-			</b:Column>
-		</b:Row>
 		<b:Collapse ui:field="collapse" defaultOpen="false">
 			<g:FlowPanel addStyleNames="{style.details}">
 				<g:HTML ui:field="accessInfoLabel" addStyleNames="{style.details-header}" visible="false"><ui:text from="{messages.accessInfoLabel}"/></g:HTML>

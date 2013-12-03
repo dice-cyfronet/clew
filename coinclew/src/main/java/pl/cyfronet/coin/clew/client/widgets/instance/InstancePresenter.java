@@ -68,7 +68,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.getName().setText(applianceType.getName());
 				}
 				
-				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
+//				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
 				
 				if (enableShutdown) {
 					view.addShutdownControl();

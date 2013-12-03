@@ -36,9 +36,9 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiField CheckBox shared;
 	@UiField CheckBox scalable;
 	@UiField ListBox visibleFor;
-	@UiField ListBox cores;
-	@UiField ListBox ram;
-	@UiField ListBox disk;
+//	@UiField ListBox cores;
+//	@UiField ListBox ram;
+//	@UiField ListBox disk;
 	@UiField Label errorLabel;
 	@UiField ApplianceTypeEditorMessages messages;
 	@UiField Button update;
@@ -179,92 +179,92 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 		};
 	}
 
-	@Override
-	public HasValue<String> getDisk() {
-		return new HasValue<String>() {
-			@Override
-			public HandlerRegistration addValueChangeHandler(
-					ValueChangeHandler<String> handler) {
-				return null;
-			}
+//	@Override
+//	public HasValue<String> getDisk() {
+//		return new HasValue<String>() {
+//			@Override
+//			public HandlerRegistration addValueChangeHandler(
+//					ValueChangeHandler<String> handler) {
+//				return null;
+//			}
+//
+//			@Override
+//			public void fireEvent(GwtEvent<?> event) {
+//			}
+//
+//			@Override
+//			public String getValue() {
+//				return disk.getValue();
+//			}
+//
+//			@Override
+//			public void setValue(String value) {
+//				disk.setSelectedValue(value);
+//			}
+//
+//			@Override
+//			public void setValue(String value, boolean fireEvents) {
+//			}
+//		};
+//	}
 
-			@Override
-			public void fireEvent(GwtEvent<?> event) {
-			}
+//	@Override
+//	public HasValue<String> getRam() {
+//		return new HasValue<String>() {
+//			@Override
+//			public HandlerRegistration addValueChangeHandler(
+//					ValueChangeHandler<String> handler) {
+//				return null;
+//			}
+//
+//			@Override
+//			public void fireEvent(GwtEvent<?> event) {
+//			}
+//
+//			@Override
+//			public String getValue() {
+//				return ram.getValue();
+//			}
+//
+//			@Override
+//			public void setValue(String value) {
+//				ram.setSelectedValue(value);
+//			}
+//
+//			@Override
+//			public void setValue(String value, boolean fireEvents) {
+//			}
+//		};
+//	}
 
-			@Override
-			public String getValue() {
-				return disk.getValue();
-			}
-
-			@Override
-			public void setValue(String value) {
-				disk.setSelectedValue(value);
-			}
-
-			@Override
-			public void setValue(String value, boolean fireEvents) {
-			}
-		};
-	}
-
-	@Override
-	public HasValue<String> getRam() {
-		return new HasValue<String>() {
-			@Override
-			public HandlerRegistration addValueChangeHandler(
-					ValueChangeHandler<String> handler) {
-				return null;
-			}
-
-			@Override
-			public void fireEvent(GwtEvent<?> event) {
-			}
-
-			@Override
-			public String getValue() {
-				return ram.getValue();
-			}
-
-			@Override
-			public void setValue(String value) {
-				ram.setSelectedValue(value);
-			}
-
-			@Override
-			public void setValue(String value, boolean fireEvents) {
-			}
-		};
-	}
-
-	@Override
-	public HasValue<String> getCores() {
-		return new HasValue<String>() {
-			@Override
-			public HandlerRegistration addValueChangeHandler(
-					ValueChangeHandler<String> handler) {
-				return null;
-			}
-
-			@Override
-			public void fireEvent(GwtEvent<?> event) {
-			}
-
-			@Override
-			public String getValue() {
-				return cores.getValue();
-			}
-
-			@Override
-			public void setValue(String value) {
-				cores.setSelectedValue(value);
-			}
-
-			@Override
-			public void setValue(String value, boolean fireEvents) {
-			}
-		};
-	}
+//	@Override
+//	public HasValue<String> getCores() {
+//		return new HasValue<String>() {
+//			@Override
+//			public HandlerRegistration addValueChangeHandler(
+//					ValueChangeHandler<String> handler) {
+//				return null;
+//			}
+//
+//			@Override
+//			public void fireEvent(GwtEvent<?> event) {
+//			}
+//
+//			@Override
+//			public String getValue() {
+//				return cores.getValue();
+//			}
+//
+//			@Override
+//			public void setValue(String value) {
+//				cores.setSelectedValue(value);
+//			}
+//
+//			@Override
+//			public void setValue(String value, boolean fireEvents) {
+//			}
+//		};
+//	}
 
 	@Override
 	public void displayNameEmptyMessage() {

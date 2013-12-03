@@ -45,7 +45,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Label noAccessInfoLabel;
 	
 	@UiField HTML name;
-	@UiField HTML spec;
+//	@UiField HTML spec;
 	@UiField InstanceMessages messages;
 	@UiField HTML ip;
 	@UiField HTML location;
@@ -84,10 +84,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		return name;
 	}
 
-	@Override
-	public HasText getSpec() {
-		return spec;
-	}
+//	@Override
+//	public HasText getSpec() {
+//		return spec;
+//	}
 
 	@Override
 	public String getSpecStanza(String cpu, String ram, String disk) {
