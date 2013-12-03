@@ -6,4 +6,5 @@ public interface ApplianceTypeMessages extends Messages {
 	String emptyDescriptionLabel();
 	String noInitialConfigLabel();
 	String startTooltip();
+	String pickInitConfigLabel();
 }

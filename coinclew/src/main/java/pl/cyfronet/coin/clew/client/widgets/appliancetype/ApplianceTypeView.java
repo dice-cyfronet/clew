@@ -14,6 +14,7 @@ import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -28,6 +29,9 @@ import com.mvp4g.client.view.ReverseViewInterface;
 public class ApplianceTypeView extends Composite implements IApplianceTypeView, ReverseViewInterface<IApplianceTypePresenter> {
 	private static ApplianceTypeViewUiBinder uiBinder = GWT.create(ApplianceTypeViewUiBinder.class);
 	interface ApplianceTypeViewUiBinder extends UiBinder<Widget, ApplianceTypeView> {}
+	interface Styles extends CssResource {
+		String config();
+	}
 	
 	private IApplianceTypePresenter presenter;
 	private List<RadioButton> checkBoxes;
@@ -38,6 +42,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField Button start;
 	@UiField FlowPanel initialConfigsContainer;
 	@UiField CheckBox checked;
+	@UiField Styles style;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -109,6 +114,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public HasValue<Boolean> addInitialConfigRadioBox(String radioName, String name) {
 		RadioButton radio = new RadioButton(radioName);
+		radio.addStyleName(style.config());
 		radio.setHTML(name);
 		initialConfigsContainer.add(radio);
 		checkBoxes.add(radio);

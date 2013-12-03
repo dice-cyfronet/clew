@@ -3,28 +3,42 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypeMessages" field="messages"/>
-	<ui:style>
+	<ui:style type="pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypeView.Styles">
 		.name {
 			text-align: left;
 			font-weight: bold;
 			width: 30%;
 			float: left;
 		}
-		.description {
+		.description-panel {
 			width: 50%;
 			float: left;
 			text-align: left;
+			font-size: 0.9em;
+		}
+		.description-text {
+			margin-right: 5px;
+			margin-bottom: 5px;
 		}
 		.control {
 			width: 10%;
 			float: left;
 			text-align: left;
 		}
+		.container {
+			float: left;
+			width: 100%;
+			margin-bottom: 5px;
+		}
+		.config {
+			font-size: 0.9em;
+		}
 	</ui:style>
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.container}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
-		<g:FlowPanel addStyleNames="{style.description}">
-			<g:HTML ui:field="description"/>
+		<g:FlowPanel addStyleNames="{style.description-panel}">
+			<g:HTML ui:field="description" addStyleNames="{style.description-text}"/>
+			<b:Strong><ui:text from="{messages.pickInitConfigLabel}"/>:</b:Strong>
 			<g:FlowPanel ui:field="initialConfigsContainer"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
