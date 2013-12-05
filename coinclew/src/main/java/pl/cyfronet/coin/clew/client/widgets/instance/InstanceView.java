@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -95,7 +96,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public HasText getIp() {
+	public HasHTML getIp() {
 		return ip;
 	}
 
@@ -105,7 +106,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public HasText getStatus() {
+	public HasHTML getStatus() {
 		return status;
 	}
 

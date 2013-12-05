@@ -9,33 +9,45 @@
 		}
 		.header {
 			font-weight: bold;
-			font-size: 1.1em;
+			font-style: italic;
 		}
 		.right {
 			text-align: right;
 		}
+		.name {
+			float: left;
+			width: 30%;
+		}
+		.spec {
+			float: left;
+			width: 20%;
+		}
+		.ip {
+			float: left;
+			width: 20%;
+		}
+		.location {
+			float: left;
+			width: 20%;
+		}
+		.status {
+			float: left;
+			width: 20%;
+		}
+		.instance-actions {
+			float: left;
+			width: 10%;
+		}
 	</ui:style>
 	<g:FlowPanel>
-		<b:Row ui:field="headerRow" visible="false">
-			<b:Column size="2">
-				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
-			</b:Column>
-			<b:Column size="3">
-				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.specHeader}"/></g:HTML>
-			</b:Column>
-			<b:Column size="2">
-				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.ipHeader}"/></g:HTML>
-			</b:Column>
-			<b:Column size="2">
-				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.locationHeader}"/></g:HTML>
-			</b:Column>
-			<b:Column size="2">
-				<g:HTML addStyleNames="{style.header}"><ui:text from="{messages.statusHeader}"/></g:HTML>
-			</b:Column>
-			<b:Column size="1">
-				<g:HTML addStyleNames="{style.header} {style.right}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
-			</b:Column>
-		</b:Row>
+		<g:FlowPanel ui:field="headerRow" visible="false">
+			<g:HTML addStyleNames="{style.name} {style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
+			<!-- <g:HTML addStyleNames="{style.spec}"><ui:text from="{messages.specHeader}"/></g:HTML> -->
+			<g:HTML addStyleNames="{style.ip} {style.header}"><ui:text from="{messages.ipHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.location} {style.header}"><ui:text from="{messages.locationHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.status} {style.header}"><ui:text from="{messages.statusHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.instance-actions} {style.right} {style.header}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
+		</g:FlowPanel>
 		<g:FlowPanel ui:field="instanceContainer" addStyleNames="{style.center}"/>
 		<b:Button ui:field="startInstance" type="SUCCESS"><ui:text from="{messages.startInstanceButtonLabel}"/></b:Button>
 	</g:FlowPanel>

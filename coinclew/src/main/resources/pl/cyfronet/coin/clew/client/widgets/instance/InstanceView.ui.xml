@@ -65,6 +65,7 @@
 		.actions {
 			float: left;
 			width: 10%;
+			text-align: right;
 		}
 		.container {
 			padding-left: 20px;

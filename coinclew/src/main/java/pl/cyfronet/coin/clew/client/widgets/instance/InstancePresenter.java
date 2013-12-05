@@ -25,6 +25,7 @@ import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -92,8 +93,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				if (applianceVms.size() > 0) {
 					//TODO(DH): for now details of the first VM are shown only
 					ApplianceVm applianceVm = applianceVms.get(0);
-					view.getIp().setText(applianceVm.getIp());
-					view.getStatus().setText(applianceVm.getState());
+					view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+					view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 					cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
 						@Override
 						public void processComputeSite(ComputeSite computeSite) {
@@ -233,8 +234,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				if (applianceVms.size() > 0) {
 					//TODO(DH): for now details of the first VM are shown only
 					ApplianceVm applianceVm = applianceVms.get(0);
-					view.getIp().setText(applianceVm.getIp());
-					view.getStatus().setText(applianceVm.getState());
+					view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+					view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 					cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
 						@Override
 						public void processComputeSite(ComputeSite computeSite) {

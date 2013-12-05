@@ -4,7 +4,6 @@ import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsVi
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
-import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -14,8 +13,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -26,9 +27,9 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	private IApplianceDetailsPresenter presenter;
 	
 	@UiField Modal modal;
-	@UiField Form form;
 	@UiField Button start;
 	@UiField ApplianceDetailsMessages messages;
+	@UiField FlowPanel container;
 
 	public ApplianceDetailsView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -67,7 +68,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	public HasValue<Boolean> addKey(String id, String name) {
 		RadioButton button = new RadioButton("key", name);
 		button.setFormValue(id);
-		form.add(button);
+		container.add(button);
 		
 		return button;
 	}
@@ -86,9 +87,14 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		ControlLabel label = new ControlLabel(messages.nameLabel(name));
 		TextBox nameBox = new TextBox();
 		nameBox.setPlaceholder(messages.namePlaceholder());
-		form.insert(nameBox, 0);
-		form.insert(label, 0);
+		container.insert(nameBox, 0);
+		container.insert(label, 0);
 		
 		return nameBox;
+	}
+
+	@Override
+	public HasWidgets getContainer() {
+		return container;
 	}
 }

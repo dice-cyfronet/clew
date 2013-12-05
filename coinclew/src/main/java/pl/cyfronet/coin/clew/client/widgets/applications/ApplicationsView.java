@@ -27,7 +27,7 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	
 	@UiField FlowPanel instanceContainer;
 	@UiField ApplicationsMessages messages;
-	@UiField Row headerRow;
+	@UiField FlowPanel headerRow;
 
 	public ApplicationsView() {
 		initWidget(uiBinder.createAndBindUi(this));

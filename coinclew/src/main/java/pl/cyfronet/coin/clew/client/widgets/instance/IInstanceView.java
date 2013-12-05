@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -13,9 +14,9 @@ public interface IInstanceView extends IsWidget {
 	HasText getName();
 //	HasText getSpec();
 	String getSpecStanza(String cpu, String ram, String disk);
-	HasText getIp();
+	HasHTML getIp();
 	HasText getLocation();
-	HasText getStatus();
+	HasHTML getStatus();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();

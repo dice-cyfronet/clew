@@ -58,6 +58,7 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	}
 
 	private void loadKeysAndNames(List<String> initialConfigurationIds) {
+		view.getContainer().clear();
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {

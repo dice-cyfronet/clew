@@ -25,7 +25,7 @@
 		}
 		.header {
 			font-weight: bold;
-			font-size: 1.1em;
+			font-style: italic;
 		}
 		.right {
 			text-align: right;
@@ -60,12 +60,12 @@
 		<g:FlowPanel ui:field="atomicServicesContainer" addStyleNames="{style.container}"/>
 		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
 		<g:FlowPanel ui:field="headerRow" visible="false">
-			<g:HTML addStyleNames="{style.name}"><ui:text from="{messages.nameHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.name} {style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
 			<!-- <g:HTML addStyleNames="{style.spec}"><ui:text from="{messages.specHeader}"/></g:HTML> -->
-			<g:HTML addStyleNames="{style.ip}"><ui:text from="{messages.ipHeader}"/></g:HTML>
-			<g:HTML addStyleNames="{style.location}"><ui:text from="{messages.locationHeader}"/></g:HTML>
-			<g:HTML addStyleNames="{style.status}"><ui:text from="{messages.statusHeader}"/></g:HTML>
-			<g:HTML addStyleNames="{style.instance-actions} {style.right}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.ip} {style.header}"><ui:text from="{messages.ipHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.location} {style.header}"><ui:text from="{messages.locationHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.status} {style.header}"><ui:text from="{messages.statusHeader}"/></g:HTML>
+			<g:HTML addStyleNames="{style.instance-actions} {style.right} {style.header}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="runningInstancesContainer" addStyleNames="{style.container}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
