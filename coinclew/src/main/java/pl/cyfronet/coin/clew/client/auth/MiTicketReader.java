@@ -61,7 +61,7 @@ public class MiTicketReader {
 		RegExp regexp = RegExp.compile(".*tokens=(.*?);.*");
 		MatchResult matchResult = regexp.exec(decoded);
 		
-		if (matchResult.getGroupCount() > 1) {
+		if (matchResult != null && matchResult.getGroupCount() > 1) {
 			String roles = matchResult.getGroup(1);
 			String[] splitRoles = roles.split(ROLE_DELIMITER);
 			result.addAll(Arrays.asList(splitRoles));
