@@ -510,4 +510,14 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	public void showCannotRemoveMappingMessage() {
 		Window.alert(messages.cannotRemoveMappingEndpointsExist());
 	}
+
+	@Override
+	public boolean confirmMappingRemoval() {
+		return Window.confirm(messages.confirmMappingRemoval());
+	}
+
+	@Override
+	public boolean confirmEndpointRemoval() {
+		return Window.confirm(messages.confirmEndpointRemoval());
+	}
 }

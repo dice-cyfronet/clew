@@ -35,7 +35,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		String anchor();
 		String descriptor();
 		String service();
-		String name();
+		String detailsName();
 	}
 	
 	private IInstancePresenter presenter;
@@ -150,7 +150,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		panel.addStyleName(style.service());
 		
 		InlineHTML nameWidget = new InlineHTML(name + ":&nbsp;");
-		nameWidget.addStyleName(style.name());
+		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
 		
 		if (httpUrl != null) {
@@ -198,7 +198,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		panel.addStyleName(style.service());
 		
 		InlineHTML nameWidget = new InlineHTML(name + ":&nbsp;");
-		nameWidget.addStyleName(style.name());
+		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
 		
 		if (httpUrl != null) {
@@ -313,7 +313,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		panel.addStyleName(style.service());
 		
 		InlineHTML nameWidget = new InlineHTML(serviceName + ":&nbsp;");
-		nameWidget.addStyleName(style.name());
+		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
 		
 		InlineHTML info = new InlineHTML(publicIp + ":" + port);

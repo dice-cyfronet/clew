@@ -19,22 +19,20 @@
 			text-align: left;
 			padding-top: 10px;
 			padding-bottom: 10px;
+			padding-left: 20px;
+		}
+		.details {
 			float: left;
 			width: 100%;
 		}
-		.details {
-			margin-left: 50px;
-		}
 		.anchor {
-			float: left;
-			margin-right: 10px;
+			display: inline;
+			margin-left: 10px;
 		}
 		.descriptor {
 			float: right;
 		}
 		.service {
-			float: left;
-			width: 100%;
 			margin-top: 5px;
 			text-align: left;
 		}
@@ -42,30 +40,33 @@
 			float: left;
 			font-weight: bold;
 			width: 30%;
+			text-align: left;
 		}
 		.spec {
 			float: left;
 			width: 20%;
+			text-align: left;
 		}
 		.ip {
 			float: left;
 			width: 20%;
+			text-align: left;
 		}
 		.location {
 			float: left;
 			width: 20%;
+			text-align: left;
 		}
 		.status {
 			float: left;
 			width: 20%;
+			text-align: left;
 		}
 		.actions {
 			float: left;
 			width: 10%;
 		}
 		.container {
-			float: left;
-			width: 100%;
 			padding-left: 20px;
 		}
 		.panel {
@@ -76,13 +77,22 @@
 		.panel:hover {
 			background-color: #F5F5F5;
 		}
+		.full-width {
+			float: left;
+			width: 100%;
+		}
+		.detailsName {
+			font-weight: bold;
+			text-align: left;
+			padding-left: 30px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.panel}">
-		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
-		<!-- <g:HTML ui:field="spec" addStyleNames="{style.spec}"/> -->
-		<g:HTML ui:field="ip" addStyleNames="{style.ip}"/>
-		<g:HTML ui:field="location" addStyleNames="{style.location}"/>
-		<g:HTML ui:field="status" addStyleNames="{style.status}"/>
+		<g:HTML ui:field="name" addStyleNames="{style.name}">&nbsp;</g:HTML>
+		<!-- <g:HTML ui:field="spec" addStyleNames="{style.spec}">&nbsp;</g:HTML> -->
+		<g:HTML ui:field="ip" addStyleNames="{style.ip}">&nbsp;</g:HTML>
+		<g:HTML ui:field="location" addStyleNames="{style.location}">&nbsp;</g:HTML>
+		<g:HTML ui:field="status" addStyleNames="{style.status}">&nbsp;</g:HTML>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="controls">
 				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>

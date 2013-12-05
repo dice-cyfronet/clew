@@ -42,4 +42,6 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String endpointTargetPortHelp();
 	String endpointNameInvocationPathOrPortMappingIdEmptyMessage();
 	String cannotRemoveMappingEndpointsExist();
+	String confirmMappingRemoval();
+	String confirmEndpointRemoval();
 }

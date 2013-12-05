@@ -174,27 +174,29 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 
 	@Override
 	public void onRemoveMapping(final String mappingId) {
-		cloudFacadeController.getEndpoints(mappingId, new EndpointsCallback() {
-			@Override
-			public void processEndpoints(List<Endpoint> endpoints) {
-				if (endpoints.size() > 0) {
-					view.showCannotRemoveMappingMessage();
-				} else {
-					cloudFacadeController.removePortMapingTemplate(mappingId, new Command() {
-						@Override
-						public void execute() {
-							view.removeMappingTemplate(mappings.remove(mappingId));
-							
-							if (mappings.size() == 0) {
-								view.showNoExternalInterfacesLabel(true);
+		if (view.confirmMappingRemoval()) {
+			cloudFacadeController.getEndpoints(mappingId, new EndpointsCallback() {
+				@Override
+				public void processEndpoints(List<Endpoint> endpoints) {
+					if (endpoints.size() > 0) {
+						view.showCannotRemoveMappingMessage();
+					} else {
+						cloudFacadeController.removePortMapingTemplate(mappingId, new Command() {
+							@Override
+							public void execute() {
+								view.removeMappingTemplate(mappings.remove(mappingId));
+								
+								if (mappings.size() == 0) {
+									view.showNoExternalInterfacesLabel(true);
+								}
+								
+								eventBus.externalInterfacesChanged(applianceInstanceId);
 							}
-							
-							eventBus.externalInterfacesChanged(applianceInstanceId);
-						}
-					});
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	@Override
@@ -276,16 +278,20 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 
 	@Override
 	public void onRemoveEndpoint(final String endpointId) {
-		cloudFacadeController.removeEndpoint(endpointId, new Command() {
-			@Override
-			public void execute() {
-				view.removeEndpoint(endpoints.remove(endpointId));
-				
-				if (endpoints.size() == 0) {
-					view.showNoEndpointsLabel(true);
+		if (view.confirmEndpointRemoval()) {
+			cloudFacadeController.removeEndpoint(endpointId, new Command() {
+				@Override
+				public void execute() {
+					view.removeEndpoint(endpoints.remove(endpointId));
+					
+					if (endpoints.size() == 0) {
+						view.showNoEndpointsLabel(true);
+					}
+					
+					eventBus.externalInterfacesChanged(applianceInstanceId);
 				}
-			}
-		});
+			});
+		}
 	}
 	
 	private String addUrlPath(String url, String path) {

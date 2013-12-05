@@ -45,4 +45,6 @@ public interface IExternalInterfacesView extends IsWidget {
 	void clearEndpointTargetPorts();
 	void displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage();
 	void showCannotRemoveMappingMessage();
+	boolean confirmMappingRemoval();
+	boolean confirmEndpointRemoval();
 }
