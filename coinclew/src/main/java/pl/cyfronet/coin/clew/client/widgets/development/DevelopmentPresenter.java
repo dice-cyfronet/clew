@@ -187,6 +187,10 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
 				
 				if (presenter == null) {
+					if (atomicServicePresenters.size() == 0) {
+						view.showNoAtomicServicesLabel(false);
+					}
+
 					presenter = eventBus.addHandler(AtomicServicePresenter.class);
 					atomicServicePresenters.put(applianceType.getId(), presenter);
 					view.getAtomicServicesContainer().add(presenter.getView().asWidget());
