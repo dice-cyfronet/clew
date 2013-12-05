@@ -120,4 +120,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void endpointsChanged(String applianceInstanceId);
+
+	@Event(handlers = DevelopmentPresenter.class)
+	void removeApplianceType(String id);
 }

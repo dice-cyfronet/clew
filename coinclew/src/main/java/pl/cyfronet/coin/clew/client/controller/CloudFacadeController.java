@@ -1422,4 +1422,21 @@ public class CloudFacadeController {
 			}
 		});
 	}
+
+	public void removeApplianceType(String applianceTypeId, final Command command) {
+		applianceTypesService.deleteApplianceType(applianceTypeId, new MethodCallback<Void>() {
+
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if (command != null) {
+					command.execute();
+				}
+			}
+		});
+	}
 }

@@ -7,8 +7,12 @@ public interface IAtomicServiceView extends IsWidget {
 	interface IAtomicServicePresenter {
 		void onEditInitialConfigs();
 		void onEditProperties();
+		void onRemove();
 	}
 
 	HasText getName();
 	void updateAuthor(String fullName);
+	void addRemoveButton();
+	void setRemoveBusyState(boolean busy);
+	boolean confirmRemoval();
 }

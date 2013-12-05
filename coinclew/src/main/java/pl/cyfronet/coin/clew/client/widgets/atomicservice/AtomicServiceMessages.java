@@ -6,4 +6,5 @@ public interface AtomicServiceMessages extends Messages {
 	String editInitialConfigsTooltip();
 	String editPropertiesTooltip();
 	String authorLabel(String authorName);
+	String confirmRemoval();
 }

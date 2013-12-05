@@ -58,6 +58,20 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		eventBus.showKeyManagerDialog();
 	}
 	
+	public void onRemoveApplianceType(String applianceTypeId) {
+		AtomicServicePresenter presenter = atomicServicePresenters.get(applianceTypeId);
+		
+		if (presenter != null) {
+			eventBus.removeHandler(presenter);
+			view.getAtomicServicesContainer().remove(presenter.getView().asWidget());
+			atomicServicePresenters.remove(applianceTypeId);
+			
+			if (atomicServicePresenters.size() == 0) {
+				view.showNoAtomicServicesLabel(true);
+			}
+		}
+	}
+	
 	private void loadDevelopmentResources() {
 		loadAtomicServices();
 		loadInstances(false);
