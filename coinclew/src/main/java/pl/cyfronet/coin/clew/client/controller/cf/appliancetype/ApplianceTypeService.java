@@ -41,8 +41,8 @@ public interface ApplianceTypeService extends RestService {
 	void getApplianceTypesForIds(@PathParam("ids") String applianceTypeIds, MethodCallback<ApplianceTypesResponse> methodCallback);
 
 	@GET
-	@Path("appliance_types?visible_for={visibility}")
-	void getApplianceTypesForVisibility(@PathParam("visibility") String visibility, MethodCallback<ApplianceTypesResponse> methodCallback);
+	@Path("appliance_types?visible_for={visibility}&active={active}")
+	void getApplianceTypesForVisibilityAndActiveFlag(@PathParam("visibility") String visibility, @PathParam("active") boolean active, MethodCallback<ApplianceTypesResponse> methodCallback);
 
 	@GET
 	@Path("appliance_types?author_id={user}")

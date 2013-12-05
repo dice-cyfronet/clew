@@ -15,4 +15,6 @@ public interface IAtomicServiceView extends IsWidget {
 	void addRemoveButton();
 	void setRemoveBusyState(boolean busy);
 	boolean confirmRemoval();
+	void showInactiveLabel(boolean active);
+	HasText getDescription();
 }

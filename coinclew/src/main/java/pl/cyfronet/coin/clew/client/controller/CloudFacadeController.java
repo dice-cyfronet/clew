@@ -761,7 +761,7 @@ public class CloudFacadeController {
 	}
 
 	public void getDevelopmentApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
-		applianceTypesService.getApplianceTypesForVisibility(join(Arrays.asList(new String[] {"developer", "all", "owner"}), ","), new MethodCallback<ApplianceTypesResponse>() {
+		applianceTypesService.getApplianceTypesForVisibilityAndActiveFlag(join(Arrays.asList(new String[] {"developer", "all", "owner"}), ","), true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());
@@ -777,7 +777,7 @@ public class CloudFacadeController {
 	}
 
 	public void getProductionApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
-		applianceTypesService.getApplianceTypesForVisibility(join(Arrays.asList(new String[] {"all", "owner"}), ","), new MethodCallback<ApplianceTypesResponse>() {
+		applianceTypesService.getApplianceTypesForVisibilityAndActiveFlag(join(Arrays.asList(new String[] {"all", "owner"}), ","), true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(exception.getMessage());

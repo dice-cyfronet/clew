@@ -32,6 +32,8 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 		this.applianceType = applianceType;
 		view.getName().setText(applianceType.getApplianceType().getName());
 		view.updateAuthor(applianceType.getUser().getFullName());
+		view.showInactiveLabel(!applianceType.getApplianceType().isActive());
+		view.getDescription().setText(applianceType.getApplianceType().getDescription());
 		
 		if (applianceType.getUser().getLogin().equals(ticketReader.getUserLogin())) {
 			view.addRemoveButton();
@@ -55,5 +57,9 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 				}
 			});
 		}
+	}
+
+	public boolean isInactive() {
+		return !applianceType.getApplianceType().isActive();
 	}
 }

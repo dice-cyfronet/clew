@@ -50,7 +50,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 	
 	public void onRefreshDevelopmentInstanceList() {
-		loadInstances(true);
+		loadInstancesAndAtomicServices(true);
 	}
 
 	@Override
@@ -73,8 +73,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 	
 	private void loadDevelopmentResources() {
-		loadAtomicServices();
-		loadInstances(false);
+		loadInstancesAndAtomicServices(false);
 	}
 	
 	public void onDeactivateDevelopmentRefresh() {
@@ -100,7 +99,25 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		}
 	}
 
-	private void loadInstances(boolean update) {
+	private void loadInstancesAndAtomicServices(boolean update) {
+		if (update) {
+			boolean isInactive = false;
+			
+			for (String atomicServiceId : atomicServicePresenters.keySet()) {
+				if (atomicServicePresenters.get(atomicServiceId).isInactive()) {
+					isInactive = true;
+					
+					break;
+				}
+			}
+			
+			if (isInactive) {
+				loadAtomicServices(update);
+			}
+		} else {
+			loadAtomicServices(update);
+		}
+		
 		view.showNoRunningInstancesLabel(false);
 		
 		if (!update) {
@@ -138,7 +155,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 						timer = new Timer() {
 							@Override
 							public void run() {
-								loadInstances(true);
+								loadInstancesAndAtomicServices(true);
 							}
 						};
 					}
@@ -158,9 +175,11 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		}
 	}
 
-	private void loadAtomicServices() {
-		view.getAtomicServicesContainer().clear();
-		view.addAtomicServiceProgressIndicator();
+	private void loadAtomicServices(final boolean update) {
+		if (!update) {
+			view.getAtomicServicesContainer().clear();
+			view.addAtomicServiceProgressIndicator();
+		}
 		cloudFacadeController.getOwnedApplianceTypesForUser(ticketReader.getUserLogin(), new OwnedApplianceTypesCallback() {
 			@Override
 			public void processOwnedApplianceTypes(List<OwnedApplianceType> applianceTypes) {
@@ -170,12 +189,19 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 					view.getAtomicServicesContainer().clear();
 					view.showNoAtomicServicesLabel(true);
 				} else {
-					view.getAtomicServicesContainer().clear();
+					if (!update) {
+						view.getAtomicServicesContainer().clear();
+					}
 					
 					for (OwnedApplianceType applianceType : applianceTypes) {
-						AtomicServicePresenter presenter = eventBus.addHandler(AtomicServicePresenter.class);
-						atomicServicePresenters.put(applianceType.getApplianceType().getId(), presenter);
-						view.getAtomicServicesContainer().add(presenter.getView().asWidget());
+						AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getApplianceType().getId());
+						
+						if (presenter == null) {
+							presenter = eventBus.addHandler(AtomicServicePresenter.class);
+							atomicServicePresenters.put(applianceType.getApplianceType().getId(), presenter);
+							view.getAtomicServicesContainer().add(presenter.getView().asWidget());
+						}
+						
 						presenter.setApplianceType(applianceType);
 					}
 				}
