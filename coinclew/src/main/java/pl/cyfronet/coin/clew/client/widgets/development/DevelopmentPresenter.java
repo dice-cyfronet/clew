@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.development;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			view.getInstanceContainer().clear();
 			view.showInstanceLoadingIndicator(true);
 			view.showHeaderRow(false);
+			clearInstancePresenters();
 		}
 		
 		cloudFacadeController.getDevelopmentApplianceInstances(new ApplianceInstancesCallback() {
@@ -107,7 +109,6 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 					view.showHeaderRow(true);
 					
 					for (ApplianceInstance instance : applianceInstances) {
-						
 						InstancePresenter presenter = instancePresenters.get(instance.getId());
 						
 						if (presenter == null) {
@@ -132,6 +133,15 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				}
 			}
 		});
+	}
+
+	private void clearInstancePresenters() {
+		for (Iterator<String> i = instancePresenters.keySet().iterator(); i.hasNext();) {
+			String instanceId = i.next();
+			InstancePresenter presenter = instancePresenters.get(instanceId);
+			eventBus.removeHandler(presenter);
+			i.remove();
+		}
 	}
 
 	private void loadAtomicServices() {
