@@ -179,6 +179,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		if (!update) {
 			view.getAtomicServicesContainer().clear();
 			view.addAtomicServiceProgressIndicator();
+			clearAtomicService();
 		}
 		cloudFacadeController.getOwnedApplianceTypesForUser(ticketReader.getUserLogin(), new OwnedApplianceTypesCallback() {
 			@Override
@@ -207,6 +208,15 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				}
 			}
 		});
+	}
+
+	private void clearAtomicService() {
+		for (Iterator<String> i = atomicServicePresenters.keySet().iterator(); i.hasNext();) {
+			String atomicServiceId = i.next();
+			AtomicServicePresenter presenter = atomicServicePresenters.get(atomicServiceId);
+			eventBus.removeHandler(presenter);
+			i.remove();
+		}
 	}
 
 	@Override
