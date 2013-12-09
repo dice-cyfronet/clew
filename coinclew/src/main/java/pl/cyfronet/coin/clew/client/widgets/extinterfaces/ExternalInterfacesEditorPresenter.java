@@ -128,7 +128,9 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 																}
 															}
 															
-															IsWidget widget = view.addEndpoint(endpoint.getId(), endpoint.getName(), httpUrl, httpsUrl);
+															IsWidget widget = view.addEndpoint(endpoint.getId(), endpoint.getName(),
+																	joinUrl(httpUrl, endpoint.getInvocationPath()),
+																	joinUrl(httpsUrl, endpoint.getInvocationPath()));
 															ExternalInterfacesEditorPresenter.this.endpoints.put(endpoint.getId(), widget);
 														}
 													}
@@ -159,6 +161,22 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 						}});
 					}
 			}});
+	}
+	
+	private String joinUrl(String url, String path) {
+		if (url == null) {
+			return null;
+		}
+		
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length() - 1);
+		}
+		
+		if (path != null && path.startsWith("/")) {
+			path = path.substring(1, path.length());
+		}
+		
+		return url + "/" + path;
 	}
 
 	@Override
