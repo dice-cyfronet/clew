@@ -25,7 +25,6 @@ import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -142,14 +141,18 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							presentWebappIds.add(endpoint.getId());
 							
 							if (!webapps.keySet().contains(endpoint.getId())) {
-								IsWidget widget = view.addWebApplication(endpoint.getName(), redirection.getHttpUrl(), redirection.getHttpsUrl());
+								IsWidget widget = view.addWebApplication(endpoint.getName(),
+										joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath()),
+										joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath()));
 								webapps.put(endpoint.getId(), widget);
 							}
 						} else {
 							presentServiceIds.add(endpoint.getId());
 							
 							if (!services.keySet().contains(endpoint.getId())) {
-								IsWidget widget = view.addService(endpoint.getName(), redirection.getHttpUrl(), redirection.getHttpsUrl(), endpoint.getDescriptor());
+								IsWidget widget = view.addService(endpoint.getName(),
+										joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath()),
+										joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath()), endpoint.getDescriptor());
 								services.put(endpoint.getId(), widget);
 							}
 						}
@@ -211,6 +214,22 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		} else {
 			view.showNoAccessInfoLabel(false);
 		}
+	}
+
+	private String joinUrl(String url, String path) {
+		if (url == null) {
+			return null;
+		}
+		
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length() - 1);
+		}
+		
+		if (path != null && path.startsWith("/")) {
+			path = path.substring(1, path.length());
+		}
+		
+		return url + "/" + path;
 	}
 
 	@Override
