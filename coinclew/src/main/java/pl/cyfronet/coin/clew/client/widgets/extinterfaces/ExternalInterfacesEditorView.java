@@ -240,6 +240,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			
 			if (httpUrl != null) {
 				Anchor httpAnchor = new Anchor("http&nbsp;", true, httpUrl);
+				httpAnchor.setTarget("_blank");
 				links.add(httpAnchor);
 				links.add(new Icon(IconType.ARROW_RIGHT));
 				links.add(new InlineHTML("&nbsp;" + targetPort));
@@ -251,6 +252,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				}
 				
 				Anchor httpsAnchor = new Anchor("https&nbsp;", true, httpsUrl);
+				httpsAnchor.setTarget("_blank");
 				links.add(httpsAnchor);
 				links.add(new Icon(IconType.ARROW_RIGHT));
 				links.add(new InlineHTML("&nbsp;" + targetPort));
@@ -446,6 +448,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		if (httpUrl != null) {
 			Anchor httpAnchor = new Anchor("http", true, httpUrl);
+			httpAnchor.setTarget("_blank");
 			links.add(httpAnchor);
 		}
 		
@@ -455,6 +458,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			}
 			
 			Anchor httpsAnchor = new Anchor("https", true, httpsUrl);
+			httpsAnchor.setTarget("_blank");
 			links.add(httpsAnchor);
 		}
 		

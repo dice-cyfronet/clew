@@ -156,12 +156,14 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		if (httpUrl != null) {
 			Anchor http = new Anchor("http", httpUrl);
+			http.setTarget("_blank");
 			http.addStyleName(style.anchor());
 			panel.add(http);
 		}
 		
 		if (httpsUrl != null) {
 			Anchor https = new Anchor("https", httpsUrl);
+			https.setTarget("_blank");
 			https.addStyleName(style.anchor());
 			panel.add(https);
 		}
@@ -204,12 +206,14 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		if (httpUrl != null) {
 			Anchor http = new Anchor("http", httpUrl);
+			http.setTarget("_blank");
 			http.addStyleName(style.anchor());
 			panel.add(http);
 		}
 		
 		if (httpsUrl != null) {
 			Anchor https = new Anchor("https", httpsUrl);
+			https.setTarget("_blank");
 			https.addStyleName(style.anchor());
 			panel.add(https);
 		}
