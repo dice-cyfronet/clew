@@ -10,7 +10,6 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.OwnedApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;

@@ -11,6 +11,7 @@ public class NewApplianceInstance {
 	private String applianceSetId;
 	private Map<String, String> params;
 	private String name;
+	@Json(name = "user_key_id")
 	private String userKeyId;
 	
 	public String getConfigurationTemplateId() {
