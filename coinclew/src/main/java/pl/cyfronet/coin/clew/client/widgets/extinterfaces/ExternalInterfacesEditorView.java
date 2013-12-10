@@ -46,6 +46,9 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		String name();
 		String links();
 		String actions();
+		String link();
+		String altName();
+		String altLinks();
 	}
 	
 	private Icon externalInterfacesLoadingIndicator;
@@ -230,12 +233,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		panel.addStyleName(style.mapping());
 		
 		HTML name = new HTML(serviceName + " (" + transportProtocol + ")");
-		name.addStyleName(style.name());
+		name.addStyleName(style.altName());
 		panel.add(name);
 		
 		if (httpUrl != null || httpsUrl != null) {
 			FlowPanel links = new FlowPanel();
-			links.addStyleName(style.links());
+			links.addStyleName(style.altLinks());
 			
 			if (httpUrl != null) {
 				Anchor httpAnchor = new Anchor("http&nbsp;", true, httpUrl);
@@ -259,9 +262,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			
 			panel.add(links);
 		} else {
-			
 			InlineHTML tcpUdpMapping = new InlineHTML(messages.getTcpUdpMapping(publicIp, sourcePort, targetPort));
-			tcpUdpMapping.addStyleName(style.links());
+			tcpUdpMapping.addStyleName(style.altLinks());
 			panel.add(tcpUdpMapping);
 		}
 		
@@ -448,16 +450,14 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		if (httpUrl != null) {
 			Anchor httpAnchor = new Anchor("http", true, httpUrl);
 			httpAnchor.setTarget("_blank");
+			httpAnchor.addStyleName(style.link());
 			links.add(httpAnchor);
 		}
 		
 		if (httpsUrl != null) {
-			if (links.getWidgetCount() > 0) {
-				links.add(new InlineHTML(",&nbsp;"));
-			}
-			
 			Anchor httpsAnchor = new Anchor("https", true, httpsUrl);
 			httpsAnchor.setTarget("_blank");
+			httpsAnchor.addStyleName(style.link());
 			links.add(httpsAnchor);
 		}
 		

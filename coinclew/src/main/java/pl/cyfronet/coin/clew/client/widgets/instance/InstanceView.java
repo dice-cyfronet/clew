@@ -37,6 +37,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		String descriptor();
 		String service();
 		String detailsName();
+		String links();
 	}
 	
 	private IInstancePresenter presenter;
@@ -150,22 +151,26 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
-		InlineHTML nameWidget = new InlineHTML(name + ":&nbsp;");
+		InlineHTML nameWidget = new InlineHTML(name);
 		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
+		
+		FlowPanel links = new FlowPanel();
+		panel.add(links);
+		links.addStyleName(style.links());
 		
 		if (httpUrl != null) {
 			Anchor http = new Anchor("http", httpUrl);
 			http.setTarget("_blank");
 			http.addStyleName(style.anchor());
-			panel.add(http);
+			links.add(http);
 		}
 		
 		if (httpsUrl != null) {
 			Anchor https = new Anchor("https", httpsUrl);
 			https.setTarget("_blank");
 			https.addStyleName(style.anchor());
-			panel.add(https);
+			links.add(https);
 		}
 		
 		Button descriptorButton = new Button();
@@ -206,22 +211,26 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
-		InlineHTML nameWidget = new InlineHTML(name + ":&nbsp;");
+		InlineHTML nameWidget = new InlineHTML(name);
 		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
+		
+		FlowPanel links = new FlowPanel();
+		panel.add(links);
+		links.addStyleName(style.links());
 		
 		if (httpUrl != null) {
 			Anchor http = new Anchor("http", httpUrl);
 			http.setTarget("_blank");
 			http.addStyleName(style.anchor());
-			panel.add(http);
+			links.add(http);
 		}
 		
 		if (httpsUrl != null) {
 			Anchor https = new Anchor("https", httpsUrl);
 			https.setTarget("_blank");
 			https.addStyleName(style.anchor());
-			panel.add(https);
+			links.add(https);
 		}
 		
 		webApplicationsContainer.add(panel);
@@ -323,7 +332,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
-		InlineHTML nameWidget = new InlineHTML(serviceName + ":&nbsp;");
+		InlineHTML nameWidget = new InlineHTML(serviceName);
 		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
 		

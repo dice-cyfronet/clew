@@ -20,6 +20,7 @@
 			padding-top: 10px;
 			padding-bottom: 10px;
 			padding-left: 20px;
+			clear: both;
 		}
 		.details {
 			float: left;
@@ -27,7 +28,7 @@
 		}
 		.anchor {
 			display: inline;
-			margin-left: 10px;
+			margin-right: 10px;
 		}
 		.descriptor {
 			float: right;
@@ -35,6 +36,8 @@
 		.service {
 			margin-top: 5px;
 			text-align: left;
+			float: left;
+			width: 100%;
 		}
 		.name {
 			float: left;
@@ -68,7 +71,8 @@
 			text-align: right;
 		}
 		.container {
-			padding-left: 20px;
+			float: left;
+			width: 100%;
 		}
 		.panel {
 			float: left;
@@ -86,6 +90,13 @@
 			font-weight: bold;
 			text-align: left;
 			padding-left: 30px;
+			float: left;
+			display: block;
+			width: 20%;
+		}
+		.links {
+			float: left;
+			width: 70%;
 		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.panel}">
