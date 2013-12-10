@@ -33,7 +33,9 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 		view.getName().setText(applianceType.getApplianceType().getName());
 		view.updateAuthor(applianceType.getUser().getFullName());
 		view.showInactiveLabel(!applianceType.getApplianceType().isActive());
-		view.getDescription().setText(applianceType.getApplianceType().getDescription());
+		
+		String description = applianceType.getApplianceType().getDescription();
+		view.getDescription().setHTML(description != null && !description.isEmpty() ? description : "&nbsp;");
 		
 		if (applianceType.getUser().getLogin().equals(ticketReader.getUserLogin())) {
 			view.addRemoveButton();

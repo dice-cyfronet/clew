@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Widget;
@@ -122,7 +123,7 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	}
 
 	@Override
-	public HasText getDescription() {
+	public HasHTML getDescription() {
 		return description;
 	}
 }
