@@ -175,6 +175,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		descriptorButton.setSize(ButtonSize.MINI);
 		
 		if (descriptor != null && !descriptor.trim().isEmpty()) {
+			descriptorButton.setTitle(messages.descriptorButtonTooltip());
+		} else {
+			descriptorButton.setTitle(messages.noDescriptorButtonTooltip());
+		}
+		
+		if (descriptor != null && !descriptor.trim().isEmpty()) {
 			final Modal modal = new Modal();
 			modal.setTitle(messages.descriptorModalTitle());
 			modal.add(new HTML(descriptor));

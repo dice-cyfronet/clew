@@ -16,4 +16,6 @@ public interface InstanceMessages extends Messages {
 	String saveTooltip();
 	String accessInfoLabel();
 	String noAccessInfos();
+	String descriptorButtonTooltip();
+	String noDescriptorButtonTooltip();
 }
