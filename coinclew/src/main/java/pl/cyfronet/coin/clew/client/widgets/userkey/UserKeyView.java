@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.userkey;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.userkey.IUserKeyView.IUserKeyPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -55,10 +56,6 @@ public class UserKeyView extends Composite implements IUserKeyView, ReverseViewI
 
 	@Override
 	public void setRemoveBusyState(boolean busy) {
-		if (busy) {
-			remove.state().loading();
-		} else {
-			remove.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(remove, busy);
 	}
 }

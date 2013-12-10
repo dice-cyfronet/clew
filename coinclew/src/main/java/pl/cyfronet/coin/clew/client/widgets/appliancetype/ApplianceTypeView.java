@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -85,11 +86,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 	@Override
 	public void setStartButtonBusyState(boolean busy) {
-		if (busy) {
-			start.state().loading();
-		} else {
-			start.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(start, busy);
 	}
 
 	@Override

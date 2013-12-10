@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.IExternalInterfacesView.IExternalInterfacesPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -299,11 +300,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 	@Override
 	public void setAddExternalInterfaceBusyState(boolean busy) {
-		if (busy) {
-			addExternalInterface.state().loading();
-		} else {
-			addExternalInterface.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(addExternalInterface, busy);
 	}
 
 	@Override

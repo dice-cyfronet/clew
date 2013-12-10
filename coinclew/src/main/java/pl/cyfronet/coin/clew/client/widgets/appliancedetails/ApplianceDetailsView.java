@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancedetails;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -76,11 +77,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public void setStartBusyState(boolean busy) {
-		if (busy) {
-			start.state().loading();
-		} else {
-			start.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(start, busy);
 	}
 
 	@Override

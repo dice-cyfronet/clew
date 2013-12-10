@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -114,11 +115,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public void setShutdownBusyState(boolean busy) {
 		if (shutdown != null) {
-			if (busy) {
-				shutdown.state().loading();
-			} else {
-				shutdown.state().reset();
-			}
+			BootstrapHelpers.setButtonBusyState(shutdown, busy);
 		}
 	}
 

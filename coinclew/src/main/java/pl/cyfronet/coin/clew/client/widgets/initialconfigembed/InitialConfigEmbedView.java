@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.IInitialConfigEmbedView.IInitialConfigEmbedPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -133,10 +134,6 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 
 	@Override
 	public void setStartBusyState(boolean busy) {
-		if (busy) {
-			start.state().loading();
-		} else {
-			start.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(start, busy);
 	}
 }

@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.startinstance;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -116,11 +117,7 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 
 	@Override
 	public void setStartSelectedBusyState(boolean busy) {
-		if (busy) {
-			startSelected.state().loading();
-		} else {
-			startSelected.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(startSelected, busy);
 	}
 
 	@Override

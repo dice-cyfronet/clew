@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -93,11 +94,7 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 
 	@Override
 	public void setRemoveBusyState(boolean busy) {
-		if (busy) {
-			removeButton.state().loading();
-		} else {
-			removeButton.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(removeButton, busy);
 	}
 
 	@Override

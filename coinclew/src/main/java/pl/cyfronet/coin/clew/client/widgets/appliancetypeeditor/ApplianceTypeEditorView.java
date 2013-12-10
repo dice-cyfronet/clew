@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -280,11 +281,7 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 	@Override
 	public void setUpdateBusyState(boolean busy) {
-		if (busy) {
-			update.state().loading();
-		} else {
-			update.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(update, busy);
 	}
 
 	@Override
@@ -305,11 +302,7 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 	@Override
 	public void setSaveBusyState(boolean busy) {
-		if (busy) {
-			save.state().loading();
-		} else {
-			save.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(save, busy);
 	}
 
 	@Override

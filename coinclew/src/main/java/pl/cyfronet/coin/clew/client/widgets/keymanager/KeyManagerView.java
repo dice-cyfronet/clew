@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.keymanager;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -116,11 +117,7 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 
 	@Override
 	public void setUploadBusyState(boolean busy) {
-		if (busy) {
-			uploadKey.state().loading();
-		} else {
-			uploadKey.state().reset();
-		}
+		BootstrapHelpers.setButtonBusyState(uploadKey, busy);
 	}
 
 	@Override
