@@ -6,7 +6,8 @@
 	<ui:style>
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
-		<b:Form ui:field="form">
+		<b:Form>
+			<g:FlowPanel ui:field="nameContainer"/>
 			<b:ControlLabel><ui:text from="{messages.keysLabel}"/></b:ControlLabel>
 			<g:FlowPanel ui:field="container"/>
 		</b:Form>

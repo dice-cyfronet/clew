@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancedetails;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -15,4 +17,5 @@ public interface IApplianceDetailsView extends IsWidget {
 	void setStartBusyState(boolean busy);
 	HasText addName(String name);
 	HasWidgets getContainer();
+	HasWidgets getNameContainer();
 }

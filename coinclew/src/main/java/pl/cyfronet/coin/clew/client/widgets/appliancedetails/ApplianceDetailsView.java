@@ -4,7 +4,6 @@ import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsVi
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
-import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -31,7 +30,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@UiField Button start;
 	@UiField ApplianceDetailsMessages messages;
 	@UiField FlowPanel container;
-	@UiField Form form;
+	@UiField FlowPanel nameContainer;
 
 	public ApplianceDetailsView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -89,8 +88,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		ControlLabel label = new ControlLabel(messages.nameLabel(name));
 		TextBox nameBox = new TextBox();
 		nameBox.setPlaceholder(messages.namePlaceholder());
-		form.insert(nameBox, 0);
-		form.insert(label, 0);
+		nameContainer.add(label);
+		nameContainer.add(nameBox);
 		
 		return nameBox;
 	}
@@ -98,5 +97,10 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public HasWidgets getContainer() {
 		return container;
+	}
+
+	@Override
+	public HasWidgets getNameContainer() {
+		return nameContainer;
 	}
 }
