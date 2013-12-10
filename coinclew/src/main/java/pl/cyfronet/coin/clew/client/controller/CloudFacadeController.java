@@ -88,7 +88,7 @@ public class CloudFacadeController {
 		public abstract void processApplianceInstances(List<ApplianceInstance> applianceInstances);
 		
 		protected void onError(Throwable e) {
-			popupErrorHandler.displayError(e.getMessage());
+			simpleErrorHandler.displayError(e.getMessage());
 		}
 	}
 	
@@ -185,7 +185,7 @@ public class CloudFacadeController {
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
 	private ApplianceConfigurationService applianceConfigurationService;
-	private static PopupErrorHandler popupErrorHandler;
+	private static SimpleErrorHandler simpleErrorHandler;
 	private ApplianceVmService applianceVmsService;
 	private ComputeSiteService computeSitesService;
 	private PortMappingTemplateService portMappingTemplateService;
@@ -203,7 +203,7 @@ public class CloudFacadeController {
 			PortMappingTemplateService portMappingTemplateService, HttpMappingService httpMappingService,
 			EndpointService endpointService, UserKeyService userKeyService,
 			DevelopmentModePropertySetService developmentModePropertySetService,
-			PortMappingService portMappingService, UserService userService, PopupErrorHandler popupErrorHandler) {
+			PortMappingService portMappingService, UserService userService, SimpleErrorHandler simpleErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -217,7 +217,7 @@ public class CloudFacadeController {
 		this.developmentModePropertySetService = developmentModePropertySetService;
 		this.portMappingService = portMappingService;
 		this.userService = userService;
-		CloudFacadeController.popupErrorHandler = popupErrorHandler;
+		CloudFacadeController.simpleErrorHandler = simpleErrorHandler;
 	}
 	
 	public void getApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
@@ -231,7 +231,7 @@ public class CloudFacadeController {
 			
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 		});
 	}
@@ -240,7 +240,7 @@ public class CloudFacadeController {
 		applianceTypesService.getApplianceType(applianceTypeId, new MethodCallback<ApplianceTypeRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -269,7 +269,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							popupErrorHandler.displayError(exception.getMessage());
+							simpleErrorHandler.displayError(exception.getMessage());
 							checkReturn();
 						}
 
@@ -312,7 +312,7 @@ public class CloudFacadeController {
 		applianceInstancesService.deleteApplianceInstance(applianceInstanceId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -328,7 +328,7 @@ public class CloudFacadeController {
 		applianceSetService.getApplianceSets(new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -351,7 +351,7 @@ public class CloudFacadeController {
 				applianceSetService.addApplianceSet(applianceSetRequest, new MethodCallback<ApplianceSetRequestResponse>() {
 					@Override
 					public void onFailure(Method method, Throwable exception) {
-						popupErrorHandler.displayError(exception.getMessage());
+						simpleErrorHandler.displayError(exception.getMessage());
 					}
 
 					@Override
@@ -407,7 +407,7 @@ public class CloudFacadeController {
 		applianceVmsService.getApplianceVms(applianceInstanceId, new MethodCallback<ApplianceVmsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -423,7 +423,7 @@ public class CloudFacadeController {
 		computeSitesService.getComputeSite(computeSiteId, new MethodCallback<ComputeSiteRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -439,7 +439,7 @@ public class CloudFacadeController {
 		applianceSetService.getApplianceSets(type, new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -455,7 +455,7 @@ public class CloudFacadeController {
 		applianceInstancesService.getApplianceInstances(applianceSetId, new MethodCallback<ApplianceInstancesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -471,7 +471,7 @@ public class CloudFacadeController {
 		applianceSetService.deleteApplianceSet(applianceSetId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -487,7 +487,7 @@ public class CloudFacadeController {
 		applianceSetService.getApplianceSets(Type.portal, new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -497,7 +497,7 @@ public class CloudFacadeController {
 					applianceInstancesService.getApplianceInstances(portalApplianceSet.getId(), new MethodCallback<ApplianceInstancesResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
-							popupErrorHandler.displayError(exception.getMessage());
+							simpleErrorHandler.displayError(exception.getMessage());
 						}
 
 						@Override
@@ -520,7 +520,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.getPortMappingTemplates(applianceTypeId, new MethodCallback<PortMappingTemplatesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -536,7 +536,7 @@ public class CloudFacadeController {
 		httpMappingService.getHttpMappings(applianceInstanceId, new MethodCallback<HttpMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -552,7 +552,7 @@ public class CloudFacadeController {
 		endpointService.getEndpoints(portMappingTemplateId, new MethodCallback<EndpointsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -568,7 +568,7 @@ public class CloudFacadeController {
 		userKeyService.getUserKeys(new MethodCallback<UserKeysResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -619,7 +619,7 @@ public class CloudFacadeController {
 		userKeyService.deleteUserKey(userKeyId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -635,7 +635,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.deleteApplianceConfiguration(initialConfigurationId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -660,7 +660,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.updateApplianceConfiguration(configId, request, new MethodCallback<ApplianceConfigurationRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -677,7 +677,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.getApplianceConfigurationsForIds(ids, new MethodCallback<ApplianceConfigurationsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -700,7 +700,7 @@ public class CloudFacadeController {
 			
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 		});
 	}
@@ -738,7 +738,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							popupErrorHandler.displayError(exception.getMessage());
+							simpleErrorHandler.displayError(exception.getMessage());
 							checkReturn();
 						}
 
@@ -763,7 +763,7 @@ public class CloudFacadeController {
 		applianceTypesService.getApplianceTypesForVisibilityAndActiveFlag(join(Arrays.asList(new String[] {"developer", "all", "owner"}), ","), true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -779,7 +779,7 @@ public class CloudFacadeController {
 		applianceTypesService.getApplianceTypesForVisibilityAndActiveFlag(join(Arrays.asList(new String[] {"all", "owner"}), ","), true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -808,7 +808,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							popupErrorHandler.displayError(exception.getMessage());
+							simpleErrorHandler.displayError(exception.getMessage());
 							checkReturn();
 						}
 
@@ -853,7 +853,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							popupErrorHandler.displayError(exception.getMessage());
+							simpleErrorHandler.displayError(exception.getMessage());
 							checkReturn();
 						}
 
@@ -881,7 +881,7 @@ public class CloudFacadeController {
 				applianceInstancesService.getApplianceInstances(applianceSet.getId(), new MethodCallback<ApplianceInstancesResponse>() {
 					@Override
 					public void onFailure(Method method, Throwable exception) {
-						popupErrorHandler.displayError(exception.getMessage());
+						simpleErrorHandler.displayError(exception.getMessage());
 					}
 
 					@Override
@@ -899,7 +899,7 @@ public class CloudFacadeController {
 		developmentModePropertySetService.getDevelopmentModePropertySet(applianceInstanceId, new MethodCallback<DevelopmentModePropertySetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -918,7 +918,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.getPortMappingTemplatesForIds(join(portMappingTemplateIds, ","), new MethodCallback<PortMappingTemplatesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -934,7 +934,7 @@ public class CloudFacadeController {
 		portMappingService.getPortMappings(applianceInstanceId, new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -950,7 +950,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.removePortMappingTemplate(mappingId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -977,7 +977,7 @@ public class CloudFacadeController {
 
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -998,7 +998,7 @@ public class CloudFacadeController {
 		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<HttpMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1023,7 +1023,7 @@ public class CloudFacadeController {
 		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1048,7 +1048,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySetId, new MethodCallback<PortMappingTemplatesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1064,7 +1064,7 @@ public class CloudFacadeController {
 		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1080,7 +1080,7 @@ public class CloudFacadeController {
 		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());	
+				simpleErrorHandler.displayError(exception.getMessage());	
 			}
 
 			@Override
@@ -1096,7 +1096,7 @@ public class CloudFacadeController {
 		endpointService.deleteEndpoint(endpointId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1123,7 +1123,7 @@ public class CloudFacadeController {
 		endpointService.addEndpoint(request, new MethodCallback<EndpointRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1303,7 +1303,7 @@ public class CloudFacadeController {
 		userService.getUsers(join(userIds, ","), new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1366,7 +1366,7 @@ public class CloudFacadeController {
 
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1382,7 +1382,7 @@ public class CloudFacadeController {
 		userService.getUserForLogin(userLogin, new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
@@ -1394,7 +1394,7 @@ public class CloudFacadeController {
 					applianceTypesService.getApplianceTypesForUserId(user.getId(), new MethodCallback<ApplianceTypesResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
-							popupErrorHandler.displayError(exception.getMessage());
+							simpleErrorHandler.displayError(exception.getMessage());
 						}
 
 						@Override
@@ -1427,7 +1427,7 @@ public class CloudFacadeController {
 
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(exception.getMessage());
+				simpleErrorHandler.displayError(exception.getMessage());
 			}
 
 			@Override
