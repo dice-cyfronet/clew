@@ -257,7 +257,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void addExternalInterfacesControl() {
 		if (externalInterfaces == null) {
 			externalInterfaces = new Button();
-			externalInterfaces.setIcon(IconType.ANCHOR);
+			externalInterfaces.setIcon(IconType.COGS);
 			externalInterfaces.setType(ButtonType.WARNING);
 			externalInterfaces.setSize(ButtonSize.MINI);
 			externalInterfaces.setLoadingText("<i class='icon-spinner icon-spin'></i>");

@@ -6,7 +6,7 @@
 	<inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name="org.fusesource.restygwt.RestyGWT"/>
 	<inherits name="com.google.gwt.inject.Inject"/>
-	<inherits name="com.github.gwtbootstrap.Bootstrap"/>
+	<inherits name="com.github.gwtbootstrap.BootstrapNoResources"/>
 	<inherits name="de.benediktmeurer.gwt.slf4j.jul.JUL"/>
 	<inherits name='com.mvp4g.Mvp4gModule'/>
 	
