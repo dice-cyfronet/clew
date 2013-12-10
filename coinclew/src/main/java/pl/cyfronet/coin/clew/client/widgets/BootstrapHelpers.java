@@ -35,8 +35,8 @@ public class BootstrapHelpers {
 		Element iconElement = DOM.getChild(button.getElement(), 0);
 		
 		if (iconElement != null && iconElement.getClassName() != null &&
-				iconElement.getClassName().contains("icon-spin")) {
-			iconElement.setClassName(iconElement.getClassName().replaceAll("icon-spin", "").trim());
+				iconElement.getClassName().endsWith("icon-spin")) {
+			iconElement.setClassName(iconElement.getClassName().substring(0, iconElement.getClassName().length() - 9).trim());
 		}
 	}
 
