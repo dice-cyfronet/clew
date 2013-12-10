@@ -141,9 +141,27 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							presentWebappIds.add(endpoint.getId());
 							
 							if (!webapps.keySet().contains(endpoint.getId())) {
-								IsWidget widget = view.addWebApplication(endpoint.getName(),
-										joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath()),
-										joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath()));
+								String endpointHttpUrl = joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath());
+								String endpointHttpsUrl = joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath());
+								
+								//nx url params fix
+								if (redirection.getName().equals("nx")) {
+									Redirection sshRedirection = findSshRedirection(redirections);
+									
+									if (sshRedirection != null && sshRedirection.getPortMappings().size() > 0) {
+										PortMapping portMapping = sshRedirection.getPortMappings().get(0);
+										
+										if (endpointHttpUrl != null) {
+											endpointHttpUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+										}
+										
+										if (endpointHttpsUrl != null) {
+											endpointHttpsUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+										}
+									}
+								}
+								
+								IsWidget widget = view.addWebApplication(endpoint.getName(), endpointHttpUrl, endpointHttpsUrl);
 								webapps.put(endpoint.getId(), widget);
 							}
 						} else {
@@ -214,6 +232,16 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		} else {
 			view.showNoAccessInfoLabel(false);
 		}
+	}
+
+	private Redirection findSshRedirection(List<Redirection> redirections) {
+		for (Redirection redirection : redirections) {
+			if (redirection.getName().equals("ssh") && redirection.getProtocol().equals("tcp")) {
+				return redirection;
+			}
+		}
+		
+		return null;
 	}
 
 	private String joinUrl(String url, String path) {
