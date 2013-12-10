@@ -32,9 +32,13 @@
 		.noresize {
 			resize: none;
 		}
+		@external tab-content;
+		.disable-y-scroll .tab-content {
+			overflow-y: hidden;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal"  title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
-		<b:TabPanel>
+		<b:TabPanel addStyleNames="{style.disable-y-scroll}">
 			<b:Tab heading="{messages.externalInterfacesTabLabel}" active="true">
 				<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
 				<b:Form>
