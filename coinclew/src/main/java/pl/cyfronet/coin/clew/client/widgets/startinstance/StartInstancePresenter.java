@@ -35,6 +35,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		setTitle();
 		view.clearApplianceTypeContainer();
 		view.showProgressIndicator();
+		view.getFilter().setText("");
 		view.show();
 		
 		if (developmentMode) {
