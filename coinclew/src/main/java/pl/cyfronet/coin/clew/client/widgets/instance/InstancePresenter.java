@@ -1,6 +1,5 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +32,6 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	protected CloudFacadeController cloudFacadeController;
-	private boolean detailsRendered;
 	private Map<String, IsWidget> accessInfos;
 	private Map<String, IsWidget> webapps;
 	private Map<String, IsWidget> services;
@@ -80,10 +78,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.showAccessInfoSection();
 				}
 				
-				if (!detailsRendered) {
-					detailsRendered = true;
-					displayDetails();
-				}
+				displayDetails();
 			}
 		});
 		cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
@@ -129,18 +124,14 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	private void displayRedirections(List<Redirection> redirections, boolean developmentMode) {
-		List<String> presentWebappIds = new ArrayList<String>();
-		List<String> presentServiceIds = new ArrayList<String>();
-		List<String> presentAccessInfos = new ArrayList<String>();
-		
 		for (Redirection redirection : redirections) {
 			if (redirection.isHttp()) {
 				if (redirection.getEndpoints() != null) {
 					for (Endpoint endpoint : redirection.getEndpoints()) {
 						if ("webapp".equals(endpoint.getEndpointType())) {
-							presentWebappIds.add(endpoint.getId());
-							
-							if (!webapps.keySet().contains(endpoint.getId())) {
+							//before showing a webapp at least one http mapping has to be available
+							if (!webapps.keySet().contains(endpoint.getId()) &&
+									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
 								String endpointHttpUrl = joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath());
 								String endpointHttpsUrl = joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath());
 								
@@ -165,9 +156,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 								webapps.put(endpoint.getId(), widget);
 							}
 						} else {
-							presentServiceIds.add(endpoint.getId());
-							
-							if (!services.keySet().contains(endpoint.getId())) {
+							//before showing a service at least one http mapping has to be available
+							if (!services.keySet().contains(endpoint.getId()) &&
+									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
 								IsWidget widget = view.addService(endpoint.getName(),
 										joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath()),
 										joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath()), endpoint.getDescriptor());
@@ -181,7 +172,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				if (redirection.getPortMappings().size() > 0) {
 					//TODO(DH): for now only the first port mapping is used
 					PortMapping portMapping = redirection.getPortMappings().get(0);
-					presentAccessInfos.add(redirection.getId());
 					
 					if (!accessInfos.keySet().contains(redirection.getId())) {
 						IsWidget widget = view.addAccessInfo(redirection.getName(), portMapping.getPublicIp(), portMapping.getSourcePort());
@@ -194,7 +184,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		for (Iterator<String> i = webapps.keySet().iterator(); i.hasNext();) {
 			String endpointId = i.next();
 			
-			if (!presentWebappIds.contains(endpointId)) {
+			if (!webapps.keySet().contains(endpointId)) {
 				view.removeWebapp(webapps.remove(endpointId));
 			}
 		}
@@ -202,7 +192,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		for (Iterator<String> i = services.keySet().iterator(); i.hasNext();) {
 			String endpointId = i.next();
 			
-			if (!presentServiceIds.contains(endpointId)) {
+			if (!services.keySet().contains(endpointId)) {
 				view.removeService(services.remove(endpointId));
 			}
 		}
@@ -210,24 +200,24 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		for (Iterator<String> i = accessInfos.keySet().iterator(); i.hasNext();) {
 			String redirectionId = i.next();
 			
-			if (!presentAccessInfos.contains(redirectionId)) {
+			if (!accessInfos.keySet().contains(redirectionId)) {
 				view.removeAccessInfo(accessInfos.remove(redirectionId));
 			}
 		}
 		
-		if (presentWebappIds.size() == 0) {
+		if (webapps.size() == 0) {
 			view.showNoWebApplicationsLabel(true);
 		} else {
 			view.showNoWebApplicationsLabel(false);
 		}
 		
-		if (presentServiceIds.size() == 0) {
+		if (services.size() == 0) {
 			view.showNoServicesLabel(true);
 		} else {
 			view.showNoServicesLabel(false);
 		}
 		
-		if (presentAccessInfos.size() == 0) {
+		if (accessInfos.size() == 0) {
 			view.showNoAccessInfoLabel(true);
 		} else {
 			view.showNoAccessInfoLabel(false);
@@ -294,6 +284,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 		});
+		displayDetails();
 	}
 
 	@Override
