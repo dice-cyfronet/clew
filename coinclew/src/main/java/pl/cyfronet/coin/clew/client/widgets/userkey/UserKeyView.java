@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
@@ -24,6 +25,7 @@ public class UserKeyView extends Composite implements IUserKeyView, ReverseViewI
 	@UiField HTML name;
 	@UiField HTML fingerprint;
 	@UiField Button remove;
+	@UiField UserKeyMessages messages;
 
 	public UserKeyView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -57,5 +59,10 @@ public class UserKeyView extends Composite implements IUserKeyView, ReverseViewI
 	@Override
 	public void setRemoveBusyState(boolean busy) {
 		BootstrapHelpers.setButtonBusyState(remove, busy);
+	}
+	
+	@Override
+	public boolean confirmKeyRemoval() {
+		return Window.confirm(messages.confirmKeyRemoval());
 	}
 }

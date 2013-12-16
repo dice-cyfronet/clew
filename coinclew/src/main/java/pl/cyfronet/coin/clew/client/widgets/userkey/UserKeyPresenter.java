@@ -28,13 +28,15 @@ public class UserKeyPresenter extends BasePresenter<IUserKeyView, MainEventBus> 
 
 	@Override
 	public void onRemoveClicked() {
-		view.setRemoveBusyState(true);
-		cloudFacadeController.removeUserKey(userKey.getId(), new Command() {
-			@Override
-			public void execute() {
-				view.setRemoveBusyState(false);
-				eventBus.removeUserKey(userKey.getId());
-			}
-		});
+		if (view.confirmKeyRemoval()) {
+			view.setRemoveBusyState(true);
+			cloudFacadeController.removeUserKey(userKey.getId(), new Command() {
+				@Override
+				public void execute() {
+					view.setRemoveBusyState(false);
+					eventBus.removeUserKey(userKey.getId());
+				}
+			});
+		}
 	}
 }
