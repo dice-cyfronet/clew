@@ -274,6 +274,13 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					cloudFacadeController.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new HttpMappingsCallback() {
 						@Override
 						public void processHttpMappings(List<HttpMapping> httpMappings) {
+							view.getEndpointName().setText("");
+							view.getInvocationPath().setText("");
+							view.getEndpointType().setValue("webapp");
+							view.selectFirstTargetPort();
+							view.getEndpointDescription().setText("");
+							view.getEndpointDescriptor().setText("");
+							
 							String httpUrl = null;
 							String httpsUrl = null;
 							

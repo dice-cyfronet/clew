@@ -520,4 +520,11 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	public boolean confirmEndpointRemoval() {
 		return Window.confirm(messages.confirmEndpointRemoval());
 	}
+
+	@Override
+	public void selectFirstTargetPort() {
+		if (endpointTargetPort.getItemCount() > 1) {
+			endpointTargetPort.setSelectedIndex(0);
+		}
+	}
 }
