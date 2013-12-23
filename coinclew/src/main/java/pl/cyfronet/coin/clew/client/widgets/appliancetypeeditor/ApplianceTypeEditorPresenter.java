@@ -76,7 +76,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 				view.getDescription().setText(applianceType.getDescription());
 				view.getShared().setValue(applianceType.isShared());
 				view.getScalable().setValue(applianceType.isScalable());
-				view.getVisibleFor().setValue(applianceType.getVisibleFor());
+				view.getVisibleFor().setValue(applianceType.getVisibleTo());
 //				view.getCores().setValue(applianceType.getPreferenceCpu());
 //				view.getRam().setValue(applianceType.getPreferenceMemory());
 //				view.getDisk().setValue(applianceType.getPreferenceDisk());

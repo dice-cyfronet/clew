@@ -1144,7 +1144,7 @@ public class CloudFacadeController {
 		applianceType.setDescription(description);
 		applianceType.setShared(shared);
 		applianceType.setScalable(scalable);
-		applianceType.setVisibleFor(visibleFor);
+		applianceType.setVisibleTo(visibleFor);
 		applianceType.setPreferenceCpu(cores);
 		applianceType.setPreferenceMemory(ram);
 		applianceType.setPreferenceDisk(disk);
@@ -1179,7 +1179,7 @@ public class CloudFacadeController {
 		applianceType.setDescription(description);
 		applianceType.setShared(shared);
 		applianceType.setScalable(scalable);
-		applianceType.setVisibleFor(visibleFor);
+		applianceType.setVisibleTo(visibleFor);
 		applianceType.setPreferenceCpu(cores);
 		applianceType.setPreferenceMemory(ram);
 		applianceType.setPreferenceDisk(disk);

@@ -30,8 +30,8 @@ public class NewApplianceType {
 	private List<String> virtualMachineTemplateIds;
 	@Json(name = "security_proxy_id")
 	private String securityProxyId;
-	@Json(name = "visible_for")
-	private String visibleFor;
+	@Json(name = "visible_to")
+	private String visibleTo;
 	
 	public String getName() {
 		return name;
@@ -154,10 +154,10 @@ public class NewApplianceType {
 	public void setSecurityProxyId(String securityProxyId) {
 		this.securityProxyId = securityProxyId;
 	}
-	public String getVisibleFor() {
-		return visibleFor;
+	public String getVisibleTo() {
+		return visibleTo;
 	}
-	public void setVisibleFor(String visibleFor) {
-		this.visibleFor = visibleFor;
+	public void setVisibleTo(String visibleTo) {
+		this.visibleTo = visibleTo;
 	}
 }
