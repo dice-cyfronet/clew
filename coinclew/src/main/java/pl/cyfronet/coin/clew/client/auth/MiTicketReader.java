@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 public class MiTicketReader {
 	private static final String DEVELOPER_ROLE = "developer";
 	private static final String ROLE_DELIMITER = ",";
+	private static final String CF_KEY = "t8YTdyd-yiAkmJx195VC";
 
 	public boolean isDeveloper() {
 		if (getTicket() == null) {
@@ -51,6 +52,10 @@ public class MiTicketReader {
 		}
 		
 		return "dharezlak";
+	}
+	
+	public String getCfToken() {
+		return CF_KEY;
 	}
 	
 	private List<String> getRoles() {

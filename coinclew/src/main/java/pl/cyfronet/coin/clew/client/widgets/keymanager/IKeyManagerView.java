@@ -8,6 +8,9 @@ public interface IKeyManagerView extends IsWidget {
 	interface IKeyManagerPresenter {
 		void onKeyUploadClicked();
 		void onClose();
+		void onKeyFromFileOptionSelected();
+		void onCopiedKeyOptionSelected();
+		void onKeyFromFileUploaded();
 	}
 
 	void showModal(boolean show);
@@ -21,4 +24,13 @@ public interface IKeyManagerView extends IsWidget {
 	void displayNameOrContentsEmptyMessage();
 	void displayUnknownErrorMessage();
 	void displayInvalidKeyMessage();
+	void enableKeyUpload(boolean enable);
+	void enableKeyTextBox(boolean enable);
+	void addHiddenField(String name, String value);
+	boolean isCopiedKey();
+	void displayNameOrFileEmptyMessage();
+	boolean isKeyFileSelected();
+	void resetForm();
+	void submitForm();
+	void setFormAction(String target);
 }

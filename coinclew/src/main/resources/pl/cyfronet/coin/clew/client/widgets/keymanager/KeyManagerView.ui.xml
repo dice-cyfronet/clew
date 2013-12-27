@@ -16,15 +16,29 @@
 		.text-area {
 			resize: none;
 		}
+		.help {
+			margin-top: 10px;
+		}
+		.radio {
+			float: left;
+		}
+		.file {
+			display: block;
+			clear: both;
+		}
 	</ui:style>
 	<b:Modal ui:field="keyModal" title="{messages.keyManagerModalLabel}"  animation="true" closeVisible="false" keyboard="false">
 		<g:FlowPanel ui:field="keyContainer" addStyleNames="{style.keys}"/>
-		<b:Form>
+		<b:Form ui:field="keyUploadForm" method="POST" encoding="multipart/form-data">
 			<b:ControlLabel><ui:text from="{messages.keyNameLabel}"/></b:ControlLabel>
-			<b:TextBox ui:field="keyName" placeholder="{messages.keyNamePlaceholder}" addStyleNames="input-block-level"/>
-			<b:ControlLabel><ui:text from="{messages.keyPayloadLabel}"/></b:ControlLabel>
+			<b:TextBox ui:field="keyName" name="user_key[name]" placeholder="{messages.keyNamePlaceholder}" addStyleNames="input-block-level"/>
+			<b:RadioButton ui:field="keyCopiedRadio" name="keyContents" value="true" addStyleNames="{style.radio}"/>
+			<g:InlineHTML><ui:text from="{messages.keyCopiedLabel}"/></g:InlineHTML>
 			<b:TextArea ui:field="keyPayload" placeholder="{messages.keyPayloadPlaceholder}" addStyleNames="input-block-level {style.text-area}"/>
-			<b:HelpBlock><ui:text from="{messages.keyHelp}"/></b:HelpBlock>
+			<b:RadioButton ui:field="keyFromFileRadio" name="keyContents" addStyleNames="{style.radio}"/>
+			<g:InlineHTML><ui:text from="{messages.keyFromFileLabel}"/></g:InlineHTML>
+			<b:FileUpload ui:field="keyUpload" name="user_key[public_key]" enabled="false" addStyleNames="{style.file}"/>
+			<b:HelpBlock addStyleNames="{style.help}"><ui:text from="{messages.keyHelp}"/></b:HelpBlock>
 			<b:Button ui:field="uploadKey" icon="KEY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
 		</b:Form>
 		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>

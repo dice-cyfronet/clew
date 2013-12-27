@@ -8,11 +8,13 @@ public interface KeyManagerMessages extends Messages {
 	String closeButtonLabel();
 	String keyNameLabel();
 	String keyNamePlaceholder();
-	String keyPayloadLabel();
 	String keyPayloadPlaceholder();
 	String uploadKeyButtonLabel();
 	String keyHelp();
 	String nameOrContentsEmptyMessage();
 	String invalidKeyMessage();
 	String unknownErrorMessage();
+	String keyCopiedLabel();
+	String keyFromFileLabel();
+	String nameOrFileEmptyMessage();
 }

@@ -4,15 +4,20 @@ import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.FileUpload;
+import com.github.gwtbootstrap.client.ui.Form;
+import com.github.gwtbootstrap.client.ui.Form.SubmitCompleteEvent;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -21,6 +26,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -38,6 +44,9 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	@UiField TextArea keyPayload;
 	@UiField Label errorLabel;
 	@UiField Button uploadKey;
+	@UiField FileUpload keyUpload;
+	@UiField Form keyUploadForm;
+	@UiField RadioButton keyCopiedRadio;
 
 	public KeyManagerView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -52,6 +61,25 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	void uploadKeyClicked(ClickEvent event) {
 		getPresenter().onKeyUploadClicked();
 		event.preventDefault();
+	}
+	
+	@UiHandler("keyCopiedRadio")
+	void keyCopiedRadioSelected(ValueChangeEvent<Boolean> event) {
+		if (event.getValue()) {
+			getPresenter().onCopiedKeyOptionSelected();
+		}
+	}
+	
+	@UiHandler("keyFromFileRadio")
+	void keyFromFileRadioSelected(ValueChangeEvent<Boolean> event) {
+		if (event.getValue()) {
+			getPresenter().onKeyFromFileOptionSelected();
+		}
+	}
+	
+	@UiHandler("keyUploadForm")
+	void formSubmitted(SubmitCompleteEvent event) {
+		getPresenter().onKeyFromFileUploaded();
 	}
 	
 	@Override
@@ -137,5 +165,53 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	public void displayInvalidKeyMessage() {
 		errorLabel.setText(messages.invalidKeyMessage());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public void enableKeyUpload(boolean enable) {
+		keyUpload.setEnabled(enable);
+	}
+
+	@Override
+	public void enableKeyTextBox(boolean enable) {
+		keyPayload.setEnabled(enable);
+	}
+
+	@Override
+	public void addHiddenField(String name, String value) {
+		keyUploadForm.add(new Hidden(name, value));
+	}
+
+	@Override
+	public boolean isCopiedKey() {
+		return keyCopiedRadio.getValue();
+	}
+
+	@Override
+	public void displayNameOrFileEmptyMessage() {
+		errorLabel.setText(messages.nameOrFileEmptyMessage());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public boolean isKeyFileSelected() {
+		return keyUpload.getFilename() != null && !keyUpload.getFilename().isEmpty();
+	}
+
+	@Override
+	public void resetForm() {
+		keyUploadForm.reset();
+		keyUpload.setEnabled(false);
+		keyPayload.setEnabled(true);
+	}
+
+	@Override
+	public void submitForm() {
+		keyUploadForm.submit();
+	}
+
+	@Override
+	public void setFormAction(String action) {
+		keyUploadForm.setAction(action);
 	}
 }
