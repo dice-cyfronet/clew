@@ -29,7 +29,9 @@
 	<g:HTMLPanel addStyleNames="{style.panel}">
 		<g:FlowPanel addStyleNames="{style.details}">
 			<g:HTML ui:field="name" addStyleNames="{style.name}"/>
-			<g:HTML ui:field="fingerprint" addStyleNames="{style.fingerprint}"/>
+			<b:Tooltip text="{messages.fingerprintAbout}" placement="BOTTOM">
+				<g:HTML ui:field="fingerprint" addStyleNames="{style.fingerprint}"/>
+			</b:Tooltip>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:Button ui:field="remove" icon="REMOVE" size="MINI" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
