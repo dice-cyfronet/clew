@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.controller.cf;
 import org.fusesource.restygwt.client.Dispatcher;
 import org.fusesource.restygwt.client.Method;
 
+import pl.cyfronet.coin.clew.client.DevelopmentProperties;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 
 import com.google.gwt.http.client.Request;
@@ -19,7 +20,13 @@ public class CloudFacadeDispatcher implements Dispatcher {
 		String ticket = ticketReader.getTicket();
 		
 		if (ticket == null) {
-			builder.setHeader("PRIVATE-TOKEN", ticketReader.getCfToken());
+			if (ticketReader.getCfToken().equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
+				builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
+				
+				return null;
+			} else {
+				builder.setHeader("PRIVATE-TOKEN", ticketReader.getCfToken());
+			}
 		} else {
 			builder.setHeader("MI-TICKET", ticket);
 		}

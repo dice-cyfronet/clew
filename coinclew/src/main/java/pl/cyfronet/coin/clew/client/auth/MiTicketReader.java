@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pl.cyfronet.coin.clew.client.DevelopmentProperties;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Cookies;
@@ -13,7 +16,11 @@ import com.google.inject.Singleton;
 public class MiTicketReader {
 	private static final String DEVELOPER_ROLE = "developer";
 	private static final String ROLE_DELIMITER = ",";
-	private static final String CF_KEY = "t8YTdyd-yiAkmJx195VC";
+	private DevelopmentProperties devProperties;
+	
+	public MiTicketReader() {
+		devProperties = GWT.create(DevelopmentProperties.class);
+	}
 
 	public boolean isDeveloper() {
 		if (getTicket() == null) {
@@ -50,12 +57,12 @@ public class MiTicketReader {
 				return login;
 			}
 		}
-		
-		return "dharezlak";
+
+		return devProperties.developmentUserLogin();
 	}
 	
 	public String getCfToken() {
-		return CF_KEY;
+		return devProperties.cloudFacadeKey();
 	}
 	
 	private List<String> getRoles() {
