@@ -112,12 +112,12 @@
 		</g:FlowPanel>
 		<b:Collapse ui:field="collapse" defaultOpen="false">
 			<g:FlowPanel addStyleNames="{style.details}">
-				<g:HTML ui:field="accessInfoLabel" addStyleNames="{style.details-header}" visible="false"><ui:text from="{messages.accessInfoLabel}"/></g:HTML>
-				<g:FlowPanel ui:field="accessInfoContainer" addStyleNames="{style.container}" visible="false"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.webApplicationsLabel}"/></g:HTML>
 				<g:FlowPanel ui:field="webApplicationsContainer" addStyleNames="{style.container}"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.restApplicationsLabel}"/></g:HTML>
 				<g:FlowPanel ui:field="serviceContainer" addStyleNames="{style.container}"/>
+				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.otherServicesLabel}"/></g:HTML>
+				<g:FlowPanel ui:field="otherServiceContainer" addStyleNames="{style.container}"/>
 			</g:FlowPanel>
 		</b:Collapse>
 	</g:FlowPanel>

@@ -26,10 +26,9 @@ public interface IInstanceView extends IsWidget {
 	void showNoWebApplicationsLabel(boolean show);
 	void addExternalInterfacesControl();
 	void addSaveControl();
-	void showNoAccessInfoLabel(boolean show);
-	void showAccessInfoSection();
-	IsWidget addAccessInfo(String serviceName, String publicIp, String port);
-	void removeAccessInfo(IsWidget isWidget);
 	void removeWebapp(IsWidget remove);
 	void removeService(IsWidget widget);
+	IsWidget addOtherService(String serviceName, String publicIp, String port);
+	void showNoOtherServicesLabel(boolean show);
+	void removeOtherService(IsWidget remove);
 }

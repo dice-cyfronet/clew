@@ -14,8 +14,8 @@ public interface InstanceMessages extends Messages {
 	String shutdownTooltip();
 	String externalInterfacesTooltip();
 	String saveTooltip();
-	String accessInfoLabel();
-	String noAccessInfos();
 	String descriptorButtonTooltip();
 	String noDescriptorButtonTooltip();
+	String otherServicesLabel();
+	String noOtherServices();
 }

@@ -45,7 +45,9 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Button shutdown;
 	private Button externalInterfaces;
 	private Button saveButton;
-	private Label noAccessInfoLabel;
+	private Label noServiceLabel;
+	private Label noWebApplicationLabel;
+	private Label noOtherServicesLabel;
 	
 	@UiField HTML name;
 //	@UiField HTML spec;
@@ -58,10 +60,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField FlowPanel webApplicationsContainer;
 	@UiField FlowPanel serviceContainer;
 	@UiField Styles style;
-	@UiField HTML accessInfoLabel;
-	@UiField FlowPanel accessInfoContainer;
-	private Label noServiceLabel;
-	private Label noWebApplicationLabel;
+	@UiField FlowPanel otherServiceContainer;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -304,28 +303,17 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void showNoAccessInfoLabel(boolean show) {
-		if (show) {
-			if (noAccessInfoLabel == null) {
-				noAccessInfoLabel = new Label(messages.noAccessInfos());
-				accessInfoContainer.add(noAccessInfoLabel);
-			}
-		} else {
-			if (noAccessInfoLabel != null) {
-				accessInfoContainer.remove(noAccessInfoLabel);
-				noAccessInfoLabel = null;
-			}
-		}
+	public void removeWebapp(IsWidget widget) {
+		webApplicationsContainer.remove(widget);
 	}
 
 	@Override
-	public void showAccessInfoSection() {
-		accessInfoLabel.setVisible(true);
-		accessInfoContainer.setVisible(true);
+	public void removeService(IsWidget widget) {
+		serviceContainer.remove(widget);
 	}
 
 	@Override
-	public IsWidget addAccessInfo(String serviceName, String publicIp, String port) {
+	public IsWidget addOtherService(String serviceName, String publicIp, String port) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -335,23 +323,28 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		InlineHTML info = new InlineHTML(publicIp + ":" + port);
 		panel.add(info);
-		accessInfoContainer.add(panel);
+		otherServiceContainer.add(panel);
 		
 		return panel;
 	}
 
 	@Override
-	public void removeAccessInfo(IsWidget widget) {
-		accessInfoContainer.remove(widget);
+	public void showNoOtherServicesLabel(boolean show) {
+		if (show) {
+			if (noOtherServicesLabel == null) {
+				noOtherServicesLabel = new Label(messages.noOtherServices());
+				otherServiceContainer.add(noOtherServicesLabel);
+			}
+		} else {
+			if (noOtherServicesLabel != null) {
+				otherServiceContainer.remove(noOtherServicesLabel);
+				noOtherServicesLabel = null;
+			}
+		}
 	}
 
 	@Override
-	public void removeWebapp(IsWidget widget) {
-		webApplicationsContainer.remove(widget);
-	}
-
-	@Override
-	public void removeService(IsWidget widget) {
-		serviceContainer.remove(widget);
+	public void removeOtherService(IsWidget widget) {
+		otherServiceContainer.remove(widget);
 	}
 }

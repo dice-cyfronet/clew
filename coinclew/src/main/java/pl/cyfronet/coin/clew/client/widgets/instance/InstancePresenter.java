@@ -32,18 +32,18 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	protected CloudFacadeController cloudFacadeController;
-	private Map<String, IsWidget> accessInfos;
 	private Map<String, IsWidget> webapps;
 	private Map<String, IsWidget> services;
+	private Map<String, IsWidget> otherServices;
 	private boolean developmentMode;
 	private ApplianceInstance applianceInstance;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
-		accessInfos = new HashMap<String, IsWidget>();
 		webapps = new HashMap<String, IsWidget>();
 		services = new HashMap<String, IsWidget>();
+		otherServices = new HashMap<String, IsWidget>();
 	}
 	
 	public void setInstance(final ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
@@ -75,7 +75,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				if (developmentMode) {
 					view.addExternalInterfacesControl();
 					view.addSaveControl();
-					view.showAccessInfoSection();
 				}
 				
 				displayDetails();
@@ -167,15 +166,14 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 						}
 					}
 				}
-			} else if (developmentMode) {
-				//access info is displayed only in development mode
+			} else {
 				if (redirection.getPortMappings().size() > 0) {
 					//TODO(DH): for now only the first port mapping is used
 					PortMapping portMapping = redirection.getPortMappings().get(0);
 					
-					if (!accessInfos.keySet().contains(redirection.getId())) {
-						IsWidget widget = view.addAccessInfo(redirection.getName(), portMapping.getPublicIp(), portMapping.getSourcePort());
-						accessInfos.put(redirection.getId(), widget);
+					if (!otherServices.keySet().contains(redirection.getId())) {
+						IsWidget widget = view.addOtherService(redirection.getName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+						otherServices.put(redirection.getId(), widget);
 					}
 				}
 			}
@@ -197,11 +195,11 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			}
 		}
 		
-		for (Iterator<String> i = accessInfos.keySet().iterator(); i.hasNext();) {
+		for (Iterator<String> i = otherServices.keySet().iterator(); i.hasNext();) {
 			String redirectionId = i.next();
 			
-			if (!accessInfos.keySet().contains(redirectionId)) {
-				view.removeAccessInfo(accessInfos.remove(redirectionId));
+			if (!otherServices.keySet().contains(redirectionId)) {
+				view.removeOtherService(otherServices.remove(redirectionId));
 			}
 		}
 		
@@ -217,10 +215,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			view.showNoServicesLabel(false);
 		}
 		
-		if (accessInfos.size() == 0) {
-			view.showNoAccessInfoLabel(true);
+		if (otherServices.size() == 0) {
+			view.showNoOtherServicesLabel(true);
 		} else {
-			view.showNoAccessInfoLabel(false);
+			view.showNoOtherServicesLabel(false);
 		}
 	}
 
