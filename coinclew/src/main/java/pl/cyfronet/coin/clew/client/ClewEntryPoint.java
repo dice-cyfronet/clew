@@ -11,12 +11,13 @@ import com.mvp4g.client.Mvp4gModule;
 public class ClewEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
-		ClewProperties clewProperties = GWT.create(ClewProperties.class);
-		Defaults.setServiceRoot(clewProperties.getCloudFacadeRootUrl());
+		CloudFacadeEndpointProperty cloudFacadeEndpointProperty = new CloudFacadeEndpointProperty();
+		Defaults.setServiceRoot(cloudFacadeEndpointProperty.getCloudFacadeEndpoint());
 		
 		Mvp4gModule module = (Mvp4gModule) GWT.create(Mvp4gModule.class);
 		module.createAndStartModule();
 		
+		ClewProperties clewProperties = GWT.create(ClewProperties.class);
 		RootPanel rootPanel = RootPanel.get(clewProperties.getDashboardContainerId());
 		
 		if (rootPanel == null) {

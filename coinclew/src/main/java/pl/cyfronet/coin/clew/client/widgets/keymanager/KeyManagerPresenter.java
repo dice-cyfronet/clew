@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.ClewProperties;
+import pl.cyfronet.coin.clew.client.CloudFacadeEndpointProperty;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
@@ -25,13 +26,15 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 	private Map<String, UserKeyPresenter> keyPresenters;
 	private MiTicketReader ticketReader;
 	private ClewProperties properties;
+	private CloudFacadeEndpointProperty cloudFacadeEndpointProperty;
 
 	@Inject
 	public KeyManagerPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader,
-			ClewProperties properties) {
+			ClewProperties properties, CloudFacadeEndpointProperty cloudFacadeEndpointProperty) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.ticketReader = ticketReader;
 		this.properties = properties;
+		this.cloudFacadeEndpointProperty = cloudFacadeEndpointProperty;
 		keyPresenters = new HashMap<String, UserKeyPresenter>();
 	}
 	
@@ -46,7 +49,7 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 			view.addHiddenField("private_token", ticketReader.getCfToken());
 		}
 		
-		view.setFormAction(properties.getCloudFacadeRootUrl() + properties.userKeyUploadPath());
+		view.setFormAction(cloudFacadeEndpointProperty.getCloudFacadeEndpoint() + properties.userKeyUploadPath());
 	}
 	
 	public void onShowKeyManagerDialog() {
