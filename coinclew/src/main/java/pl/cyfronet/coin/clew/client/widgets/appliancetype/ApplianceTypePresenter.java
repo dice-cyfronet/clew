@@ -97,7 +97,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	}
 
 	public boolean matchesFilter(String filterText) {
-		return applianceType.getName() != null && applianceType.getName().contains(filterText) ||
-				applianceType.getDescription() != null && applianceType.getDescription().contains(filterText);
+		return applianceType.getName() != null && applianceType.getName().toLowerCase().contains(filterText.toLowerCase()) ||
+				applianceType.getDescription() != null && applianceType.getDescription().toLowerCase().contains(filterText.toLowerCase());
 	}
 }
