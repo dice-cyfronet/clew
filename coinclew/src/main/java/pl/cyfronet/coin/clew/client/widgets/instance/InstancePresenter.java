@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -109,7 +110,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					cloudFacadeController.getRedirectionsForDevPropertySetId(developmentModePropertySet.getId(), new RedirectionsCallback() {
 						@Override
 						public void processRedirections(List<Redirection> redirections) {
-							displayRedirections(redirections, developmentMode);
+							displayRedirections(redirections);
 						}
 					});
 				}});
@@ -117,17 +118,23 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			cloudFacadeController.getRedirectionsForApplianceType(applianceInstance.getApplianceTypeId(), new RedirectionsCallback() {
 				@Override
 				public void processRedirections(List<Redirection> redirections) {
-					displayRedirections(redirections, developmentMode);
+					displayRedirections(redirections);
 				}});
 		}
 	}
 	
-	private void displayRedirections(List<Redirection> redirections, boolean developmentMode) {
+	private void displayRedirections(List<Redirection> redirections) {
+		List<String> currentWebapps = new ArrayList<String>();
+		List<String> currentServices = new ArrayList<String>();
+		List<String> currentOtherServices = new ArrayList<String>();
+		
 		for (Redirection redirection : redirections) {
 			if (redirection.isHttp()) {
 				if (redirection.getEndpoints() != null) {
 					for (Endpoint endpoint : redirection.getEndpoints()) {
 						if ("webapp".equals(endpoint.getEndpointType())) {
+							currentWebapps.add(endpoint.getId());
+							
 							//before showing a webapp at least one http mapping has to be available
 							if (!webapps.keySet().contains(endpoint.getId()) &&
 									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
@@ -155,6 +162,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 								webapps.put(endpoint.getId(), widget);
 							}
 						} else {
+							currentServices.add(endpoint.getId());
+							
 							//before showing a service at least one http mapping has to be available
 							if (!services.keySet().contains(endpoint.getId()) &&
 									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
@@ -170,6 +179,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				if (redirection.getPortMappings().size() > 0) {
 					//TODO(DH): for now only the first port mapping is used
 					PortMapping portMapping = redirection.getPortMappings().get(0);
+					currentOtherServices.add(redirection.getId());
 					
 					if (!otherServices.keySet().contains(redirection.getId())) {
 						IsWidget widget = view.addOtherService(redirection.getName(), portMapping.getPublicIp(), portMapping.getSourcePort());
@@ -179,27 +189,21 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			}
 		}
 		
-		for (Iterator<String> i = webapps.keySet().iterator(); i.hasNext();) {
-			String endpointId = i.next();
-			
-			if (!webapps.keySet().contains(endpointId)) {
-				view.removeWebapp(webapps.remove(endpointId));
+		for (String webappId : webapps.keySet()) {
+			if (!currentWebapps.contains(webappId)) {
+				view.removeWebapp(webapps.remove(webappId));
 			}
 		}
 		
-		for (Iterator<String> i = services.keySet().iterator(); i.hasNext();) {
-			String endpointId = i.next();
-			
-			if (!services.keySet().contains(endpointId)) {
-				view.removeService(services.remove(endpointId));
+		for (String serviceId : services.keySet()) {
+			if (!currentServices.contains(serviceId)) {
+				view.removeService(services.remove(serviceId));
 			}
 		}
 		
-		for (Iterator<String> i = otherServices.keySet().iterator(); i.hasNext();) {
-			String redirectionId = i.next();
-			
-			if (!otherServices.keySet().contains(redirectionId)) {
-				view.removeOtherService(otherServices.remove(redirectionId));
+		for (String otherServiceId : otherServices.keySet()) {
+			if (!currentOtherServices.contains(otherServiceId)) {
+				view.removeOtherService(otherServices.remove(otherServiceId));
 			}
 		}
 		

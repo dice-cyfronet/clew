@@ -2,6 +2,8 @@ package pl.cyfronet.coin.clew.client.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1233,6 +1235,7 @@ public class CloudFacadeController {
 		
 		for (PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 			final Redirection redirection = new Redirection();
+			redirection.setId(portMappingTemplate.getId());
 			redirection.setName(portMappingTemplate.getServiceName());
 			redirection.setTargetPort(portMappingTemplate.getTargetPort());
 			redirection.setProtocol(portMappingTemplate.getTransportProtocol());
@@ -1293,6 +1296,17 @@ public class CloudFacadeController {
 				return;
 			}
 		}
+		
+		Collections.sort(redirections, new Comparator<Redirection>() {
+			@Override
+			public int compare(Redirection o1, Redirection o2) {
+				if (o1 != null && o2 != null && o1.getName() != null && o2.getName() != null) {
+					return o1.getName().compareToIgnoreCase(o2.getName());
+				}
+				
+				return 0;
+			}
+		});
 		
 		if (callback != null) {
 			callback.processRedirections(redirections);
