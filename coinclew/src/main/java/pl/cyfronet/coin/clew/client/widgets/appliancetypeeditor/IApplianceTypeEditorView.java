@@ -16,9 +16,9 @@ public interface IApplianceTypeEditorView extends IsWidget {
 	HasValue<Boolean> getShared();
 	HasValue<Boolean> getScalable();
 	HasValue<String> getVisibleFor();
-//	HasValue<String> getDisk();
-//	HasValue<String> getRam();
-//	HasValue<String> getCores();
+	HasValue<String> getDisk();
+	HasValue<String> getRam();
+	HasValue<String> getCores();
 	void displayNameEmptyMessage();
 	void clearErrorMessages();
 	void setUpdateBusyState(boolean busy);

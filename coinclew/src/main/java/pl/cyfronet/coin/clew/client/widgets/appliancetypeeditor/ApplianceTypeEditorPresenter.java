@@ -52,9 +52,9 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		view.getShared().setValue(false);
 		view.getScalable().setValue(false);
 		view.getVisibleFor().setValue("all");
-//		view.getCores().setValue("0");
-//		view.getRam().setValue("0");
-//		view.getDisk().setValue("0");
+		view.getCores().setValue("0");
+		view.getRam().setValue("0");
+		view.getDisk().setValue("0");
 	}
 
 	private void applyMode() {
@@ -77,9 +77,9 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 				view.getShared().setValue(applianceType.isShared());
 				view.getScalable().setValue(applianceType.isScalable());
 				view.getVisibleFor().setValue(applianceType.getVisibleTo());
-//				view.getCores().setValue(applianceType.getPreferenceCpu());
-//				view.getRam().setValue(applianceType.getPreferenceMemory());
-//				view.getDisk().setValue(applianceType.getPreferenceDisk());
+				view.getCores().setValue(applianceType.getPreferenceCpu());
+				view.getRam().setValue(applianceType.getPreferenceMemory());
+				view.getDisk().setValue(applianceType.getPreferenceDisk());
 			}
 		});
 	}
@@ -91,9 +91,9 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		boolean shared = view.getShared().getValue();
 		boolean scalable = view.getScalable().getValue();
 		String visibleFor = view.getVisibleFor().getValue();
-//		String cores = view.getCores().getValue();
-//		String ram = view.getRam().getValue();
-//		String disk = view.getDisk().getValue();
+		String cores = view.getCores().getValue();
+		String ram = view.getRam().getValue();
+		String disk = view.getDisk().getValue();
 		view.clearErrorMessages();
 		
 		if (name.isEmpty()) {
@@ -101,7 +101,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		} else {
 			view.setUpdateBusyState(true);
 			cloudFacadeController.updateApplianceType(applianceTypeId, name, description, shared, scalable,
-					visibleFor, null, null, null, new ApplianceTypeCallback() {
+					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
 						@Override
 						public void processApplianceType(ApplianceType applianceType) {
 							view.setUpdateBusyState(false);
