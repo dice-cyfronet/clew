@@ -1,6 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.startinstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -61,6 +63,12 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		if (applianceTypes.size() == 0) {
 			view.addNoApplianceTypesLabel();
 		} else {
+			Collections.sort(applianceTypes, new Comparator<ApplianceType>() {
+				@Override
+				public int compare(ApplianceType o1, ApplianceType o2) {
+					return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+				}
+			});
 			for (ApplianceType applianceType : applianceTypes) {
 				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
 				applianceTypePresenters.add(presenter);
