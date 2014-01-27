@@ -227,7 +227,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	}
 
 	@Override
-	public IsWidget addMapping(final String mappingId, String serviceName,
+	public IsWidget addMapping(int beforePosition, final String mappingId, String serviceName,
 			int targetPort, String transportProtocol, String httpUrl,
 			String httpsUrl, String publicIp, String sourcePort) {
 		FlowPanel panel = new FlowPanel();
@@ -242,9 +242,15 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			links.addStyleName(style.altLinks());
 			
 			if (httpUrl != null) {
-				Anchor httpAnchor = new Anchor("http&nbsp;", true, httpUrl);
-				httpAnchor.setTarget("_blank");
-				links.add(httpAnchor);
+				if (httpUrl.isEmpty()) {
+					HTML http = new InlineHTML("http&nbsp;");
+					links.add(http);
+				} else {
+					Anchor httpAnchor = new Anchor("http&nbsp;", true, httpUrl);
+					httpAnchor.setTarget("_blank");
+					links.add(httpAnchor);
+				}
+				
 				links.add(new Icon(IconType.ARROW_RIGHT));
 				links.add(new InlineHTML("&nbsp;" + targetPort));
 			}
@@ -254,9 +260,15 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 					links.add(new InlineHTML(",&nbsp;"));
 				}
 				
-				Anchor httpsAnchor = new Anchor("https&nbsp;", true, httpsUrl);
-				httpsAnchor.setTarget("_blank");
-				links.add(httpsAnchor);
+				if (httpUrl.isEmpty()) {
+					HTML https = new InlineHTML("https&nbsp;");
+					links.add(https);
+				} else {
+					Anchor httpsAnchor = new Anchor("https&nbsp;", true, httpsUrl);
+					httpsAnchor.setTarget("_blank");
+					links.add(httpsAnchor);
+				}
+
 				links.add(new Icon(IconType.ARROW_RIGHT));
 				links.add(new InlineHTML("&nbsp;" + targetPort));
 			}
@@ -283,7 +295,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		actions.addStyleName(style.actions());
 		actions.add(removeButton);
 		panel.add(actions);
-		externalInterfaceContainer.add(panel);
+		externalInterfaceContainer.insert(panel, beforePosition);
 		
 		return panel;
 	}
@@ -433,7 +445,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	}
 
 	@Override
-	public IsWidget addEndpoint(final String endpointId, String endpointName, String httpUrl, String httpsUrl) {
+	public IsWidget addEndpoint(int beforePosition, final String endpointId, String endpointName, String httpUrl, String httpsUrl) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.mapping());
 		
@@ -458,6 +470,10 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			links.add(httpsAnchor);
 		}
 		
+		if (links.getWidgetCount() == 0) {
+			links.add(new HTML("&nbsp;"));
+		}
+		
 		panel.add(links);
 		
 		Button removeButton = new Button();
@@ -475,7 +491,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		actions.addStyleName(style.actions());
 		actions.add(removeButton);
 		panel.add(actions);
-		endpointContainer.add(panel);
+		endpointContainer.insert(panel, beforePosition);
 		
 		return panel;
 	}

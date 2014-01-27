@@ -54,6 +54,7 @@
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="buttons">
 				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
+				<b:Button ui:field="editExternalInterfaces" icon="COGS" size="MINI" type="WARNING" title="{messages.editExternalInterfacesTooltip}"/>
 				<b:Button ui:field="editInitialConfigs" icon="LIST_UL" size="MINI" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>

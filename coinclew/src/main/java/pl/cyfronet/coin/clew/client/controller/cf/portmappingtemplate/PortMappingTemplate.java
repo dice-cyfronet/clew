@@ -11,4 +11,10 @@ public class PortMappingTemplate extends NewPortMappingTemplate {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	@Override
+	public String toString() {
+		return "PortMappingTemplate [id=" + id + ", getServiceName()="
+				+ getServiceName() + "]";
+	}
 }

@@ -964,19 +964,10 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void addPortMappingTemplate(String name, int portNumber, String transportProtocol,
+	public void addPortMappingTemplateForDevelopmentModePropertySet(String name, int portNumber, String transportProtocol,
 			final String applicationProtocol, String developmentModePropertySetId, final PortMappingTemplateCallback portMappingTemplateCallback) {
-		NewPortMappingTemplate portMappingTemplate = new NewPortMappingTemplate();
-		portMappingTemplate.setServiceName(name);
-		portMappingTemplate.setTargetPort(portNumber);
-		portMappingTemplate.setTransportProtocol(transportProtocol);
-		portMappingTemplate.setApplicationProtocol(applicationProtocol);
-		portMappingTemplate.setDevelopmentModePropertySetId(developmentModePropertySetId);
-		
-		NewPortMappingTemplateRequest request = new NewPortMappingTemplateRequest();
-		request.setPortMapping(portMappingTemplate);
+		NewPortMappingTemplateRequest request = createPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, null);
 		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
-
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				simpleErrorHandler.displayError(exception.getMessage());
@@ -994,6 +985,40 @@ public class CloudFacadeController {
 				}
 			}
 		});
+	}
+	
+	public void addPortMappingTemplateForApplianceType(String name, int portNumber, String transportProtocol,
+			final String applicationProtocol, String applianceTypeId, final PortMappingTemplateCallback portMappingTemplateCallback) {
+		NewPortMappingTemplateRequest request = createPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, null, applianceTypeId);
+		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplateRequestResponse response) {
+				if (portMappingTemplateCallback != null) {
+					portMappingTemplateCallback.processPortMappingTemplate(response.getPortMappingTemplate());
+				}
+			}
+		});
+	}
+	
+	private NewPortMappingTemplateRequest createPortMappingTemplateRequest(String name, int portNumber, String transportProtocol, final String applicationProtocol,
+			String developmentModePropertySetId, String applianceTypeId) {
+		NewPortMappingTemplate portMappingTemplate = new NewPortMappingTemplate();
+		portMappingTemplate.setServiceName(name);
+		portMappingTemplate.setTargetPort(portNumber);
+		portMappingTemplate.setTransportProtocol(transportProtocol);
+		portMappingTemplate.setApplicationProtocol(applicationProtocol);
+		portMappingTemplate.setDevelopmentModePropertySetId(developmentModePropertySetId);
+		portMappingTemplate.setApplianceTypeId(applianceTypeId);
+		
+		NewPortMappingTemplateRequest request = new NewPortMappingTemplateRequest();
+		request.setPortMapping(portMappingTemplate);
+		
+		return request;
 	}
 
 	private void waitForHttpMappings(final PortMappingTemplate portMappingTemplate, final PortMappingTemplateCallback portMappingTemplateCallback) {

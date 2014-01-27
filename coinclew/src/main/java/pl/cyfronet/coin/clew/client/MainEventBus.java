@@ -123,4 +123,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void removeApplianceType(String id);
+
+	@Event(handlers = ExternalInterfacesEditorPresenter.class)
+	void showExternalInterfacesEditorForApplianceType(String applianceTypeId);
 }

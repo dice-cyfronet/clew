@@ -23,7 +23,7 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasWidgets getExternalInterfaceContainer();
 	HasValue<String> getTransportProtocol();
 	void setApplicationProtocolEnabled(boolean enabled);
-	IsWidget addMapping(String mappingId, String serviceName, int targetPort, String transportProtocol, String httpUrl, String httpsUrl, String publicIp, String sourcePort);
+	IsWidget addMapping(int beforePosition, String mappingId, String serviceName, int targetPort, String transportProtocol, String httpUrl, String httpsUrl, String publicIp, String sourcePort);
 	void removeMappingTemplate(IsWidget widget);
 	HasText getExternalInterfaceName();
 	void setAddExternalInterfaceBusyState(boolean busy);
@@ -38,7 +38,7 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasValue<String> getTargetPort();
 	HasText getEndpointDescription();
 	HasText getEndpointDescriptor();
-	IsWidget addEndpoint(String endpointId, String name, String httpUrl, String httpsUrl);
+	IsWidget addEndpoint(int beforePosition, String endpointId, String name, String httpUrl, String httpsUrl);
 	void removeEndpoint(IsWidget isWidget);
 	void addHttpMappingEndpointOption(String id, String serviceName, int targetPort);
 	void showEndpointTargetPortHelpBlock(boolean show);

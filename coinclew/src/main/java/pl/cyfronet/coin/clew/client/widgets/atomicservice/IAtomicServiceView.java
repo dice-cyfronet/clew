@@ -9,6 +9,7 @@ public interface IAtomicServiceView extends IsWidget {
 		void onEditInitialConfigs();
 		void onEditProperties();
 		void onRemove();
+		void onEditExternalInterfaces();
 	}
 
 	HasText getName();

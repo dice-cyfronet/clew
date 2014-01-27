@@ -64,4 +64,9 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 	public boolean isInactive() {
 		return !applianceType.getApplianceType().isActive();
 	}
+
+	@Override
+	public void onEditExternalInterfaces() {
+		eventBus.showExternalInterfacesEditorForApplianceType(applianceType.getApplianceType().getId());
+	}
 }

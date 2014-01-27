@@ -8,4 +8,5 @@ public interface AtomicServiceMessages extends Messages {
 	String authorLabel(String authorName);
 	String confirmRemoval();
 	String inactiveLabel();
+	String editExternalInterfacesTooltip();
 }
