@@ -69,6 +69,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 					return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 				}
 			});
+			
 			for (ApplianceType applianceType : applianceTypes) {
 				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
 				applianceTypePresenters.add(presenter);

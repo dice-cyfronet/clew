@@ -1,9 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
@@ -12,7 +10,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigu
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -21,13 +18,11 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, MainEventBus> implements IApplianceTypePresenter {
 	private ApplianceType applianceType;
 	private CloudFacadeController cloudFacadeController;
-	private Map<String, HasValue<Boolean>> initialConfigs;
 	private boolean developmentMode;
 	
 	@Inject
 	public ApplianceTypePresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
-		initialConfigs = new HashMap<String, HasValue<Boolean>>();
 	}
 
 	public void setApplianceType(ApplianceType applianceType, boolean developmentMode) {
@@ -51,15 +46,10 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				if (applianceConfigurations.size() == 0) {
 					view.addNoInitialConfigsLabel();
 				} else {
-					boolean firstChecked = false;
-					
+					view.showInitialConfigs();
+
 					for (ApplianceConfiguration config : applianceConfigurations) {
-						initialConfigs.put(config.getId(), view.addInitialConfigRadioBox(ApplianceTypePresenter.this.applianceType.getId(), config.getName()));
-						
-						if (!firstChecked) {
-							initialConfigs.get(config.getId()).setValue(true);
-							firstChecked = true;
-						}
+						view.addInitialConfigValue(config.getId(), config.getName());
 					}
 					
 					view.enableControls(true);
@@ -70,27 +60,14 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 
 	@Override
 	public void onStartApplianceType() {
-		String initialConfigurationId = null;
-		
-		for (String initialConfigId : initialConfigs.keySet()) {
-			if (initialConfigs.get(initialConfigId).getValue()) {
-				initialConfigurationId = initialConfigId;
-				
-				break;
-			}
-		}
-		
+		String initialConfigurationId = view.getInitialConfigs().getValue();
 		eventBus.hideStartInstanceModal();
 		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}), developmentMode);
 	}
 
 	public String getSelectedInitialConfigId() {
 		if (view.getChecked().getValue()) {
-			for (String initialConfigId : initialConfigs.keySet()) {
-				if (initialConfigs.get(initialConfigId).getValue()) {
-					return initialConfigId;
-				}
-			}
+			return view.getInitialConfigs().getValue();
 		}
 		
 		return null;

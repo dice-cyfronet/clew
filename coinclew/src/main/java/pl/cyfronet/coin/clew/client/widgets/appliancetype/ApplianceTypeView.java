@@ -1,8 +1,5 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
@@ -10,11 +7,14 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.RadioButton;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -35,7 +35,6 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	}
 	
 	private IApplianceTypePresenter presenter;
-	private List<RadioButton> checkBoxes;
 
 	@UiField HTML name;
 	@UiField HTML description;
@@ -44,10 +43,10 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField FlowPanel initialConfigsContainer;
 	@UiField CheckBox checked;
 	@UiField Styles style;
+	@UiField ListBox initialConfigs;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		checkBoxes = new ArrayList<RadioButton>();
 	}
 	
 	@UiHandler("start")
@@ -109,14 +108,8 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	}
 
 	@Override
-	public HasValue<Boolean> addInitialConfigRadioBox(String radioName, String name) {
-		RadioButton radio = new RadioButton(radioName);
-		radio.addStyleName(style.config());
-		radio.setHTML(name);
-		initialConfigsContainer.add(radio);
-		checkBoxes.add(radio);
-		
-		return radio;
+	public void addInitialConfigValue(String configId, String name) {
+		initialConfigs.addItem(name, configId);
 	}
 
 	@Override
@@ -128,5 +121,39 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public HasValue<Boolean> getChecked() {
 		return checked;
+	}
+
+	@Override
+	public void showInitialConfigs() {
+		initialConfigs.setVisible(true);
+	}
+
+	@Override
+	public HasValue<String> getInitialConfigs() {
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return initialConfigs.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				initialConfigs.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				initialConfigs.setSelectedValue(value);
+			}
+		};
 	}
 }

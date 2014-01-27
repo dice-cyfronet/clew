@@ -16,7 +16,9 @@ public interface IApplianceTypeView extends IsWidget {
 	void addInitialConfigsProgressIndicator();
 	void clearInitialConfigsContainer();
 	void addNoInitialConfigsLabel();
-	HasValue<Boolean> addInitialConfigRadioBox(String radioName, String name);
+	void addInitialConfigValue(String configId, String configName);
 	void enableControls(boolean b);
 	HasValue<Boolean> getChecked();
+	void showInitialConfigs();
+	HasValue<String> getInitialConfigs();
 }

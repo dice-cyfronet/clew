@@ -58,6 +58,7 @@
 		<g:FlowPanel addStyleNames="{style.description-panel}">
 			<g:HTML ui:field="description" addStyleNames="{style.description-text}"/>
 			<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>
+			<b:ListBox ui:field="initialConfigs" visible="false"/>
 			<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
