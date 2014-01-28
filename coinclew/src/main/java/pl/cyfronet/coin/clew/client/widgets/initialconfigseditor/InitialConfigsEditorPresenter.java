@@ -83,7 +83,7 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 		String configPayload = view.getPayload().getText().trim();
 		view.clearMessages();
 		
-		if (!configName.isEmpty() && !configPayload.isEmpty()) {
+		if (!configName.isEmpty()) {
 			if (editedConfigId != null) {
 				cloudFacadeController.updateApplianceConfiguration(editedConfigId, applianceTypeId, configName, configPayload, new ApplianceConfigurationCallback() {
 					@Override
@@ -123,7 +123,7 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 				}
 			}
 		} else {
-			view.displayNameOrPayloadEmptyMessage();
+			view.displayNameEmptyMessage();
 		}
 	}
 	

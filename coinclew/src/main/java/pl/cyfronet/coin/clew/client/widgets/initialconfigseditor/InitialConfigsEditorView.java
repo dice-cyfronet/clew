@@ -99,8 +99,8 @@ public class InitialConfigsEditorView extends Composite implements IInitialConfi
 	}
 
 	@Override
-	public void displayNameOrPayloadEmptyMessage() {
-		errorLabel.setText(messages.nameOrPayloadEmpty());
+	public void displayNameEmptyMessage() {
+		errorLabel.setText(messages.nameEmpty());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 

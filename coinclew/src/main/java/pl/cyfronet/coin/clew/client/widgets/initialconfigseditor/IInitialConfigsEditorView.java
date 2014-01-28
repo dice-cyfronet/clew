@@ -15,7 +15,7 @@ public interface IInitialConfigsEditorView extends IsWidget {
 	void showNoConfigsLabel();
 	HasText getName();
 	HasText getPayload();
-	void displayNameOrPayloadEmptyMessage();
+	void displayNameEmptyMessage();
 	void clearMessages();
 	void displayNameNotUniqueMessage();
 	void setEditLabel(boolean edit);

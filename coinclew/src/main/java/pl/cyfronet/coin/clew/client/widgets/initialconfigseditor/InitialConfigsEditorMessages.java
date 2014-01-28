@@ -12,7 +12,7 @@ public interface InitialConfigsEditorMessages extends Messages {
 	String payloadPlaceholder();
 	String processConfig();
 	String payloadHelp();
-	String nameOrPayloadEmpty();
+	String nameEmpty();
 	String nameNotUnique();
 	String getEditLabel();
 	String removalConfirmMessage();
