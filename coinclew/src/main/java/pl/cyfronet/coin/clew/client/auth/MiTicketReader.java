@@ -25,7 +25,7 @@ public class MiTicketReader {
 	public boolean isDeveloper() {
 		if (getTicket() == null) {
 			//not in an MI environment, overriding development mode
-			return true;
+			return !devProperties.developmentUserLogin().equals(DevelopmentProperties.MISSING);
 		}
 		
 		List<String> roles = getRoles();
@@ -68,15 +68,18 @@ public class MiTicketReader {
 	private List<String> getRoles() {
 		List<String> result = new ArrayList<String>();
 		String ticket = getTicket();
-		String decoded = decodeBase64(ticket);
 		
-		RegExp regexp = RegExp.compile(".*tokens=(.*?);.*");
-		MatchResult matchResult = regexp.exec(decoded);
-		
-		if (matchResult != null && matchResult.getGroupCount() > 1) {
-			String roles = matchResult.getGroup(1);
-			String[] splitRoles = roles.split(ROLE_DELIMITER);
-			result.addAll(Arrays.asList(splitRoles));
+		if (ticket != null) {
+			String decoded = decodeBase64(ticket);
+			
+			RegExp regexp = RegExp.compile(".*tokens=(.*?);.*");
+			MatchResult matchResult = regexp.exec(decoded);
+			
+			if (matchResult != null && matchResult.getGroupCount() > 1) {
+				String roles = matchResult.getGroup(1);
+				String[] splitRoles = roles.split(ROLE_DELIMITER);
+				result.addAll(Arrays.asList(splitRoles));
+			}
 		}
 		
 		return result;
