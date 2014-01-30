@@ -64,6 +64,12 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappin
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplateService;
 import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate.PortMappingTemplatesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.NewPortMappingTemplateProperty;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.NewPortMappingTemplatePropertyRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.PortMappingTemplatePropertiesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.PortMappingTemplateProperty;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.PortMappingTemplatePropertyRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.PortMappingTemplatePropertyService;
 import pl.cyfronet.coin.clew.client.controller.cf.user.User;
 import pl.cyfronet.coin.clew.client.controller.cf.user.UserRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.user.UserService;
@@ -183,6 +189,10 @@ public class CloudFacadeController {
 		void processOwnedApplianceTypes(List<OwnedApplianceType> ownedApplianceTypes);
 	}
 	
+	public interface PortMappingTemplatePropertiesCallback {
+		void processPortMappingTemplateProperties(List<PortMappingTemplateProperty> portMappingTemplateProperties);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -197,6 +207,7 @@ public class CloudFacadeController {
 	private DevelopmentModePropertySetService developmentModePropertySetService;
 	private PortMappingService portMappingService;
 	private UserService userService;
+	private PortMappingTemplatePropertyService portMappingTemplatePropertyService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -205,7 +216,8 @@ public class CloudFacadeController {
 			PortMappingTemplateService portMappingTemplateService, HttpMappingService httpMappingService,
 			EndpointService endpointService, UserKeyService userKeyService,
 			DevelopmentModePropertySetService developmentModePropertySetService,
-			PortMappingService portMappingService, UserService userService, SimpleErrorHandler simpleErrorHandler) {
+			PortMappingService portMappingService, UserService userService,
+			PortMappingTemplatePropertyService portMappingTemplatePropertyService, SimpleErrorHandler simpleErrorHandler) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -219,6 +231,7 @@ public class CloudFacadeController {
 		this.developmentModePropertySetService = developmentModePropertySetService;
 		this.portMappingService = portMappingService;
 		this.userService = userService;
+		this.portMappingTemplatePropertyService = portMappingTemplatePropertyService;
 		CloudFacadeController.simpleErrorHandler = simpleErrorHandler;
 	}
 	
@@ -1473,6 +1486,45 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, Void response) {
 				if (command != null) {
 					command.execute();
+				}
+			}
+		});
+	}
+
+	public void addPortMappingProperty(String portMappingTemplateId, String propertyName, String propertyValue, final Command onFinish) {
+		NewPortMappingTemplateProperty property = new NewPortMappingTemplateProperty();
+		property.setPortMappingTemplateId(portMappingTemplateId);
+		property.setKey(propertyName);
+		property.setValue(propertyValue);
+		
+		NewPortMappingTemplatePropertyRequest portMappingTemplatePropertyRequest = new NewPortMappingTemplatePropertyRequest();
+		portMappingTemplatePropertyRequest.setPortMappingTemplateProperty(property);
+		portMappingTemplatePropertyService.addPortMappingTemplateProperty(portMappingTemplatePropertyRequest, new MethodCallback<PortMappingTemplatePropertyRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplatePropertyRequestResponse response) {
+				if (onFinish != null) {
+					onFinish.execute();
+				}
+			}
+		});
+	}
+
+	public void getPortMappingTemplateProperties(String portMappingTemplatePropertyId, final PortMappingTemplatePropertiesCallback portMappingTemplatePropertiesCallback) {
+		portMappingTemplatePropertyService.getPortMappings(portMappingTemplatePropertyId, new MethodCallback<PortMappingTemplatePropertiesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplatePropertiesResponse response) {
+				if (portMappingTemplatePropertiesCallback != null) {
+					portMappingTemplatePropertiesCallback.processPortMappingTemplateProperties(response.getProperties());
 				}
 			}
 		});

@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -23,7 +25,7 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasWidgets getExternalInterfaceContainer();
 	HasValue<String> getTransportProtocol();
 	void setApplicationProtocolEnabled(boolean enabled);
-	IsWidget addMapping(int beforePosition, String mappingId, String serviceName, int targetPort, String transportProtocol, String httpUrl, String httpsUrl, String publicIp, String sourcePort);
+	IsWidget addMapping(int beforePosition, String mappingId, String serviceName, int targetPort, String transportProtocol, String httpUrl, String httpsUrl, String publicIp, String sourcePort, Map<String, String> properties);
 	void removeMappingTemplate(IsWidget widget);
 	HasText getExternalInterfaceName();
 	void setAddExternalInterfaceBusyState(boolean busy);
@@ -48,4 +50,8 @@ public interface IExternalInterfacesView extends IsWidget {
 	boolean confirmMappingRemoval();
 	boolean confirmEndpointRemoval();
 	void selectFirstTargetPort();
+	HasValue<String> getProxySendTimeout();
+	HasValue<String> getProxyReadTimeout();
+	void displayWorngProxySendTimeoutMessage();
+	void displayWorngProxyReadTimeoutMessage();
 }

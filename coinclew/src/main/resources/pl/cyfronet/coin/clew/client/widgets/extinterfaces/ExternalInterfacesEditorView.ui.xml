@@ -74,6 +74,10 @@
 						<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
 						<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
 					</b:ListBox>
+					<b:ControlLabel><ui:text from="{messages.proxySendTimeoutLabel}"/></b:ControlLabel>
+					<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>
+					<b:ControlLabel><ui:text from="{messages.proxyReadTimeoutLabel}"/></b:ControlLabel>
+					<b:TextBox ui:field="proxyReadTimeout" placeholder="{messages.proxyReadTimeoutPlaceholder}" addStyleNames="input-block-level"/>
 					<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
 				</b:Form>
 			</b:Tab>

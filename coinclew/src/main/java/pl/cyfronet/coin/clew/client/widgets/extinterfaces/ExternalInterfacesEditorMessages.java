@@ -44,4 +44,10 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String cannotRemoveMappingEndpointsExist();
 	String confirmMappingRemoval();
 	String confirmEndpointRemoval();
+	String proxySendTimeoutLabel();
+	String proxySendTimeoutPlaceholder();
+	String proxyReadTimeoutLabel();
+	String proxyReadTimeoutPlaceholder();
+	String wrongProxySendTimeout();
+	String wrongProxyReadTimeout();
 }

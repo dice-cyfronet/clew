@@ -1,5 +1,10 @@
 package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.IExternalInterfacesView.IExternalInterfacesPresenter;
 
@@ -76,6 +81,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField TextArea endpointDescription;
 	@UiField TextArea endpointDescriptor;
 	@UiField HelpBlock endpointTargetPortHelpBlock;
+	@UiField TextBox proxySendTimeout;
+	@UiField TextBox proxyReadTimeout;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -229,7 +236,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@Override
 	public IsWidget addMapping(int beforePosition, final String mappingId, String serviceName,
 			int targetPort, String transportProtocol, String httpUrl,
-			String httpsUrl, String publicIp, String sourcePort) {
+			String httpsUrl, String publicIp, String sourcePort, Map<String, String> properties) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.mapping());
 		
@@ -260,7 +267,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 					links.add(new InlineHTML(",&nbsp;"));
 				}
 				
-				if (httpUrl.isEmpty()) {
+				if (httpsUrl.isEmpty()) {
 					HTML https = new InlineHTML("https&nbsp;");
 					links.add(https);
 				} else {
@@ -271,6 +278,21 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 				links.add(new Icon(IconType.ARROW_RIGHT));
 				links.add(new InlineHTML("&nbsp;" + targetPort));
+			}
+			
+			if (properties != null) {
+				List<String> keys = new ArrayList<String>(properties.keySet());
+				Collections.sort(keys);
+				String propertiesValue = "";
+				
+				
+				for (String key : keys) {
+					propertiesValue += ", " + key + ": " + properties.get(key);
+				}
+				
+				if (!propertiesValue.isEmpty()) {
+					links.add(new InlineHTML(propertiesValue));
+				}
 			}
 			
 			panel.add(links);
@@ -542,5 +564,27 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		if (endpointTargetPort.getItemCount() > 1) {
 			endpointTargetPort.setSelectedIndex(0);
 		}
+	}
+
+	@Override
+	public HasValue<String> getProxySendTimeout() {
+		return proxySendTimeout;
+	}
+
+	@Override
+	public HasValue<String> getProxyReadTimeout() {
+		return proxyReadTimeout;
+	}
+
+	@Override
+	public void displayWorngProxySendTimeoutMessage() {
+		errorLabel.setText(messages.wrongProxySendTimeout());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
+
+	@Override
+	public void displayWorngProxyReadTimeoutMessage() {
+		errorLabel.setText(messages.wrongProxyReadTimeout());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
 }
