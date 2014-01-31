@@ -297,7 +297,14 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			
 			panel.add(links);
 		} else {
-			InlineHTML tcpUdpMapping = new InlineHTML(messages.getTcpUdpMapping(publicIp, sourcePort, targetPort));
+			InlineHTML tcpUdpMapping = null;
+			
+			if (!publicIp.isEmpty() && !sourcePort.isEmpty()) {
+				tcpUdpMapping = new InlineHTML(messages.getTcpUdpMapping(publicIp, sourcePort, targetPort));
+			} else {
+				tcpUdpMapping = new InlineHTML(messages.getTcpUdpEmptyMapping(targetPort));
+			}
+			
 			tcpUdpMapping.addStyleName(style.altLinks());
 			panel.add(tcpUdpMapping);
 		}

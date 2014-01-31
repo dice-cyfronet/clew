@@ -175,8 +175,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
 								@Override
 								public void processPortMappings(List<PortMapping> portMappings) {
-									String publicIp = "none";
-									String sourcePort = "none";
+									String publicIp = "";
+									String sourcePort = "";
 									
 									if (portMappings.size() > 0) {
 										PortMapping portMapping = portMappings.get(0);

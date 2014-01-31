@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface ExternalInterfacesEditorMessages extends Messages {
 	String modalHeader();
@@ -50,4 +51,5 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String proxyReadTimeoutPlaceholder();
 	String wrongProxySendTimeout();
 	String wrongProxyReadTimeout();
+	SafeHtml getTcpUdpEmptyMapping(int targetPort);
 }
