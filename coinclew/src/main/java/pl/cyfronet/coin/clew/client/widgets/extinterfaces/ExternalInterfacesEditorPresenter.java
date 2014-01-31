@@ -241,6 +241,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 			cloudFacadeController.getDevelopmentModePropertySet(applianceInstanceId, new DevelopmentModePropertySetCallback() {
 				@Override
 				public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
+					developmentModePropertySetId = developmentModePropertySet.getId();
+					
 					if (developmentModePropertySet.getPortMappingTemplateIds().size() > 0) {
 						cloudFacadeController.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySet.getId(), new PortMappingTemplatesCallback() {
 							@Override
