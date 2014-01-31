@@ -12,6 +12,7 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -173,6 +174,10 @@ public class CloudFacadeController {
 		void onError(CloudFacadeErrorCodes errorCodes);
 	}
 	
+	public interface GenericErrorCallback {
+		void onError(int statusCode, String message);
+	}
+	
 	public interface RedirectionsCallback {
 		void processRedirections(List<Redirection> redirections);
 	}
@@ -208,6 +213,7 @@ public class CloudFacadeController {
 	private PortMappingService portMappingService;
 	private UserService userService;
 	private PortMappingTemplatePropertyService portMappingTemplatePropertyService;
+	private CfErrorReader errorReader;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -217,7 +223,7 @@ public class CloudFacadeController {
 			EndpointService endpointService, UserKeyService userKeyService,
 			DevelopmentModePropertySetService developmentModePropertySetService,
 			PortMappingService portMappingService, UserService userService,
-			PortMappingTemplatePropertyService portMappingTemplatePropertyService, SimpleErrorHandler simpleErrorHandler) {
+			PortMappingTemplatePropertyService portMappingTemplatePropertyService, SimpleErrorHandler simpleErrorHandler, CfErrorReader errorReader) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -233,6 +239,7 @@ public class CloudFacadeController {
 		this.userService = userService;
 		this.portMappingTemplatePropertyService = portMappingTemplatePropertyService;
 		CloudFacadeController.simpleErrorHandler = simpleErrorHandler;
+		this.errorReader = errorReader;
 	}
 	
 	public void getApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
@@ -1474,12 +1481,13 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void removeApplianceType(String applianceTypeId, final Command command) {
+	public void removeApplianceType(String applianceTypeId, final Command command, final GenericErrorCallback errorCallback) {
 		applianceTypesService.deleteApplianceType(applianceTypeId, new MethodCallback<Void>() {
-
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				if (errorCallback != null) {
+					errorCallback.onError(method.getResponse().getStatusCode(), errorReader.decodeError(method.getResponse().getText()));
+				}
 			}
 
 			@Override

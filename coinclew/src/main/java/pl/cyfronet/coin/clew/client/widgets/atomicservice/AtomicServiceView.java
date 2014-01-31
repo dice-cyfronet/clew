@@ -144,4 +144,9 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	public void showNoInitialConfigurationsMessage() {
 		Window.alert(messages.noInitialConfigsMessage());
 	}
+
+	@Override
+	public void showRemovalErrorMessage(String errorMessage) {
+		Window.alert(errorMessage);
+	}
 }

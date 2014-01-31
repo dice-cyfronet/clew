@@ -22,4 +22,5 @@ public interface IAtomicServiceView extends IsWidget {
 	HasHTML getDescription();
 	void setStartInstanceBusyState(boolean busy);
 	void showNoInitialConfigurationsMessage();
+	void showRemovalErrorMessage(String errorMessage);
 }
