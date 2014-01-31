@@ -10,6 +10,7 @@ public interface IAtomicServiceView extends IsWidget {
 		void onEditProperties();
 		void onRemove();
 		void onEditExternalInterfaces();
+		void onStartInstance();
 	}
 
 	HasText getName();
@@ -19,4 +20,6 @@ public interface IAtomicServiceView extends IsWidget {
 	boolean confirmRemoval();
 	void showInactiveLabel(boolean active);
 	HasHTML getDescription();
+	void setStartInstanceBusyState(boolean busy);
+	void showNoInitialConfigurationsMessage();
 }

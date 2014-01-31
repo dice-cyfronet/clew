@@ -18,7 +18,7 @@
 		}
 		.actions {
 			float:left;
-			width: 10%;
+			width: 15%;
 			text-align: right;
 		}
 		.container {
@@ -31,7 +31,7 @@
 		}
 		.description {
 			float: left;
-			width: 50%;
+			width: 45%;
 			text-align: left;
 		}
 		.inactive {
@@ -53,6 +53,7 @@
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="buttons">
+				<b:Button ui:field="startInstance" icon="PLAY" size="MINI" type="SUCCESS" title="{messages.startInstanceTooltip}"/>
 				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
 				<b:Button ui:field="editExternalInterfaces" icon="COGS" size="MINI" type="WARNING" title="{messages.editExternalInterfacesTooltip}"/>
 				<b:Button ui:field="editInitialConfigs" icon="LIST_UL" size="MINI" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>

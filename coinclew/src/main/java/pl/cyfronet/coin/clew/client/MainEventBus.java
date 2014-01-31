@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorPresenter;
@@ -10,6 +11,7 @@ import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.ExternalInterfacesEditorPresenter;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.InitialConfigEmbedPresenter;
+import pl.cyfronet.coin.clew.client.widgets.initialconfigpicker.InitialConfigurationPickerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigseditor.InitialConfigsEditorPresenter;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.KeyManagerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.menu.MenuPresenter;
@@ -30,7 +32,8 @@ public interface MainEventBus extends EventBusWithLookup {
 	@Event(handlers = {MenuPresenter.class, StartInstancePresenter.class,
 			KeyManagerPresenter.class, InitialConfigsEditorPresenter.class,
 			InitialConfigEmbedPresenter.class, ExternalInterfacesEditorPresenter.class,
-			ApplianceTypeEditorPresenter.class, ApplianceDetailsPresenter.class})
+			ApplianceTypeEditorPresenter.class, ApplianceDetailsPresenter.class,
+			InitialConfigurationPickerPresenter.class})
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
@@ -126,4 +129,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = ExternalInterfacesEditorPresenter.class)
 	void showExternalInterfacesEditorForApplianceType(String applianceTypeId);
+
+	@Event(handlers = InitialConfigurationPickerPresenter.class)
+	void showInitialConfigPicker(List<ApplianceConfiguration> applianceConfigurations);
 }

@@ -39,6 +39,7 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	@UiField ButtonGroup buttons;
 	@UiField InlineHTML description;
 	@UiField FlowPanel inactiveContainer;
+	@UiField Button startInstance;
 
 	public AtomicServiceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -57,6 +58,11 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	@UiHandler("editExternalInterfaces")
 	void editExternalInterfaces(ClickEvent event) {
 		getPresenter().onEditExternalInterfaces();
+	}
+	
+	@UiHandler("startInstance")
+	void startInstance(ClickEvent event) {
+		getPresenter().onStartInstance();
 	}
 
 	@Override
@@ -127,5 +133,15 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	@Override
 	public HasHTML getDescription() {
 		return description;
+	}
+
+	@Override
+	public void setStartInstanceBusyState(boolean busy) {
+		BootstrapHelpers.setButtonBusyState(startInstance, busy);
+	}
+
+	@Override
+	public void showNoInitialConfigurationsMessage() {
+		Window.alert(messages.noInitialConfigsMessage());
 	}
 }

@@ -9,4 +9,6 @@ public interface AtomicServiceMessages extends Messages {
 	String confirmRemoval();
 	String inactiveLabel();
 	String editExternalInterfacesTooltip();
+	String startInstanceTooltip();
+	String noInitialConfigsMessage();
 }

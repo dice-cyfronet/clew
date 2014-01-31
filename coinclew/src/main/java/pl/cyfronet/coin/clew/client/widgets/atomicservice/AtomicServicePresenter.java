@@ -1,8 +1,13 @@
 package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 
+import java.util.Arrays;
+import java.util.List;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
@@ -68,5 +73,25 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 	@Override
 	public void onEditExternalInterfaces() {
 		eventBus.showExternalInterfacesEditorForApplianceType(applianceType.getApplianceType().getId());
+	}
+
+	@Override
+	public void onStartInstance() {
+		view.setStartInstanceBusyState(true);
+		cloudFacadeController.getInitialConfigurations(applianceType.getApplianceType().getId(), new ApplianceConfigurationsCallback() {
+			@Override
+			public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations) {
+				view.setStartInstanceBusyState(false);
+				
+				if (applianceConfigurations.size() == 0) {
+					view.showNoInitialConfigurationsMessage();
+				} else if (applianceConfigurations.size() == 1) {
+					eventBus.startApplications(
+							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), true);
+				} else {
+					eventBus.showInitialConfigPicker(applianceConfigurations);
+				}
+			}
+		});
 	}
 }
