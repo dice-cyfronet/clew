@@ -3,9 +3,9 @@ package pl.cyfronet.coin.clew.client.controller.cf.applianceinstance;
 import org.fusesource.restygwt.client.Json;
 
 public class ApplianceInstance extends NewApplianceInstance {
-	public enum Status {
-		booting,
-		running
+	public enum State {
+		satisfied,
+		unsatisfied
 	}
 	
 	private String id;
@@ -13,7 +13,22 @@ public class ApplianceInstance extends NewApplianceInstance {
 	private String applianceTypeId;
 	@Json(name = "appliance_configuration_instance_id")
 	private String configurationInstanceId;
+	private State state;
+	@Json(name = "state_explanation")
+	private String stateExplanation;
 	
+	public State getState() {
+		return state;
+	}
+	public void setState(State state) {
+		this.state = state;
+	}
+	public String getStateExplanation() {
+		return stateExplanation;
+	}
+	public void setStateExplanation(String stateExplanation) {
+		this.stateExplanation = stateExplanation;
+	}
 	public String getId() {
 		return id;
 	}

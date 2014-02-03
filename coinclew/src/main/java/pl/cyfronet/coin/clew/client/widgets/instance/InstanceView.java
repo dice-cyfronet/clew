@@ -8,8 +8,10 @@ import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Collapse;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -54,7 +56,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField InstanceMessages messages;
 	@UiField HTML ip;
 	@UiField HTML location;
-	@UiField HTML status;
+	@UiField FlowPanel status;
 	@UiField ButtonGroup controls;
 	@UiField Collapse collapse;
 	@UiField FlowPanel webApplicationsContainer;
@@ -108,7 +110,11 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public HasHTML getStatus() {
-		return status;
+		HTML statusHtml = new HTML();
+		status.clear();
+		status.add(statusHtml);
+		
+		return statusHtml;
 	}
 
 	@Override
@@ -346,5 +352,17 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public void removeOtherService(IsWidget widget) {
 		otherServiceContainer.remove(widget);
+	}
+
+	@Override
+	public void setUnsatisfiedState(String stateExplanation) {
+		status.clear();
+		
+		Label unsatisfiedLabel = new Label(messages.unsatisfiedLabel());
+		unsatisfiedLabel.setType(LabelType.IMPORTANT);
+		
+		Tooltip tooltip = new Tooltip(stateExplanation);
+		tooltip.add(unsatisfiedLabel);
+		status.add(tooltip);
 	}
 }

@@ -104,7 +104,7 @@
 		<!-- <g:HTML ui:field="spec" addStyleNames="{style.spec}">&nbsp;</g:HTML> -->
 		<g:HTML ui:field="ip" addStyleNames="{style.ip}">&nbsp;</g:HTML>
 		<g:HTML ui:field="location" addStyleNames="{style.location}">&nbsp;</g:HTML>
-		<g:HTML ui:field="status" addStyleNames="{style.status}">&nbsp;</g:HTML>
+		<g:FlowPanel ui:field="status" addStyleNames="{style.status}"><g:HTML>&nbsp;</g:HTML></g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="controls">
 				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>

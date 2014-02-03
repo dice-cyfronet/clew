@@ -18,4 +18,5 @@ public interface InstanceMessages extends Messages {
 	String noDescriptorButtonTooltip();
 	String otherServicesLabel();
 	String noOtherServices();
+	String unsatisfiedLabel();
 }

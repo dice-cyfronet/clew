@@ -31,4 +31,5 @@ public interface IInstanceView extends IsWidget {
 	IsWidget addOtherService(String serviceName, String publicIp, String port);
 	void showNoOtherServicesLabel(boolean show);
 	void removeOtherService(IsWidget remove);
+	void setUnsatisfiedState(String stateExplanation);
 }

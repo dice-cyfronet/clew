@@ -15,6 +15,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSite
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RedirectionsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
@@ -53,7 +54,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		this.developmentMode = developmentMode;
 		
 		if (this.applianceInstance != null) {
-			//we are updating
 			updateView(applianceInstance);
 			
 			return;
@@ -69,39 +69,48 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.getName().setText(applianceType.getName());
 				}
 				
+				if (applianceInstance.getState() == State.unsatisfied) {
+					view.setUnsatisfiedState(applianceInstance.getStateExplanation());
+				}
+				
 //				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
 				
 				if (enableShutdown) {
 					view.addShutdownControl();
 				}
 				
-				if (developmentMode) {
-					view.addExternalInterfacesControl();
-					view.addSaveControl();
-				}
-				
-				displayDetails();
-			}
-		});
-		cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
-			@Override
-			public void processApplianceVms(List<ApplianceVm> applianceVms) {
-				if (applianceVms.size() > 0) {
-					//TODO(DH): for now details of the first VM are shown only
-					ApplianceVm applianceVm = applianceVms.get(0);
-					view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-					view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
-					cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
-						@Override
-						public void processComputeSite(ComputeSite computeSite) {
-							view.getLocation().setText(computeSite.getName());
-						}
-					});
-				} else {
-					eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+				if (applianceInstance.getState() == State.satisfied) {
+					if (developmentMode) {
+						view.addExternalInterfacesControl();
+						view.addSaveControl();
+					}
+					
+					displayDetails();
 				}
 			}
 		});
+		
+		if (applianceInstance.getState() == State.satisfied) {
+			cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
+				@Override
+				public void processApplianceVms(List<ApplianceVm> applianceVms) {
+					if (applianceVms.size() > 0) {
+						//TODO(DH): for now details of the first VM are shown only
+						ApplianceVm applianceVm = applianceVms.get(0);
+						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+						view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
+							@Override
+							public void processComputeSite(ComputeSite computeSite) {
+								view.getLocation().setText(computeSite.getName());
+							}
+						});
+					} else {
+						eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+					}
+				}
+			});
+		}
 	}
 	
 	private void displayDetails() {
@@ -283,26 +292,28 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	private void updateView(ApplianceInstance applianceInstance) {
-		cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
-			@Override
-			public void processApplianceVms(List<ApplianceVm> applianceVms) {
-				if (applianceVms.size() > 0) {
-					//TODO(DH): for now details of the first VM are shown only
-					ApplianceVm applianceVm = applianceVms.get(0);
-					view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-					view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
-					cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
-						@Override
-						public void processComputeSite(ComputeSite computeSite) {
-							view.getLocation().setText(computeSite.getName());
-						}
-					});
-				} else {
-					eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+		if (applianceInstance.getState() == State.satisfied) {
+			cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
+				@Override
+				public void processApplianceVms(List<ApplianceVm> applianceVms) {
+					if (applianceVms.size() > 0) {
+						//TODO(DH): for now details of the first VM are shown only
+						ApplianceVm applianceVm = applianceVms.get(0);
+						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+						view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
+							@Override
+							public void processComputeSite(ComputeSite computeSite) {
+								view.getLocation().setText(computeSite.getName());
+							}
+						});
+					} else {
+						eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+					}
 				}
-			}
-		});
-		displayDetails();
+			});
+			displayDetails();
+		}
 	}
 
 	@Override
