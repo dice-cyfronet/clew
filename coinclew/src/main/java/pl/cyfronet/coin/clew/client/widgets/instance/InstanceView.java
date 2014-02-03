@@ -8,10 +8,14 @@ import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Collapse;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.Popover;
 import com.github.gwtbootstrap.client.ui.Tooltip;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
+import com.github.gwtbootstrap.client.ui.constants.Placement;
+import com.github.gwtbootstrap.client.ui.constants.Trigger;
+import com.github.gwtbootstrap.client.ui.constants.VisibilityChange;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -319,7 +323,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public IsWidget addOtherService(String serviceName, String publicIp, String port) {
+	public IsWidget addOtherService(String serviceName, String publicIp, String port, String helpBlock) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -329,6 +333,30 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		InlineHTML info = new InlineHTML(publicIp + ":" + port);
 		panel.add(info);
+		
+		if (helpBlock != null) {
+			Button helpButton = new Button("", IconType.QUESTION);
+			helpButton.setSize(ButtonSize.MINI);
+			helpButton.setToggle(true);
+			helpButton.setType(ButtonType.INFO);
+			helpButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					Popover.changeVisibility(event.getRelativeElement(), VisibilityChange.TOGGLE.get());
+				}
+			});
+			
+			Popover helpPopover = new Popover();
+			helpPopover.setText(helpBlock);
+			helpPopover.setWidget(helpButton);
+			helpPopover.setPlacement(Placement.TOP);
+			helpPopover.setHeading(messages.sshHelpHeader());
+			helpPopover.setTrigger(Trigger.MANUAL);
+			
+			panel.add(new InlineHTML("&nbsp;"));
+			panel.add(helpPopover);
+		}
+		
 		otherServiceContainer.add(panel);
 		
 		return panel;
@@ -364,5 +392,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		Tooltip tooltip = new Tooltip(stateExplanation);
 		tooltip.add(unsatisfiedLabel);
 		status.add(tooltip);
+	}
+
+	@Override
+	public String getSshHelpBlock(String publicIp, String sourcePort) {
+		return messages.sshHelpBlock(publicIp, sourcePort);
 	}
 }

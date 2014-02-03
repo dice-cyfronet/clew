@@ -19,4 +19,6 @@ public interface InstanceMessages extends Messages {
 	String otherServicesLabel();
 	String noOtherServices();
 	String unsatisfiedLabel();
+	String sshHelpBlock(String publicIp, String sourcePort);
+	String sshHelpHeader();
 }

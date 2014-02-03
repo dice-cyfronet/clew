@@ -28,6 +28,7 @@ import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePres
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.ServiceName;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
 
@@ -197,7 +198,15 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					currentOtherServices.add(redirection.getId());
 					
 					if (!otherServices.keySet().contains(redirection.getId())) {
-						IsWidget widget = view.addOtherService(redirection.getName(), portMapping.getPublicIp(), portMapping.getSourcePort());
+						String helpBlock = null;
+						
+						if (redirection.getName().toLowerCase().startsWith("ssh")) {
+							helpBlock = view.getSshHelpBlock(portMapping.getPublicIp(),
+									portMapping.getSourcePort());
+						}
+						
+						IsWidget widget = view.addOtherService(redirection.getName(),
+								portMapping.getPublicIp(), portMapping.getSourcePort(), helpBlock);
 						otherServices.put(redirection.getId(), widget);
 					}
 				}

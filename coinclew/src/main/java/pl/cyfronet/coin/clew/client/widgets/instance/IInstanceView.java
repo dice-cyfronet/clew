@@ -28,8 +28,9 @@ public interface IInstanceView extends IsWidget {
 	void addSaveControl();
 	void removeWebapp(IsWidget remove);
 	void removeService(IsWidget widget);
-	IsWidget addOtherService(String serviceName, String publicIp, String port);
+	IsWidget addOtherService(String serviceName, String publicIp, String port, String helpBlock);
 	void showNoOtherServicesLabel(boolean show);
 	void removeOtherService(IsWidget remove);
 	void setUnsatisfiedState(String stateExplanation);
+	String getSshHelpBlock(String publicIp, String sourcePort);
 }
