@@ -42,8 +42,6 @@
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:FlowPanel addStyleNames="{style.title}">
 			<g:InlineHTML ui:field="name" addStyleNames="{style.name}"/>
-			<g:InlineHTML>&nbsp;</g:InlineHTML>
-			<g:InlineHTML ui:field="author" addStyleNames="{style.author} muted"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.description}">
 			<g:InlineHTML ui:field="description"/>

@@ -34,7 +34,6 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	private Label inactiveLabel;
 	
 	@UiField InlineHTML name;
-	@UiField InlineHTML author;
 	@UiField AtomicServiceMessages messages;
 	@UiField ButtonGroup buttons;
 	@UiField InlineHTML description;
@@ -78,11 +77,6 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	@Override
 	public HasText getName() {
 		return name;
-	}
-
-	@Override
-	public void updateAuthor(String authorName) {
-		author.setText(messages.authorLabel(authorName));
 	}
 
 	@Override

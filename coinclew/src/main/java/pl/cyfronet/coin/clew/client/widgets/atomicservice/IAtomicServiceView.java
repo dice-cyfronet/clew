@@ -14,7 +14,6 @@ public interface IAtomicServiceView extends IsWidget {
 	}
 
 	HasText getName();
-	void updateAuthor(String fullName);
 	void addRemoveButton();
 	void setRemoveBusyState(boolean busy);
 	boolean confirmRemoval();
