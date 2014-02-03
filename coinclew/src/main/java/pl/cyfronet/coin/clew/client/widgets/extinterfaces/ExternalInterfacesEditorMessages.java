@@ -51,5 +51,6 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String proxyReadTimeoutPlaceholder();
 	String wrongProxySendTimeout();
 	String wrongProxyReadTimeout();
-	SafeHtml getTcpUdpEmptyMapping(int targetPort);
+	String getTcpUdpEmptyMapping(int targetPort);
+	String descriptorHelpBlock();
 }
