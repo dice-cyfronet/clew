@@ -200,7 +200,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					if (!otherServices.keySet().contains(redirection.getId())) {
 						String helpBlock = null;
 						
-						if (redirection.getName().toLowerCase().startsWith("ssh")) {
+						if (redirection.getName().toLowerCase().startsWith("ssh") && developmentMode) {
 							helpBlock = view.getSshHelpBlock(portMapping.getPublicIp(),
 									portMapping.getSourcePort());
 						}
