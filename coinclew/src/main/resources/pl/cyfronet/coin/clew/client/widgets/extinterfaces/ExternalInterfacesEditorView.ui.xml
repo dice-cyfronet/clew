@@ -54,7 +54,7 @@
 		}
 	</ui:style>
 	<b:Modal ui:field="modal"  title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
-		<b:TabPanel addStyleNames="{style.disable-y-scroll}">
+		<b:TabPanel ui:field="tabs" addStyleNames="{style.disable-y-scroll}">
 			<b:Tab heading="{messages.externalInterfacesTabLabel}" active="true">
 				<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
 				<b:Form>
@@ -81,7 +81,7 @@
 					<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
 				</b:Form>
 			</b:Tab>
-			<b:Tab heading="{messages.endpointsTabLabel}">
+			<b:Tab ui:field="endpointTab" heading="{messages.endpointsTabLabel}">
 				<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
 				<b:Form>
 					<b:ControlLabel><ui:text from="{messages.endpointName}"/></b:ControlLabel>

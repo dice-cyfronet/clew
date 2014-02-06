@@ -56,6 +56,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		this.applianceInstanceId = applianceInstanceId;
 		applianceTypeId = null;
 		developmentModePropertySetId = null;
+		view.switchToMappingsTab();
 		view.showModal(true);
 		loadExternalInterfacesAndEndpoints();
 	}
@@ -82,6 +83,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		view.showEndpointTargetPortHelpBlock(true);
 		mappings.clear();
 		endpoints.clear();
+		view.enableEndpoints(false);
 		
 		retrievePortMappingTemplates(new PortMappingTemplatesCallback() {
 			@Override
@@ -98,6 +100,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					for (final PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 						if (Arrays.asList(new String[] {"http", "https", "http_https"}).contains(portMappingTemplate.getApplicationProtocol())) {
 							//http mapping
+							view.enableEndpoints(true);
 							view.addHttpMappingEndpointOption(portMappingTemplate.getId(), portMappingTemplate.getServiceName(), portMappingTemplate.getTargetPort());
 							view.showEndpointTargetPortHelpBlock(false);
 							cloudFacadeController.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new HttpMappingsCallback() {
@@ -196,6 +199,17 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		});
 	}
 	
+	private boolean httpMappingExists() {
+		for (PortMappingTemplate mappingTemplate : mappings.keySet()) {
+			if (Arrays.asList(new String[] {"http", "https", "http_https"})
+					.contains(mappingTemplate.getApplicationProtocol())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 	private int getMappingPosition(String serviceName) {
 		int beforePosition = 0;
 		
@@ -323,6 +337,10 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 								
 								view.removeMappingTemplate(mappings.remove(mapping));
 								view.removeHttpMappingEndpointOption(mappingId);
+								
+								if (!httpMappingExists()) {
+									view.enableEndpoints(false);
+								}
 								
 								if (mappings.size() == 0) {
 									view.showNoExternalInterfacesLabel(true);

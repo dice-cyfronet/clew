@@ -14,6 +14,8 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.Tab;
+import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
@@ -83,6 +85,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField HelpBlock endpointTargetPortHelpBlock;
 	@UiField TextBox proxySendTimeout;
 	@UiField TextBox proxyReadTimeout;
+	@UiField TabPanel tabs;
+	@UiField Tab endpointTab;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -604,5 +608,15 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				break;
 			}
 		}
+	}
+
+	@Override
+	public void switchToMappingsTab() {
+		tabs.selectTab(0);
+	}
+
+	@Override
+	public void enableEndpoints(boolean enable) {
+		endpointTab.setEnabled(enable);
 	}
 }
