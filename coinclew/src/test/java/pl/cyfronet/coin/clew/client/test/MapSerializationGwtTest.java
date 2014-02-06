@@ -10,7 +10,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.junit.client.GWTTestCase;
 
-public class MapSerializationTest extends GWTTestCase {
+public class MapSerializationGwtTest extends GWTTestCase {
 	public interface NewApplianceInstanceCodec extends JsonEncoderDecoder<NewApplianceInstance> {}
 
 	@Override
