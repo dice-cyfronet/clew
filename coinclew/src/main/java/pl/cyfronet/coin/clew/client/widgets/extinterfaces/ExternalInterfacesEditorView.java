@@ -594,4 +594,15 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		errorLabel.setText(messages.wrongProxyReadTimeout());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
+
+	@Override
+	public void removeHttpMappingEndpointOption(String mappingId) {
+		for (int i = 0; i < endpointTargetPort.getItemCount(); i++) {
+			if (endpointTargetPort.getValue(i).equals(mappingId)) {
+				endpointTargetPort.removeItem(i);
+				
+				break;
+			}
+		}
+	}
 }

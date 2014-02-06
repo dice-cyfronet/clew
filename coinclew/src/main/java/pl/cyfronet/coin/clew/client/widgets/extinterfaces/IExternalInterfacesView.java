@@ -54,4 +54,5 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasValue<String> getProxyReadTimeout();
 	void displayWorngProxySendTimeoutMessage();
 	void displayWorngProxyReadTimeoutMessage();
+	void removeHttpMappingEndpointOption(String mappingId);
 }

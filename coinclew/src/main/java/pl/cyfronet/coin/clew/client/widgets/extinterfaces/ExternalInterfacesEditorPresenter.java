@@ -322,6 +322,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 								}
 								
 								view.removeMappingTemplate(mappings.remove(mapping));
+								view.removeHttpMappingEndpointOption(mappingId);
 								
 								if (mappings.size() == 0) {
 									view.showNoExternalInterfacesLabel(true);
