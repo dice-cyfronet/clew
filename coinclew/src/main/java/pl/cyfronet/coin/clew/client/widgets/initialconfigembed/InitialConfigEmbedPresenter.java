@@ -64,7 +64,6 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 								ApplianceType applianceType = getAppliance(config.getApplianceTypeId(), applianceTypes);
 								Map<String, HasText> paramValues = view.addParameters(applianceType.getName(), config.getName(), config.getParameters());
 								params.put(config.getId(), paramValues);
-								
 							}
 						}
 
