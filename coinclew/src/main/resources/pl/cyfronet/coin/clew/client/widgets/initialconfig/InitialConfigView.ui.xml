@@ -26,6 +26,7 @@
 		}
 		.param {
 			margin-right: 5px;
+			margin-top: 3px;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
