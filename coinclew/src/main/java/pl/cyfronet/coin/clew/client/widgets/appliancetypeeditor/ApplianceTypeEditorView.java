@@ -310,4 +310,24 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 		errorLabel.setText(messages.saveErrorMessage());
 		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 	}
+
+	@Override
+	public String getDefaultOptionLabel() {
+		return messages.defaultValueLabel();
+	}
+
+	@Override
+	public void addCoreOption(String value, String label) {
+		cores.addItem(label, value);
+	}
+
+	@Override
+	public void addDiskOption(String value, String label) {
+		disk.addItem(label, value);
+	}
+
+	@Override
+	public void addRamOption(String value, String label) {
+		ram.addItem(label, value);
+	}
 }

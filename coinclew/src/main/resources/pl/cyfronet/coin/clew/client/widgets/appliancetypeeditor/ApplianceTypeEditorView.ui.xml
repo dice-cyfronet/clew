@@ -23,32 +23,11 @@
 				<g:item value="developer"><ui:text from="{messages.visibilityDeveloper}"/></g:item>
 			</b:ListBox>
 			<b:ControlLabel><ui:text from="{messages.coresLabel}"/></b:ControlLabel>
-			<b:ListBox ui:field="cores" addStyleNames="input-block-level">
-				<g:item value="0"><ui:text from="{messages.defaultValueLabel}"/></g:item>
-				<g:item value="1">1</g:item>
-				<g:item value="2">2</g:item>
-				<g:item value="4">4</g:item>
-				<g:item value="8">8</g:item>
-			</b:ListBox>
+			<b:ListBox ui:field="cores" addStyleNames="input-block-level"/>
 			<b:ControlLabel><ui:text from="{messages.ramLabel}"/></b:ControlLabel>
-			<b:ListBox ui:field="ram" addStyleNames="input-block-level">
-				<g:item value="0"><ui:text from="{messages.defaultValueLabel}"/></g:item>
-				<g:item value="512">512</g:item>
-				<g:item value="1024">1024</g:item>
-				<g:item value="2048">2048</g:item>
-				<g:item value="4096">4096</g:item>
-				<g:item value="8192">8192</g:item>
-				<g:item value="16384">16384</g:item>
-			</b:ListBox>
+			<b:ListBox ui:field="ram" addStyleNames="input-block-level"/>
 			<b:ControlLabel><ui:text from="{messages.diskLabel}"/></b:ControlLabel>
-			<b:ListBox ui:field="disk" addStyleNames="input-block-level">
-				<g:item value="0"><ui:text from="{messages.defaultValueLabel}"/></g:item>
-				<g:item value="1">1</g:item>
-				<g:item value="5">5</g:item>
-				<g:item value="10">10</g:item>
-				<g:item value="20">20</g:item>
-				<g:item value="25">25</g:item>
-			</b:ListBox>
+			<b:ListBox ui:field="disk" addStyleNames="input-block-level"/>
 			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
 			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
 		</b:Form>

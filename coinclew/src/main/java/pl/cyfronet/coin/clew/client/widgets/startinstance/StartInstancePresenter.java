@@ -93,6 +93,8 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
 			eventBus.removeHandler(presenter);
 		}
+		
+		applianceTypePresenters.clear();
 	}
 
 	@Override
@@ -110,8 +112,8 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		if (initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
+			onHideStartInstanceModal();
 			eventBus.startApplications(initialConfigurationIds, developmentMode);
-			view.hide();
 		}
 	}
 
@@ -126,5 +128,10 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 				presenter.getView().asWidget().setVisible(false);
 			}
 		}
+	}
+
+	@Override
+	public void onHide() {
+		onHideStartInstanceModal();
 	}
 }

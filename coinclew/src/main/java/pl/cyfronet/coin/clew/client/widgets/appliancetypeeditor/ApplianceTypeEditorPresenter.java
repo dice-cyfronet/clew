@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor;
 
+import pl.cyfronet.coin.clew.client.ClewProperties;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
@@ -8,6 +9,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
+import com.google.gwt.event.logical.shared.HasOpenHandlers;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -18,16 +20,19 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 	private String applianceTypeId;
 	private String applianceId;
 	private boolean saveMode;
+	private ClewProperties properties;
 
 	@Inject
-	public ApplianceTypeEditorPresenter(CloudFacadeController cloudFacadeController) {
+	public ApplianceTypeEditorPresenter(CloudFacadeController cloudFacadeController, ClewProperties properties) {
 		this.cloudFacadeController = cloudFacadeController;
+		this.properties = properties;
 	}
 	
 	public void onStart() {
+		setOptions();
 		eventBus.addPopup(view);
 	}
-	
+
 	public void onShowAtomicServiceEditor(String applianceTypeOrInstanceId, boolean saveMode) {
 		if (saveMode) {
 			applianceId = applianceTypeOrInstanceId;
@@ -43,6 +48,20 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 			clearControls();
 		} else {
 			loadProperties();
+		}
+	}
+	
+	private void setOptions() {
+		for(String value : properties.coreOptions()) {
+			view.addCoreOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
+		}
+		
+		for(String value : properties.ramOptions()) {
+			view.addRamOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
+		}
+		
+		for(String value : properties.diskOptions()) {
+			view.addDiskOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
 		}
 	}
 
@@ -124,9 +143,9 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		boolean shared = view.getShared().getValue();
 		boolean scalable = view.getScalable().getValue();
 		String visibleFor = view.getVisibleFor().getValue();
-//		String cores = view.getCores().getValue();
-//		String ram = view.getRam().getValue();
-//		String disk = view.getDisk().getValue();
+		String cores = view.getCores().getValue();
+		String ram = view.getRam().getValue();
+		String disk = view.getDisk().getValue();
 		view.clearErrorMessages();
 		
 		if (name.isEmpty()) {
@@ -134,7 +153,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		} else {
 			view.setSaveBusyState(true);
 			cloudFacadeController.saveApplianceType(applianceId, name, description, shared, scalable,
-					visibleFor, null, null, null, new ApplianceTypeCallback() {
+					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
 						@Override
 						public void processApplianceType(ApplianceType applianceType) {
 							view.setSaveBusyState(false);

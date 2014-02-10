@@ -2,9 +2,11 @@ package pl.cyfronet.coin.clew.client.widgets.appliancedetails;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.coin.clew.client.ClewProperties;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
@@ -28,12 +30,20 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private Map<String, HasValue<Boolean>> keys;
 	private Map<String, Map<String, String>> parameterValues;
 	private Map<String, HasText> names;
+	private ClewProperties properties;
+	private Map<String, HasValue<String>> cores;
+	private Map<String, HasValue<String>> rams;
+	private Map<String, HasValue<String>> disks;
 
 	@Inject
-	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController) {
+	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController, ClewProperties properties) {
 		this.cloudFacadeController = cloudFacadeController;
+		this.properties = properties;
 		keys = new HashMap<String, HasValue<Boolean>>();
 		names = new HashMap<String, HasText>();
+		cores = new HashMap<String, HasValue<String>>();
+		rams = new HashMap<String, HasValue<String>>();
+		disks = new HashMap<String, HasValue<String>>();
 	}
 	
 	public void onStart() {
@@ -60,15 +70,19 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private void loadKeysAndNames(List<String> initialConfigurationIds) {
 		view.getContainer().clear();
 		view.getNameContainer().clear();
+		names.clear();
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
 				cloudFacadeController.getApplianceTypes(collectApplianceTypeIds(applianceConfigurations), new ApplianceTypesCallback() {
 					@Override
 					public void processApplianceTypes(List<ApplianceType> applianceTypes) {
-						for (ApplianceType applianceType : applianceTypes) {
-							names.put(getInitialConfigId(applianceType.getId(), applianceConfigurations),
-									view.addName(applianceType.getName()));
+						for (ApplianceType applianceType : applianceTypes) { 
+							String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
+							names.put(initialConfigId, view.addName(applianceType.getName()));
+							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions())));
+							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions())));
+							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions())));
 						}
 					}
 				});
@@ -108,8 +122,12 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 			}
 		}
 		
+		Map<String, String> cores = createPreferenceMapping(this.cores);
+		Map<String, String> rams = createPreferenceMapping(this.rams);
+		Map<String, String> disks = createPreferenceMapping(this.disks);
+		
 		view.setStartBusyState(true);
-		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, new Command() {
+		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, cores, rams, disks, new Command() {
 			@Override
 			public void execute() {
 				view.setStartBusyState(false);
@@ -119,6 +137,16 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		});
 	}
 	
+	private Map<String, String> createPreferenceMapping(Map<String, HasValue<String>> preferences) {
+		Map<String, String> result = new HashMap<String, String>();
+		
+		for(String id : preferences.keySet()) {
+			result.put(id, preferences.get(id).getValue());
+		}
+		
+		return result;
+	}
+
 	private List<String> collectApplianceTypeIds(List<ApplianceConfiguration> applianceConfigurations) {
 		List<String> result = new ArrayList<String>();
 		
@@ -137,5 +165,15 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		}
 		
 		return null;
+	}
+	
+	private Map<String, String> getOptions(String[] values) {
+		Map<String, String> result = new LinkedHashMap<String, String>();
+		
+		for(String value : values) {
+			result.put(value, value.equals("0") ? view.getDefaultValueLabel() : value);
+		}
+		
+		return result;
 	}
 }

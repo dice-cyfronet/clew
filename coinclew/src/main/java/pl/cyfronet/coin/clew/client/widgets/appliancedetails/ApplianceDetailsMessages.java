@@ -9,4 +9,8 @@ public interface ApplianceDetailsMessages extends Messages {
 	String namePlaceholder();
 	String startButtonLabel();
 	String keysLabel();
+	String defaultValueLabel();
+	String coresLabel();
+	String ramLabel();
+	String diskLabel();
 }

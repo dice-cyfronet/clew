@@ -8,6 +8,7 @@ public interface IStartInstanceView extends IsWidget {
 	interface IStartInstancePresenter {
 		void onStartSelected();
 		void onFilterTextChanged();
+		void onHide();
 	}
 
 	void show();

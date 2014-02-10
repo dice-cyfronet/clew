@@ -27,4 +27,8 @@ public interface IApplianceTypeEditorView extends IsWidget {
 	void showSaveControl(boolean show);
 	void setSaveBusyState(boolean busy);
 	void displayGeneralSaveError();
+	String getDefaultOptionLabel();
+	void addCoreOption(String value, String label);
+	void addDiskOption(String value, String label);
+	void addRamOption(String value, String label);
 }

@@ -1,15 +1,21 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancedetails;
 
+import java.util.Map;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -99,5 +105,122 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public HasWidgets getNameContainer() {
 		return nameContainer;
+	}
+
+	@Override
+	public String getDefaultValueLabel() {
+		return messages.defaultValueLabel();
+	}
+
+	@Override
+	public HasValue<String> addCores(Map<String, String> options) {
+		ControlLabel label = new ControlLabel(messages.coresLabel());
+		final ListBox listBox = createListBox(options);
+		nameContainer.add(label);
+		nameContainer.add(listBox);
+		
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return listBox.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				listBox.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				listBox.setSelectedValue(value);
+			}
+		};
+	}
+
+	private ListBox createListBox(Map<String, String> options) {
+		ListBox result = new ListBox();
+		
+		for(String value : options.keySet()) {
+			result.addItem(options.get(value), value);
+		}
+		
+		return result;
+	}
+
+	@Override
+	public HasValue<String> addRam(Map<String, String> options) {
+		ControlLabel label = new ControlLabel(messages.ramLabel());
+		final ListBox listBox = createListBox(options);
+		nameContainer.add(label);
+		nameContainer.add(listBox);
+		
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return listBox.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				listBox.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				listBox.setSelectedValue(value);
+			}
+		};
+	}
+
+	@Override
+	public HasValue<String> addDisk(Map<String, String> options) {
+		ControlLabel label = new ControlLabel(messages.diskLabel());
+		final ListBox listBox = createListBox(options);
+		nameContainer.add(label);
+		nameContainer.add(listBox);
+		
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return listBox.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				listBox.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				listBox.setSelectedValue(value);
+			}
+		};
 	}
 }

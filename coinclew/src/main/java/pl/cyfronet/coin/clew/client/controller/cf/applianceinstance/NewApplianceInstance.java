@@ -13,6 +13,8 @@ public class NewApplianceInstance {
 	private String name;
 	@Json(name = "user_key_id")
 	private String userKeyId;
+	@Json(name = "dev_mode_property_set")
+	private Map<String, String> developmentProperties;
 	
 	public String getConfigurationTemplateId() {
 		return configurationTemplateId;
@@ -43,5 +45,11 @@ public class NewApplianceInstance {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public Map<String, String> getDevelopmentProperties() {
+		return developmentProperties;
+	}
+	public void setDevelopmentProperties(Map<String, String> developmentProperties) {
+		this.developmentProperties = developmentProperties;
 	}
 }

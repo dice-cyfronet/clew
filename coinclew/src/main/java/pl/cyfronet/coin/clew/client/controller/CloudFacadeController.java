@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -851,7 +852,8 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String, Map<String, String>> parameterValues, final Command command) {
+	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String, Map<String, String>> parameterValues,
+			final Map<String, String> cores, final Map<String, String> rams, final Map<String, String> disks, final Command command) {
 		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -864,6 +866,10 @@ public class CloudFacadeController {
 					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
 					applianceInstance.setParams(parameterValues.get(configurationTemplateId));
 					applianceInstance.setUserKeyId(keyId);
+					applianceInstance.setDevelopmentProperties(new HashMap<String, String>());
+					applianceInstance.getDevelopmentProperties().put("preference_cpu", cores.get(configurationTemplateId));
+					applianceInstance.getDevelopmentProperties().put("preference_memory", rams.get(configurationTemplateId));
+					applianceInstance.getDevelopmentProperties().put("preference_disk", disks.get(configurationTemplateId));
 					
 					if (overrideNames != null && overrideNames.containsKey(configurationTemplateId)) {
 						applianceInstance.setName(overrideNames.get(configurationTemplateId));

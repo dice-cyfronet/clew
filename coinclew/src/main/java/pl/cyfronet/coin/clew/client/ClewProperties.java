@@ -7,4 +7,7 @@ public interface ClewProperties extends Constants {
 	/* Do not use this directly, instead use pl/cyfronet/coin/clew/client/CloudFacadeEndpointProperty.java */
 	String getCloudFacadeRootUrl();
 	String userKeyUploadPath();
+	String[] coreOptions();
+	String[] ramOptions();
+	String[] diskOptions();
 }

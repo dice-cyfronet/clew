@@ -44,7 +44,7 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	
 	@UiHandler("close")
 	void closeClicked(ClickEvent event) {
-		startInstanceModal.hide();
+		getPresenter().onHide();
 	}
 	
 	@UiHandler("startSelected")
