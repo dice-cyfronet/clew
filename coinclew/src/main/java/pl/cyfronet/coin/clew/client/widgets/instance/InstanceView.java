@@ -335,7 +335,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		panel.add(info);
 		
 		if (helpBlock != null) {
-			Button helpButton = new Button("", IconType.QUESTION);
+			Button helpButton = new Button("", IconType.SIGNIN);
 			helpButton.setSize(ButtonSize.MINI);
 			helpButton.setToggle(true);
 			helpButton.setType(ButtonType.INFO);
