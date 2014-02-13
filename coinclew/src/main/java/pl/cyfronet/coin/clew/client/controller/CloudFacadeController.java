@@ -406,7 +406,7 @@ public class CloudFacadeController {
 
 	public void addApplianceConfiguration(String applianceTypeId, String name, String payload, final ApplianceConfigurationCallback applianceConfigurationCallback) {
 		NewApplianceConfigurationRequest newApplianceConfigurationRequest = new NewApplianceConfigurationRequest();
-		NewApplianceConfiguration applianceConfiguration = new ApplianceConfiguration();
+		NewApplianceConfiguration applianceConfiguration = new NewApplianceConfiguration();
 		applianceConfiguration.setApplianceTypeId(applianceTypeId);
 		applianceConfiguration.setName(name);
 		applianceConfiguration.setPayload(payload);
