@@ -488,6 +488,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		if (name.isEmpty() || invocationPath.isEmpty() || portMappingTemplateId.isEmpty()) {
 			view.displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage();
 		} else {
+			view.clearErrorMessages();
 			cloudFacadeController.addEndpoint(name, invocationPath, endpointType, portMappingTemplateId, description, descriptor, new EndpointCallback() {
 				@Override
 				public void processEndpoint(final Endpoint endpoint) {
