@@ -279,7 +279,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			if (result.startsWith("http://")) {
 				result = "http://" + user + ":" + token + "@" + result.substring(7);
 			} else if (result.startsWith("https://")) {
-				result = "http://" + user + ":" + token + "@" + result.substring(8);
+				result = "https://" + user + ":" + token + "@" + result.substring(8);
 			}
 		}
 		
