@@ -8,6 +8,7 @@
 			text-align: left;
 			float: left;
 			width: 30%;
+			word-wrap: break-word;
 		}
 		.container {
 			float: left;
