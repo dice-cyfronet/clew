@@ -158,4 +158,18 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 		view.setEditLabel(false);
 		editedConfigId = null;
 	}
+
+	@Override
+	public void onClose() {
+		view.showModal(false);
+		configNames.clear();
+		
+		for(String id : configPresenters.keySet()) {
+			InitialConfigPresenter presenter = configPresenters.get(id);
+			eventBus.removeHandler(presenter);
+			view.getContainer().remove(presenter.getView().asWidget());
+		}
+		
+		configPresenters.clear();
+	}
 }

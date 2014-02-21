@@ -43,7 +43,7 @@ public class InitialConfigsEditorView extends Composite implements IInitialConfi
 	
 	@UiHandler("close")
 	void onCloseClicked(ClickEvent event) {
-		modal.hide();
+		getPresenter().onClose();
 	}
 	
 	@UiHandler("process")

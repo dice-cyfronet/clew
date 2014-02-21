@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IInitialConfigsEditorView extends IsWidget {
 	interface IInitialConfigsEditorPresenter {
 		void onProcess();
+		void onClose();
 	}
 
 	void showModal(boolean b);
