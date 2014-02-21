@@ -23,6 +23,7 @@
 		<slf4j.version>1.7.5</slf4j.version>
 		<log4j.version>1.2.17</log4j.version>
 		<junit.version>4.11</junit.version>
+		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 	</properties>
 	
 	<repositories>
@@ -37,6 +38,22 @@
 	<build>
 		<finalName>clew</finalName>
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>pl/cyfronet/coin/clew/client/ClewProperties.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>pl/cyfronet/coin/clew/client/ClewProperties.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

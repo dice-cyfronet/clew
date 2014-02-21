@@ -26,4 +26,8 @@ public class CloudFacadeEndpointProperty {
 		
 		return properties.getCloudFacadeRootUrl();
 	}
+	
+	public String getBuildInfo() {
+		return properties.buildInfo();
+	}
 }

@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.root;
 
+import pl.cyfronet.coin.clew.client.CloudFacadeEndpointProperty;
 import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.widgets.root.IRootView.IRootPresenter;
@@ -14,10 +15,16 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implements IRootPresenter {
 	private RootMessages messages;
 	private Timer errorTimer;
+	private CloudFacadeEndpointProperty properties;
 
 	@Inject
-	public RootPresenter(RootMessages messages) {
+	public RootPresenter(RootMessages messages, CloudFacadeEndpointProperty properties) {
 		this.messages = messages;
+		this.properties = properties;
+	}
+	
+	public void onStart() {
+		view.setBuildInfo(properties.getBuildInfo());
 	}
 	
 	public void onSetMenu(IsWidget widget) {

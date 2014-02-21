@@ -33,7 +33,7 @@ public interface MainEventBus extends EventBusWithLookup {
 			KeyManagerPresenter.class, InitialConfigsEditorPresenter.class,
 			InitialConfigEmbedPresenter.class, ExternalInterfacesEditorPresenter.class,
 			ApplianceTypeEditorPresenter.class, ApplianceDetailsPresenter.class,
-			InitialConfigurationPickerPresenter.class})
+			InitialConfigurationPickerPresenter.class, RootPresenter.class})
 	void start();
 	
 	@Event(handlers = RootPresenter.class)

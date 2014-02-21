@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,6 +24,7 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	@UiField FlowPanel bodyPanel;
 	@UiField Label errorLabel;
 	@UiField FlowPanel popups;
+	@UiField HTML buildInfo;
 
 	public RootView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -62,5 +64,10 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	@Override
 	public void setErrorLabelVisible(boolean visible) {
 		errorLabel.setVisible(visible);
+	}
+
+	@Override
+	public void setBuildInfo(String buildInfo) {
+		this.buildInfo.setText(buildInfo);
 	}
 }

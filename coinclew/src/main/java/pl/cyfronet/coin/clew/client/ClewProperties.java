@@ -10,4 +10,5 @@ public interface ClewProperties extends Constants {
 	String[] coreOptions();
 	String[] ramOptions();
 	String[] diskOptions();
+	String buildInfo();
 }

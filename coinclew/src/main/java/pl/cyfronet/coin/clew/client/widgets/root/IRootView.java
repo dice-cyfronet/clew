@@ -13,4 +13,5 @@ public interface IRootView extends IsWidget {
 	HasText getErrorLabel();
 	void addPopup(IsWidget widget);
 	void setErrorLabelVisible(boolean b);
+	void setBuildInfo(String buildInfo);
 }
