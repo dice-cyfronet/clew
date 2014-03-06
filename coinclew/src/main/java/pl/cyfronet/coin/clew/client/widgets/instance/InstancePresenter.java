@@ -7,6 +7,7 @@ import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
+import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
@@ -150,9 +151,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							//before showing a webapp at least one http mapping has to be available
 							if (!webapps.keySet().contains(endpoint.getId()) &&
 									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
-								String endpointHttpUrl = joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
+								String endpointHttpUrl = UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
 										ticketReader.getUserLogin(), ticketReader.getTicket());
-								String endpointHttpsUrl = joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
+								String endpointHttpsUrl = UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
 										ticketReader.getUserLogin(), ticketReader.getTicket());
 								
 								//nx url params fix
@@ -182,9 +183,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							if (!services.keySet().contains(endpoint.getId()) &&
 									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
 								IsWidget widget = view.addService(endpoint.getName(),
-										joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
+										UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
 												ticketReader.getUserLogin(), ticketReader.getTicket()),
-										joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
+										UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
 												ticketReader.getUserLogin(), ticketReader.getTicket()), endpoint.getDescriptor());
 								services.put(endpoint.getId(), widget);
 							}
@@ -258,32 +259,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 		
 		return null;
-	}
-
-	private String joinUrl(String url, String path, String user, String token) {
-		if (url == null) {
-			return null;
-		}
-		
-		if (url.endsWith("/")) {
-			url = url.substring(0, url.length() - 1);
-		}
-		
-		if (path != null && path.startsWith("/")) {
-			path = path.substring(1, path.length());
-		}
-		
-		String result = url + "/" + path;
-		
-		if (user != null && token != null) {
-			if (result.startsWith("http://")) {
-				result = "http://" + user + ":" + token + "@" + result.substring(7);
-			} else if (result.startsWith("https://")) {
-				result = "https://" + user + ":" + token + "@" + result.substring(8);
-			}
-		}
-		
-		return result;
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
+import pl.cyfronet.coin.clew.client.UrlHelper;
+import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointCallback;
@@ -40,10 +42,12 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 	private Map<Endpoint, IsWidget> endpoints;
 	private boolean endpointsExist;
 	private String applianceTypeId;
+	private MiTicketReader ticketReader;
 
 	@Inject
-	public ExternalInterfacesEditorPresenter(CloudFacadeController cloudFacadeController) {
+	public ExternalInterfacesEditorPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
+		this.ticketReader = ticketReader;
 		mappings = new HashMap<PortMappingTemplate, IsWidget>();
 		endpoints = new HashMap<Endpoint, IsWidget>();
 	}
@@ -160,8 +164,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 													}
 													
 													IsWidget widget = view.addEndpoint(getEndpointPosition(endpoint.getName()), endpoint.getId(), endpoint.getName(),
-															joinUrl(httpUrl, endpoint.getInvocationPath()),
-															joinUrl(httpsUrl, endpoint.getInvocationPath()));
+															UrlHelper.joinUrl(httpUrl, endpoint.getInvocationPath(), ticketReader.getUserLogin(), ticketReader.getTicket()),
+															UrlHelper.joinUrl(httpsUrl, endpoint.getInvocationPath(), ticketReader.getUserLogin(), ticketReader.getTicket()));
 													ExternalInterfacesEditorPresenter.this.endpoints.put(endpoint, widget);
 												}
 											}
@@ -284,22 +288,6 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 				}
 			});
 		}
-	}
-
-	private String joinUrl(String url, String path) {
-		if (url == null) {
-			return null;
-		}
-		
-		if (url.endsWith("/")) {
-			url = url.substring(0, url.length() - 1);
-		}
-		
-		if (path != null && path.startsWith("/")) {
-			path = path.substring(1, path.length());
-		}
-		
-		return url + "/" + path;
 	}
 
 	@Override
