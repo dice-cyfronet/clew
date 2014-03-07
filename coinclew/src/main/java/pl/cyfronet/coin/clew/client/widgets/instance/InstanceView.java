@@ -67,6 +67,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField FlowPanel serviceContainer;
 	@UiField Styles style;
 	@UiField FlowPanel otherServiceContainer;
+	@UiField HTML description;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -397,5 +398,15 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public String getSshHelpBlock(String publicIp, String sourcePort) {
 		return messages.sshHelpBlock(publicIp, sourcePort);
+	}
+
+	@Override
+	public void setNoDescription() {
+		description.setText(messages.getEmptyDescription());
+	}
+
+	@Override
+	public HasText getDescription() {
+		return description;
 	}
 }

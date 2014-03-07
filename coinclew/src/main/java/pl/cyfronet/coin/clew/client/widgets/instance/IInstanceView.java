@@ -33,4 +33,6 @@ public interface IInstanceView extends IsWidget {
 	void removeOtherService(IsWidget remove);
 	void setUnsatisfiedState(String stateExplanation);
 	String getSshHelpBlock(String publicIp, String sourcePort);
+	void setNoDescription();
+	HasText getDescription();
 }

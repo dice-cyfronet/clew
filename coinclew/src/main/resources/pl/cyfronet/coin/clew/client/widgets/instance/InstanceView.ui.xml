@@ -98,6 +98,10 @@
 			float: left;
 			width: 70%;
 		}
+		.description {
+			text-align: left;
+			padding: 15px 30px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.panel}">
 		<g:HTML ui:field="name" addStyleNames="{style.name}">&nbsp;</g:HTML>
@@ -112,6 +116,7 @@
 		</g:FlowPanel>
 		<b:Collapse ui:field="collapse" defaultOpen="false">
 			<g:FlowPanel addStyleNames="{style.details}">
+				<g:HTML ui:field="description" addStyleNames="{style.description} muted"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.webApplicationsLabel}"/></g:HTML>
 				<g:FlowPanel ui:field="webApplicationsContainer" addStyleNames="{style.container}"/>
 				<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.restApplicationsLabel}"/></g:HTML>

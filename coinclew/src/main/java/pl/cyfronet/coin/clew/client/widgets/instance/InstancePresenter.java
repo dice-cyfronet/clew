@@ -29,7 +29,6 @@ import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePres
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.ServiceName;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
 
@@ -73,6 +72,12 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				
 				if (applianceInstance.getState() == State.unsatisfied) {
 					view.setUnsatisfiedState(applianceInstance.getStateExplanation());
+				}
+				
+				if(applianceType != null && !applianceType.getDescription().isEmpty()) {
+					view.getDescription().setText(applianceType.getDescription());
+				} else {
+					view.setNoDescription();
 				}
 				
 //				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
