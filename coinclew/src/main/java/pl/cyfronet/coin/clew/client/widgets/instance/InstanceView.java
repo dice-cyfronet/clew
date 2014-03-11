@@ -68,6 +68,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField Styles style;
 	@UiField FlowPanel otherServiceContainer;
 	@UiField HTML description;
+	@UiField Label bill;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -408,5 +409,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public HasText getDescription() {
 		return description;
+	}
+
+	@Override
+	public HasText getCost() {
+		return bill;
 	}
 }

@@ -35,4 +35,5 @@ public interface IInstanceView extends IsWidget {
 	String getSshHelpBlock(String publicIp, String sourcePort);
 	void setNoDescription();
 	HasText getDescription();
+	HasText getCost();
 }

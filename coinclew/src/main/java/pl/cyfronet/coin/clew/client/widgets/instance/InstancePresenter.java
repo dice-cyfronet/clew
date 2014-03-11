@@ -74,6 +74,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.setUnsatisfiedState(applianceInstance.getStateExplanation());
 				}
 				
+				view.getCost().setText("$" + String.valueOf(((float) applianceInstance.getAmountBilled() / 1000)));
+				
 				if(applianceType != null && !applianceType.getDescription().isEmpty()) {
 					view.getDescription().setText(applianceType.getDescription());
 				} else {

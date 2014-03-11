@@ -15,4 +15,5 @@ public interface DevelopmentMessages extends Messages {
 	String locationHeader();
 	String statusHeader();
 	String actionsHeader();
+	String costHeader();
 }

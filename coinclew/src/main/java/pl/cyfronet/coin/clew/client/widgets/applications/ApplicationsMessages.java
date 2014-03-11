@@ -11,4 +11,5 @@ public interface ApplicationsMessages extends Messages {
 	String locationHeader();
 	String statusHeader();
 	String actionsHeader();
+	String costHeader();
 }

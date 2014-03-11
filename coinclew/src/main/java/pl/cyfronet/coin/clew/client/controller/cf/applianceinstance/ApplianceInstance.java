@@ -16,7 +16,15 @@ public class ApplianceInstance extends NewApplianceInstance {
 	private State state;
 	@Json(name = "state_explanation")
 	private String stateExplanation;
+	@Json(name = "amount_billed")
+	private long amountBilled;
 	
+	public long getAmountBilled() {
+		return amountBilled;
+	}
+	public void setAmountBilled(long amountBilled) {
+		this.amountBilled = amountBilled;
+	}
 	public State getState() {
 		return state;
 	}
