@@ -26,7 +26,9 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -74,7 +76,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					view.setUnsatisfiedState(applianceInstance.getStateExplanation());
 				}
 				
-				view.getCost().setText("$" + String.valueOf(((float) applianceInstance.getAmountBilled() / 1000)));
+				view.getCost().setText(costIndicator(applianceInstance));
 				
 				if(applianceType != null && !applianceType.getDescription().isEmpty()) {
 					view.getDescription().setText(applianceType.getDescription());
@@ -120,6 +122,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			});
 		}
+	}
+	
+	private String costIndicator(final ApplianceInstance applianceInstance) {
+		return "$" + NumberFormat.getFormat("0.00").format(((float) applianceInstance.getAmountBilled() / 1000));
 	}
 	
 	private void displayDetails() {
