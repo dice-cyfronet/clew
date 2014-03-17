@@ -125,7 +125,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	private String costIndicator(final ApplianceInstance applianceInstance) {
-		return "$" + NumberFormat.getFormat("0.00").format(((float) applianceInstance.getAmountBilled() / 1000));
+		return "$" + NumberFormat.getFormat("0.00").format(((float) applianceInstance.getAmountBilled() / 10000));
 	}
 	
 	private void displayDetails() {
