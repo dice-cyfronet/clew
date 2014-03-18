@@ -65,4 +65,9 @@ public class UserKeyView extends Composite implements IUserKeyView, ReverseViewI
 	public boolean confirmKeyRemoval() {
 		return Window.confirm(messages.confirmKeyRemoval());
 	}
+
+	@Override
+	public void showRemovalError() {
+		Window.alert(messages.removalError());
+	}
 }

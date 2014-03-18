@@ -199,6 +199,10 @@ public class CloudFacadeController {
 		void processPortMappingTemplateProperties(List<PortMappingTemplateProperty> portMappingTemplateProperties);
 	}
 	
+	public interface UserKeyRemovalCallback extends GenericErrorCallback {
+		void onRemoved();
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -638,17 +642,21 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void removeUserKey(String userKeyId, final Command after) {
+	public void removeUserKey(String userKeyId, final UserKeyRemovalCallback callback) {
 		userKeyService.deleteUserKey(userKeyId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				if(callback != null) {
+					callback.onError(0, exception.getMessage());
+				} else {
+					simpleErrorHandler.displayError(exception.getMessage());
+				}
 			}
 
 			@Override
 			public void onSuccess(Method method, Void response) {
-				if (after != null) {
-					after.execute();
+				if (callback != null) {
+					callback.onRemoved();
 				}
 			}
 		});

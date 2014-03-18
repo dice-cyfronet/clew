@@ -12,4 +12,5 @@ public interface IUserKeyView extends IsWidget {
 	HasText getFingerprint();
 	void setRemoveBusyState(boolean busy);
 	boolean confirmKeyRemoval();
+	void showRemovalError();
 }

@@ -2,10 +2,10 @@ package pl.cyfronet.coin.clew.client.widgets.userkey;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserKeyRemovalCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.widgets.userkey.IUserKeyView.IUserKeyPresenter;
 
-import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -30,9 +30,15 @@ public class UserKeyPresenter extends BasePresenter<IUserKeyView, MainEventBus> 
 	public void onRemoveClicked() {
 		if (view.confirmKeyRemoval()) {
 			view.setRemoveBusyState(true);
-			cloudFacadeController.removeUserKey(userKey.getId(), new Command() {
+			cloudFacadeController.removeUserKey(userKey.getId(), new UserKeyRemovalCallback() {
 				@Override
-				public void execute() {
+				public void onError(int statusCode, String message) {
+					view.setRemoveBusyState(false);
+					view.showRemovalError();
+				}
+				
+				@Override
+				public void onRemoved() {
 					view.setRemoveBusyState(false);
 					eventBus.removeUserKey(userKey.getId());
 				}

@@ -6,4 +6,5 @@ public interface UserKeyMessages extends Messages {
 	String removeTooltip();
 	String confirmKeyRemoval();
 	String fingerprintAbout();
+	String removalError();
 }
