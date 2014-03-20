@@ -7,6 +7,15 @@
 		.invisible {
 			visibility: hidden;
 		}
+		.inline-checkbox {
+			float: left;
+			margin-right: 20px;
+		}
+		.checkboxes {
+			float: left;
+			width: 100%;
+			margin: 10px 0px;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
 		<b:Form>
@@ -14,8 +23,10 @@
 			<b:TextBox ui:field="name" placeholder="{messages.namePlaceholder}" addStyleNames="input-block-level"/>
 			<b:ControlLabel><ui:text from="{messages.descriptionLabel}"/></b:ControlLabel>
 			<b:TextArea ui:field="description" placeholder="{messages.descriptionPlaceholder}" addStyleNames="input-block-level"/>
-			<b:CheckBox ui:field="shared"><ui:text from="{messages.sharedLabel}"/></b:CheckBox>
-			<b:CheckBox ui:field="scalable"><ui:text from="{messages.scalableLabel}"/></b:CheckBox>
+			<g:HTMLPanel addStyleNames="{style.checkboxes}">
+				<b:CheckBox ui:field="shared" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.sharedLabel}"/></b:CheckBox>
+				<b:CheckBox ui:field="scalable" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.scalableLabel}"/></b:CheckBox>
+			</g:HTMLPanel>
 			<b:ControlLabel><ui:text from="{messages.visibleForLabel}"/></b:ControlLabel>
 			<b:ListBox ui:field="visibleFor" addStyleNames="input-block-level">
 				<g:item value="all"><ui:text from="{messages.visibilityAll}"/></g:item>
