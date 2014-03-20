@@ -125,7 +125,7 @@
 		<g:FlowPanel addStyleNames="{style.bill}"><b:Label ui:field="bill" type="IMPORTANT"/></g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="controls" addStyleNames="{style.buttons}">
-				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}"/>
+				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}" enabled="false"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
 		<b:Collapse ui:field="collapse" defaultOpen="false">

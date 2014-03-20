@@ -36,4 +36,8 @@ public interface IInstanceView extends IsWidget {
 	HasText getDescription();
 	HasText getCost();
 	void setStatus(String string);
+	void enableSave(boolean enable);
+	void enableExternalInterfaces(boolean enable);
+	void enableCollapsable(boolean enable);
+	void collapseDetails();
 }

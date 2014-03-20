@@ -54,6 +54,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Label noServiceLabel;
 	private Label noWebApplicationLabel;
 	private Label noOtherServicesLabel;
+	private boolean collapsed;
 	
 	@UiField HTML name;
 //	@UiField HTML spec;
@@ -69,14 +70,17 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField FlowPanel otherServiceContainer;
 	@UiField HTML description;
 	@UiField Label bill;
+	@UiField Button showDetails;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
+		collapsed = true;
 	}
 	
 	@UiHandler("showDetails")
 	void showDetailsClicked(ClickEvent event) {
 		collapse.toggle();
+		collapsed = !collapsed;
 	}
 	
 	@Override
@@ -276,6 +280,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			externalInterfaces.setSize(ButtonSize.MINI);
 			externalInterfaces.setLoadingText("<i class='icon-spinner icon-spin'></i>");
 			externalInterfaces.setTitle(messages.externalInterfacesTooltip());
+			externalInterfaces.setEnabled(false);
 			externalInterfaces.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -295,6 +300,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			saveButton.setSize(ButtonSize.MINI);
 			saveButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
 			saveButton.setTitle(messages.saveTooltip());
+			saveButton.setEnabled(false);
 			saveButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -419,5 +425,28 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		
 		this.status.clear();
 		this.status.add(label);
+	}
+
+	@Override
+	public void enableSave(boolean enable) {
+		saveButton.setEnabled(enable);
+	}
+
+	@Override
+	public void enableExternalInterfaces(boolean enable) {
+		externalInterfaces.setEnabled(enable);
+	}
+
+	@Override
+	public void enableCollapsable(boolean enable) {
+		showDetails.setEnabled(enable);
+	}
+
+	@Override
+	public void collapseDetails() {
+		if(!collapsed) {
+			showDetailsClicked(null);
+			showDetails.setActive(false);
+		}
 	}
 }

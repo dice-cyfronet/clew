@@ -28,7 +28,6 @@ import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePres
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -109,7 +108,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 						//TODO(DH): for now details of the first VM are shown only
 						ApplianceVm applianceVm = applianceVms.get(0);
 						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-						view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+						updateStatus(applianceVm);
 						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
 							@Override
 							public void processComputeSite(ComputeSite computeSite) {
@@ -121,6 +120,23 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					}
 				}
 			});
+		}
+	}
+	
+	private void updateStatus(ApplianceVm applianceVm) {
+		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+		
+		if(applianceVm.getState() != null) {
+			if(applianceVm.getState().equals("active")) {
+				view.enableSave(true);
+				view.enableExternalInterfaces(true);
+				view.enableCollapsable(true);
+			} else if(applianceVm.getState().equals("saving")) {
+				view.enableSave(false);
+				view.enableExternalInterfaces(false);
+				view.collapseDetails();
+				view.enableCollapsable(false);
+			}
 		}
 	}
 	
@@ -199,7 +215,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 										UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
 												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
 										UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
-												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null), endpoint.getDescriptor());
+												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
+										endpoint.getDescriptor());
 								services.put(endpoint.getId(), widget);
 							}
 						}
@@ -297,7 +314,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 						//TODO(DH): for now details of the first VM are shown only
 						ApplianceVm applianceVm = applianceVms.get(0);
 						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-						view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+						updateStatus(applianceVm);
 						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
 							@Override
 							public void processComputeSite(ComputeSite computeSite) {
