@@ -13,4 +13,5 @@ public interface IInitialConfigView extends IsWidget{
 	void addParameter(String parameter);
 	void addNoParametersLabel();
 	void clearParameterContainer();
+	void cancelEdit();
 }

@@ -94,6 +94,7 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 							configNames.remove(presenter.getConfigName());
 							configNames.put(applianceConfiguration.getId(), applianceConfiguration.getName());
 							presenter.setInitialConfig(applianceConfiguration);
+							presenter.finishEdit();
 						}
 						
 						resetForm();
@@ -171,5 +172,9 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 		}
 		
 		configPresenters.clear();
+	}
+	
+	public void onCancelEditInitialConfiguration(String initialConfigurationId) {
+		resetForm();
 	}
 }

@@ -6,6 +6,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigu
 import pl.cyfronet.coin.clew.client.widgets.initialconfig.IInitialConfigView.IInitialConfigPresenter;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -14,6 +15,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class InitialConfigPresenter extends BasePresenter<IInitialConfigView, MainEventBus> implements IInitialConfigPresenter {
 	private CloudFacadeController cloudFacadeController;
 	private ApplianceConfiguration configuration;
+	private boolean editMode;
 	
 	@Inject
 	public InitialConfigPresenter(CloudFacadeController cloudFacadeController) {
@@ -46,7 +48,13 @@ public class InitialConfigPresenter extends BasePresenter<IInitialConfigView, Ma
 
 	@Override
 	public void onEdit() {
-		eventBus.editInitialConfiguration(configuration.getId());
+		if(editMode) {
+			editMode = false;
+			eventBus.cancelEditInitialConfiguration(configuration.getId());
+		} else {
+			editMode = true;
+			eventBus.editInitialConfiguration(configuration.getId());
+		}
 	}
 
 	public String getConfigPayload() {
@@ -55,5 +63,12 @@ public class InitialConfigPresenter extends BasePresenter<IInitialConfigView, Ma
 
 	public String getConfigName() {
 		return configuration.getName();
+	}
+
+	public void finishEdit() {
+		if(editMode) {
+			editMode = false;
+			view.cancelEdit();
+		}
 	}
 }

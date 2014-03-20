@@ -132,4 +132,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = InitialConfigurationPickerPresenter.class)
 	void showInitialConfigPicker(List<ApplianceConfiguration> applianceConfigurations);
+
+	@Event(handlers = InitialConfigsEditorPresenter.class)
+	void cancelEditInitialConfiguration(String initialConfigurationId);
 }

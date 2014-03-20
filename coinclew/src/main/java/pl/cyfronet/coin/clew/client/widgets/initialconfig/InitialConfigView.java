@@ -2,6 +2,7 @@ package pl.cyfronet.coin.clew.client.widgets.initialconfig;
 
 import pl.cyfronet.coin.clew.client.widgets.initialconfig.IInitialConfigView.IInitialConfigPresenter;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
@@ -30,6 +31,7 @@ public class InitialConfigView extends Composite implements IInitialConfigView, 
 	@UiField FlowPanel parameters;
 	@UiField Styles style;
 	@UiField InitialConfigMessages messages;
+	@UiField Button edit;
 
 	public InitialConfigView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -77,5 +79,10 @@ public class InitialConfigView extends Composite implements IInitialConfigView, 
 	@Override
 	public void clearParameterContainer() {
 		parameters.clear();
+	}
+
+	@Override
+	public void cancelEdit() {
+		edit.setActive(false);
 	}
 }

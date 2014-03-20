@@ -35,7 +35,7 @@
 		<g:FlowPanel ui:field="parameters" addStyleNames="{style.params}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup>
-				<b:Button ui:field="edit" icon="PENCIL" size="MINI" title="{messages.editTooltip}"/>
+				<b:Button ui:field="edit" icon="PENCIL" size="MINI" toggle="true" title="{messages.editTooltip}" />
 				<b:Button ui:field="remove" icon="REMOVE" size="MINI" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
