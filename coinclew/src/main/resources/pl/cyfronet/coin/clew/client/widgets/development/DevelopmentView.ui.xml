@@ -44,7 +44,7 @@
 		}
 		.location {
 			float: left;
-			width: 20%;
+			width: 15%;
 		}
 		.status {
 			float: left;
@@ -52,7 +52,7 @@
 		}
 		.instance-actions {
 			float: left;
-			width: 10%;
+			width: 15%;
 		}
 		.bill {
 			float: left;

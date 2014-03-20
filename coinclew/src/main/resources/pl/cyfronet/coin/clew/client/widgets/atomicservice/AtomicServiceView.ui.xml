@@ -11,6 +11,7 @@
 			font-size: 1.2em;
 		}
 		.name {
+			padding-left: 5px;
 		}
 		.author {
 			text-align: left;
@@ -24,7 +25,7 @@
 		.container {
 			float: left;
 			width: 100%;
-			margin-top: 10px;
+			padding: 5px 0px;
 		}
 		.container:hover {
 			background-color: #F5F5F5;
@@ -38,6 +39,9 @@
 			float: left;
 			width: 10%;
 		}
+		.buttons {
+			padding-right: 5px;
+		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:FlowPanel addStyleNames="{style.title}">
@@ -50,7 +54,7 @@
 			<g:InlineHTML>&nbsp;</g:InlineHTML>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:ButtonGroup ui:field="buttons">
+			<b:ButtonGroup ui:field="buttons" addStyleNames="{style.buttons}">
 				<b:Button ui:field="startInstance" icon="PLAY" size="MINI" type="SUCCESS" title="{messages.startInstanceTooltip}"/>
 				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
 				<b:Button ui:field="editExternalInterfaces" icon="COGS" size="MINI" type="WARNING" title="{messages.editExternalInterfacesTooltip}"/>

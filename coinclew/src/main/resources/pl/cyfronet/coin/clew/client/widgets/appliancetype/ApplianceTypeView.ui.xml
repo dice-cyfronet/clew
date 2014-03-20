@@ -34,7 +34,7 @@
 		.container {
 			float: left;
 			width: 100%;
-			margin-bottom: 5px;
+			padding: 5px 0px;
 		}
 		.container:hover {
 			background-color: #F5F5F5;
@@ -49,10 +49,18 @@
 			margin-left: 5px;
 			font-style: italic;
 		}
+		.inner-check {
+			padding-left: 5px;
+		}
+		.inner-control {
+			padding-right: 5px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.container}">
 		<g:FlowPanel addStyleNames="{style.check}">
-			<b:CheckBox ui:field="checked" enabled="false"/>
+			<g:FlowPanel addStyleNames="{style.inner-check}">
+				<b:CheckBox ui:field="checked" enabled="false"/>
+			</g:FlowPanel>
 		</g:FlowPanel>
 		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
 		<g:FlowPanel addStyleNames="{style.description-panel}">
@@ -62,7 +70,9 @@
 			<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
-			<b:Button ui:field="start" size="MINI" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" enabled="false" title="{messages.startTooltip}"></b:Button>
+			<g:FlowPanel addStyleNames="{style.inner-control}">
+				<b:Button ui:field="start" size="MINI" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" enabled="false" title="{messages.startTooltip}"></b:Button>
+			</g:FlowPanel>
 		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder> 
