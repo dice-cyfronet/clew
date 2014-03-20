@@ -9,6 +9,7 @@ import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.IExternalInterfacesView.IExternalInterfacesPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.HelpBlock;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
@@ -20,6 +21,7 @@ import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -57,6 +59,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		String link();
 		String altName();
 		String altLinks();
+		String secured();
 	}
 	
 	private Icon externalInterfacesLoadingIndicator;
@@ -87,6 +90,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField TextBox proxyReadTimeout;
 	@UiField TabPanel tabs;
 	@UiField Tab endpointTab;
+	@UiField CheckBox secured;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -478,7 +482,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	}
 
 	@Override
-	public IsWidget addEndpoint(int beforePosition, final String endpointId, String endpointName, String httpUrl, String httpsUrl) {
+	public IsWidget addEndpoint(int beforePosition, final String endpointId, String endpointName, boolean secured, String httpUrl, String httpsUrl) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.mapping());
 		
@@ -519,6 +523,21 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				getPresenter().onRemoveEndpoint(endpointId);
 			}
 		});
+		
+		FlowPanel securedPanel = new FlowPanel();
+		securedPanel.addStyleName(style.secured());
+		
+		Label securedLabel = new Label();
+		securedPanel.add(securedLabel);
+		
+		if(secured) {
+			securedLabel.setText(messages.secured());
+			securedLabel.setType(LabelType.SUCCESS);
+		} else {
+			securedLabel.setText(messages.notSecured());
+		}
+		
+		panel.add(securedPanel);
 		
 		FlowPanel actions = new FlowPanel();
 		actions.addStyleName(style.actions());
@@ -618,5 +637,34 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@Override
 	public void enableEndpoints(boolean enable) {
 		endpointTab.setEnabled(enable);
+	}
+
+	@Override
+	public HasValue<Boolean> getSecured() {
+		return new HasValue<Boolean>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Boolean> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public Boolean getValue() {
+				return secured.getValue();
+			}
+
+			@Override
+			public void setValue(Boolean value) {
+				secured.setValue(value);
+			}
+
+			@Override
+			public void setValue(Boolean value, boolean fireEvents) {
+				secured.setValue(value);
+			}
+		};
 	}
 }

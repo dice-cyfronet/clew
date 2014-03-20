@@ -17,7 +17,7 @@
 		}
 		.name {
 			float: left;
-			width: 40%;
+			width: 30%;
 			font-weight: bold;
 			text-align: left;
 		}
@@ -29,7 +29,7 @@
 		}
 		.links {
 			float: left;
-			width: 50%;
+			width: 40%;
 			text-align: left;
 		}
 		.altLinks {
@@ -51,6 +51,11 @@
 		@external tab-content;
 		.disable-y-scroll .tab-content {
 			overflow-y: hidden;
+		}
+		.secured {
+			float: left;
+			width: 20%;
+			text-align: left;
 		}
 	</ui:style>
 	<b:Modal ui:field="modal"  title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
@@ -102,10 +107,12 @@
 					<b:ControlLabel>
 						<ui:text from="{messages.endpointDescriptor}"/>
 						<b:Tooltip text="{messages.descriptorHelpBlock}">
-							<g:HTML addStyleNames="label label-info"><i class='icon-question'></i></g:HTML>
+							<g:HTML addStyleNames="label label-info"><i class='icon-comment'></i></g:HTML>
 						</b:Tooltip>
 					</b:ControlLabel>
 					<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+					<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
+					<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
 					<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
 				</b:Form>
 			</b:Tab>

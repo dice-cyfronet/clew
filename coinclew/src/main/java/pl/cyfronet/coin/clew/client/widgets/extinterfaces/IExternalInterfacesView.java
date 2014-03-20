@@ -2,6 +2,8 @@ package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
 import java.util.Map;
 
+import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.NewPortMappingTemplateProperty;
+
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -40,7 +42,7 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasValue<String> getTargetPort();
 	HasText getEndpointDescription();
 	HasText getEndpointDescriptor();
-	IsWidget addEndpoint(int beforePosition, String endpointId, String name, String httpUrl, String httpsUrl);
+	IsWidget addEndpoint(int beforePosition, String endpointId, String name, boolean secured, String httpUrl, String httpsUrl);
 	void removeEndpoint(IsWidget isWidget);
 	void addHttpMappingEndpointOption(String id, String serviceName, int targetPort);
 	void showEndpointTargetPortHelpBlock(boolean show);
@@ -57,4 +59,5 @@ public interface IExternalInterfacesView extends IsWidget {
 	void removeHttpMappingEndpointOption(String mappingId);
 	void switchToMappingsTab();
 	void enableEndpoints(boolean enable);
+	HasValue<Boolean> getSecured();
 }

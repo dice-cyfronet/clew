@@ -12,6 +12,7 @@ public class NewEndpoint {
 	@Json(name = "invocation_path")
 	private String invocationPath;
 	private String name;
+	private boolean secured;
 	
 	public String getDescription() {
 		return description;
@@ -48,5 +49,11 @@ public class NewEndpoint {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public boolean isSecured() {
+		return secured;
+	}
+	public void setSecured(boolean secured) {
+		this.secured = secured;
 	}
 }

@@ -165,9 +165,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							if (!webapps.keySet().contains(endpoint.getId()) &&
 									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
 								String endpointHttpUrl = UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
-										ticketReader.getUserLogin(), ticketReader.getTicket());
+										endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
 								String endpointHttpsUrl = UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
-										ticketReader.getUserLogin(), ticketReader.getTicket());
+										endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
 								
 								//nx url params fix
 								if (redirection.getName().equals("nx")) {
@@ -197,9 +197,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
 								IsWidget widget = view.addService(endpoint.getName(),
 										UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
-												ticketReader.getUserLogin(), ticketReader.getTicket()),
+												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
 										UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
-												ticketReader.getUserLogin(), ticketReader.getTicket()), endpoint.getDescriptor());
+												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null), endpoint.getDescriptor());
 								services.put(endpoint.getId(), widget);
 							}
 						}

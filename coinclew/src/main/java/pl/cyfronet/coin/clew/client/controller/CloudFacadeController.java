@@ -1170,7 +1170,7 @@ public class CloudFacadeController {
 	}
 
 	public void addEndpoint(String name, String invocationPath, String endpointType, String portMappingTemplateId,
-			String description, String descriptor, final EndpointCallback endpointCallback) {
+			String description, String descriptor, boolean secured, final EndpointCallback endpointCallback) {
 		NewEndpoint endpoint = new NewEndpoint();
 		endpoint.setName(name);
 		endpoint.setDescription(description);
@@ -1178,6 +1178,7 @@ public class CloudFacadeController {
 		endpoint.setEndpointType(endpointType);
 		endpoint.setInvocationPath(invocationPath);
 		endpoint.setPortMappingTemplateId(portMappingTemplateId);
+		endpoint.setSecured(secured);
 		
 		NewEndpointRequest request = new NewEndpointRequest();
 		request.setEndpoint(endpoint);

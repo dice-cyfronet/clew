@@ -163,9 +163,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 														}
 													}
 													
-													IsWidget widget = view.addEndpoint(getEndpointPosition(endpoint.getName()), endpoint.getId(), endpoint.getName(),
-															UrlHelper.joinUrl(httpUrl, endpoint.getInvocationPath(), ticketReader.getUserLogin(), ticketReader.getTicket()),
-															UrlHelper.joinUrl(httpsUrl, endpoint.getInvocationPath(), ticketReader.getUserLogin(), ticketReader.getTicket()));
+													IsWidget widget = view.addEndpoint(getEndpointPosition(endpoint.getName()), endpoint.getId(), endpoint.getName(), endpoint.isSecured(),
+															UrlHelper.joinUrl(httpUrl, endpoint.getInvocationPath(),
+																	endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
+															UrlHelper.joinUrl(httpsUrl, endpoint.getInvocationPath(),
+																	endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null));
 													ExternalInterfacesEditorPresenter.this.endpoints.put(endpoint, widget);
 												}
 											}
@@ -472,12 +474,13 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		final String portMappingTemplateId = view.getTargetPort().getValue();
 		String description = view.getEndpointDescription().getText().trim();
 		String descriptor = view.getEndpointDescriptor().getText().trim();
+		boolean secured = view.getSecured().getValue();
 		
 		if (name.isEmpty() || invocationPath.isEmpty() || portMappingTemplateId.isEmpty()) {
 			view.displayEndpointNameInvocationPathOrPortMappingIdEmptyMessage();
 		} else {
 			view.clearErrorMessages();
-			cloudFacadeController.addEndpoint(name, invocationPath, endpointType, portMappingTemplateId, description, descriptor, new EndpointCallback() {
+			cloudFacadeController.addEndpoint(name, invocationPath, endpointType, portMappingTemplateId, description, descriptor, secured, new EndpointCallback() {
 				@Override
 				public void processEndpoint(final Endpoint endpoint) {
 					view.showNoEndpointsLabel(false);
@@ -497,7 +500,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 								}
 							}
 							
-							IsWidget widget = view.addEndpoint(getEndpointPosition(endpoint.getName()), endpoint.getId(), endpoint.getName(), httpUrl, httpsUrl);
+							IsWidget widget = view.addEndpoint(getEndpointPosition(endpoint.getName()), endpoint.getId(), endpoint.getName(), endpoint.isSecured(), httpUrl, httpsUrl);
 							endpoints.put(endpoint, widget);
 							
 							if (applianceInstanceId != null) {
@@ -515,6 +518,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		view.selectFirstTargetPort();
 		view.getEndpointDescription().setText("");
 		view.getEndpointDescriptor().setText("");
+		view.getSecured().setValue(false);
 	}
 
 	@Override
