@@ -109,7 +109,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 						//TODO(DH): for now details of the first VM are shown only
 						ApplianceVm applianceVm = applianceVms.get(0);
 						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-						view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+						view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
 							@Override
 							public void processComputeSite(ComputeSite computeSite) {
@@ -297,7 +297,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 						//TODO(DH): for now details of the first VM are shown only
 						ApplianceVm applianceVm = applianceVms.get(0);
 						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-						view.getStatus().setHTML(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
+						view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
 							@Override
 							public void processComputeSite(ComputeSite computeSite) {

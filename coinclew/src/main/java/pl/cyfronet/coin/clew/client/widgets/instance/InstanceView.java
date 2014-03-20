@@ -115,15 +115,6 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public HasHTML getStatus() {
-		HTML statusHtml = new HTML();
-		status.clear();
-		status.add(statusHtml);
-		
-		return statusHtml;
-	}
-
-	@Override
 	public void setShutdownBusyState(boolean busy) {
 		if (shutdown != null) {
 			BootstrapHelpers.setButtonBusyState(shutdown, busy);
@@ -414,5 +405,19 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public HasText getCost() {
 		return bill;
+	}
+
+	@Override
+	public void setStatus(String status) {
+		Label label = new Label(status);
+		
+		if(status!= null && status.equals("active")) {
+			label.setType(LabelType.SUCCESS);
+		} else {
+			label.setType(LabelType.WARNING);
+		}
+		
+		this.status.clear();
+		this.status.add(label);
 	}
 }

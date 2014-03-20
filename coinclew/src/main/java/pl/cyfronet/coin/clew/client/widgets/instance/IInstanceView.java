@@ -16,7 +16,6 @@ public interface IInstanceView extends IsWidget {
 	String getSpecStanza(String cpu, String ram, String disk);
 	HasHTML getIp();
 	HasText getLocation();
-	HasHTML getStatus();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();
@@ -36,4 +35,5 @@ public interface IInstanceView extends IsWidget {
 	void setNoDescription();
 	HasText getDescription();
 	HasText getCost();
+	void setStatus(String string);
 }
