@@ -15,4 +15,7 @@ public interface DevelopmentProperties extends Constants {
 	
 	@DefaultStringValue(MISSING)
 	String developmentUserLogin();
+	
+	@DefaultStringValue(MISSING)
+	String ticketOverride();
 }

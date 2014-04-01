@@ -791,7 +791,7 @@ public class CloudFacadeController {
 	}
 
 	public void getDevelopmentApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
-		applianceTypesService.getApplianceTypesForVisibilityAndActiveFlag(join(Arrays.asList(new String[] {"developer", "all", "owner"}), ","), true, new MethodCallback<ApplianceTypesResponse>() {
+		applianceTypesService.getApplianceTypesForModeAndActiveFlag("development", true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				simpleErrorHandler.displayError(exception.getMessage());
@@ -807,7 +807,7 @@ public class CloudFacadeController {
 	}
 
 	public void getProductionApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
-		applianceTypesService.getApplianceTypesForVisibilityAndActiveFlag(join(Arrays.asList(new String[] {"all", "owner"}), ","), true, new MethodCallback<ApplianceTypesResponse>() {
+		applianceTypesService.getApplianceTypesForModeAndActiveFlag("production", true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				simpleErrorHandler.displayError(exception.getMessage());

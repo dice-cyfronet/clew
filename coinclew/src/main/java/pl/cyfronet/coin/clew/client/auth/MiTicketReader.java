@@ -34,6 +34,10 @@ public class MiTicketReader {
 	}
 
 	public String getTicket() {
+		if(!devProperties.ticketOverride().equals(DevelopmentProperties.MISSING)) {
+			return devProperties.ticketOverride();
+		}
+		
 		String ticket = Cookies.getCookie("vph-tkt");
 		
 		if (ticket != null) {

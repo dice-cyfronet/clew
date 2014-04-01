@@ -41,10 +41,10 @@ public interface ApplianceTypeService extends RestService {
 	void getApplianceTypesForIds(@PathParam("ids") String applianceTypeIds, MethodCallback<ApplianceTypesResponse> methodCallback);
 
 	@GET
-	@Path("appliance_types?visible_to={visibility}&active={active}")
-	void getApplianceTypesForVisibilityAndActiveFlag(@PathParam("visibility") String visibility, @PathParam("active") boolean active, MethodCallback<ApplianceTypesResponse> methodCallback);
+	@Path("appliance_types?mode={mode}&active={active}")
+	void getApplianceTypesForModeAndActiveFlag(@PathParam("mode") String mode, @PathParam("active") boolean active, MethodCallback<ApplianceTypesResponse> methodCallback);
 
 	@GET
-	@Path("appliance_types?author_id={user}")
+	@Path("appliance_types?mode=manage")
 	void getApplianceTypesForUserId(@PathParam("user") String userId, MethodCallback<ApplianceTypesResponse> methodCallback);
 }
