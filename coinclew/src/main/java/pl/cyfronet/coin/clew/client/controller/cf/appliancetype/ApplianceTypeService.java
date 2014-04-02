@@ -46,5 +46,5 @@ public interface ApplianceTypeService extends RestService {
 
 	@GET
 	@Path("appliance_types?mode=manage")
-	void getApplianceTypesForUserId(@PathParam("user") String userId, MethodCallback<ApplianceTypesResponse> methodCallback);
+	void getManagedApplianceTypes(MethodCallback<ApplianceTypesResponse> methodCallback);
 }

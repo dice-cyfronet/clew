@@ -1452,7 +1452,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getOwnedApplianceTypesForUser(String userLogin, final OwnedApplianceTypesCallback ownedApplianceTypesCallback) {
+	public void getManagedApplianceTypes(String userLogin, final OwnedApplianceTypesCallback ownedApplianceTypesCallback) {
 		userService.getUserForLogin(userLogin, new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
@@ -1465,7 +1465,7 @@ public class CloudFacadeController {
 				
 				if (response.getUsers().size() > 0) {
 					final User user = response.getUsers().get(0);
-					applianceTypesService.getApplianceTypesForUserId(user.getId(), new MethodCallback<ApplianceTypesResponse>() {
+					applianceTypesService.getManagedApplianceTypes(new MethodCallback<ApplianceTypesResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							simpleErrorHandler.displayError(exception.getMessage());
@@ -1474,12 +1474,10 @@ public class CloudFacadeController {
 						@Override
 						public void onSuccess(Method method, ApplianceTypesResponse response) {
 							for (ApplianceType applianceType : response.getApplianceTypes()) {
-								if (applianceType.getAuthorId().equals(user.getId())) {
-									OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
-									ownedApplianceType.setApplianceType(applianceType);
-									ownedApplianceType.setUser(user);
-									result.add(ownedApplianceType);
-								}
+								OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
+								ownedApplianceType.setApplianceType(applianceType);
+								ownedApplianceType.setUser(user);
+								result.add(ownedApplianceType);
 							}
 							
 							if (ownedApplianceTypesCallback != null) {

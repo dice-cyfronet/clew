@@ -181,7 +181,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			view.addAtomicServiceProgressIndicator();
 			clearAtomicService();
 		}
-		cloudFacadeController.getOwnedApplianceTypesForUser(ticketReader.getUserLogin(), new OwnedApplianceTypesCallback() {
+		cloudFacadeController.getManagedApplianceTypes(ticketReader.getUserLogin(), new OwnedApplianceTypesCallback() {
 			@Override
 			public void processOwnedApplianceTypes(List<OwnedApplianceType> applianceTypes) {
 				view.showNoAtomicServicesLabel(false);
