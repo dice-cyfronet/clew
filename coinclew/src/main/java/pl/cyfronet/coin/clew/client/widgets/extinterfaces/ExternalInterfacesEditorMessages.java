@@ -57,4 +57,10 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String securedHelp();
 	String secured();
 	String notSecured();
+	String editMappingLabel();
+	String editEndpointLabel();
+	String removeEndpointLabel();
+	String removeMappingLabel();
+	String addExternalInterfaceEditButtonLabel();
+	String addEndpointEditButtonLabel();
 }

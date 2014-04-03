@@ -1,7 +1,9 @@
 package pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -20,4 +22,12 @@ public interface PortMappingTemplatePropertyService extends RestService {
 	@POST
 	@Path("port_mapping_properties")
 	void addPortMappingTemplateProperty(NewPortMappingTemplatePropertyRequest portMappingTemplatePropertyRequest, MethodCallback<PortMappingTemplatePropertyRequestResponse> methodCallback);
+
+	@PUT
+	@Path("port_mapping_properties/{id}")
+	void updatePortMappingTemplateProperty(@PathParam("id") String propertyId, NewPortMappingTemplatePropertyRequest portMappingTemplatePropertyRequest, MethodCallback<PortMappingTemplatePropertyRequestResponse> methodCallback);
+
+	@DELETE
+	@Path("port_mapping_properties/{id}")
+	void removePortMappingTemplateProperety(@PathParam("id") String propertyId, MethodCallback<Void> methodCallback);
 }

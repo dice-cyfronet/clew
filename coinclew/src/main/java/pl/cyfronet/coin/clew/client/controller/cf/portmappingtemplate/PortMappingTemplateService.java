@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplate;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -33,4 +34,8 @@ public interface PortMappingTemplateService extends RestService {
 	@GET
 	@Path("port_mapping_templates?dev_mode_property_set_id={id}")
 	void getPortMappingTemplatesForDevelopmentModePropertySetId(@PathParam("id") String developmentModePropertySetId, MethodCallback<PortMappingTemplatesResponse> methodCallback);
+
+	@PUT
+	@Path("port_mapping_templates/{id}")
+	void updatePortMappingTemplate(@PathParam("id") String mappingId, NewPortMappingTemplateRequest request, MethodCallback<PortMappingTemplateRequestResponse> methodCallback);
 }

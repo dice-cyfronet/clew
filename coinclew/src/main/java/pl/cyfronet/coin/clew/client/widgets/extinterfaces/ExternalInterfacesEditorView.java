@@ -9,6 +9,7 @@ import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.IExternalInterfacesView.IExternalInterfacesPresenter;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.HelpBlock;
 import com.github.gwtbootstrap.client.ui.Icon;
@@ -91,6 +92,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField TabPanel tabs;
 	@UiField Tab endpointTab;
 	@UiField CheckBox secured;
+	@UiField Button addEndpoint;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -108,12 +110,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	
 	@UiHandler("addExternalInterface")
 	void addExternalInterfaceClicked(ClickEvent event) {
-		getPresenter().onAddExternalInterface();
+		getPresenter().onUpdateExternalInterface();
 	}
 	
 	@UiHandler("addEndpoint")
 	void addEndpointClicked(ClickEvent event) {
-		getPresenter().onAddEndpoint();
+		getPresenter().onUpdateEndpoint();
 	}
 	
 	@Override
@@ -317,10 +319,23 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			panel.add(tcpUdpMapping);
 		}
 		
+		Button editButton = new Button();
+		editButton.setIcon(IconType.PENCIL);
+		editButton.setSize(ButtonSize.MINI);
+		editButton.setToggle(true);
+		editButton.setTitle(messages.editMappingLabel());
+		editButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().onEditMapping(mappingId);
+			}
+		});
+		
 		Button removeButton = new Button();
 		removeButton.setIcon(IconType.REMOVE);
 		removeButton.setSize(ButtonSize.MINI);
 		removeButton.setType(ButtonType.DANGER);
+		removeButton.setTitle(messages.removeMappingLabel());
 		removeButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -328,8 +343,9 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			}
 		});
 		
-		FlowPanel actions = new FlowPanel();
+		ButtonGroup actions = new ButtonGroup();
 		actions.addStyleName(style.actions());
+		actions.add(editButton);
 		actions.add(removeButton);
 		panel.add(actions);
 		externalInterfaceContainer.insert(panel, beforePosition);
@@ -348,7 +364,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	}
 
 	@Override
-	public void setAddExternalInterfaceBusyState(boolean busy) {
+	public void setUpdateExternalInterfaceBusyState(boolean busy) {
 		BootstrapHelpers.setButtonBusyState(addExternalInterface, busy);
 	}
 
@@ -513,10 +529,23 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		panel.add(links);
 		
+		Button editButton = new Button();
+		editButton.setIcon(IconType.PENCIL);
+		editButton.setSize(ButtonSize.MINI);
+		editButton.setToggle(true);
+		editButton.setTitle(messages.editEndpointLabel());
+		editButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getPresenter().onEditEndpoint(endpointId);
+			}
+		});
+		
 		Button removeButton = new Button();
 		removeButton.setIcon(IconType.REMOVE);
 		removeButton.setSize(ButtonSize.MINI);
 		removeButton.setType(ButtonType.DANGER);
+		removeButton.setTitle(messages.removeEndpointLabel());
 		removeButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -539,8 +568,9 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		panel.add(securedPanel);
 		
-		FlowPanel actions = new FlowPanel();
+		ButtonGroup actions = new ButtonGroup();
 		actions.addStyleName(style.actions());
+		actions.add(editButton);
 		actions.add(removeButton);
 		panel.add(actions);
 		endpointContainer.insert(panel, beforePosition);
@@ -666,5 +696,23 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				secured.setValue(value);
 			}
 		};
+	}
+
+	@Override
+	public void setMappingEditLabel(boolean show) {
+		if(show) {
+			addExternalInterface.setText(messages.addExternalInterfaceEditButtonLabel());
+		} else {
+			addExternalInterface.setText(messages.addExternalInterfaceButtonLabel());
+		}
+	}
+
+	@Override
+	public void setEndpointEditLabel(boolean show) {
+		if(show) {
+			addEndpoint.setText(messages.addEndpointEditButtonLabel());
+		} else {
+			addEndpoint.setText(messages.addEndpointButtonLabel());
+		}
 	}
 }

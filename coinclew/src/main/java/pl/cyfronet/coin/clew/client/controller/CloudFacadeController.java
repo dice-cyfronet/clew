@@ -13,6 +13,7 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
@@ -1000,7 +1001,7 @@ public class CloudFacadeController {
 
 	public void addPortMappingTemplateForDevelopmentModePropertySet(String name, int portNumber, String transportProtocol,
 			final String applicationProtocol, String developmentModePropertySetId, final PortMappingTemplateCallback portMappingTemplateCallback) {
-		NewPortMappingTemplateRequest request = createPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, null);
+		NewPortMappingTemplateRequest request = createNewPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, null);
 		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
@@ -1023,7 +1024,7 @@ public class CloudFacadeController {
 	
 	public void addPortMappingTemplateForApplianceType(String name, int portNumber, String transportProtocol,
 			final String applicationProtocol, String applianceTypeId, final PortMappingTemplateCallback portMappingTemplateCallback) {
-		NewPortMappingTemplateRequest request = createPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, null, applianceTypeId);
+		NewPortMappingTemplateRequest request = createNewPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, null, applianceTypeId);
 		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
@@ -1039,7 +1040,7 @@ public class CloudFacadeController {
 		});
 	}
 	
-	private NewPortMappingTemplateRequest createPortMappingTemplateRequest(String name, int portNumber, String transportProtocol, final String applicationProtocol,
+	private NewPortMappingTemplateRequest createNewPortMappingTemplateRequest(String name, int portNumber, String transportProtocol, final String applicationProtocol,
 			String developmentModePropertySetId, String applianceTypeId) {
 		NewPortMappingTemplate portMappingTemplate = new NewPortMappingTemplate();
 		portMappingTemplate.setServiceName(name);
@@ -1546,6 +1547,117 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, PortMappingTemplatePropertiesResponse response) {
 				if (portMappingTemplatePropertiesCallback != null) {
 					portMappingTemplatePropertiesCallback.processPortMappingTemplateProperties(response.getProperties());
+				}
+			}
+		});
+	}
+
+	public void updatePortMappingTemplateForDevelopmentModePropertySet(String editMappingId, String name,
+			int portNumber, String transportProtocol, final String applicationProtocol, String developmentModePropertySetId,
+			final PortMappingTemplateCallback portMappingTemplateCallback) {
+		NewPortMappingTemplateRequest request = createNewPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, null);
+		portMappingTemplateService.updatePortMappingTemplate(editMappingId, request, new MethodCallback<PortMappingTemplateRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplateRequestResponse response) {
+				//this operation requires a busy-waiting loop
+				if (applicationProtocol.equals("none")) {
+					//waiting for port mappings
+					waitForPortMappings(response.getPortMappingTemplate(), portMappingTemplateCallback);
+				} else {
+					//waiting for http mappings
+					waitForHttpMappings(response.getPortMappingTemplate(), portMappingTemplateCallback);
+				}
+			}
+		});
+	}
+
+	public void updatePortMappingTemplateForApplianceType(String mappingId, String name, int portNumber,
+			String transportProtocol, String applicationProtocol, String applianceTypeId,
+			final PortMappingTemplateCallback portMappingTemplateCallback) {
+		NewPortMappingTemplateRequest request = createNewPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, null, applianceTypeId);
+		portMappingTemplateService.updatePortMappingTemplate(mappingId, request, new MethodCallback<PortMappingTemplateRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplateRequestResponse response) {
+				if (portMappingTemplateCallback != null) {
+					portMappingTemplateCallback.processPortMappingTemplate(response.getPortMappingTemplate());
+				}
+			}
+		});
+	}
+
+	public void updatePortMappingProperty(String portMappingTemplateId, String propertyId, String name, String value, final Command onFinish) {
+		NewPortMappingTemplateProperty property = new NewPortMappingTemplateProperty();
+		property.setPortMappingTemplateId(portMappingTemplateId);
+		property.setKey(name);
+		property.setValue(value);
+		
+		NewPortMappingTemplatePropertyRequest portMappingTemplatePropertyRequest = new NewPortMappingTemplatePropertyRequest();
+		portMappingTemplatePropertyRequest.setPortMappingTemplateProperty(property);
+		portMappingTemplatePropertyService.updatePortMappingTemplateProperty(propertyId, portMappingTemplatePropertyRequest, new MethodCallback<PortMappingTemplatePropertyRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, PortMappingTemplatePropertyRequestResponse response) {
+				if (onFinish != null) {
+					onFinish.execute();
+				}
+			}
+		});
+	}
+
+	public void removePortMappingProperty(String propertyId, final Command command) {
+		portMappingTemplatePropertyService.removePortMappingTemplateProperety(propertyId, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if(command != null) {
+					command.execute();
+				}
+			}
+		});
+	}
+
+	public void updateEndpoint(String endpointId, String name, String invocationPath, String endpointType,
+			String portMappingTemplateId, String description, String descriptor, boolean secured,
+			final EndpointCallback endpointCallback) {
+		NewEndpoint endpoint = new NewEndpoint();
+		endpoint.setName(name);
+		endpoint.setDescription(description);
+		endpoint.setDescriptor(descriptor);
+		endpoint.setEndpointType(endpointType);
+		endpoint.setInvocationPath(invocationPath);
+		endpoint.setPortMappingTemplateId(portMappingTemplateId);
+		endpoint.setSecured(secured);
+		
+		NewEndpointRequest request = new NewEndpointRequest();
+		request.setEndpoint(endpoint);
+		endpointService.updateEndpoint(endpointId, request, new MethodCallback<EndpointRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, EndpointRequestResponse response) {
+				if (endpointCallback != null) {
+					endpointCallback.processEndpoint(response.getEndpoint());
 				}
 			}
 		});

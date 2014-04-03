@@ -2,8 +2,6 @@ package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
 import java.util.Map;
 
-import pl.cyfronet.coin.clew.client.controller.cf.portmappingtemplateproperty.NewPortMappingTemplateProperty;
-
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -13,9 +11,11 @@ public interface IExternalInterfacesView extends IsWidget {
 	interface IExternalInterfacesPresenter {
 		void onTransportProtocolChanged();
 		void onRemoveMapping(String mappingId);
-		void onAddExternalInterface();
-		void onAddEndpoint();
+		void onUpdateExternalInterface();
+		void onUpdateEndpoint();
 		void onRemoveEndpoint(String endpointId);
+		void onEditMapping(String mappingId);
+		void onEditEndpoint(String endpointId);
 	}
 
 	void showModal(boolean show);
@@ -30,7 +30,7 @@ public interface IExternalInterfacesView extends IsWidget {
 	IsWidget addMapping(int beforePosition, String mappingId, String serviceName, int targetPort, String transportProtocol, String httpUrl, String httpsUrl, String publicIp, String sourcePort, Map<String, String> properties);
 	void removeMappingTemplate(IsWidget widget);
 	HasText getExternalInterfaceName();
-	void setAddExternalInterfaceBusyState(boolean busy);
+	void setUpdateExternalInterfaceBusyState(boolean busy);
 	HasText getExternalInterfacePort();
 	HasValue<String> getApplicationProtocol();
 	void displayNameOrPortEmptyMessage();
@@ -60,4 +60,6 @@ public interface IExternalInterfacesView extends IsWidget {
 	void switchToMappingsTab();
 	void enableEndpoints(boolean enable);
 	HasValue<Boolean> getSecured();
+	void setMappingEditLabel(boolean show);
+	void setEndpointEditLabel(boolean show);
 }

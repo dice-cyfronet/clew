@@ -429,7 +429,9 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void enableSave(boolean enable) {
-		saveButton.setEnabled(enable);
+		if(saveButton != null) {
+			saveButton.setEnabled(enable);
+		}
 	}
 
 	@Override

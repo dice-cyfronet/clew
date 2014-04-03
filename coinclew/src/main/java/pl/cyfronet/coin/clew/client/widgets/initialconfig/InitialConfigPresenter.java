@@ -6,7 +6,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigu
 import pl.cyfronet.coin.clew.client.widgets.initialconfig.IInitialConfigView.IInitialConfigPresenter;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -26,6 +25,7 @@ public class InitialConfigPresenter extends BasePresenter<IInitialConfigView, Ma
 		this.configuration = configuration;
 		view.getName().setText(configuration.getName());
 		view.clearParameterContainer();
+		editMode = false;
 		
 		if (configuration.getParameters().size() > 0) {
 			for (String parameter : configuration.getParameters()) {

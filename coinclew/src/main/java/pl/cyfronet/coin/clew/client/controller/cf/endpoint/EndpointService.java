@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client.controller.cf.endpoint;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -25,4 +26,9 @@ public interface EndpointService extends RestService {
 	@POST
 	@Path("endpoints")
 	void addEndpoint(NewEndpointRequest newEndpointRequest, MethodCallback<EndpointRequestResponse> methodCallback);
+
+	@PUT
+	@Path("endpoints/{id}")
+	void updateEndpoint(@PathParam("id") String endpointId, NewEndpointRequest request,
+			MethodCallback<EndpointRequestResponse> methodCallback);
 }
