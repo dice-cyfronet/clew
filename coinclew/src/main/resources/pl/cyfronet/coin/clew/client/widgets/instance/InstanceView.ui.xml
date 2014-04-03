@@ -82,6 +82,10 @@
 		.panel:hover {
 			background-color: #F5F5F5;
 		}
+		.panel:not\(:last-child\) {
+			border-bottom: solid 1px;
+			border-color: #dddddd;
+		}
 		.full-width {
 			float: left;
 			width: 100%;

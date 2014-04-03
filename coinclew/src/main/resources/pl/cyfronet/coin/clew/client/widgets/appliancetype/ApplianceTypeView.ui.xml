@@ -39,6 +39,10 @@
 		.container:hover {
 			background-color: #F5F5F5;
 		}
+		.container:not\(:last-child\) {
+			border-bottom: solid 1px;
+			border-color: #dddddd;
+		}
 		.config {
 			font-size: 0.9em;
 		}

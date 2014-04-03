@@ -13,7 +13,11 @@
 		.mapping {
 			float: left;
 			width: 100%;
-			margin-bottom: 5px;
+			padding: 5px 0px;
+		}
+		.mapping:not\(:last-child\) {
+			border-bottom: solid 1px;
+			border-color: #dddddd;
 		}
 		.name {
 			float: left;

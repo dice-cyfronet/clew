@@ -21,9 +21,13 @@
 			font-style: italic;
 		}
 		.panel {
-			margin-bottom: 15px;
+			padding: 5px 0px;
 			float: left;
 			width: 100%;
+		}
+		.panel:not\(:last-child\) {
+			border-bottom: solid 1px;
+			border-color: #dddddd;
 		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.panel}">
