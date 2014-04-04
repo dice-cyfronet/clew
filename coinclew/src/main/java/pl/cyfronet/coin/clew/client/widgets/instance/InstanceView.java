@@ -1,5 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
@@ -45,6 +48,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		String service();
 		String detailsName();
 		String links();
+		String statusLabel();
 	}
 	
 	private IInstancePresenter presenter;
@@ -55,6 +59,9 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Label noWebApplicationLabel;
 	private Label noOtherServicesLabel;
 	private boolean collapsed;
+	private Map<String, Label> httpStatuses;
+	private Map<String, Label> httpsStatuses;
+	
 	
 	@UiField HTML name;
 //	@UiField HTML spec;
@@ -75,6 +82,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		collapsed = true;
+		httpStatuses = new HashMap<String, Label>();
+		httpsStatuses = new HashMap<String, Label>();
 	}
 	
 	@UiHandler("showDetails")
@@ -150,7 +159,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor) {
+	public IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor,
+			String redirectionId, String httpUrlStatus, String httpsUrlStatus) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -167,6 +177,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			http.setTarget("_blank");
 			http.addStyleName(style.anchor());
 			links.add(http);
+			
+			Label status = new Label(httpUrlStatus);
+			status.addStyleName(style.statusLabel());
+			status.setType(getStatusLabelType(httpUrlStatus));
+			links.add(status);
+			httpStatuses.put(redirectionId, status);
 		}
 		
 		if (httpsUrl != null) {
@@ -174,6 +190,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			https.setTarget("_blank");
 			https.addStyleName(style.anchor());
 			links.add(https);
+			
+			Label status = new Label(httpsUrlStatus);
+			status.addStyleName(style.statusLabel());
+			status.setType(getStatusLabelType(httpsUrlStatus));
+			links.add(status);
+			httpsStatuses.put(redirectionId, status);
 		}
 		
 		Button descriptorButton = new Button();
@@ -210,7 +232,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public IsWidget addWebApplication(String name, String httpUrl, String httpsUrl) {
+	public IsWidget addWebApplication(String name, String httpUrl, String httpsUrl,
+			String redirectionId, String httpUrlStatus, String httpsUrlStatus) {
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
@@ -227,6 +250,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			http.setTarget("_blank");
 			http.addStyleName(style.anchor());
 			links.add(http);
+			
+			Label status = new Label(httpUrlStatus);
+			status.addStyleName(style.statusLabel());
+			status.setType(getStatusLabelType(httpUrlStatus));
+			links.add(status);
+			httpStatuses.put(redirectionId, status);
 		}
 		
 		if (httpsUrl != null) {
@@ -234,6 +263,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			https.setTarget("_blank");
 			https.addStyleName(style.anchor());
 			links.add(https);
+			
+			Label status = new Label(httpsUrlStatus);
+			status.addStyleName(style.statusLabel());
+			status.setType(getStatusLabelType(httpsUrlStatus));
+			links.add(status);
+			httpsStatuses.put(redirectionId, status);
 		}
 		
 		webApplicationsContainer.add(panel);
@@ -436,7 +471,9 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void enableExternalInterfaces(boolean enable) {
-		externalInterfaces.setEnabled(enable);
+		if(externalInterfaces != null) {
+			externalInterfaces.setEnabled(enable);
+		}
 	}
 
 	@Override
@@ -449,6 +486,38 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		if(!collapsed) {
 			showDetailsClicked(null);
 			showDetails.setActive(false);
+		}
+	}
+	
+	private LabelType getStatusLabelType(String status) {
+		if("pending".equals(status)) {
+			return LabelType.WARNING;
+		} else if("ok".equals(status)) {
+			return LabelType.SUCCESS;
+		} else if("lost".equals(status)) {
+			return LabelType.IMPORTANT;
+		} else {
+			return LabelType.DEFAULT;
+		}
+	}
+
+	@Override
+	public void updateHttpStatus(String redirectionId, String status) {
+		Label statusLabel = httpStatuses.get(redirectionId);
+		
+		if(statusLabel != null) {
+			statusLabel.setType(getStatusLabelType(status));
+			statusLabel.setText(status);
+		}
+	}
+
+	@Override
+	public void updateHttpsStatus(String redirectionId, String status) {
+		Label statusLabel = httpsStatuses.get(redirectionId);
+		
+		if(statusLabel != null) {
+			statusLabel.setType(getStatusLabelType(status));
+			statusLabel.setText(status);
 		}
 	}
 }

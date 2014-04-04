@@ -117,6 +117,9 @@
 		.buttons {
 			padding-right: 5px;
 		}
+		.statusLabel {
+			margin-right: 40px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.panel}">
 		<g:FlowPanel addStyleNames="{style.name}">

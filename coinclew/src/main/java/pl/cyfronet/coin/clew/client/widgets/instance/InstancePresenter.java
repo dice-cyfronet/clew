@@ -178,46 +178,67 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							currentWebapps.add(endpoint.getId());
 							
 							//before showing a webapp at least one http mapping has to be available
-							if (!webapps.keySet().contains(endpoint.getId()) &&
-									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
-								String endpointHttpUrl = UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
-										endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
-								String endpointHttpsUrl = UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
-										endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
-								
-								//nx url params fix
-								if (redirection.getName().equals("nx")) {
-									Redirection sshRedirection = findSshRedirection(redirections);
+							if(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null) {
+								if (!webapps.keySet().contains(endpoint.getId())) {
+									String endpointHttpUrl = UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
+											endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
+									String endpointHttpsUrl = UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
+											endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
 									
-									if (sshRedirection != null && sshRedirection.getPortMappings().size() > 0) {
-										PortMapping portMapping = sshRedirection.getPortMappings().get(0);
+									//nx url params fix
+									if (redirection.getName().equals("nx")) {
+										Redirection sshRedirection = findSshRedirection(redirections);
 										
-										if (endpointHttpUrl != null) {
-											endpointHttpUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
-										}
-										
-										if (endpointHttpsUrl != null) {
-											endpointHttpsUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+										if (sshRedirection != null && sshRedirection.getPortMappings().size() > 0) {
+											PortMapping portMapping = sshRedirection.getPortMappings().get(0);
+											
+											if (endpointHttpUrl != null) {
+												endpointHttpUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+											}
+											
+											if (endpointHttpsUrl != null) {
+												endpointHttpsUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+											}
 										}
 									}
+									
+									IsWidget widget = view.addWebApplication(endpoint.getName(), endpointHttpUrl, endpointHttpsUrl,
+											redirection.getId(), redirection.getHttpUrlStatus(), redirection.getHttpsUrlStatus());
+									webapps.put(endpoint.getId(), widget);
+								} else {
+									//updating endpoint status
+									if(redirection.getHttpUrl() != null) {
+										view.updateHttpStatus(redirection.getId(), redirection.getHttpUrlStatus());
+									}
+									
+									if(redirection.getHttpsUrl() != null) {
+										view.updateHttpsStatus(redirection.getId(), redirection.getHttpsUrlStatus());
+									}
 								}
-								
-								IsWidget widget = view.addWebApplication(endpoint.getName(), endpointHttpUrl, endpointHttpsUrl);
-								webapps.put(endpoint.getId(), widget);
 							}
 						} else {
 							currentServices.add(endpoint.getId());
 							
 							//before showing a service at least one http mapping has to be available
-							if (!services.keySet().contains(endpoint.getId()) &&
-									(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null)) {
-								IsWidget widget = view.addService(endpoint.getName(),
-										UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
-												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
-										UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
-												endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
-										endpoint.getDescriptor());
-								services.put(endpoint.getId(), widget);
+							if(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null) {
+								if (!services.keySet().contains(endpoint.getId())) {
+									IsWidget widget = view.addService(endpoint.getName(),
+											UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
+													endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
+											UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
+													endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
+											endpoint.getDescriptor(), redirection.getId(), redirection.getHttpUrlStatus(), redirection.getHttpsUrlStatus());
+									services.put(endpoint.getId(), widget);
+								} else {
+									//updating endpoint status
+									if(redirection.getHttpUrl() != null) {
+										view.updateHttpStatus(redirection.getId(), redirection.getHttpUrlStatus());
+									}
+									
+									if(redirection.getHttpsUrl() != null) {
+										view.updateHttpsStatus(redirection.getId(), redirection.getHttpsUrlStatus());
+									}
+								}
 							}
 						}
 					}

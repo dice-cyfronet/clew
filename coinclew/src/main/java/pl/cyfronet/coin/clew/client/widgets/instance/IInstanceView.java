@@ -19,8 +19,8 @@ public interface IInstanceView extends IsWidget {
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();
-	IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor);
-	IsWidget addWebApplication(String name, String httpUrl, String httpsUrl);
+	IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor, String redirectionId, String httpUrlStatus, String httpsUrlStatus);
+	IsWidget addWebApplication(String name, String httpUrl, String httpsUrl, String redirectionId, String httpUrlStatus, String httpsUrlStatus);
 	void showNoServicesLabel(boolean show);
 	void showNoWebApplicationsLabel(boolean show);
 	void addExternalInterfacesControl();
@@ -40,4 +40,6 @@ public interface IInstanceView extends IsWidget {
 	void enableExternalInterfaces(boolean enable);
 	void enableCollapsable(boolean enable);
 	void collapseDetails();
+	void updateHttpStatus(String redirectionId, String status);
+	void updateHttpsStatus(String redirectionId, String ststus);
 }

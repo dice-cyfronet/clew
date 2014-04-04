@@ -1313,8 +1313,10 @@ public class CloudFacadeController {
 						for (HttpMapping httpMapping : httpMappings) {
 							if ("http".equals(httpMapping.getApplicationProtocol())) {
 								redirection.setHttpUrl(httpMapping.getUrl());
+								redirection.setHttpUrlStatus(httpMapping.getStatus());
 							} else if ("https".equals(httpMapping.getApplicationProtocol())) {
 								redirection.setHttpsUrl(httpMapping.getUrl());
+								redirection.setHttpsUrlStatus(httpMapping.getStatus());
 							}
 						}
 						

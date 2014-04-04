@@ -15,7 +15,21 @@ public class Redirection {
 	private String httpsUrl;
 	private List<Endpoint> endpoints;
 	private List<PortMapping> portMappings;
+	private String httpUrlStatus;
+	private String httpsUrlStatus;
 	
+	public String getHttpUrlStatus() {
+		return httpUrlStatus;
+	}
+	public void setHttpUrlStatus(String httpUrlStatus) {
+		this.httpUrlStatus = httpUrlStatus;
+	}
+	public String getHttpsUrlStatus() {
+		return httpsUrlStatus;
+	}
+	public void setHttpsUrlStatus(String httpsUrlStatus) {
+		this.httpsUrlStatus = httpsUrlStatus;
+	}
 	public String getId() {
 		return id;
 	}
