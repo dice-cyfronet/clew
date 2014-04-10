@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.applications;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,9 @@ import java.util.Map;
 import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
@@ -66,6 +69,23 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 			timer.cancel();
 			timer = null;
 		}
+	}
+	
+	public void onStartInstance(String applianceTypeId) {
+		eventBus.switchToApplicationsView();
+		cloudFacadeController.getInitialConfigurations(applianceTypeId, new ApplianceConfigurationsCallback() {
+			@Override
+			public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations) {
+				if(applianceConfigurations.size() == 0) {
+					view.showNoInitialConfigurationsMessage();
+				} else if(applianceConfigurations.size() == 1) {
+					eventBus.startApplications(
+							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), false);
+				} else {
+					eventBus.showInitialConfigPicker(applianceConfigurations, false);
+				}
+			}
+		});
 	}
 	
 	private void loadApplianceInstances(final boolean update) {

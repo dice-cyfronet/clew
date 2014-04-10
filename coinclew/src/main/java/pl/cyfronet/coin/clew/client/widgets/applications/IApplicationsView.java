@@ -12,4 +12,5 @@ public interface IApplicationsView extends IsWidget {
 	void showLoadingInicator(boolean show);
 	void showNoInstancesLabel(boolean show);
 	void showHeaderRow(boolean b);
+	void showNoInitialConfigurationsMessage();
 }

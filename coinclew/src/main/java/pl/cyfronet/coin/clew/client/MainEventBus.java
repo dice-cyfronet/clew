@@ -131,8 +131,11 @@ public interface MainEventBus extends EventBusWithLookup {
 	void showExternalInterfacesEditorForApplianceType(String applianceTypeId);
 
 	@Event(handlers = InitialConfigurationPickerPresenter.class)
-	void showInitialConfigPicker(List<ApplianceConfiguration> applianceConfigurations);
+	void showInitialConfigPicker(List<ApplianceConfiguration> applianceConfigurations, boolean developmentMode);
 
 	@Event(handlers = InitialConfigsEditorPresenter.class)
 	void cancelEditInitialConfiguration(String initialConfigurationId);
+	
+	@Event(handlers = ApplicationsPresenter.class, historyConverter = TabHistoryConverter.class)
+	void startInstance(String applianceTypeId);
 }

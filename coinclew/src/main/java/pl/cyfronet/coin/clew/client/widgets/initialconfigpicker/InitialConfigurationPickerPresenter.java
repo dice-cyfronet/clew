@@ -12,11 +12,14 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = InitialConfigurationPickerView.class)
 public class InitialConfigurationPickerPresenter extends BasePresenter<IInitialConfigurationPickerView, MainEventBus> implements IInitialConfigurationPickerPresenter {
+	private boolean developmentMode;
+
 	public void onStart() {
 		eventBus.addPopup(view);
 	}
 	
-	public void onShowInitialConfigPicker(List<ApplianceConfiguration> applianceConfigurations) {
+	public void onShowInitialConfigPicker(List<ApplianceConfiguration> applianceConfigurations, boolean deelopmentMode) {
+		this.developmentMode = deelopmentMode;
 		view.clearConfigs();
 		
 		for (ApplianceConfiguration config : applianceConfigurations) {
@@ -30,6 +33,6 @@ public class InitialConfigurationPickerPresenter extends BasePresenter<IInitialC
 	public void onStartInstance() {
 		String configId = view.getConfig().getValue();
 		view.showModal(false);
-		eventBus.startApplications(Arrays.asList(new String[] {configId}), true);
+		eventBus.startApplications(Arrays.asList(new String[] {configId}), developmentMode);
 	}
 }

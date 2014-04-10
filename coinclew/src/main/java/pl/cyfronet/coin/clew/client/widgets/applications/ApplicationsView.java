@@ -4,13 +4,13 @@ import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IAppl
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Row;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -87,5 +87,10 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	@Override
 	public void showHeaderRow(boolean show) {
 		headerRow.setVisible(show);
+	}
+
+	@Override
+	public void showNoInitialConfigurationsMessage() {
+		Window.alert(messages.noInitialConfigurationsMessage());
 	}
 }

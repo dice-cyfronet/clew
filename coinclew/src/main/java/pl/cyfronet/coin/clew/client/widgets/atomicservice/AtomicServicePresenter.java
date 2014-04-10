@@ -95,7 +95,7 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 					eventBus.startApplications(
 							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), true);
 				} else {
-					eventBus.showInitialConfigPicker(applianceConfigurations);
+					eventBus.showInitialConfigPicker(applianceConfigurations, true);
 				}
 			}
 		});
