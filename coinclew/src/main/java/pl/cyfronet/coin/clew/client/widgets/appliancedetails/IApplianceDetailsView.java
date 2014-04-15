@@ -19,7 +19,7 @@ public interface IApplianceDetailsView extends IsWidget {
 	HasWidgets getContainer();
 	HasWidgets getNameContainer();
 	String getDefaultValueLabel();
-	HasValue<String> addCores(Map<String, String> options);
-	HasValue<String> addRam(Map<String, String> options);
-	HasValue<String> addDisk(Map<String, String> options);
+	HasValue<String> addCores(Map<String, String> options, String value);
+	HasValue<String> addRam(Map<String, String> options, String value);
+	HasValue<String> addDisk(Map<String, String> options, String value);
 }

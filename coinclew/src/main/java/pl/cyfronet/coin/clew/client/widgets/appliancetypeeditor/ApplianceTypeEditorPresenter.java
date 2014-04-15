@@ -9,7 +9,6 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
-import com.google.gwt.event.logical.shared.HasOpenHandlers;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;

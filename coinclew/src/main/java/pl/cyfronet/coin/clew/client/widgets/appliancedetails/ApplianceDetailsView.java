@@ -113,9 +113,9 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	}
 
 	@Override
-	public HasValue<String> addCores(Map<String, String> options) {
+	public HasValue<String> addCores(Map<String, String> options, String value) {
 		ControlLabel label = new ControlLabel(messages.coresLabel());
-		final ListBox listBox = createListBox(options);
+		final ListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
 		
@@ -146,20 +146,22 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		};
 	}
 
-	private ListBox createListBox(Map<String, String> options) {
+	private ListBox createListBox(Map<String, String> options, String value) {
 		ListBox result = new ListBox();
 		
-		for(String value : options.keySet()) {
-			result.addItem(options.get(value), value);
+		for(String v : options.keySet()) {
+			result.addItem(options.get(v), v);
 		}
+		
+		result.setSelectedValue(value);
 		
 		return result;
 	}
 
 	@Override
-	public HasValue<String> addRam(Map<String, String> options) {
+	public HasValue<String> addRam(Map<String, String> options, String value) {
 		ControlLabel label = new ControlLabel(messages.ramLabel());
-		final ListBox listBox = createListBox(options);
+		final ListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
 		
@@ -191,9 +193,9 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	}
 
 	@Override
-	public HasValue<String> addDisk(Map<String, String> options) {
+	public HasValue<String> addDisk(Map<String, String> options, String value) {
 		ControlLabel label = new ControlLabel(messages.diskLabel());
-		final ListBox listBox = createListBox(options);
+		final ListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
 		

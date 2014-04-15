@@ -80,9 +80,9 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 						for (ApplianceType applianceType : applianceTypes) { 
 							String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
 							names.put(initialConfigId, view.addName(applianceType.getName()));
-							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions())));
-							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions())));
-							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions())));
+							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()), applianceType.getPreferenceCpu()));
+							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions()), applianceType.getPreferenceMemory()));
+							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions()), applianceType.getPreferenceDisk()));
 						}
 					}
 				});
