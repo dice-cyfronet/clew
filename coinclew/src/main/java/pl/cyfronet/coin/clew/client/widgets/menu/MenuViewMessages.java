@@ -6,4 +6,7 @@ public interface MenuViewMessages extends Messages {
 	String appsMenuLabel();
 	String wfsMenuLabel();
 	String devMenuLabel();
+	String applicationsInfo();
+	String workflowsInfo();
+	String developmentInfo();
 }
