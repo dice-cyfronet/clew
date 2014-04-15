@@ -39,11 +39,11 @@
 			<b:ListBox ui:field="ram" addStyleNames="input-block-level"/>
 			<b:ControlLabel><ui:text from="{messages.diskLabel}"/></b:ControlLabel>
 			<b:ListBox ui:field="disk" addStyleNames="input-block-level"/>
-			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
-			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
 		</b:Form>
 		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.invisible}"/>
 		<b:ModalFooter>
+			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

@@ -27,8 +27,8 @@
 			display: block;
 			clear: both;
 		}
-		.upload {
-			margin-bottom: 10px;
+		.label {
+			margin-right: 10px;
 		}
 	</ui:style>
 	<b:Modal ui:field="keyModal" title="{messages.keyManagerModalLabel}"  animation="true" closeVisible="false" keyboard="false">
@@ -43,10 +43,10 @@
 			<g:InlineHTML><ui:text from="{messages.keyFromFileLabel}"/></g:InlineHTML>
 			<b:FileUpload ui:field="keyUpload" name="user_key[public_key]" enabled="false" addStyleNames="{style.file}"/>
 			<b:HelpBlock addStyleNames="{style.help}"><ui:text from="{messages.keyHelp}"/></b:HelpBlock>
-			<b:Button ui:field="uploadKey" icon="KEY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}" addStyleNames="{style.upload}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
 		</b:Form>
-		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>
 		<b:ModalFooter>
+			<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden} {style.label}"/>
+			<b:Button ui:field="uploadKey" icon="KEY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

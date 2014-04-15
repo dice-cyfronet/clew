@@ -28,12 +28,10 @@
 			<b:ControlLabel><ui:text from="{messages.payloadLabel}"/></b:ControlLabel>
 			<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
 			<b:HelpBlock><ui:text from="{messages.payloadHelp}"/></b:HelpBlock>
-			<g:FlowPanel addStyleNames="{style.main-action}">
-				<b:Button ui:field="process"><ui:text from="{messages.processConfig}"/></b:Button>
-			</g:FlowPanel>
 		</b:Form>
 		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>
 		<b:ModalFooter>
+			<b:Button ui:field="process" type="SUCCESS"><ui:text from="{messages.processConfig}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

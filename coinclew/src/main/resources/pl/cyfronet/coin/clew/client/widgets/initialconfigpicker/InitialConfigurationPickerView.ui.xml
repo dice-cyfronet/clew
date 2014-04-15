@@ -10,11 +10,11 @@
 		<b:Form>
 			<b:ControlLabel><ui:text from="{messages.configSelectLabel}"/></b:ControlLabel>
 			<b:ListBox ui:field="configListBox" addStyleNames="input-block-level"/>
+		</b:Form>
+		<b:ModalFooter>
 			<b:Button ui:field="startInstance" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startInstanceLabel}">
 				<ui:text from="{messages.startInstanceLabel}"/>
 			</b:Button>
-		</b:Form>
-		<b:ModalFooter>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>
