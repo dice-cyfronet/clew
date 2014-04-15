@@ -4,6 +4,7 @@ import pl.cyfronet.coin.clew.client.widgets.root.IRootView.IRootPresenter;
 
 import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -22,11 +24,20 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	
 	@UiField FlowPanel menuPanel;
 	@UiField FlowPanel bodyPanel;
-	@UiField Label errorLabel;
 	@UiField FlowPanel popups;
 	@UiField HTML buildInfo;
+	PopupPanel errorPopup;
+	HTML errorLabel;
 
 	public RootView() {
+		errorLabel = new HTML();
+		errorLabel.addStyleName("alert alert-error");
+		errorLabel.getElement().getStyle().setMargin(10, Unit.PX);
+		
+		errorPopup = new PopupPanel();
+		errorPopup.add(errorLabel);
+		errorPopup.setAnimationEnabled(true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -63,7 +74,11 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 
 	@Override
 	public void setErrorLabelVisible(boolean visible) {
-		errorLabel.setVisible(visible);
+		if(visible) {
+			errorPopup.show();
+		} else {
+			errorPopup.hide();
+		}
 	}
 
 	@Override

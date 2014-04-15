@@ -51,8 +51,8 @@ public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implem
 		errorTimer = new Timer() {
 			@Override
 			public void run() {
-				view.getErrorLabel().setText("");
 				view.setErrorLabelVisible(false);
+				view.getErrorLabel().setText("");
 				errorTimer = null;
 			}
 		};

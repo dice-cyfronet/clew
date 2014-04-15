@@ -6,7 +6,6 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<g:HTML ui:field="buildInfo" visible="false"/>
-		<b:Label ui:field="errorLabel" type="WARNING" visible="false"/>
 		<g:FlowPanel ui:field="menuPanel"/>
 		<hr/>
 		<g:FlowPanel ui:field="bodyPanel"/>
