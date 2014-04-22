@@ -13,7 +13,6 @@ import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.EndpointCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
@@ -55,6 +54,9 @@ import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointService;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.EndpointsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.NewEndpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.NewEndpointRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
+import pl.cyfronet.coin.clew.client.controller.cf.flavor.FlavorService;
+import pl.cyfronet.coin.clew.client.controller.cf.flavor.FlavorsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingService;
@@ -204,6 +206,10 @@ public class CloudFacadeController {
 		void onRemoved();
 	}
 	
+	public interface FlavorsCallback {
+		void processFlavors(List<Flavor> flavors);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -220,6 +226,7 @@ public class CloudFacadeController {
 	private UserService userService;
 	private PortMappingTemplatePropertyService portMappingTemplatePropertyService;
 	private CfErrorReader errorReader;
+	private FlavorService flavorService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -229,7 +236,8 @@ public class CloudFacadeController {
 			EndpointService endpointService, UserKeyService userKeyService,
 			DevelopmentModePropertySetService developmentModePropertySetService,
 			PortMappingService portMappingService, UserService userService,
-			PortMappingTemplatePropertyService portMappingTemplatePropertyService, SimpleErrorHandler simpleErrorHandler, CfErrorReader errorReader) {
+			PortMappingTemplatePropertyService portMappingTemplatePropertyService, FlavorService flavorService,
+			SimpleErrorHandler simpleErrorHandler, CfErrorReader errorReader) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -244,6 +252,7 @@ public class CloudFacadeController {
 		this.portMappingService = portMappingService;
 		this.userService = userService;
 		this.portMappingTemplatePropertyService = portMappingTemplatePropertyService;
+		this.flavorService = flavorService;
 		CloudFacadeController.simpleErrorHandler = simpleErrorHandler;
 		this.errorReader = errorReader;
 	}
@@ -1660,6 +1669,22 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, EndpointRequestResponse response) {
 				if (endpointCallback != null) {
 					endpointCallback.processEndpoint(response.getEndpoint());
+				}
+			}
+		});
+	}
+
+	public void getFlavors(String applianceTypeId, String cpu, String memory, String disk, final FlavorsCallback callback) {
+		flavorService.getFlavors(applianceTypeId, cpu, memory, disk, new MethodCallback<FlavorsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, FlavorsResponse response) {
+				if(callback != null) {
+					callback.processFlavors(response.getFlavors());
 				}
 			}
 		});

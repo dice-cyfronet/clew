@@ -11,10 +11,13 @@ import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,6 +27,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -44,6 +48,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField CheckBox checked;
 	@UiField Styles style;
 	@UiField ListBox initialConfigs;
+	@UiField FlowPanel flavorContainer;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -155,5 +160,33 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 				initialConfigs.setSelectedValue(value);
 			}
 		};
+	}
+
+	@Override
+	public void showFlavorProgress(boolean show) {
+		flavorContainer.clear();
+		
+		Icon spinner = new Icon(IconType.SPINNER);
+		spinner.getElement().getStyle().setMarginRight(10, Unit.PX);
+		spinner.setSpin(true);
+		flavorContainer.add(spinner);
+		
+		
+		InlineHTML loadingText = new InlineHTML(messages.loadingFlavor());
+		loadingText.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+		flavorContainer.add(loadingText);
+	}
+
+	@Override
+	public void showFlavorInformation(String name, Integer hourlyCost) {
+		flavorContainer.clear();
+		flavorContainer.add(new Label(LabelType.INFO, messages.flavorInfo(name, 
+				"$" + NumberFormat.getFormat("0.0000").format(((float) hourlyCost / 10000)))));
+	}
+
+	@Override
+	public void showFlavorError() {
+		flavorContainer.clear();
+		flavorContainer.add(new Label(LabelType.IMPORTANT, messages.flavorError()));
 	}
 }

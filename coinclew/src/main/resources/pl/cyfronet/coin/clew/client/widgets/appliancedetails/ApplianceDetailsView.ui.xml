@@ -4,12 +4,16 @@
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsMessages" field="messages"/>
 	<ui:style>
+		.flavor {
+			text-align: right;
+		}
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
 		<b:Form>
 			<g:FlowPanel ui:field="nameContainer"/>
 			<b:ControlLabel><ui:text from="{messages.keysLabel}"/></b:ControlLabel>
 			<g:FlowPanel ui:field="container"/>
+			<g:FlowPanel ui:field="flavorContainer" addStyleNames="{style.flavor}"/>
 		</b:Form>
 		<b:ModalFooter>
 			<b:Button ui:field="start" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startButtonLabel}"><ui:text from="{messages.startButtonLabel}"/></b:Button>

@@ -11,15 +11,18 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserKeysCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -34,6 +37,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private Map<String, HasValue<String>> cores;
 	private Map<String, HasValue<String>> rams;
 	private Map<String, HasValue<String>> disks;
+	private Map<String, HasWidgets> flavorContainers;
+	private Map<String, String> applianceTypeIdToInitialConfigIdMapping;
 
 	@Inject
 	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController, ClewProperties properties) {
@@ -44,6 +49,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		cores = new HashMap<String, HasValue<String>>();
 		rams = new HashMap<String, HasValue<String>>();
 		disks = new HashMap<String, HasValue<String>>();
+		flavorContainers = new HashMap<String, HasWidgets>();
+		applianceTypeIdToInitialConfigIdMapping = new HashMap<String, String>();
 	}
 	
 	public void onStart() {
@@ -80,9 +87,12 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 						for (ApplianceType applianceType : applianceTypes) { 
 							String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
 							names.put(initialConfigId, view.addName(applianceType.getName()));
-							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()), applianceType.getPreferenceCpu()));
-							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions()), applianceType.getPreferenceMemory()));
-							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions()), applianceType.getPreferenceDisk()));
+							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()), applianceType.getPreferenceCpu(), applianceType.getId()));
+							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions()), applianceType.getPreferenceMemory(), applianceType.getId()));
+							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions()), applianceType.getPreferenceDisk(), applianceType.getId()));
+							flavorContainers.put(applianceType.getId(), view.addFlavorContainer());
+							applianceTypeIdToInitialConfigIdMapping.put(applianceType.getId(), initialConfigId);
+							updateFlavorDetails(applianceType.getId(), applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk());
 						}
 					}
 				});
@@ -102,6 +112,37 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 				}
 			}
 		});
+	}
+	
+	private void updateFlavorDetails(final String applianceTypeId, String cpu, String ram, String disk) {
+		view.showFlavorProgress(flavorContainers.get(applianceTypeId), true);
+		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu,
+				ram == null ? "0" : ram, disk == null ? "0" : disk, new FlavorsCallback() {
+					@Override
+					public void processFlavors(List<Flavor> flavors) {
+						view.showFlavorProgress(flavorContainers.get(applianceTypeId), false);
+						
+						Flavor flavor = getCheapest(flavors);
+						
+						if(flavor != null) {
+							view.showFlavorInformation(flavorContainers.get(applianceTypeId), flavor.getName(), flavor.getHourlyCost());
+						} else {
+							view.showFlavorError(flavorContainers.get(applianceTypeId));
+						}
+					}
+				});
+	}
+	
+	private Flavor getCheapest(List<Flavor> flavors) {
+		Flavor result = null;
+		
+		for(Flavor flavor : flavors) {
+			if(result == null || flavor.getHourlyCost() < result.getHourlyCost()) {
+				result = flavor;
+			}
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -135,6 +176,13 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 				eventBus.refreshDevelopmentInstanceList();
 			}
 		});
+	}
+	
+	@Override
+	public void onPreferenceChanged(String applianceTypeId) {
+		String initialConfigId = applianceTypeIdToInitialConfigIdMapping.get(applianceTypeId);
+		updateFlavorDetails(applianceTypeId, cores.get(initialConfigId).getValue(), rams.get(initialConfigId).getValue(),
+				disks.get(initialConfigId).getValue());
 	}
 	
 	private Map<String, String> createPreferenceMapping(Map<String, HasValue<String>> preferences) {

@@ -66,7 +66,10 @@
 				<b:CheckBox ui:field="checked" enabled="false"/>
 			</g:FlowPanel>
 		</g:FlowPanel>
-		<g:HTML ui:field="name" addStyleNames="{style.name}"/>
+		<g:FlowPanel addStyleNames="{style.name}">
+			<g:HTML ui:field="name"/>
+			<g:FlowPanel ui:field="flavorContainer"/>
+		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.description-panel}">
 			<g:HTML ui:field="description" addStyleNames="{style.description-text}"/>
 			<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>

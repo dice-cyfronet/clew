@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IApplianceDetailsView extends IsWidget {
 	interface IApplianceDetailsPresenter {
 		void onStartInstance();
+		void onPreferenceChanged(String applianceTypeId);
 	}
 
 	void showModal(boolean show);
@@ -19,7 +20,11 @@ public interface IApplianceDetailsView extends IsWidget {
 	HasWidgets getContainer();
 	HasWidgets getNameContainer();
 	String getDefaultValueLabel();
-	HasValue<String> addCores(Map<String, String> options, String value);
-	HasValue<String> addRam(Map<String, String> options, String value);
-	HasValue<String> addDisk(Map<String, String> options, String value);
+	HasValue<String> addCores(Map<String, String> options, String value, String applianceTypeId);
+	HasValue<String> addRam(Map<String, String> options, String value, String applianceTypeId);
+	HasValue<String> addDisk(Map<String, String> options, String value, String applianceTypeId);
+	void showFlavorProgress(HasWidgets container, boolean show);
+	void showFlavorError(HasWidgets container);
+	void showFlavorInformation(HasWidgets container, String name, Integer hourlyCost);
+	HasWidgets addFlavorContainer();
 }

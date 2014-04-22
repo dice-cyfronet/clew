@@ -13,4 +13,7 @@ public interface ApplianceDetailsMessages extends Messages {
 	String coresLabel();
 	String ramLabel();
 	String diskLabel();
+	String loadingFlavor();
+	String flavorError();
+	String flavorDetails(String name, String cost);
 }

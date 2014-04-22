@@ -21,4 +21,7 @@ public interface IApplianceTypeView extends IsWidget {
 	HasValue<Boolean> getChecked();
 	void showInitialConfigs();
 	HasValue<String> getInitialConfigs();
+	void showFlavorProgress(boolean show);
+	void showFlavorInformation(String name, Integer hourlyCost);
+	void showFlavorError();
 }

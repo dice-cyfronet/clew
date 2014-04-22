@@ -6,8 +6,10 @@ import java.util.List;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
 import com.google.inject.Inject;
@@ -53,9 +55,35 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 					}
 					
 					view.enableControls(true);
+					
+					if(!ApplianceTypePresenter.this.developmentMode) {
+						updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
+								ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
+								ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
+								ApplianceTypePresenter.this.applianceType.getPreferenceDisk());
+					}
 				}
 			}
 		});
+	}
+
+	private void updateFlavorInformation(String applianceTypeId, String cpu, String ram,
+			String disk) {
+		view.showFlavorProgress(true);
+		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu, ram == null ? "0" : ram, disk == null ? "0" : disk, new FlavorsCallback() {
+					@Override
+					public void processFlavors(List<Flavor> flavors) {
+						view.showFlavorProgress(false);
+						
+						Flavor flavor = getCheapest(flavors);
+						
+						if(flavor != null) {
+							view.showFlavorInformation(flavor.getName(), flavor.getHourlyCost());
+						} else {
+							view.showFlavorError();
+						}
+					}
+				});
 	}
 
 	@Override
@@ -76,5 +104,17 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	public boolean matchesFilter(String filterText) {
 		return applianceType.getName() != null && applianceType.getName().toLowerCase().contains(filterText.toLowerCase()) ||
 				applianceType.getDescription() != null && applianceType.getDescription().toLowerCase().contains(filterText.toLowerCase());
+	}
+	
+	private Flavor getCheapest(List<Flavor> flavors) {
+		Flavor result = null;
+		
+		for(Flavor flavor : flavors) {
+			if(result == null || flavor.getHourlyCost() < result.getHourlyCost()) {
+				result = flavor;
+			}
+		}
+		
+		return result;
 	}
 }
