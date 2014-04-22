@@ -16,6 +16,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.userkey.UserKeyPresenter;
 
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -46,7 +47,11 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 		if (ticket != null) {
 			view.addHiddenField("mi_ticket", ticket);
 		} else {
-			view.addHiddenField("private_token", ticketReader.getCfToken());
+			if(Window.Location.getParameter("private_token") != null) {
+				view.addHiddenField("private_token", Window.Location.getParameter("private_token"));
+			} else {
+				view.addHiddenField("private_token", ticketReader.getCfToken());
+			}
 		}
 		
 		view.setFormAction(cloudFacadeEndpointProperty.getCloudFacadeEndpoint() + properties.userKeyUploadPath());
