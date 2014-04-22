@@ -49,6 +49,8 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField Styles style;
 	@UiField ListBox initialConfigs;
 	@UiField FlowPanel flavorContainer;
+	@UiField FlowPanel computeSiteContainer;
+	@UiField ListBox computeSites;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -188,5 +190,75 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	public void showFlavorError() {
 		flavorContainer.clear();
 		flavorContainer.add(new Label(LabelType.IMPORTANT, messages.flavorError()));
+	}
+
+	@Override
+	public void showComputeSiteProgressIndicator(boolean show) {
+		if(show) {
+			Icon icon = new Icon(IconType.SPINNER);
+			icon.setSpin(true);
+			computeSiteContainer.add(icon);
+		} else {
+			computeSiteContainer.clear();
+		}
+	}
+
+	@Override
+	public void showSingleComputeSite() {
+		computeSiteContainer.add(new Label(LabelType.SUCCESS, messages.singleComputeSite()));
+	}
+
+	@Override
+	public void showNoComputeSitesMessage() {
+		computeSiteContainer.add(new Label(LabelType.IMPORTANT, messages.noComputeSite()));
+	}
+
+	@Override
+	public void addComputeSite(String computeSiteId, String computeSiteName) {
+		computeSites.addItem(computeSiteName, computeSiteId);
+	}
+
+	@Override
+	public void showComputeSiteSelector() {
+		computeSites.setVisible(true);
+	}
+
+	@Override
+	public void showNoComputeSitesBecauseNoInitialConfigurations() {
+		computeSiteContainer.add(new Label(LabelType.WARNING, messages.noComputeSitesWhenNoInitialConfiguratrions()));
+	}
+
+	@Override
+	public String getAnyComputeSiteLabel() {
+		return messages.anyComputeSiteLabel();
+	}
+
+	@Override
+	public HasValue<String> getComputeSites() {
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return computeSites.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				computeSites.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				computeSites.setSelectedValue(value);
+			}
+		};
 	}
 }

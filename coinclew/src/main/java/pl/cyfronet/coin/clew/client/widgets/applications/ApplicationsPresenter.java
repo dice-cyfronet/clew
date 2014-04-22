@@ -80,7 +80,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 					view.showNoInitialConfigurationsMessage();
 				} else if(applianceConfigurations.size() == 1) {
 					eventBus.startApplications(
-							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), false);
+							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), null, false);
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, false);
 				}

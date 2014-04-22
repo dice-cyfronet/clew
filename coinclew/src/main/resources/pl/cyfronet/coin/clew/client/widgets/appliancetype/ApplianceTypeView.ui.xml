@@ -75,6 +75,9 @@
 			<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>
 			<b:ListBox ui:field="initialConfigs" visible="false"/>
 			<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
+			<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickComputeSiteLabel}"/>:</g:HTML>
+			<b:ListBox ui:field="computeSites" visible="false"/>
+			<g:FlowPanel ui:field="computeSiteContainer" addStyleNames="{style.left-margin}"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
 			<g:FlowPanel addStyleNames="{style.inner-control}">

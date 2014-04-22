@@ -24,6 +24,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, Map<String, HasText>> params;
 	private boolean developmentMode;
+	private Map<String, List<String>> computeSiteIds;
 
 	@Inject
 	public InitialConfigEmbedPresenter(CloudFacadeController cloudFacadeController) {
@@ -35,8 +36,9 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 		eventBus.addPopup(view);
 	}
 	
-	public void onStartApplications(final List<String> initialConfigurationIds, boolean developmentMode) {
+	public void onStartApplications(final List<String> initialConfigurationIds, final Map<String, List<String>> computeSiteIds, boolean developmentMode) {
 		this.developmentMode = developmentMode;
+		this.computeSiteIds = computeSiteIds;
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
@@ -79,9 +81,9 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 					});
 				} else {
 					if (InitialConfigEmbedPresenter.this.developmentMode) {
-						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds);
+						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds, computeSiteIds);
 					} else {
-						cloudFacadeController.startApplianceTypes(initialConfigurationIds, new Command() {
+						cloudFacadeController.startApplianceTypes(initialConfigurationIds, computeSiteIds, new Command() {
 							@Override
 							public void execute() {
 								eventBus.refreshInstanceList();
@@ -108,10 +110,10 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 		
 		if (developmentMode) {
 			view.showModal(false);
-			eventBus.showApplianceStartDetailsEditorForConfigParams(parameterValues);
+			eventBus.showApplianceStartDetailsEditorForConfigParams(parameterValues, computeSiteIds);
 		} else {
 			view.setStartBusyState(true);
-			cloudFacadeController.startApplianceTypes(parameterValues, new Command() {
+			cloudFacadeController.startApplianceTypes(parameterValues, computeSiteIds, new Command() {
 				@Override
 				public void execute() {
 					view.setStartBusyState(false);

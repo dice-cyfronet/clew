@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.controller.cf.applianceinstance;
 
+import java.util.List;
 import java.util.Map;
 
 import org.fusesource.restygwt.client.Json;
@@ -15,6 +16,9 @@ public class NewApplianceInstance {
 	private String userKeyId;
 	@Json(name = "dev_mode_property_set")
 	private Map<String, String> developmentProperties;
+	@Json(name = "compute_site_ids")
+	private List<String> computeSiteIds;
+	
 	
 	public String getConfigurationTemplateId() {
 		return configurationTemplateId;
@@ -51,5 +55,12 @@ public class NewApplianceInstance {
 	}
 	public void setDevelopmentProperties(Map<String, String> developmentProperties) {
 		this.developmentProperties = developmentProperties;
+	}
+	
+	public List<String> getComputeSiteIds() {
+		return computeSiteIds;
+	}
+	public void setComputeSiteIds(List<String> computeSiteIds) {
+		this.computeSiteIds = computeSiteIds;
 	}
 }

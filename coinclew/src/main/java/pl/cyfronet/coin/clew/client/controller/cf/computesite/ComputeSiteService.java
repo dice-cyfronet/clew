@@ -19,4 +19,8 @@ public interface ComputeSiteService extends RestService {
 	@GET
 	@Path("compute_sites/{id}")
 	void getComputeSite(@PathParam("id") String computeSiteId, MethodCallback<ComputeSiteRequestResponse> methodCallback);
+
+	@GET
+	@Path("compute_sites?id={ids}")
+	void getComputeSites(@PathParam("ids") String ids, MethodCallback<ComputeSitesResponse> methodCallback);
 }

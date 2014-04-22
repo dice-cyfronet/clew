@@ -1,8 +1,13 @@
 package pl.cyfronet.coin.clew.client.controller.cf.appliancetype;
 
+import java.util.List;
+
+import org.fusesource.restygwt.client.Json;
 
 public class ApplianceType extends NewApplianceType {
 	private String id;
+	@Json(name = "compute_site_ids")
+	private List<String> computeSiteIds;
 
 	public String getId() {
 		return id;
@@ -32,5 +37,12 @@ public class ApplianceType extends NewApplianceType {
 				+ ", getSecurityProxyId()=" + getSecurityProxyId()
 				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
 				+ "]";
+	}
+	
+	public List<String> getComputeSiteIds() {
+		return computeSiteIds;
+	}
+	public void setComputeSiteIds(List<String> computeSiteIds) {
+		this.computeSiteIds = computeSiteIds;
 	}
 }

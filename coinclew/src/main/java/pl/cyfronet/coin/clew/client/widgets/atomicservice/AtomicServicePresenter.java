@@ -93,7 +93,7 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 					view.showNoInitialConfigurationsMessage();
 				} else if (applianceConfigurations.size() == 1) {
 					eventBus.startApplications(
-							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), true);
+							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), null, true);
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, true);
 				}

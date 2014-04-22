@@ -1,14 +1,18 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSitesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
@@ -40,6 +44,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		
 		view.clearInitialConfigsContainer();
 		view.addInitialConfigsProgressIndicator();
+		view.showComputeSiteProgressIndicator(true);
 		cloudFacadeController.getInitialConfigurations(applianceType.getId(), new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations) {
@@ -47,6 +52,8 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				
 				if (applianceConfigurations.size() == 0) {
 					view.addNoInitialConfigsLabel();
+					view.showComputeSiteProgressIndicator(false);
+					view.showNoComputeSitesBecauseNoInitialConfigurations();
 				} else {
 					view.showInitialConfigs();
 
@@ -61,6 +68,30 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 								ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
 								ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
 								ApplianceTypePresenter.this.applianceType.getPreferenceDisk());
+					}
+					
+					if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds() != null &&
+							ApplianceTypePresenter.this.applianceType.getComputeSiteIds().size() > 0) {
+						if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds().size() > 1) {
+							cloudFacadeController.getComputeSites(ApplianceTypePresenter.this.applianceType.getComputeSiteIds(), new ComputeSitesCallback() {
+								@Override
+								public void processComputeSites(List<ComputeSite> computeSites) {
+									view.showComputeSiteProgressIndicator(false);
+									view.showComputeSiteSelector();
+									view.addComputeSite("0", view.getAnyComputeSiteLabel());
+									
+									for(ComputeSite computeSite : computeSites) {
+										view.addComputeSite(computeSite.getId(), computeSite.getName());
+									}
+								}});
+						} else {
+							//only one compute site available
+							view.showComputeSiteProgressIndicator(false);
+							view.showSingleComputeSite();
+						}
+					} else {
+						view.showComputeSiteProgressIndicator(false);
+						view.showNoComputeSitesMessage();
 					}
 				}
 			}
@@ -90,7 +121,27 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	public void onStartApplianceType() {
 		String initialConfigurationId = view.getInitialConfigs().getValue();
 		eventBus.hideStartInstanceModal();
-		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}), developmentMode);
+		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}), collectComputeSiteIds(), developmentMode);
+	}
+
+	private Map<String, List<String>> collectComputeSiteIds() {
+		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
+		
+		if(applianceType.getComputeSiteIds() != null && applianceType.getComputeSiteIds().size() > 0) {
+			if(applianceType.getComputeSiteIds().size() > 1) {
+				if(view.getInitialConfigs().getValue().equals("0")) {
+					computeSiteIds.put(view.getInitialConfigs().getValue(), applianceType.getComputeSiteIds());
+				} else {
+					computeSiteIds.put(view.getInitialConfigs().getValue(), Arrays.asList(new String[] {view.getComputeSites().getValue()}));
+				}
+			} else {
+				computeSiteIds.put(view.getInitialConfigs().getValue(), applianceType.getComputeSiteIds());
+			}
+		} else {
+			return null;
+		}
+		
+		return computeSiteIds;
 	}
 
 	public String getSelectedInitialConfigId() {
@@ -116,5 +167,9 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		}
 		
 		return result;
+	}
+
+	public String getSelectedComputeSiteId() {
+		return view.getComputeSites().getValue();
 	}
 }

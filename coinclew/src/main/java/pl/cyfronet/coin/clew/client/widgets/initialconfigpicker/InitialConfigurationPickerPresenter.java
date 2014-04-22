@@ -33,6 +33,6 @@ public class InitialConfigurationPickerPresenter extends BasePresenter<IInitialC
 	public void onStartInstance() {
 		String configId = view.getConfig().getValue();
 		view.showModal(false);
-		eventBus.startApplications(Arrays.asList(new String[] {configId}), developmentMode);
+		eventBus.startApplications(Arrays.asList(new String[] {configId}), null, developmentMode);
 	}
 }

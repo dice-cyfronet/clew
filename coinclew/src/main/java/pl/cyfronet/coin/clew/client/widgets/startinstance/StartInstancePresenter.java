@@ -1,9 +1,12 @@
 package pl.cyfronet.coin.clew.client.widgets.startinstance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
@@ -100,6 +103,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	@Override
 	public void onStartSelected() {
 		List<String> initialConfigurationIds = new ArrayList<String>();
+		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
 		
 		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
 			String initialConfigId = presenter.getSelectedInitialConfigId();
@@ -107,13 +111,19 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			if (initialConfigId != null) {
 				initialConfigurationIds.add(initialConfigId);
 			}
+			
+			String computeSiteId = presenter.getSelectedComputeSiteId();
+			
+			if(computeSiteId != null && !computeSiteId.equals("0")) {
+				computeSiteIds.put(initialConfigId, Arrays.asList(new String[] {computeSiteId}));
+			}
 		}
 		
 		if (initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
 			onHideStartInstanceModal();
-			eventBus.startApplications(initialConfigurationIds, developmentMode);
+			eventBus.startApplications(initialConfigurationIds, computeSiteIds, developmentMode);
 		}
 	}
 

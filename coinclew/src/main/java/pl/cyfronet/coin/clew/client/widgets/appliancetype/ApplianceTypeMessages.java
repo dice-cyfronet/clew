@@ -1,7 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface ApplianceTypeMessages extends Messages {
 	String emptyDescriptionLabel();
@@ -10,5 +9,10 @@ public interface ApplianceTypeMessages extends Messages {
 	String pickInitConfigLabel();
 	String flavorError();
 	String flavorInfo(String name, String cost);
-	SafeHtml loadingFlavor();
+	String loadingFlavor();
+	String pickComputeSiteLabel();
+	String singleComputeSite();
+	String noComputeSite();
+	String noComputeSitesWhenNoInitialConfiguratrions();
+	String anyComputeSiteLabel();
 }

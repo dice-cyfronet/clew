@@ -45,6 +45,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVmsRespon
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSiteService;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSitesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySetService;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySetsResponse;
@@ -210,6 +211,10 @@ public class CloudFacadeController {
 		void processFlavors(List<Flavor> flavors);
 	}
 	
+	public interface ComputeSitesCallback {
+		void processComputeSites(List<ComputeSite> computeSites);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -289,7 +294,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypes(final List<String> configurationTemplateIds, final Command command) {
+	public void startApplianceTypes(final List<String> configurationTemplateIds, final Map<String, List<String>> computeSiteIds, final Command command) {
 		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -302,6 +307,11 @@ public class CloudFacadeController {
 					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
 					applianceInstanceRequest.setApplianceInstance(applianceInstance);
+					
+					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
+						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
+					}
+					
 					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
@@ -760,7 +770,7 @@ public class CloudFacadeController {
 		return builder.toString();
 	}
 
-	public void startApplianceTypes(final Map<String, Map<String, String>> parameterValues, final Command command) {
+	public void startApplianceTypes(final Map<String, Map<String, String>> parameterValues, final Map<String, List<String>> computeSiteIds, final Command command) {
 		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -772,6 +782,10 @@ public class CloudFacadeController {
 					applianceInstance.setApplianceSetId(applianceSet.getId());
 					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
 					applianceInstance.setParams(parameterValues.get(configurationTemplateId));
+					
+					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
+						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
+					}
 					
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
 					applianceInstanceRequest.setApplianceInstance(applianceInstance);
@@ -832,46 +846,8 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypesInDevelopment(final List<String> configurationTemplateIds, final Command command) {
-		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
-			@Override
-			public void processApplianceSet(ApplianceSet applianceSet) {
-				final List<String> started = new ArrayList<String>();
-				final List<String> failed = new ArrayList<String>();
-				
-				for (final String configurationTemplateId : configurationTemplateIds) {
-					NewApplianceInstance applianceInstance = new NewApplianceInstance();
-					applianceInstance.setApplianceSetId(applianceSet.getId());
-					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
-					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
-					applianceInstanceRequest.setApplianceInstance(applianceInstance);
-					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
-						@Override
-						public void onFailure(Method method, Throwable exception) {
-							failed.add(configurationTemplateId);
-							simpleErrorHandler.displayError(exception.getMessage());
-							checkReturn();
-						}
-
-						@Override
-						public void onSuccess(Method method, ApplianceInstanceRequestResponse response) {
-							started.add(configurationTemplateId);
-							checkReturn();
-						}
-						
-						private void checkReturn() {
-							if (started.size() + failed.size() == configurationTemplateIds.size() && command != null) {
-								command.execute();
-							}
-						}
-					});
-				}
-			}
-		});
-	}
-
 	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String, Map<String, String>> parameterValues,
-			final Map<String, String> cores, final Map<String, String> rams, final Map<String, String> disks, final Command command) {
+			final Map<String, String> cores, final Map<String, String> rams, final Map<String, String> disks, final Map<String, List<String>> computeSiteIds, final Command command) {
 		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -891,6 +867,10 @@ public class CloudFacadeController {
 					
 					if (overrideNames != null && overrideNames.containsKey(configurationTemplateId)) {
 						applianceInstance.setName(overrideNames.get(configurationTemplateId));
+					}
+					
+					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
+						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
 					}
 					
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
@@ -1685,6 +1665,22 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, FlavorsResponse response) {
 				if(callback != null) {
 					callback.processFlavors(response.getFlavors());
+				}
+			}
+		});
+	}
+
+	public void getComputeSites(List<String> computeSiteIds, final ComputeSitesCallback computeSitesCallback) {
+		computeSitesService.getComputeSites(join(computeSiteIds, ","), new MethodCallback<ComputeSitesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, ComputeSitesResponse response) {
+				if(computeSitesCallback != null) {
+					computeSitesCallback.processComputeSites(response.getComputeSites());
 				}
 			}
 		});

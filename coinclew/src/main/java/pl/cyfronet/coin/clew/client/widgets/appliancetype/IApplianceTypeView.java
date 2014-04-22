@@ -24,4 +24,12 @@ public interface IApplianceTypeView extends IsWidget {
 	void showFlavorProgress(boolean show);
 	void showFlavorInformation(String name, Integer hourlyCost);
 	void showFlavorError();
+	void showComputeSiteProgressIndicator(boolean show);
+	void showSingleComputeSite();
+	void showNoComputeSitesMessage();
+	void addComputeSite(String computeSiteId, String computeSiteName);
+	void showComputeSiteSelector();
+	void showNoComputeSitesBecauseNoInitialConfigurations();
+	String getAnyComputeSiteLabel();
+	HasValue<String> getComputeSites();
 }

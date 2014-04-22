@@ -39,6 +39,7 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private Map<String, HasValue<String>> disks;
 	private Map<String, HasWidgets> flavorContainers;
 	private Map<String, String> applianceTypeIdToInitialConfigIdMapping;
+	private Map<String, List<String>> computeSiteIds;
 
 	@Inject
 	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController, ClewProperties properties) {
@@ -57,7 +58,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		eventBus.addPopup(view);
 	}
 	
-	public void onShowApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds) {
+	public void onShowApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds) {
+		this.computeSiteIds = computeSiteIds;
 		parameterValues = new HashMap<String, Map<String, String>>();
 		
 		for (String initialConfigurationId : initialConfigurationIds) {
@@ -68,8 +70,9 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		loadKeysAndNames(initialConfigurationIds);
 	}
 
-	public void onShowApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues) {
+	public void onShowApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds) {
 		this.parameterValues = parameterValues;
+		this.computeSiteIds = computeSiteIds;
 		view.showModal(true);
 		loadKeysAndNames(new ArrayList<String>(parameterValues.keySet()));
 	}
@@ -168,7 +171,7 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		Map<String, String> disks = createPreferenceMapping(this.disks);
 		
 		view.setStartBusyState(true);
-		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, cores, rams, disks, new Command() {
+		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, cores, rams, disks, computeSiteIds, new Command() {
 			@Override
 			public void execute() {
 				view.setStartBusyState(false);
