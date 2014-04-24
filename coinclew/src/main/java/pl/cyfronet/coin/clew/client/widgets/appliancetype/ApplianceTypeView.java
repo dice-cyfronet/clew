@@ -13,6 +13,8 @@ import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.WhiteSpace;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -59,6 +61,11 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiHandler("start")
 	void startClicked(ClickEvent event) {
 		presenter.onStartApplianceType();
+	}
+	
+	@UiHandler("computeSites")
+	void computeSiteChanged(ChangeEvent event) {
+		getPresenter().onComputeSiteChanged();
 	}
 
 	@Override
@@ -182,14 +189,20 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public void showFlavorInformation(String name, Integer hourlyCost) {
 		flavorContainer.clear();
-		flavorContainer.add(new Label(LabelType.INFO, messages.flavorInfo(name, 
-				"$" + NumberFormat.getFormat("0.0000").format(((float) hourlyCost / 10000)))));
+		Label label = new Label(LabelType.INFO, messages.flavorInfo(name, 
+				"$" + NumberFormat.getFormat("0.0000").format(((float) hourlyCost / 10000))));
+		label.getElement().getStyle().setWhiteSpace(WhiteSpace.NORMAL);
+		label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		flavorContainer.add(label);
 	}
 
 	@Override
 	public void showFlavorError() {
 		flavorContainer.clear();
-		flavorContainer.add(new Label(LabelType.IMPORTANT, messages.flavorError()));
+		Label label = new Label(LabelType.IMPORTANT, messages.flavorError());
+		label.getElement().getStyle().setWhiteSpace(WhiteSpace.NORMAL);
+		label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		flavorContainer.add(label);
 	}
 
 	@Override

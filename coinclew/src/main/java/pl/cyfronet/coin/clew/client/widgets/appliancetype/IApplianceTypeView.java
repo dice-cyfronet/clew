@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IApplianceTypeView extends IsWidget {
 	interface IApplianceTypePresenter {
 		void onStartApplianceType();
+		void onComputeSiteChanged();
 	}
 
 	HasText getName();

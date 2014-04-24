@@ -67,7 +67,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 						updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
 								ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
 								ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
-								ApplianceTypePresenter.this.applianceType.getPreferenceDisk());
+								ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), null);
 					}
 					
 					if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds() != null &&
@@ -99,9 +99,9 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	}
 
 	private void updateFlavorInformation(String applianceTypeId, String cpu, String ram,
-			String disk) {
+			String disk, String computeSiteId) {
 		view.showFlavorProgress(true);
-		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu, ram == null ? "0" : ram, disk == null ? "0" : disk, new FlavorsCallback() {
+		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu, ram == null ? "0" : ram, disk == null ? "0" : disk, computeSiteId, new FlavorsCallback() {
 					@Override
 					public void processFlavors(List<Flavor> flavors) {
 						view.showFlavorProgress(false);
@@ -171,5 +171,22 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 
 	public String getSelectedComputeSiteId() {
 		return view.getComputeSites().getValue();
+	}
+
+	@Override
+	public void onComputeSiteChanged() {
+		String computeSiteId = view.getComputeSites().getValue();
+		
+		if(!computeSiteId.equals("0")) {
+			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
+					ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
+					ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
+					ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), computeSiteId);
+		} else {
+			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
+				ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
+				ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
+				ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), null);
+		}
 	}
 }

@@ -1654,20 +1654,36 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getFlavors(String applianceTypeId, String cpu, String memory, String disk, final FlavorsCallback callback) {
-		flavorService.getFlavors(applianceTypeId, cpu, memory, disk, new MethodCallback<FlavorsResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, FlavorsResponse response) {
-				if(callback != null) {
-					callback.processFlavors(response.getFlavors());
+	public void getFlavors(String applianceTypeId, String cpu, String memory, String disk, String computeSiteId, final FlavorsCallback callback) {
+		if(computeSiteId == null) {
+			flavorService.getFlavors(applianceTypeId, cpu, memory, disk, new MethodCallback<FlavorsResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					simpleErrorHandler.displayError(exception.getMessage());
 				}
-			}
-		});
+	
+				@Override
+				public void onSuccess(Method method, FlavorsResponse response) {
+					if(callback != null) {
+						callback.processFlavors(response.getFlavors());
+					}
+				}
+			});
+		} else {
+			flavorService.getFlavors(applianceTypeId, cpu, memory, disk, computeSiteId, new MethodCallback<FlavorsResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					simpleErrorHandler.displayError(exception.getMessage());
+				}
+	
+				@Override
+				public void onSuccess(Method method, FlavorsResponse response) {
+					if(callback != null) {
+						callback.processFlavors(response.getFlavors());
+					}
+				}
+			});
+		}
 	}
 
 	public void getComputeSites(List<String> computeSiteIds, final ComputeSitesCallback computeSitesCallback) {

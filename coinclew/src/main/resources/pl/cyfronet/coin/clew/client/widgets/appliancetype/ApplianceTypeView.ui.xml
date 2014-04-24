@@ -59,6 +59,9 @@
 		.inner-control {
 			padding-right: 5px;
 		}
+		.nameElement {
+			margin-right: 5px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.container}">
 		<g:FlowPanel addStyleNames="{style.check}">
@@ -67,7 +70,7 @@
 			</g:FlowPanel>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.name}">
-			<g:HTML ui:field="name"/>
+			<g:HTML ui:field="name" addStyleNames="{style.nameElement}"/>
 			<g:FlowPanel ui:field="flavorContainer"/>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.description-panel}">

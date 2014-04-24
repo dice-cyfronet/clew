@@ -120,7 +120,7 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private void updateFlavorDetails(final String applianceTypeId, String cpu, String ram, String disk) {
 		view.showFlavorProgress(flavorContainers.get(applianceTypeId), true);
 		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu,
-				ram == null ? "0" : ram, disk == null ? "0" : disk, new FlavorsCallback() {
+				ram == null ? "0" : ram, disk == null ? "0" : disk, null, new FlavorsCallback() {
 					@Override
 					public void processFlavors(List<Flavor> flavors) {
 						view.showFlavorProgress(flavorContainers.get(applianceTypeId), false);
