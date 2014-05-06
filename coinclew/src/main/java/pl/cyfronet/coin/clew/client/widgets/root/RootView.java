@@ -2,7 +2,6 @@ package pl.cyfronet.coin.clew.client.widgets.root;
 
 import pl.cyfronet.coin.clew.client.widgets.root.IRootView.IRootPresenter;
 
-import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;

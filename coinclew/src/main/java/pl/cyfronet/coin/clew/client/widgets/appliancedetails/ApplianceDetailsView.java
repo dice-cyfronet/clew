@@ -16,7 +16,6 @@ import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -28,6 +27,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
@@ -286,9 +286,9 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public HasWidgets addFlavorContainer() {
 		FlowPanel flavorContainer = new FlowPanel();
-		flavorContainer.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		flavorContainer.getElement().getStyle().setMarginBottom(20, Unit.PX);
 		nameContainer.add(flavorContainer);
+		nameContainer.getElement().appendChild(DOM.createElement("hr"));
 		
 		return flavorContainer;
 	}
