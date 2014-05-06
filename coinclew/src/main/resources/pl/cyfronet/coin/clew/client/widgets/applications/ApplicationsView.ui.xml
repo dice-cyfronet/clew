@@ -42,9 +42,15 @@
 			float: left;
 			width: 10%;
 		}
+		.header-row {
+			float:left;
+			width: 100%;
+			border-bottom: solid 2px;
+			border-color: #dddddd;
+		}
 	</ui:style>
 	<g:FlowPanel>
-		<g:FlowPanel ui:field="headerRow" visible="false">
+		<g:FlowPanel ui:field="headerRow" visible="false" addStyleNames="{style.header-row}">
 			<g:HTML addStyleNames="{style.name} {style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
 			<!-- <g:HTML addStyleNames="{style.spec}"><ui:text from="{messages.specHeader}"/></g:HTML> -->
 			<g:HTML addStyleNames="{style.ip} {style.header}"><ui:text from="{messages.ipHeader}"/></g:HTML>
