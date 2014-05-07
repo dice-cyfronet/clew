@@ -11,8 +11,6 @@ public interface ApplianceTypeMessages extends Messages {
 	String flavorInfo(String name, String cost);
 	String loadingFlavor();
 	String pickComputeSiteLabel();
-	String singleComputeSite();
 	String noComputeSite();
-	String noComputeSitesWhenNoInitialConfiguratrions();
 	String anyComputeSiteLabel();
 }

@@ -53,6 +53,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField FlowPanel flavorContainer;
 	@UiField FlowPanel computeSiteContainer;
 	@UiField ListBox computeSites;
+	@UiField HTML computeSitesLabel;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -217,11 +218,6 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	}
 
 	@Override
-	public void showSingleComputeSite() {
-		computeSiteContainer.add(new Label(LabelType.SUCCESS, messages.singleComputeSite()));
-	}
-
-	@Override
 	public void showNoComputeSitesMessage() {
 		computeSiteContainer.add(new Label(LabelType.IMPORTANT, messages.noComputeSite()));
 	}
@@ -233,12 +229,8 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 	@Override
 	public void showComputeSiteSelector() {
+		computeSitesLabel.setVisible(true);
 		computeSites.setVisible(true);
-	}
-
-	@Override
-	public void showNoComputeSitesBecauseNoInitialConfigurations() {
-		computeSiteContainer.add(new Label(LabelType.WARNING, messages.noComputeSitesWhenNoInitialConfiguratrions()));
 	}
 
 	@Override

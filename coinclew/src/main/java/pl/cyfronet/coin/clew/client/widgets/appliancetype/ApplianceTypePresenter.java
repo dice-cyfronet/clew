@@ -44,7 +44,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		
 		view.clearInitialConfigsContainer();
 		view.addInitialConfigsProgressIndicator();
-		view.showComputeSiteProgressIndicator(true);
 		cloudFacadeController.getInitialConfigurations(applianceType.getId(), new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations) {
@@ -52,16 +51,12 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				
 				if (applianceConfigurations.size() == 0) {
 					view.addNoInitialConfigsLabel();
-					view.showComputeSiteProgressIndicator(false);
-					view.showNoComputeSitesBecauseNoInitialConfigurations();
 				} else {
 					view.showInitialConfigs();
 
 					for (ApplianceConfiguration config : applianceConfigurations) {
 						view.addInitialConfigValue(config.getId(), config.getName());
 					}
-					
-					view.enableControls(true);
 					
 					if(!ApplianceTypePresenter.this.developmentMode) {
 						updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
@@ -72,7 +67,10 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 					
 					if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds() != null &&
 							ApplianceTypePresenter.this.applianceType.getComputeSiteIds().size() > 0) {
+						view.enableControls(true);
+						
 						if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds().size() > 1) {
+							view.showComputeSiteProgressIndicator(true);
 							cloudFacadeController.getComputeSites(ApplianceTypePresenter.this.applianceType.getComputeSiteIds(), new ComputeSitesCallback() {
 								@Override
 								public void processComputeSites(List<ComputeSite> computeSites) {
@@ -84,10 +82,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 										view.addComputeSite(computeSite.getId(), computeSite.getName());
 									}
 								}});
-						} else {
-							//only one compute site available
-							view.showComputeSiteProgressIndicator(false);
-							view.showSingleComputeSite();
 						}
 					} else {
 						view.showComputeSiteProgressIndicator(false);
