@@ -2,13 +2,26 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.root.RootMessages" field="messages"/>
 	<ui:style>
+		.note {
+			text-align: center;
+			margin: 20px 0px;
+		}
+		.label {
+			padding: 5px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<g:HTML ui:field="buildInfo" visible="false"/>
 		<g:FlowPanel ui:field="menuPanel"/>
 		<hr/>
 		<g:FlowPanel ui:field="bodyPanel"/>
+		<g:FlowPanel addStyleNames="{style.note}">
+			<b:Label type="WARNING" addStyleNames="{style.label}">
+				<ui:text from="{messages.costNote}"/>
+			</b:Label>
+		</g:FlowPanel>
 		<g:FlowPanel ui:field="popups"/>
 	</g:HTMLPanel>
 </ui:UiBinder>
