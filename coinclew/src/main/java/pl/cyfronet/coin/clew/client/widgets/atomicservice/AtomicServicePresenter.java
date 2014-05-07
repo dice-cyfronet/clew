@@ -39,6 +39,12 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 		view.getName().setText(applianceType.getApplianceType().getName());
 		view.showInactiveLabel(!applianceType.getApplianceType().isActive());
 		
+		if(applianceType.getApplianceType().isActive()) {
+			view.enableStartButton(true);
+		} else {
+			view.enableStartButton(false);
+		}
+		
 		String description = applianceType.getApplianceType().getDescription();
 		view.getDescription().setHTML(description != null && !description.isEmpty() ? description : "&nbsp;");
 		
