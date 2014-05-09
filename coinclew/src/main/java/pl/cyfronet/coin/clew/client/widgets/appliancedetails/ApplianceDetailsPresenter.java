@@ -66,27 +66,30 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 			parameterValues.put(initialConfigurationId, new HashMap<String, String>());
 		}
 		
-		view.showModal(true);
-		loadKeysAndNames(initialConfigurationIds);
+		loadKeysAndNamesAndShowModal(initialConfigurationIds);
 	}
 
 	public void onShowApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds) {
 		this.parameterValues = parameterValues;
 		this.computeSiteIds = computeSiteIds;
-		view.showModal(true);
-		loadKeysAndNames(new ArrayList<String>(parameterValues.keySet()));
+		loadKeysAndNamesAndShowModal(new ArrayList<String>(parameterValues.keySet()));
 	}
 
-	private void loadKeysAndNames(List<String> initialConfigurationIds) {
-		view.getContainer().clear();
+	private void loadKeysAndNamesAndShowModal(List<String> initialConfigurationIds) {
 		view.getNameContainer().clear();
 		names.clear();
+		view.getKeyContainer().clear();
+		view.showKeyProgress(true);
+		view.showDetailsProgress(true);
+		view.showModal(true);
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
 				cloudFacadeController.getApplianceTypes(collectApplianceTypeIds(applianceConfigurations), new ApplianceTypesCallback() {
 					@Override
 					public void processApplianceTypes(List<ApplianceType> applianceTypes) {
+						view.showDetailsProgress(false);
+						
 						for (ApplianceType applianceType : applianceTypes) { 
 							String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
 							names.put(initialConfigId, view.addName(applianceType.getName()));
@@ -103,6 +106,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		cloudFacadeController.getUserKeys(new UserKeysCallback() {
 			@Override
 			public void processUserKeys(List<UserKey> userKeys) {
+				view.showKeyProgress(false);
+				
 				boolean firstSet = false;
 				
 				for (UserKey userKey : userKeys) {

@@ -17,7 +17,7 @@ public interface IApplianceDetailsView extends IsWidget {
 	HasValue<Boolean> addKey(String id, String name);
 	void setStartBusyState(boolean busy);
 	HasText addName(String name);
-	HasWidgets getContainer();
+	HasWidgets getKeyContainer();
 	HasWidgets getNameContainer();
 	String getDefaultValueLabel();
 	HasValue<String> addCores(Map<String, String> options, String value, String applianceTypeId);
@@ -27,4 +27,6 @@ public interface IApplianceDetailsView extends IsWidget {
 	void showFlavorError(HasWidgets container);
 	void showFlavorInformation(HasWidgets container, String name, Integer hourlyCost);
 	HasWidgets addFlavorContainer();
+	void showKeyProgress(boolean show);
+	void showDetailsProgress(boolean show);
 }

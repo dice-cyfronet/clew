@@ -48,6 +48,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@UiField ApplianceDetailsMessages messages;
 	@UiField FlowPanel container;
 	@UiField FlowPanel nameContainer;
+	@UiField FlowPanel keyProgress;
+	@UiField FlowPanel detailsProgress;
 
 	public ApplianceDetailsView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -108,7 +110,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	}
 
 	@Override
-	public HasWidgets getContainer() {
+	public HasWidgets getKeyContainer() {
 		return container;
 	}
 
@@ -291,5 +293,15 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		nameContainer.getElement().appendChild(DOM.createElement("hr"));
 		
 		return flavorContainer;
+	}
+
+	@Override
+	public void showKeyProgress(boolean show) {
+		keyProgress.setVisible(show);
+	}
+
+	@Override
+	public void showDetailsProgress(boolean show) {
+		detailsProgress.setVisible(show);
 	}
 }
