@@ -90,12 +90,17 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 				
 				if (applianceInstance.getState() == State.satisfied) {
-					if (developmentMode) {
-						view.addExternalInterfacesControl();
-						view.addSaveControl();
-					}
-					
 					displayDetails();
+				}
+				
+				if (developmentMode) {
+					view.addExternalInterfacesControl();
+					view.addSaveControl();
+					
+					if(applianceInstance.getState() == State.unsatisfied) {
+						view.enableExternalInterfaces(false);
+						view.enableSave(false);
+					}
 				}
 			}
 		});
