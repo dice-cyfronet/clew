@@ -102,6 +102,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 		view.enableEndpoints(false);
 		editMappingMode = false;
 		editEndpointMode = false;
+		editMappingId = null;
+		editEndpointId = null;
 		
 		retrievePortMappingTemplates(new PortMappingTemplatesCallback() {
 			@Override
@@ -717,70 +719,100 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 	@Override
 	public void onEditMapping(String mappingId) {
 		if(editMappingMode) {
-			clearExternalInterfaceForm();
-		} else {
-			editMappingId = mappingId;
-			PortMappingTemplate mapping = null;
-			
-			for(PortMappingTemplate mappingTemplate : mappings.keySet()) {
-				if(mappingTemplate.getId().equals(mappingId)) {
-					mapping = mappingTemplate;
-					
-					break;
-				}
+			if(editMappingId.equals(mappingId)) {
+				//disable editing
+				editMappingMode = false;
+				clearExternalInterfaceForm();
+				editMappingId = null;
+			} else {
+				//another edit action
+				view.removeMappingEditState(editMappingId);
+				editMappingId = mappingId;
 			}
-			
-			if(mapping != null) {
-				view.getExternalInterfaceName().setText(mapping.getServiceName());
-				view.getExternalInterfacePort().setText(String.valueOf(mapping.getTargetPort()));
-				view.getTransportProtocol().setValue(mapping.getTransportProtocol());
-				view.getApplicationProtocol().setValue(mapping.getApplicationProtocol());
+		} else {
+			editMappingMode = true;
+			editMappingId = mappingId;
+		}
+		
+		if(editMappingMode) {
+			fillInExternalInterfaceForm(mappingId);
+		}
+	}
+
+	private void fillInExternalInterfaceForm(String mappingId) {
+		PortMappingTemplate mapping = null;
+		
+		for(PortMappingTemplate mappingTemplate : mappings.keySet()) {
+			if(mappingTemplate.getId().equals(mappingId)) {
+				mapping = mappingTemplate;
 				
-				if(mappingProperties.get(mappingId) != null) {
-					if(mappingProperties.get(mappingId).get(PROXY_SENT_TIMEOUT) != null) {
-						view.getProxySendTimeout().setValue(mappingProperties.get(mappingId).get(PROXY_SENT_TIMEOUT).getValue());
-					}
-					
-					if(mappingProperties.get(mappingId).get(PROXY_READ_TIMEOUT) != null) {
-						view.getProxyReadTimeout().setValue(mappingProperties.get(mappingId).get(PROXY_READ_TIMEOUT).getValue());
-					}
-				}
-				
-				view.setMappingEditLabel(true);
+				break;
 			}
 		}
 		
-		editMappingMode = !editMappingMode;
+		if(mapping != null) {
+			view.getExternalInterfaceName().setText(mapping.getServiceName());
+			view.getExternalInterfacePort().setText(String.valueOf(mapping.getTargetPort()));
+			view.getTransportProtocol().setValue(mapping.getTransportProtocol());
+			view.getApplicationProtocol().setValue(mapping.getApplicationProtocol());
+			
+			if(mappingProperties.get(mappingId) != null) {
+				if(mappingProperties.get(mappingId).get(PROXY_SENT_TIMEOUT) != null) {
+					view.getProxySendTimeout().setValue(mappingProperties.get(mappingId).get(PROXY_SENT_TIMEOUT).getValue());
+				}
+				
+				if(mappingProperties.get(mappingId).get(PROXY_READ_TIMEOUT) != null) {
+					view.getProxyReadTimeout().setValue(mappingProperties.get(mappingId).get(PROXY_READ_TIMEOUT).getValue());
+				}
+			}
+			
+			view.setMappingEditLabel(true);
+		}
 	}
 
 	@Override
 	public void onEditEndpoint(String endpointId) {
 		if(editEndpointMode) {
-			clearEndpointForm();
-		} else {
-			editEndpointId = endpointId;
-			Endpoint endpoint = null;
-			
-			for(Endpoint e : endpoints.keySet()) {
-				if(e.getId().equals(endpointId)) {
-					endpoint = e;
-					
-					break;
-				}
+			if(editEndpointId.equals(endpointId)) {
+				//disable editing
+				editEndpointMode = false;
+				clearEndpointForm();
+				editEndpointId = null;
+			} else {
+				//another edit action
+				view.removeEndpointEditState(editEndpointId);
+				editEndpointId = endpointId;
 			}
-			
-			if(endpoint != null) {
-				view.getEndpointName().setText(endpoint.getName());
-				view.getEndpointType().setValue(endpoint.getEndpointType());
-				view.getInvocationPath().setText(endpoint.getInvocationPath());
-				view.getTargetPort().setValue(endpoint.getPortMappingTemplateId());
-				view.getEndpointDescription().setText(endpoint.getDescription());
-				view.getEndpointDescriptor().setText(endpoint.getDescriptor());
-				view.getSecured().setValue(endpoint.isSecured());
-				view.setEndpointEditLabel(true);
+		} else {
+			editEndpointMode = true;
+			editEndpointId = endpointId;
+		}
+		
+		if(editEndpointMode) {
+			fillInEndpointForm(endpointId);
+		}
+	}
+
+	private void fillInEndpointForm(String endpointId) {
+		Endpoint endpoint = null;
+		
+		for(Endpoint e : endpoints.keySet()) {
+			if(e.getId().equals(endpointId)) {
+				endpoint = e;
+				
+				break;
 			}
 		}
 		
-		editEndpointMode = !editEndpointMode;
+		if(endpoint != null) {
+			view.getEndpointName().setText(endpoint.getName());
+			view.getEndpointType().setValue(endpoint.getEndpointType());
+			view.getInvocationPath().setText(endpoint.getInvocationPath());
+			view.getTargetPort().setValue(endpoint.getPortMappingTemplateId());
+			view.getEndpointDescription().setText(endpoint.getDescription());
+			view.getEndpointDescriptor().setText(endpoint.getDescriptor());
+			view.getSecured().setValue(endpoint.isSecured());
+			view.setEndpointEditLabel(true);
+		}
 	}
 }

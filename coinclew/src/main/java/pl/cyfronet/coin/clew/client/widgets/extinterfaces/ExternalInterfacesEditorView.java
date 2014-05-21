@@ -2,6 +2,7 @@ package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	private Label noExternalInterfacesLabel;
 	private Label noEndpointsLabel;
 	private IExternalInterfacesPresenter presenter;
+	private Map<String, Button> mappingEditButtons;
+	private Map<String, Button> endpointEditButtons;
 	
 	@UiField Modal modal;
 	@UiField FlowPanel externalInterfaceContainer;
@@ -96,6 +99,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
+		mappingEditButtons = new HashMap<String, Button>();
+		endpointEditButtons = new HashMap<String, Button>();
 	}
 	
 	@UiHandler("close")
@@ -330,6 +335,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				getPresenter().onEditMapping(mappingId);
 			}
 		});
+		mappingEditButtons.put(mappingId, editButton);
 		
 		Button removeButton = new Button();
 		removeButton.setIcon(IconType.REMOVE);
@@ -540,6 +546,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				getPresenter().onEditEndpoint(endpointId);
 			}
 		});
+		endpointEditButtons.put(endpointId, editButton);
 		
 		Button removeButton = new Button();
 		removeButton.setIcon(IconType.REMOVE);
@@ -713,6 +720,24 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			addEndpoint.setText(messages.addEndpointEditButtonLabel());
 		} else {
 			addEndpoint.setText(messages.addEndpointButtonLabel());
+		}
+	}
+
+	@Override
+	public void removeMappingEditState(String mappingId) {
+		Button editButton = mappingEditButtons.get(mappingId);
+		
+		if(editButton != null) {
+			editButton.setActive(false);
+		}
+	}
+
+	@Override
+	public void removeEndpointEditState(String endpointId) {
+		Button editButton = endpointEditButtons.get(endpointId);
+		
+		if(editButton != null) {
+			editButton.setActive(false);
 		}
 	}
 }

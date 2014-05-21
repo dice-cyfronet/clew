@@ -62,4 +62,6 @@ public interface IExternalInterfacesView extends IsWidget {
 	HasValue<Boolean> getSecured();
 	void setMappingEditLabel(boolean show);
 	void setEndpointEditLabel(boolean show);
+	void removeMappingEditState(String mappingId);
+	void removeEndpointEditState(String endpointId);
 }

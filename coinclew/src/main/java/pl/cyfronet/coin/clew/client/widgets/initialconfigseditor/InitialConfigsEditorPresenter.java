@@ -67,9 +67,17 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 	}
 	
 	public void onEditInitialConfiguration(String initialConfigurationId) {
+		if(editedConfigId != null) {
+			InitialConfigPresenter presenter = configPresenters.get(editedConfigId);
+			
+			if(presenter != null) {
+				presenter.finishEdit();
+			}
+		}
+		
 		InitialConfigPresenter presenter = configPresenters.get(initialConfigurationId);
 		
-		if (presenter != null) {
+		if(presenter != null) {
 			view.getName().setText(presenter.getConfigName());
 			view.getPayload().setText(presenter.getConfigPayload());
 			view.setEditLabel(true);
@@ -93,11 +101,12 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 						if (presenter != null) {
 							configNames.remove(presenter.getConfigName());
 							configNames.put(applianceConfiguration.getId(), applianceConfiguration.getName());
-							presenter.setInitialConfig(applianceConfiguration);
 							presenter.finishEdit();
+							presenter.setInitialConfig(applianceConfiguration);
 						}
 						
 						resetForm();
+						editedConfigId = null;
 					}
 				});
 			} else {
@@ -175,6 +184,7 @@ public class InitialConfigsEditorPresenter extends BasePresenter<IInitialConfigs
 	}
 	
 	public void onCancelEditInitialConfiguration(String initialConfigurationId) {
+		editedConfigId = null;
 		resetForm();
 	}
 }
