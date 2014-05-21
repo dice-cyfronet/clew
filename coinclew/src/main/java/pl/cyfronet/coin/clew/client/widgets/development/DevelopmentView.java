@@ -121,4 +121,9 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 	public void showHeaderRow(boolean show) {
 		headerRow.setVisible(show);
 	}
+
+	@Override
+	public void insert(Widget widget, int index) {
+		atomicServicesContainer.insert(widget, index);
+	}
 }

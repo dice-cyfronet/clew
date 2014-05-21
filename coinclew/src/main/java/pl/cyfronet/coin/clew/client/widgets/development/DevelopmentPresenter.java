@@ -1,9 +1,15 @@
 package pl.cyfronet.coin.clew.client.widgets.development;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
@@ -26,6 +32,8 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = DevelopmentView.class)
 public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEventBus> implements IDevelopmentPresenter {
+	private static final Logger log = LoggerFactory.getLogger(DevelopmentPresenter.class);
+	
 	private static final int REFRESH_MILIS = 5000;
 	
 	private CloudFacadeController cloudFacadeController;
@@ -200,7 +208,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 						if (presenter == null) {
 							presenter = eventBus.addHandler(AtomicServicePresenter.class);
 							atomicServicePresenters.put(applianceType.getApplianceType().getId(), presenter);
-							view.getAtomicServicesContainer().add(presenter.getView().asWidget());
+							view.insert(presenter.getView().asWidget(), calculateApplianceTypeIndex(applianceType.getApplianceType().getName()));
 						}
 						
 						presenter.setApplianceType(applianceType);
@@ -208,6 +216,29 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				}
 			}
 		});
+	}
+	
+	private int calculateApplianceTypeIndex(String name) {
+		List<String> names = new ArrayList<String>();
+		names.add(name);
+		
+		for(AtomicServicePresenter presenter : atomicServicePresenters.values()) {
+			if(presenter.getApplianceType() != null) {
+				names.add(presenter.getApplianceType().getApplianceType().getName());
+			}
+		}
+		
+		Collections.sort(names, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareToIgnoreCase(o2);
+			}
+		});
+		
+		int index = names.indexOf(name);
+		log.debug("Inserting atomic service with index {}", index);
+		
+		return index;
 	}
 
 	private void clearAtomicService() {
@@ -253,7 +284,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 
 					presenter = eventBus.addHandler(AtomicServicePresenter.class);
 					atomicServicePresenters.put(applianceType.getId(), presenter);
-					view.getAtomicServicesContainer().add(presenter.getView().asWidget());
+					view.insert(presenter.getView().asWidget(), calculateApplianceTypeIndex(applianceType.getName()));
 				}
 				
 				OwnedApplianceType ownedApplianceType = new OwnedApplianceType();

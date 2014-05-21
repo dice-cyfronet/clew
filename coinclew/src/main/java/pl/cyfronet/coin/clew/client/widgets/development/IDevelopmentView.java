@@ -2,6 +2,7 @@ package pl.cyfronet.coin.clew.client.widgets.development;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 
 public interface IDevelopmentView extends IsWidget {
 	interface IDevelopmentPresenter {
@@ -16,4 +17,5 @@ public interface IDevelopmentView extends IsWidget {
 	HasWidgets getInstanceContainer();
 	void showInstanceLoadingIndicator(boolean show);
 	void showHeaderRow(boolean show);
+	void insert(Widget widget, int index);
 }
