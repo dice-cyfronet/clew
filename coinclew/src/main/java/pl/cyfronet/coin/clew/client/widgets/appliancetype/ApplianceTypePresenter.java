@@ -123,7 +123,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		
 		if(applianceType.getComputeSiteIds() != null && applianceType.getComputeSiteIds().size() > 0) {
 			if(applianceType.getComputeSiteIds().size() > 1) {
-				if(view.getInitialConfigs().getValue().equals("0")) {
+				if(view.getComputeSites().getValue().equals("0")) {
 					computeSiteIds.put(view.getInitialConfigs().getValue(), applianceType.getComputeSiteIds());
 				} else {
 					computeSiteIds.put(view.getInitialConfigs().getValue(), Arrays.asList(new String[] {view.getComputeSites().getValue()}));
