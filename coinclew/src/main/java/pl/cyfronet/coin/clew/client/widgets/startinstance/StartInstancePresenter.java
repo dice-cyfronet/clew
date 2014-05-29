@@ -15,6 +15,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -24,6 +25,13 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	private CloudFacadeController cloudFacadeController;
 	private List<ApplianceTypePresenter> applianceTypePresenters;
 	private boolean developmentMode;
+	
+	/**
+	 * postponedQuery and presentersLoaded are used to handle filter input before the appliances are loaded and
+	 * carry out filtering afterwards. 
+	 */
+	private String postponedQuery;
+	private boolean presentersLoaded;
 
 	@Inject
 	public StartInstancePresenter(CloudFacadeController cloudFacadeController) {
@@ -79,6 +87,13 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 				presenter.setApplianceType(applianceType, developmentMode);
 				view.getApplianceTypeContainer().add(presenter.getView().asWidget());
 			}
+			
+			presentersLoaded = true;
+			
+			if(postponedQuery != null) {
+				onFilterTextChanged();
+				postponedQuery = null;
+			}
 		}
 	}
 
@@ -131,11 +146,15 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	public void onFilterTextChanged() {
 		String filterText = view.getFilter().getText();
 		
-		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
-			if (presenter.matchesFilter(filterText)) {
-				presenter.getView().asWidget().setVisible(true);
-			} else {
-				presenter.getView().asWidget().setVisible(false);
+		if(!presentersLoaded) {
+			postponedQuery = filterText;
+		} else {
+			for (ApplianceTypePresenter presenter : applianceTypePresenters) {
+				if (presenter.matchesFilter(filterText)) {
+					presenter.getView().asWidget().setVisible(true);
+				} else {
+					presenter.getView().asWidget().setVisible(false);
+				}
 			}
 		}
 	}
