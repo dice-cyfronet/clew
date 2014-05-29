@@ -31,7 +31,7 @@
 			margin-right: 10px;
 		}
 	</ui:style>
-	<b:Modal ui:field="keyModal" title="{messages.keyManagerModalLabel}"  animation="true" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="keyModal" title="{messages.keyManagerModalLabel}" closeVisible="false" keyboard="false">
 		<g:FlowPanel ui:field="keyContainer" addStyleNames="{style.keys}"/>
 		<b:Form ui:field="keyUploadForm" method="POST" encoding="multipart/form-data">
 			<b:ControlLabel><ui:text from="{messages.keyNameLabel}"/></b:ControlLabel>
