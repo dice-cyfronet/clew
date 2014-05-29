@@ -39,7 +39,7 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 
 	public StartInstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		startInstanceModal.setWidth(800);
+		startInstanceModal.setWidth(1000);
 	}
 	
 	@UiHandler("close")
