@@ -8,7 +8,7 @@
 			text-align: right;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="modal" title="{messages.modalHeader}" closeVisible="false" keyboard="false">
 		<b:Form>
 			<g:FlowPanel ui:field="detailsProgress" visible="false">
 				<b:Icon type="SPINNER" spin="true"></b:Icon>

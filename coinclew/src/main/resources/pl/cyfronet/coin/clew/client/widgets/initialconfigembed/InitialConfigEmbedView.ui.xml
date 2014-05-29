@@ -9,7 +9,7 @@
 			font-weight: bold;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false">
 		<g:HTML><ui:text from="{messages.about}"/></g:HTML>
 		<g:FlowPanel ui:field="parameterContainer"/>
 		<b:ModalFooter>

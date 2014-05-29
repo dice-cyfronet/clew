@@ -64,7 +64,7 @@
 			text-align: left;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal"  title="{messages.modalHeader}" animation="true" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="modal"  title="{messages.modalHeader}" closeVisible="false" keyboard="false">
 		<b:TabPanel ui:field="tabs" addStyleNames="{style.disable-y-scroll}">
 			<b:Tab heading="{messages.externalInterfacesTabLabel}" active="true">
 				<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>

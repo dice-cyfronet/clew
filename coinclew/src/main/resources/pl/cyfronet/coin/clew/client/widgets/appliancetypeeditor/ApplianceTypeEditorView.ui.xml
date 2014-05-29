@@ -17,7 +17,7 @@
 			margin: 10px 0px;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalTitle}" animation="true" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false">
 		<b:Form>
 			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
 			<b:TextBox ui:field="name" placeholder="{messages.namePlaceholder}" addStyleNames="input-block-level"/>
