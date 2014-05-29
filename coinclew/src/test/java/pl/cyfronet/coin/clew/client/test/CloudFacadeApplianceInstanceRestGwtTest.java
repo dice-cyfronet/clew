@@ -21,7 +21,7 @@ public class CloudFacadeApplianceInstanceRestGwtTest extends GWTTestCase {
 	
 	@Override
 	protected void gwtSetUp() throws Exception {
-		Defaults.setServiceRoot(ClewGwtTestSuite.CLOUD_FACADE_URL);
+		Defaults.setServiceRoot(ClewGwtTestSuiteIgnore.CLOUD_FACADE_URL);
 		applianceInstances = GWT.create(ApplianceInstanceService.class);
 	}
 	
