@@ -64,4 +64,5 @@ public interface IExternalInterfacesView extends IsWidget {
 	void setEndpointEditLabel(boolean show);
 	void removeMappingEditState(String mappingId);
 	void removeEndpointEditState(String endpointId);
+	void displayGeneralExternalInterfaceUpdateErrorMessage();
 }

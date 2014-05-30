@@ -63,4 +63,5 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String removeMappingLabel();
 	String addExternalInterfaceEditButtonLabel();
 	String addEndpointEditButtonLabel();
+	String externalInterfaceUpdateError();
 }

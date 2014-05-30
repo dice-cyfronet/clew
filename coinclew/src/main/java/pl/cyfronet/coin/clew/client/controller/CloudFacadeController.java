@@ -142,7 +142,7 @@ public class CloudFacadeController {
 		void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates);
 	}
 	
-	public interface PortMappingTemplateCallback {
+	public interface PortMappingTemplateCallback extends ErrorCallback {
 		void processPortMappingTemplate(PortMappingTemplate portMappingTemplate);
 	}
 	
@@ -994,7 +994,9 @@ public class CloudFacadeController {
 		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				if(portMappingTemplateCallback != null) {
+					portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+				}
 			}
 
 			@Override
@@ -1017,7 +1019,9 @@ public class CloudFacadeController {
 		portMappingTemplateService.addPortMappingTemplate(request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				if(portMappingTemplateCallback != null) {
+					portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+				}
 			}
 
 			@Override
@@ -1550,7 +1554,9 @@ public class CloudFacadeController {
 		portMappingTemplateService.updatePortMappingTemplate(editMappingId, request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				if(portMappingTemplateCallback != null) {
+					portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+				}
 			}
 
 			@Override
@@ -1574,7 +1580,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.updatePortMappingTemplate(mappingId, request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
 			}
 
 			@Override

@@ -740,4 +740,10 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 			editButton.setActive(false);
 		}
 	}
+
+	@Override
+	public void displayGeneralExternalInterfaceUpdateErrorMessage() {
+		errorLabel.setText(messages.externalInterfaceUpdateError());
+		errorLabel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+	}
 }

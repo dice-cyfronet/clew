@@ -19,6 +19,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMapping
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatePropertiesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
@@ -520,6 +521,12 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 								eventBus.externalInterfacesChanged(applianceInstanceId);
 							}
 						}
+					}
+
+					@Override
+					public void onError(CloudFacadeErrorCodes errorCodes) {
+						view.setUpdateExternalInterfaceBusyState(false);
+						view.displayGeneralExternalInterfaceUpdateErrorMessage();
 					}});
 			}
 		}
@@ -561,6 +568,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							portMappingTemplateCallback.processPortMappingTemplate(portMappingTemplate);
 						}
 					}
+
+					@Override
+					public void onError(CloudFacadeErrorCodes errorCodes) {
+						portMappingTemplateCallback.onError(errorCodes);
+					}
 				});
 			} else {
 				cloudFacadeController.addPortMappingTemplateForDevelopmentModePropertySet(name, portNumber, transportProtocol, applicationProtocol, developmentModePropertySetId, new PortMappingTemplateCallback() {
@@ -569,6 +581,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 						if (portMappingTemplateCallback != null) {
 							portMappingTemplateCallback.processPortMappingTemplate(portMappingTemplate);
 						}
+					}
+
+					@Override
+					public void onError(CloudFacadeErrorCodes errorCodes) {
+						portMappingTemplateCallback.onError(errorCodes);
 					}
 				});
 			}
@@ -581,6 +598,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							portMappingTemplateCallback.processPortMappingTemplate(portMappingTemplate);
 						}
 					}
+
+					@Override
+					public void onError(CloudFacadeErrorCodes errorCodes) {
+						portMappingTemplateCallback.onError(errorCodes);
+					}
 				});
 			} else {
 				cloudFacadeController.addPortMappingTemplateForApplianceType(name, portNumber, transportProtocol, applicationProtocol, applianceTypeId, new PortMappingTemplateCallback() {
@@ -589,6 +611,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 						if (portMappingTemplateCallback != null) {
 							portMappingTemplateCallback.processPortMappingTemplate(portMappingTemplate);
 						}
+					}
+
+					@Override
+					public void onError(CloudFacadeErrorCodes errorCodes) {
+						portMappingTemplateCallback.onError(errorCodes);
 					}
 				});
 			}
