@@ -138,4 +138,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	
 	@Event(handlers = ApplicationsPresenter.class, historyConverter = TabHistoryConverter.class)
 	void startInstance(String applianceTypeId);
+
+	@Event(handlers = RootPresenter.class)
+	void showStartApplicationProgress(boolean show);
 }

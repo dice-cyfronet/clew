@@ -11,12 +11,21 @@
 		.label {
 			padding: 5px;
 		}
+		.progress {
+			text-align: center;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<g:HTML ui:field="buildInfo" visible="false"/>
 		<g:FlowPanel ui:field="menuPanel"/>
 		<hr/>
 		<g:FlowPanel ui:field="bodyPanel"/>
+		<g:HTMLPanel ui:field="globalProgress" addStyleNames="{style.progress}" visible="false">
+			<span class="label label-danger">
+				<i class="icon-spinner icon-spin"></i>
+				<ui:text from="{messages.startApplicationInProgress}"/>
+			</span>
+		</g:HTMLPanel>
 		<g:FlowPanel addStyleNames="{style.note}">
 			<b:Label type="WARNING" addStyleNames="{style.label}">
 				<ui:text from="{messages.costNote}"/>

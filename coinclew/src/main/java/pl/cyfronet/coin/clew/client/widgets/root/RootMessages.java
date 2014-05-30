@@ -6,4 +6,5 @@ public interface RootMessages extends ConstantsWithLookup {
 	String CF_ERROR();
 	String APPLIANCE_VM_DETAILS_MISSING();
 	String costNote();
+	String startApplicationInProgress();
 }

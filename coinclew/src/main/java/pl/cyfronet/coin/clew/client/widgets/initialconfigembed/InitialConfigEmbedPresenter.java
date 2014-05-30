@@ -39,6 +39,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 	public void onStartApplications(final List<String> initialConfigurationIds, final Map<String, List<String>> computeSiteIds, boolean developmentMode) {
 		this.developmentMode = developmentMode;
 		this.computeSiteIds = computeSiteIds;
+		eventBus.showStartApplicationProgress(true);
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
@@ -53,6 +54,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 				}
 				
 				if (parametersPresent) {
+					eventBus.showStartApplicationProgress(false);
 					view.clearParameters();
 					params.clear();
 					view.showLoadingProgress(true);
@@ -81,11 +83,13 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 					});
 				} else {
 					if (InitialConfigEmbedPresenter.this.developmentMode) {
+						eventBus.showStartApplicationProgress(false);
 						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds, computeSiteIds);
 					} else {
 						cloudFacadeController.startApplianceTypes(initialConfigurationIds, computeSiteIds, new Command() {
 							@Override
 							public void execute() {
+								eventBus.showStartApplicationProgress(false);
 								eventBus.refreshInstanceList();
 							}
 						});

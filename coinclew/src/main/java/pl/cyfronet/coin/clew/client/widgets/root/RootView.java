@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -25,6 +26,8 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	@UiField FlowPanel bodyPanel;
 	@UiField FlowPanel popups;
 	@UiField HTML buildInfo;
+	@UiField HTMLPanel globalProgress;
+	
 	PopupPanel errorPopup;
 	HTML errorLabel;
 
@@ -83,5 +86,10 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 	@Override
 	public void setBuildInfo(String buildInfo) {
 		this.buildInfo.setText(buildInfo);
+	}
+
+	@Override
+	public void showStartApplicationLabel(boolean show) {
+		globalProgress.setVisible(show);
 	}
 }

@@ -58,4 +58,8 @@ public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implem
 		};
 		errorTimer.schedule(5000);
 	}
+	
+	public void onShowStartApplicationProgress(boolean show) {
+		view.showStartApplicationLabel(show);
+	}
 }
