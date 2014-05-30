@@ -12,7 +12,9 @@
 			width: 100%;
 		}
 		.actions {
-			margin-top: 30px;
+			float: left;
+			width: 100%;
+			margin-top: 20px;
 		}
 		.action {
 			margin-right: 20px;

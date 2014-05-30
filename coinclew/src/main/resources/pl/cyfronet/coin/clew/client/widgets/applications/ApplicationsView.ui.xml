@@ -48,6 +48,11 @@
 			border-bottom: solid 2px;
 			border-color: #dddddd;
 		}
+		.actions {
+			float: left;
+			width: 100%;
+			margin-top: 20px;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<g:FlowPanel ui:field="headerRow" visible="false" addStyleNames="{style.header-row}">
@@ -60,6 +65,8 @@
 			<g:HTML addStyleNames="{style.instance-actions} {style.right} {style.header}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="instanceContainer" addStyleNames="{style.center}"/>
-		<b:Button ui:field="startInstance" type="SUCCESS"><ui:text from="{messages.startInstanceButtonLabel}"/></b:Button>
+		<g:FlowPanel addStyleNames="{style.actions}">
+			<b:Button ui:field="startInstance" type="SUCCESS"><ui:text from="{messages.startInstanceButtonLabel}"/></b:Button>
+		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

@@ -164,37 +164,25 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
+		FlowPanel namePanel = new FlowPanel();
 		InlineHTML nameWidget = new InlineHTML(name);
 		nameWidget.addStyleName(style.detailsName());
-		panel.add(nameWidget);
+		namePanel.add(nameWidget);
+		panel.add(namePanel);
 		
 		FlowPanel links = new FlowPanel();
 		panel.add(links);
 		links.addStyleName(style.links());
 		
 		if (httpUrl != null) {
-			Anchor http = new Anchor("http", httpUrl);
-			http.setTarget("_blank");
-			http.addStyleName(style.anchor());
-			links.add(http);
-			
 			Label status = new Label(httpUrlStatus);
-			status.addStyleName(style.statusLabel());
-			status.setType(getStatusLabelType(httpUrlStatus));
-			links.add(status);
+			links.add(createEndpointPanel(status, httpUrl, httpUrlStatus, "http"));
 			httpStatuses.put(redirectionId, status);
 		}
 		
 		if (httpsUrl != null) {
-			Anchor https = new Anchor("https", httpsUrl);
-			https.setTarget("_blank");
-			https.addStyleName(style.anchor());
-			links.add(https);
-			
 			Label status = new Label(httpsUrlStatus);
-			status.addStyleName(style.statusLabel());
-			status.setType(getStatusLabelType(httpsUrlStatus));
-			links.add(status);
+			links.add(createEndpointPanel(status, httpsUrl, httpsUrlStatus, "https"));
 			httpsStatuses.put(redirectionId, status);
 		}
 		
@@ -225,7 +213,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			descriptorButton.setEnabled(false);
 		}
 		
-		panel.add(descriptorButton);
+		namePanel.add(descriptorButton);
 		serviceContainer.add(panel);
 		
 		return panel;
@@ -237,7 +225,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
-		InlineHTML nameWidget = new InlineHTML(name);
+		HTML nameWidget = new HTML(name);
 		nameWidget.addStyleName(style.detailsName());
 		panel.add(nameWidget);
 		
@@ -246,34 +234,38 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		links.addStyleName(style.links());
 		
 		if (httpUrl != null) {
-			Anchor http = new Anchor("http", httpUrl);
-			http.setTarget("_blank");
-			http.addStyleName(style.anchor());
-			links.add(http);
-			
 			Label status = new Label(httpUrlStatus);
-			status.addStyleName(style.statusLabel());
-			status.setType(getStatusLabelType(httpUrlStatus));
-			links.add(status);
+			links.add(createEndpointPanel(status, httpUrl, httpUrlStatus, "http"));
 			httpStatuses.put(redirectionId, status);
 		}
 		
 		if (httpsUrl != null) {
-			Anchor https = new Anchor("https", httpsUrl);
-			https.setTarget("_blank");
-			https.addStyleName(style.anchor());
-			links.add(https);
-			
 			Label status = new Label(httpsUrlStatus);
-			status.addStyleName(style.statusLabel());
-			status.setType(getStatusLabelType(httpsUrlStatus));
-			links.add(status);
+			links.add(createEndpointPanel(status, httpsUrl, httpsUrlStatus, "https"));
 			httpsStatuses.put(redirectionId, status);
 		}
 		
 		webApplicationsContainer.add(panel);
 		
 		return panel;
+	}
+
+	private Widget createEndpointPanel(Label statusLabel, String httpUrl, String httpUrlStatus, String anchorName) {
+		FlowPanel endpointPanel = new FlowPanel();
+		endpointPanel.getElement().getStyle().setProperty("display", "table-row");
+		Anchor http = new Anchor(anchorName, httpUrl);
+		http.setTarget("_blank");
+		http.addStyleName(style.anchor());
+		endpointPanel.add(http);
+		statusLabel.addStyleName(style.statusLabel());
+		statusLabel.setType(getStatusLabelType(httpUrlStatus));
+		
+		FlowPanel statusPanel = new FlowPanel();
+		statusPanel.getElement().getStyle().setProperty("display", "table-cell");
+		statusPanel.add(statusLabel);
+		endpointPanel.add(statusPanel);
+		
+		return endpointPanel;
 	}
 
 	@Override
@@ -361,11 +353,14 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.service());
 		
+		FlowPanel namePanel = new FlowPanel();
 		InlineHTML nameWidget = new InlineHTML(serviceName);
 		nameWidget.addStyleName(style.detailsName());
-		panel.add(nameWidget);
+		namePanel.add(nameWidget);
+		panel.add(namePanel);
 		
-		InlineHTML info = new InlineHTML(publicIp + ":" + port);
+		HTML info = new HTML(publicIp + ":" + port);
+		info.addStyleName(style.links());
 		panel.add(info);
 		
 		if (helpBlock != null) {
@@ -373,6 +368,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			helpButton.setSize(ButtonSize.MINI);
 			helpButton.setToggle(true);
 			helpButton.setType(ButtonType.INFO);
+			helpButton.addStyleName(style.descriptor());
 			helpButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -383,12 +379,12 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			Popover helpPopover = new Popover();
 			helpPopover.setText(helpBlock);
 			helpPopover.setWidget(helpButton);
-			helpPopover.setPlacement(Placement.TOP);
+			helpPopover.setPlacement(Placement.LEFT);
 			helpPopover.setHeading(messages.sshHelpHeader());
 			helpPopover.setTrigger(Trigger.MANUAL);
 			
 			panel.add(new InlineHTML("&nbsp;"));
-			panel.add(helpPopover);
+			namePanel.add(helpPopover);
 		}
 		
 		otherServiceContainer.add(panel);
