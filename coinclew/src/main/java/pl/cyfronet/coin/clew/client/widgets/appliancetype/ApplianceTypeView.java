@@ -11,6 +11,7 @@ import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -190,10 +191,12 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public void showFlavorInformation(String name, Integer hourlyCost) {
 		flavorContainer.clear();
-		Label label = new Label(LabelType.INFO, messages.flavorInfo(name, 
+		com.google.gwt.user.client.ui.Label label = new com.google.gwt.user.client.ui.Label(messages.flavorInfo(name, 
 				"$" + NumberFormat.getFormat("0.0000").format(((float) hourlyCost / 10000))));
 		label.getElement().getStyle().setWhiteSpace(WhiteSpace.NORMAL);
 		label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+		label.getElement().getStyle().setProperty("fontSize", "smaller");
 		flavorContainer.add(label);
 	}
 

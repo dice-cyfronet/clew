@@ -62,6 +62,17 @@
 		.nameElement {
 			margin-right: 5px;
 		}
+		.pickers-panel {
+			float: left;
+			width: 100%;
+		}
+		.picker-panel {
+			float: left;
+			width: 50%;
+		}
+		.list-container {
+			height: 30px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.container}">
 		<g:FlowPanel addStyleNames="{style.check}">
@@ -75,12 +86,22 @@
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.description-panel}">
 			<g:HTML ui:field="description" addStyleNames="{style.description-text}"/>
-			<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>
-			<b:ListBox ui:field="initialConfigs" visible="false"/>
-			<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
-			<g:HTML ui:field="computeSitesLabel" addStyleNames="{style.init-conf-label}" visible="false"><ui:text from="{messages.pickComputeSiteLabel}"/>:</g:HTML>
-			<b:ListBox ui:field="computeSites" visible="false"/>
-			<g:FlowPanel ui:field="computeSiteContainer" addStyleNames="{style.left-margin}"/>
+			<g:FlowPanel addStyleNames="{style.pickers-panel}">
+				<g:FlowPanel addStyleNames="{style.picker-panel}">
+					<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>
+					<g:FlowPanel addStyleNames="{style.list-container}">
+						<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
+						<b:ListBox ui:field="initialConfigs" visible="false"/>
+					</g:FlowPanel>
+				</g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.picker-panel}">
+					<g:HTML ui:field="computeSitesLabel" addStyleNames="{style.init-conf-label}" visible="false"><ui:text from="{messages.pickComputeSiteLabel}"/>:</g:HTML>
+					<g:FlowPanel addStyleNames="{style.list-container}">
+						<g:FlowPanel ui:field="computeSiteContainer" addStyleNames="{style.left-margin}"/>
+						<b:ListBox ui:field="computeSites" visible="false"/>
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:FlowPanel>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.control}">
 			<g:FlowPanel addStyleNames="{style.inner-control}">
