@@ -29,4 +29,5 @@ public interface IApplianceDetailsView extends IsWidget {
 	HasWidgets addFlavorContainer();
 	void showKeyProgress(boolean show);
 	void showDetailsProgress(boolean show);
+	void showPreferencesError(HasWidgets container);
 }

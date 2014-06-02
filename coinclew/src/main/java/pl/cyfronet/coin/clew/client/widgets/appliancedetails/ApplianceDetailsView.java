@@ -4,12 +4,12 @@ import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
+import pl.cyfronet.coin.clew.client.widgets.listbox.EditableListBox;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -127,8 +127,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public HasValue<String> addCores(Map<String, String> options, String value, final String applianceTypeId) {
 		ControlLabel label = new ControlLabel(messages.coresLabel());
-		final ListBox listBox = createListBox(options, value);
-		nameContainer.add(label);
+		final EditableListBox listBox = createListBox(options, value);
+		nameContainer.add(label);		
 		nameContainer.add(listBox);
 		listBox.addChangeHandler(new ChangeHandler() {
 			@Override
@@ -154,24 +154,24 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 			@Override
 			public void setValue(String value) {
-				listBox.setSelectedValue(value);
+				listBox.setValue(value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				listBox.setSelectedValue(value);
+				listBox.setValue(value);
 			}
 		};
 	}
 
-	private ListBox createListBox(Map<String, String> options, String value) {
-		ListBox result = new ListBox();
+	private EditableListBox createListBox(Map<String, String> options, String value) {
+		EditableListBox result = new EditableListBox();
 		
 		for(String v : options.keySet()) {
-			result.addItem(options.get(v), v);
+			result.addOption(options.get(v), v);
 		}
 		
-		result.setSelectedValue(value);
+		result.setValue(value);
 		
 		return result;
 	}
@@ -179,7 +179,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public HasValue<String> addRam(Map<String, String> options, String value, final String applianceTypeId) {
 		ControlLabel label = new ControlLabel(messages.ramLabel());
-		final ListBox listBox = createListBox(options, value);
+		final EditableListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
 		listBox.addChangeHandler(new ChangeHandler() {
@@ -206,12 +206,12 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 			@Override
 			public void setValue(String value) {
-				listBox.setSelectedValue(value);
+				listBox.setValue(value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				listBox.setSelectedValue(value);
+				listBox.setValue(value);
 			}
 		};
 	}
@@ -219,7 +219,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public HasValue<String> addDisk(Map<String, String> options, String value, final String applianceTypeId) {
 		ControlLabel label = new ControlLabel(messages.diskLabel());
-		final ListBox listBox = createListBox(options, value);
+		final EditableListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
 		listBox.addChangeHandler(new ChangeHandler() {
@@ -246,12 +246,12 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 			@Override
 			public void setValue(String value) {
-				listBox.setSelectedValue(value);
+				listBox.setValue(value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				listBox.setSelectedValue(value);
+				listBox.setValue(value);
 			}
 		};
 	}
@@ -272,14 +272,18 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	}
 
 	@Override
-	public void showFlavorError(HasWidgets contianer) {
+	public void showFlavorError(HasWidgets container) {
+		container.clear();
+		
 		Label label = new Label(messages.flavorError());
 		label.setType(LabelType.IMPORTANT);
-		contianer.add(label);
+		container.add(label);
 	}
 
 	@Override
 	public void showFlavorInformation(HasWidgets container, String name, Integer hourlyCost) {
+		container.clear();
+		
 		Label label = new Label(LabelType.INFO, messages.flavorDetails(name,
 				"$" + NumberFormat.getFormat("0.0000").format(((float) hourlyCost / 10000))));
 		container.add(label);
@@ -303,5 +307,14 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	@Override
 	public void showDetailsProgress(boolean show) {
 		detailsProgress.setVisible(show);
+	}
+
+	@Override
+	public void showPreferencesError(HasWidgets container) {
+		container.clear();
+		
+		Label label = new Label(messages.preferencesError());
+		label.setType(LabelType.IMPORTANT);
+		container.add(label);
 	}
 }

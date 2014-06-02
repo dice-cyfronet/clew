@@ -123,6 +123,12 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	}
 	
 	private void updateFlavorDetails(final String applianceTypeId, String cpu, String ram, String disk) {
+		if(!isValid(cpu) || !isValid(ram) || !isValid(disk)) {
+			view.showPreferencesError(flavorContainers.get(applianceTypeId));
+			
+			return;
+		}
+		
 		view.showFlavorProgress(flavorContainers.get(applianceTypeId), true);
 		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu,
 				ram == null ? "0" : ram, disk == null ? "0" : disk, null, new FlavorsCallback() {
@@ -141,6 +147,20 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 				});
 	}
 	
+	private boolean isValid(String amount) {
+		if(amount != null) {
+			try {
+				if(Integer.valueOf(amount) < 0) {
+					return false;
+				}
+			} catch(NumberFormatException e) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
 	private Flavor getCheapest(List<Flavor> flavors) {
 		Flavor result = null;
 		

@@ -11,7 +11,9 @@ import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextArea;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.UListElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -19,6 +21,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
@@ -37,14 +42,17 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiField CheckBox shared;
 	@UiField CheckBox scalable;
 	@UiField ListBox visibleFor;
-	@UiField ListBox cores;
-	@UiField ListBox ram;
-	@UiField ListBox disk;
 	@UiField Label errorLabel;
 	@UiField ApplianceTypeEditorMessages messages;
 	@UiField Button update;
 	@UiField Button save;
-
+	@UiField UListElement coresList;
+	@UiField UListElement ramList;
+	@UiField UListElement diskList;
+	@UiField TextBox cores;
+	@UiField TextBox ram;
+	@UiField TextBox disk;
+	
 	public ApplianceTypeEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -195,12 +203,12 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 			@Override
 			public String getValue() {
-				return disk.getValue();
+				return getNormalizedValue(disk.getValue());
 			}
 
 			@Override
 			public void setValue(String value) {
-				disk.setSelectedValue(value);
+				disk.setValue(getNormalizedLabel(value));
 			}
 
 			@Override
@@ -224,12 +232,12 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 			@Override
 			public String getValue() {
-				return ram.getValue();
+				return getNormalizedValue(ram.getValue());
 			}
 
 			@Override
 			public void setValue(String value) {
-				ram.setSelectedValue(value);
+				ram.setValue(getNormalizedLabel(value));
 			}
 
 			@Override
@@ -253,18 +261,34 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 			@Override
 			public String getValue() {
-				return cores.getValue();
+				return getNormalizedValue(cores.getValue());
 			}
 
 			@Override
 			public void setValue(String value) {
-				cores.setSelectedValue(value);
+				cores.setValue(getNormalizedLabel(value));
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
 			}
 		};
+	}
+	
+	private String getNormalizedValue(String label) {
+		if(messages.defaultValueLabel().equals(label)) {
+			return "0";
+		} else {
+			return label;
+		}
+	}
+	
+	private String getNormalizedLabel(String value) {
+		if("0".equals(value)) {
+			return messages.defaultValueLabel();
+		} else {
+			return value;
+		}
 	}
 
 	@Override
@@ -318,16 +342,34 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 	@Override
 	public void addCoreOption(String value, String label) {
-		cores.addItem(label, value);
+		appendOption(value, label, coresList, getCores());
+	}
+
+	private void appendOption(String value, String label, UListElement list, final HasValue<String> textBox) {
+		Element item = DOM.createElement("li");
+		Element anchor = DOM.createAnchor();
+		anchor.setAttribute("data-value", value);
+		anchor.setInnerHTML(label);
+		anchor.setAttribute("href", "#");
+		item.appendChild(anchor);
+		Event.sinkEvents(anchor, Event.ONCLICK);
+		Event.setEventListener(anchor, new EventListener() {
+			@Override
+			public void onBrowserEvent(Event event) {
+				textBox.setValue(Element.as(event.getEventTarget()).getAttribute("data-value"));
+				event.preventDefault();
+			}
+		});
+		list.appendChild(item);
 	}
 
 	@Override
 	public void addDiskOption(String value, String label) {
-		disk.addItem(label, value);
+		appendOption(value, label, diskList, getDisk());
 	}
 
 	@Override
 	public void addRamOption(String value, String label) {
-		ram.addItem(label, value);
+		appendOption(value, label, ramList, getRam());
 	}
 }
