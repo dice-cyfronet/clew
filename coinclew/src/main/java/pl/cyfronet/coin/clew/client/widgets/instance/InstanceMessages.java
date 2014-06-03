@@ -22,4 +22,5 @@ public interface InstanceMessages extends Messages {
 	String sshHelpBlock(String publicIp, String sourcePort);
 	String sshHelpHeader();
 	String getEmptyDescription();
+	String prepaidUntil(String prepaidUntil);
 }

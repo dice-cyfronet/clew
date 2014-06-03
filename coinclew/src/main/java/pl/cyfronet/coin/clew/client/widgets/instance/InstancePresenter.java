@@ -1,9 +1,13 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -26,6 +30,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -35,7 +41,9 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
-	protected CloudFacadeController cloudFacadeController;
+	private final static Logger log = LoggerFactory.getLogger(InstancePresenter.class); 
+	
+	private CloudFacadeController cloudFacadeController;
 	private Map<String, IsWidget> webapps;
 	private Map<String, IsWidget> services;
 	private Map<String, IsWidget> otherServices;
@@ -76,6 +84,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 				
 				view.getCost().setText(costIndicator(applianceInstance));
+				view.setPrepaid(formatDate(applianceInstance.getPrepaidUntil()));
 				
 				if(applianceType != null && !applianceType.getDescription().isEmpty()) {
 					view.getDescription().setText(applianceType.getDescription());
@@ -125,6 +134,19 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					}
 				}
 			});
+		}
+	}
+	
+	private String formatDate(String dateValue) {
+		try {
+			DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);
+			Date date = format.parse(dateValue);
+			
+			return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
+		} catch(Exception e) {
+			log.error("Could not parse date {}", dateValue);
+			
+			return "";
 		}
 	}
 	

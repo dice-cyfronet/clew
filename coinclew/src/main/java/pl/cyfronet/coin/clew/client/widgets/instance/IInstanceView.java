@@ -42,4 +42,5 @@ public interface IInstanceView extends IsWidget {
 	void collapseDetails();
 	void updateHttpStatus(String redirectionId, String status);
 	void updateHttpsStatus(String redirectionId, String ststus);
+	void setPrepaid(String prepaidUntil);
 }

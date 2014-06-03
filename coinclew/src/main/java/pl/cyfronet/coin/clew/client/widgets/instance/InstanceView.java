@@ -78,6 +78,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField HTML description;
 	@UiField Label bill;
 	@UiField Button showDetails;
+	@UiField Tooltip prepaidTooltip;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -515,5 +516,11 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			statusLabel.setType(getStatusLabelType(status));
 			statusLabel.setText(status);
 		}
+	}
+
+	@Override
+	public void setPrepaid(String prepaidUntil) {
+		prepaidTooltip.setText(messages.prepaidUntil(prepaidUntil));
+		prepaidTooltip.reconfigure();
 	}
 }

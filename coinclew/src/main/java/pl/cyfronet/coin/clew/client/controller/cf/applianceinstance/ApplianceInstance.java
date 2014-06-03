@@ -18,7 +18,15 @@ public class ApplianceInstance extends NewApplianceInstance {
 	private String stateExplanation;
 	@Json(name = "amount_billed")
 	private long amountBilled;
+	@Json(name = "prepaid_until")
+	private String prepaidUntil;
 	
+	public String getPrepaidUntil() {
+		return prepaidUntil;
+	}
+	public void setPrepaidUntil(String prepaidUntil) {
+		this.prepaidUntil = prepaidUntil;
+	}
 	public long getAmountBilled() {
 		return amountBilled;
 	}
