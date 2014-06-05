@@ -17,10 +17,12 @@
 			text-align: center;
 		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:FlowPanel>
 		<g:HTML ui:field="buildInfo" visible="false"/>
 		<g:FlowPanel ui:field="menuPanel"/>
-		<hr/>
+		<g:HTMLPanel>
+			<hr/>
+		</g:HTMLPanel>
 		<g:FlowPanel ui:field="bodyPanel"/>
 		<g:HTMLPanel ui:field="globalProgress" addStyleNames="{style.progress}" visible="false">
 			<span class="label label-danger">
@@ -34,5 +36,5 @@
 			</b:Label>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="popups"/>
-	</g:HTMLPanel>
+	</g:FlowPanel>
 </ui:UiBinder>

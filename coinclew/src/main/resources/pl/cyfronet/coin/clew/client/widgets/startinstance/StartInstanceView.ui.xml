@@ -9,7 +9,7 @@
 			margin-bottom: 20px;
 		}
 	</ui:style>
-	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
 		<g:HTMLPanel addStyleNames="{style.filter}">
 			<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
 		</g:HTMLPanel>

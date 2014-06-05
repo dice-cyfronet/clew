@@ -6,7 +6,7 @@
 	<ui:style>
 	
 	</ui:style>
-	<b:Modal ui:field="pickConfigModal" title="{messages.pickConfigModalHeader}" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="pickConfigModal" title="{messages.pickConfigModalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
 		<b:Form>
 			<b:ControlLabel><ui:text from="{messages.configSelectLabel}"/></b:ControlLabel>
 			<b:ListBox ui:field="configListBox" addStyleNames="input-block-level"/>
