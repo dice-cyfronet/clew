@@ -20,7 +20,7 @@
 			visibility: hidden;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false">
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
 		<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
 		<b:Form>
 			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>

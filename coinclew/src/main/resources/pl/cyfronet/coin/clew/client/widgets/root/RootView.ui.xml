@@ -12,10 +12,12 @@
 			padding: 5px;
 		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:FlowPanel>
 		<g:HTML ui:field="buildInfo" visible="false"/>
 		<g:FlowPanel ui:field="menuPanel"/>
-		<hr/>
+		<g:HTMLPanel>
+			<hr/>
+		</g:HTMLPanel>
 		<g:FlowPanel ui:field="bodyPanel"/>
 		<g:FlowPanel addStyleNames="{style.note}">
 			<b:Label type="WARNING" addStyleNames="{style.label}">
@@ -23,5 +25,5 @@
 			</b:Label>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="popups"/>
-	</g:HTMLPanel>
+	</g:FlowPanel>
 </ui:UiBinder>
