@@ -16,7 +16,7 @@
 		}
 		.details-header {
 			font-size: 1.2em;
-			text-align: left;
+			text-align: center;
 			padding-top: 10px;
 			padding-bottom: 10px;
 			padding-left: 20px;
