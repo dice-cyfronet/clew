@@ -9,6 +9,7 @@
 			width: 30%;
 			text-align: left;
 			font-size: 1.2em;
+			word-wrap: break-word;
 		}
 		.name {
 			padding-left: 5px;
