@@ -44,7 +44,7 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	}
 
 	@Override
-	public void showLoadingInicator(boolean show) {
+	public void showLoadingIndicator(boolean show) {
 		if (show) {
 			if (loadingIndicator == null) {
 				loadingIndicator = new Icon(IconType.SPINNER);

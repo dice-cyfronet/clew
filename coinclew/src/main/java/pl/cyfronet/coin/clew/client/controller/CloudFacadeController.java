@@ -98,12 +98,8 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class CloudFacadeController {
-	public abstract static class ApplianceInstancesCallback {
+	public interface ApplianceInstancesCallback extends ErrorCallback {
 		public abstract void processApplianceInstances(List<ApplianceInstance> applianceInstances);
-		
-		protected void onError(Throwable e) {
-			simpleErrorHandler.displayError(e.getMessage());
-		}
 	}
 	
 	public interface ApplianceTypesCallback {
@@ -342,7 +338,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if (applianceInstancesCallback != null) {
-					applianceInstancesCallback.onError(exception);
+					applianceInstancesCallback.onError(CloudFacadeErrorCodes.ApplianceInstanceRetrievalError);
 				}
 			}
 

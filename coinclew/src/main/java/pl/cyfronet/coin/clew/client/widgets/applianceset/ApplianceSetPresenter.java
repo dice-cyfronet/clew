@@ -6,9 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
 import pl.cyfronet.coin.clew.client.widgets.applianceset.IApplianceSetView.IApplianceSetPresenter;
@@ -72,6 +74,11 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 						i.remove();
 					}
 				}
+			}
+
+			@Override
+			public void onError(CloudFacadeErrorCodes errorCodes) {
+				eventBus.displayError(ErrorCode.CF_ERROR);
 			}
 		});
 	}

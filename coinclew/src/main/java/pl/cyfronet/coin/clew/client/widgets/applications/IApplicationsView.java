@@ -9,7 +9,7 @@ public interface IApplicationsView extends IsWidget {
 	}
 
 	HasWidgets getInstanceContainer();
-	void showLoadingInicator(boolean show);
+	void showLoadingIndicator(boolean show);
 	void showNoInstancesLabel(boolean show);
 	void showHeaderRow(boolean b);
 	void showNoInitialConfigurationsMessage();

@@ -10,6 +10,7 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IApplicationsPresenter;
@@ -91,27 +92,27 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	private void loadApplianceInstances(final boolean update) {
 		view.showNoInstancesLabel(false);
 		
-		if (!update) {
-			view.showLoadingInicator(true);
+		if(!update) {
+			view.showLoadingIndicator(true);
 		}
 		
 		cloudFacadeController.getPortalApplianceInstances(new ApplianceInstancesCallback() {
 			@Override
 			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
-				if (!update) {
-					view.showLoadingInicator(false);
+				if(!update) {
+					view.showLoadingIndicator(false);
 				}
 				
-				if (applianceInstances.size() == 0) {
+				if(applianceInstances.size() == 0) {
 					view.showNoInstancesLabel(true);
 				} else {
 					view.showHeaderRow(true);
 					view.showNoInstancesLabel(false);
 					
-					for (ApplianceInstance applianceInstance : applianceInstances) {
+					for(ApplianceInstance applianceInstance : applianceInstances) {
 						InstancePresenter presenter = instancePresenters.get(applianceInstance.getId());
 
-						if (presenter == null) {
+						if(presenter == null) {
 							presenter = eventBus.addHandler(InstancePresenter.class);
 							instancePresenters.put(applianceInstance.getId(), presenter);
 							view.getInstanceContainer().add(presenter.getView().asWidget());
@@ -120,7 +121,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 						presenter.setInstance(applianceInstance, true, false);
 					}
 					
-					if (timer == null) {
+					if(timer == null) {
 						timer = new Timer() {
 							@Override
 							public void run() {
@@ -132,12 +133,21 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 					timer.schedule(REFRESH_MILIS);
 				}
 			}
-			
+
 			@Override
-			protected void onError(Throwable e) {
+			public void onError(CloudFacadeErrorCodes errorCodes) {
 				eventBus.displayError(ErrorCode.CF_ERROR);
-				view.showLoadingInicator(false);
-				view.showNoInstancesLabel(true);
+				
+				if(timer == null) {
+					timer = new Timer() {
+						@Override
+						public void run() {
+							loadApplianceInstances(true);
+						}
+					};
+				}
+
+				timer.schedule(REFRESH_MILIS);
 			}
 		});
 	}

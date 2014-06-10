@@ -5,5 +5,6 @@ public enum CloudFacadeErrorCodes {
 	UserKeyInvalid,
 	ApplianceTypeUpdateError,
 	ApplianceTypeSaveError,
-	PortMappingTemplateUpdateError
+	PortMappingTemplateUpdateError,
+	ApplianceInstanceRetrievalError
 }
