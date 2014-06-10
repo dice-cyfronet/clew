@@ -93,9 +93,12 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 						for (ApplianceType applianceType : applianceTypes) { 
 							String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
 							names.put(initialConfigId, view.addName(applianceType.getName()));
-							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()), applianceType.getPreferenceCpu(), applianceType.getId()));
-							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions()), applianceType.getPreferenceMemory(), applianceType.getId()));
-							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions()), applianceType.getPreferenceDisk(), applianceType.getId()));
+							cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()),
+									safeValue(applianceType.getPreferenceCpu()), applianceType.getId()));
+							rams.put(initialConfigId, view.addRam(getOptions(properties.ramOptions()),
+									safeValue(applianceType.getPreferenceMemory()), applianceType.getId()));
+							disks.put(initialConfigId, view.addDisk(getOptions(properties.diskOptions()),
+									safeValue(applianceType.getPreferenceDisk()), applianceType.getId()));
 							flavorContainers.put(applianceType.getId(), view.addFlavorContainer());
 							applianceTypeIdToInitialConfigIdMapping.put(applianceType.getId(), initialConfigId);
 							updateFlavorDetails(applianceType.getId(), applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk());
@@ -251,5 +254,13 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		}
 		
 		return result;
+	}
+	
+	private String safeValue(String value) {
+		if(value == null) {
+			return "0";
+		} else {
+			return value;
+		}
 	}
 }

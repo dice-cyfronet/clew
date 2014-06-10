@@ -95,9 +95,9 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 				view.getShared().setValue(applianceType.isShared());
 				view.getScalable().setValue(applianceType.isScalable());
 				view.getVisibleFor().setValue(applianceType.getVisibleTo());
-				view.getCores().setValue(applianceType.getPreferenceCpu());
-				view.getRam().setValue(applianceType.getPreferenceMemory());
-				view.getDisk().setValue(applianceType.getPreferenceDisk());
+				view.getCores().setValue(safeValue(applianceType.getPreferenceCpu()));
+				view.getRam().setValue(safeValue(applianceType.getPreferenceMemory()));
+				view.getDisk().setValue(safeValue(applianceType.getPreferenceDisk()));
 			}
 		});
 	}
@@ -165,6 +165,14 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 							view.setSaveBusyState(false);
 							view.displayGeneralSaveError();
 						}});
+		}
+	}
+	
+	private String safeValue(String value) {
+		if(value == null) {
+			return "0";
+		} else {
+			return value;
 		}
 	}
 }
