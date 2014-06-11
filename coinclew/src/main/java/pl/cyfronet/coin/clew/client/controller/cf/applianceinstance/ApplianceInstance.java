@@ -20,6 +20,7 @@ public class ApplianceInstance extends NewApplianceInstance {
 	private long amountBilled;
 	@Json(name = "prepaid_until")
 	private String prepaidUntil;
+	private String description;
 	
 	public String getPrepaidUntil() {
 		return prepaidUntil;
@@ -62,5 +63,11 @@ public class ApplianceInstance extends NewApplianceInstance {
 	}
 	public void setConfigurationInstanceId(String configurationInstanceId) {
 		this.configurationInstanceId = configurationInstanceId;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

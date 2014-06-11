@@ -155,7 +155,7 @@
 		<b:Collapse ui:field="collapse" defaultOpen="false">
 			<g:FlowPanel addStyleNames="{style.details}">
 				<g:HTML ui:field="description" addStyleNames="{style.description} muted"/>
-				<g:FlowPanel addStyleNames="{style.column-panel}">
+				<g:FlowPanel ui:field="details" addStyleNames="{style.column-panel}">
 					<g:FlowPanel addStyleNames="{style.column-row}">
 						<g:FlowPanel addStyleNames="{style.column}">
 							<g:HTML addStyleNames="{style.details-header}"><ui:text from="{messages.webApplicationsLabel}"/></g:HTML>
@@ -170,6 +170,9 @@
 							<g:FlowPanel ui:field="otherServiceContainer" addStyleNames="{style.container}"/>
 						</g:FlowPanel>
 					</g:FlowPanel>
+				</g:FlowPanel>
+				<g:FlowPanel ui:field="noVmsLabel" visible="false">
+					<b:Label><ui:text from="{messages.noVmsLabel}"/></b:Label>
 				</g:FlowPanel>
 			</g:FlowPanel>
 		</b:Collapse>

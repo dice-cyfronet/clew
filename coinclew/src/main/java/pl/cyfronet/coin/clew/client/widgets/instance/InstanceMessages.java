@@ -23,4 +23,6 @@ public interface InstanceMessages extends Messages {
 	String sshHelpHeader();
 	String getEmptyDescription();
 	String prepaidUntil(String prepaidUntil);
+	String noVmsLabel();
+	String noVmsShortLabel();
 }

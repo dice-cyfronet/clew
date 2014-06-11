@@ -79,6 +79,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField Label bill;
 	@UiField Button showDetails;
 	@UiField Tooltip prepaidTooltip;
+	@UiField FlowPanel details;
+	@UiField FlowPanel noVmsLabel;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -124,7 +126,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public HasText getLocation() {
+	public HasHTML getLocation() {
 		return location;
 	}
 
@@ -447,12 +449,16 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void setStatus(String status) {
-		Label label = new Label(status);
+		Widget label = new Label(status);
 		
-		if(status!= null && status.equals("active")) {
-			label.setType(LabelType.SUCCESS);
+		if(status != null) {
+			if(status.equals("active")) {
+				((Label) label).setType(LabelType.SUCCESS);
+			} else {
+				((Label) label).setType(LabelType.WARNING);
+			}
 		} else {
-			label.setType(LabelType.WARNING);
+			label = new HTML("&nbsp;");
 		}
 		
 		this.status.clear();
@@ -522,5 +528,20 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void setPrepaid(String prepaidUntil) {
 		prepaidTooltip.setText(messages.prepaidUntil(prepaidUntil));
 		prepaidTooltip.reconfigure();
+	}
+
+	@Override
+	public void showDetailsPanel(boolean show) {
+		details.setVisible(show);
+	}
+
+	@Override
+	public void showNoVmsLabel(boolean show) {
+		noVmsLabel.setVisible(show);
+	}
+
+	@Override
+	public String getNoVmsLabel() {
+		return messages.noVmsShortLabel();
 	}
 }

@@ -14,14 +14,12 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVmsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RedirectionsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
@@ -34,6 +32,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -70,56 +69,49 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 
 		this.applianceInstance = applianceInstance;
-		cloudFacadeController.getApplianceType(applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
-			@Override
-			public void processApplianceType(ApplianceType applianceType) {
-				if (applianceInstance.getName() != null && !applianceInstance.getName().isEmpty()) {
-					view.getName().setText(applianceInstance.getName());
-				} else {
-					view.getName().setText(applianceType.getName());
-				}
-				
-				if (applianceInstance.getState() == State.unsatisfied) {
-					view.setUnsatisfiedState(applianceInstance.getStateExplanation());
-				}
-				
-				view.getCost().setText(costIndicator(applianceInstance));
-				view.setPrepaid(formatDate(applianceInstance.getPrepaidUntil()));
-				
-				if(applianceType != null && !applianceType.getDescription().isEmpty()) {
-					view.getDescription().setText(applianceType.getDescription());
-				} else {
-					view.setNoDescription();
-				}
-				
-//				view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
-				
-				if (enableShutdown) {
-					view.addShutdownControl();
-				}
-				
-				if (applianceInstance.getState() == State.satisfied) {
-					displayDetails();
-				}
-				
-				if (developmentMode) {
-					view.addExternalInterfacesControl();
-					view.addSaveControl();
-					
-					if(applianceInstance.getState() == State.unsatisfied) {
-						view.enableExternalInterfaces(false);
-						view.enableSave(false);
-					}
-				}
+		view.getName().setText(applianceInstance.getName());
+		
+		if (applianceInstance.getState() == State.unsatisfied) {
+			view.setUnsatisfiedState(applianceInstance.getStateExplanation());
+		}
+		
+		view.getCost().setText(costIndicator(applianceInstance));
+		view.setPrepaid(formatDate(applianceInstance.getPrepaidUntil()));
+		
+		if(!applianceInstance.getDescription().isEmpty()) {
+			view.getDescription().setText(applianceInstance.getDescription());
+		} else {
+			view.setNoDescription();
+		}
+		
+//		view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
+		
+		if (enableShutdown) {
+			view.addShutdownControl();
+		}
+		
+		if (applianceInstance.getState() == State.satisfied) {
+			displayDetails();
+		}
+		
+		if (developmentMode) {
+			view.addExternalInterfacesControl();
+			view.addSaveControl();
+			
+			if(applianceInstance.getState() == State.unsatisfied) {
+				view.enableExternalInterfaces(false);
+				view.enableSave(false);
 			}
-		});
+		}
 		
 		if (applianceInstance.getState() == State.satisfied) {
 			cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
 				@Override
 				public void processApplianceVms(List<ApplianceVm> applianceVms) {
 					if (applianceVms.size() > 0) {
-						//TODO(DH): for now details of the first VM are shown only
+						view.showDetailsPanel(true);
+						view.showNoVmsLabel(false);
+						
 						ApplianceVm applianceVm = applianceVms.get(0);
 						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
 						updateStatus(applianceVm);
@@ -130,7 +122,12 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							}
 						});
 					} else {
-						eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+						view.showDetailsPanel(false);
+						view.showNoVmsLabel(true);
+						view.getIp().setHTML("&nbsp;");
+						view.getLocation().setHTML("&nbsp;");
+						view.setStatus(view.getNoVmsLabel());
+						view.enableCollapsable(true);
 					}
 				}
 			});
@@ -359,7 +356,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				@Override
 				public void processApplianceVms(List<ApplianceVm> applianceVms) {
 					if (applianceVms.size() > 0) {
-						//TODO(DH): for now details of the first VM are shown only
+						view.showDetailsPanel(true);
+						view.showNoVmsLabel(false);
+						
 						ApplianceVm applianceVm = applianceVms.get(0);
 						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
 						updateStatus(applianceVm);
@@ -369,12 +368,17 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 								view.getLocation().setText(computeSite.getName());
 							}
 						});
+						displayDetails();
 					} else {
-						eventBus.displayError(ErrorCode.APPLIANCE_VM_DETAILS_MISSING);
+						view.showDetailsPanel(false);
+						view.showNoVmsLabel(true);
+						view.getIp().setHTML("&nbsp;");
+						view.getLocation().setHTML("&nbsp;");
+						view.setStatus(view.getNoVmsLabel());
+						view.enableCollapsable(true);
 					}
 				}
 			});
-			displayDetails();
 		}
 	}
 

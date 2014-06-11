@@ -15,7 +15,7 @@ public interface IInstanceView extends IsWidget {
 //	HasText getSpec();
 	String getSpecStanza(String cpu, String ram, String disk);
 	HasHTML getIp();
-	HasText getLocation();
+	HasHTML getLocation();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();
@@ -43,4 +43,7 @@ public interface IInstanceView extends IsWidget {
 	void updateHttpStatus(String redirectionId, String status);
 	void updateHttpsStatus(String redirectionId, String ststus);
 	void setPrepaid(String prepaidUntil);
+	void showDetailsPanel(boolean show);
+	void showNoVmsLabel(boolean show);
+	String getNoVmsLabel();
 }
