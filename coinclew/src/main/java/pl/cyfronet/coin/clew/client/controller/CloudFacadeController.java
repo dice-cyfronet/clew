@@ -1703,4 +1703,20 @@ public class CloudFacadeController {
 			}
 		});
 	}
+	
+	public void getFlavors(String virtualMachineId, final FlavorsCallback callback) {
+		flavorService.getFlavors(virtualMachineId, new MethodCallback<FlavorsResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, FlavorsResponse response) {
+				if(callback != null) {
+					callback.processFlavors(response.getFlavors());
+				}
+			}
+		});
+	}
 }

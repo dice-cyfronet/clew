@@ -42,7 +42,7 @@ public interface IInstanceView extends IsWidget {
 	void collapseDetails();
 	void updateHttpStatus(String redirectionId, String status);
 	void updateHttpsStatus(String redirectionId, String ststus);
-	void setPrepaid(String prepaidUntil);
+	void setFlavorDetails(String prepaidUntil, String flavorName, Float cpus, Float ram, Float hdd);
 	void showDetailsPanel(boolean show);
 	void showNoVmsLabel(boolean show);
 	String getNoVmsLabel();

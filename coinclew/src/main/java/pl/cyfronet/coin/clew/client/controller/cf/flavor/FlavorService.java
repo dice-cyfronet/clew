@@ -21,4 +21,8 @@ public interface FlavorService extends RestService {
 	@Path("virtual_machine_flavors?cpu={cpu}&memory={memory}&hdd={hdd}&appliance_type_id={appliance_type_id}&compute_site_id={compute_site_id}")
 	void getFlavors(@PathParam("appliance_type_id") String applianceTypeId, @PathParam("cpu") String cpu, @PathParam("memory") String memory,
 			@PathParam("hdd") String hdd, @PathParam("compute_site_id") String computeSiteId, MethodCallback<FlavorsResponse> methodCallback);
+
+	@GET
+	@Path("virtual_machine_flavors?virtual_machine_id={virtual_machine_id}")
+	void getFlavors(@PathParam("virtual_machine_id") String virtualMachineId, MethodCallback<FlavorsResponse> methodCallback);
 }
