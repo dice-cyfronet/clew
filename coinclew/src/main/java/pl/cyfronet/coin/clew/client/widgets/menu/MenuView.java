@@ -4,7 +4,6 @@ import pl.cyfronet.coin.clew.client.widgets.menu.IMenuView.IMenuPresenter;
 
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dev.protobuf.Message;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
