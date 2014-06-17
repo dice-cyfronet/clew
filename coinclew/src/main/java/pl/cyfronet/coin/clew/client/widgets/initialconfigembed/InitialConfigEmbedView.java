@@ -13,6 +13,7 @@ import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
@@ -109,7 +110,14 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 				ControlLabel controlLabel = new ControlLabel(parameter);
 				form.add(controlLabel);
 				
-				TextBox value = new TextBox();
+				TextBox value = null;
+				
+				if(parameter.toLowerCase().endsWith("password")) {
+					value = new PasswordTextBox();
+				} else {
+					value = new TextBox();
+				}
+				
 				value.setPlaceholder(messages.parameterValuePlaceholder());
 				value.addStyleName("input-block-level");
 				result.put(parameter, value);

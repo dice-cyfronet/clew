@@ -27,7 +27,13 @@
 			<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
 			<b:ControlLabel><ui:text from="{messages.payloadLabel}"/></b:ControlLabel>
 			<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
-			<b:HelpBlock><ui:text from="{messages.payloadHelp}"/></b:HelpBlock>
+			<b:HelpBlock>
+				<ul>
+					<li><ui:text from="{messages.payloadHelp}"/></li>
+					<li><ui:text from="{messages.payloadHelp2}"/></li>
+					<li><ui:text from="{messages.payloadHelp3}"/></li>
+				</ul>
+			</b:HelpBlock>
 		</b:Form>
 		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>
 		<b:ModalFooter>

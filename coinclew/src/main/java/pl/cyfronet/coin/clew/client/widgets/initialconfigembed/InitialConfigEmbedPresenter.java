@@ -45,7 +45,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
 				boolean parametersPresent = false;
 				
-				for (ApplianceConfiguration config : applianceConfigurations) {
+				for(ApplianceConfiguration config : applianceConfigurations) {
 					if (config.getParameters().size() > 0) {
 						parametersPresent = true;
 						
@@ -53,7 +53,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 					}
 				}
 				
-				if (parametersPresent) {
+				if(parametersPresent) {
 					eventBus.showStartApplicationProgress(false);
 					view.clearParameters();
 					params.clear();
