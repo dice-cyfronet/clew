@@ -1703,4 +1703,20 @@ public class CloudFacadeController {
 			}
 		});
 	}
+
+	public void getUsers(final UsersCallback callback) {
+		userService.getUsers(new MethodCallback<UsersResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Method method, UsersResponse response) {
+				if(callback != null) {
+					callback.processUsers(response.getUsers());
+				}
+			}
+		});
+	}
 }

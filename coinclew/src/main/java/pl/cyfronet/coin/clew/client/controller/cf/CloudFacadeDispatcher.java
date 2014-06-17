@@ -5,6 +5,7 @@ import org.fusesource.restygwt.client.Method;
 
 import pl.cyfronet.coin.clew.client.DevelopmentProperties;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
+import pl.cyfronet.coin.clew.client.widgets.su.SuPresenter;
 
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -32,6 +33,10 @@ public class CloudFacadeDispatcher implements Dispatcher {
 			}
 		} else {
 			builder.setHeader("MI-TICKET", ticket);
+		}
+		
+		if(SuPresenter.getSuUser() != null) {
+			builder.setHeader("HTTP-SUDO", SuPresenter.getSuUser());
 		}
 		
 		return builder.send();

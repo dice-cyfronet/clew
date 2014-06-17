@@ -4,8 +4,11 @@ import pl.cyfronet.coin.clew.client.widgets.menu.IMenuView.IMenuPresenter;
 
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dev.protobuf.Message;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,11 +20,18 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	private static MenuViewUiBinder uiBinder = GWT.create(MenuViewUiBinder.class);
 	interface MenuViewUiBinder extends UiBinder<Widget, MenuView> {}
 	
+	interface Style extends CssResource {
+		String sudo();
+	}
+	
 	private IMenuPresenter presenter;
 	
 	@UiField NavLink appsMenuItem;
 	@UiField NavLink wfsMenuItem;
 	@UiField NavLink devMenuItem;
+	@UiField NavLink suMenuItem;
+	@UiField MenuViewMessages messages;
+	@UiField Style style;
 	
 	public MenuView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -40,6 +50,11 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	@UiHandler("devMenuItem")
 	void devMenuItemClicked(ClickEvent event) {
 		getPresenter().onDevelopmentMenuItemClicked();
+	}
+	
+	@UiHandler("suMenuItem")
+	void suMenuItemClicked(ClickEvent event) {
+		getPresenter().onSuMenuItemClicked();
 	}
 
 	@Override
@@ -78,6 +93,31 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 			devMenuItem.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 		} else {
 			devMenuItem.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		}
+	}
+
+	@Override
+	public void showSuTab(boolean show) {
+		if (show) {
+			suMenuItem.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		} else {
+			suMenuItem.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		}
+	}
+
+	@Override
+	public void activateSuMenuItem(boolean activate) {
+		suMenuItem.setActive(activate);
+	}
+
+	@Override
+	public void seSuUSer(String suUser) {
+		if(suUser != null) {
+			suMenuItem.setText(messages.sudoUserMenuLabel(suUser));
+			Element.as(suMenuItem.getElement().getFirstChild()).setAttribute("class", style.sudo());
+		} else {
+			suMenuItem.setText(messages.sudoMenuLabel());
+			Element.as(suMenuItem.getElement().getFirstChild()).removeAttribute("class");
 		}
 	}
 }

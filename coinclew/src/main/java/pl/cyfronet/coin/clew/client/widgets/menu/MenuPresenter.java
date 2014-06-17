@@ -27,6 +27,7 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 		view.activateApplicationsMenuItem(false);
 		view.activateWorkflowsMenuItem(true);
 		view.activateDevelopmentMenuItem(false);
+		view.activateSuMenuItem(false);
 		eventBus.deactivateApplicationsRefresh();
 		eventBus.deactivateDevelopmentRefresh();
 	}
@@ -35,6 +36,7 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 		view.activateApplicationsMenuItem(true);
 		view.activateWorkflowsMenuItem(false);
 		view.activateDevelopmentMenuItem(false);
+		view.activateSuMenuItem(false);
 		eventBus.deactivateWorkflowsRefresh();
 		eventBus.deactivateDevelopmentRefresh();
 	}
@@ -44,6 +46,7 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 			view.activateApplicationsMenuItem(false);
 			view.activateWorkflowsMenuItem(false);
 			view.activateDevelopmentMenuItem(true);
+			view.activateSuMenuItem(false);
 			eventBus.deactivateWorkflowsRefresh();
 			eventBus.deactivateApplicationsRefresh();
 		} else {
@@ -66,9 +69,31 @@ public class MenuPresenter extends BasePresenter<IMenuView, MainEventBus> implem
 		eventBus.switchToDevelopmentView();
 	}
 	
+	@Override
+	public void onSuMenuItemClicked() {
+		eventBus.switchToSuView();
+	}
+	
+	public void onSwitchToSuView() {
+		view.activateApplicationsMenuItem(false);
+		view.activateWorkflowsMenuItem(false);
+		view.activateDevelopmentMenuItem(false);
+		view.activateSuMenuItem(true);
+		eventBus.deactivateApplicationsRefresh();
+		eventBus.deactivateDevelopmentRefresh();
+	}
+	
+	public void onSuUserChanged(String suUser) {
+		view.seSuUSer(suUser);
+	}
+	
 	private void authorizeMenuItems() {
-		if (!ticketReader.isDeveloper()) {
+		if(!ticketReader.isDeveloper()) {
 			view.showDevTab(false);
+		}
+		
+		if(!ticketReader.isCloudAdmin()) {
+			view.showSuTab(false);
 		}
 	}
 }

@@ -7,10 +7,14 @@ public interface IMenuView extends IsWidget {
 		void onApplicationsMenuItemClicked();
 		void onWorkflowsMenuItemClicked();
 		void onDevelopmentMenuItemClicked();
+		void onSuMenuItemClicked();
 	}
 
 	void activateWorkflowsMenuItem(boolean activate);
 	void activateApplicationsMenuItem(boolean activate);
 	void activateDevelopmentMenuItem(boolean activate);
 	void showDevTab(boolean show);
+	void showSuTab(boolean show);
+	void activateSuMenuItem(boolean activate);
+	void seSuUSer(String suUser);
 }

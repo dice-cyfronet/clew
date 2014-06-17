@@ -3,13 +3,18 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.menu.MenuViewMessages" field="messages"/>
-	<ui:style>
+	<ui:style type="pl.cyfronet.coin.clew.client.widgets.menu.MenuView.Style">
+		.sudo {
+			border: solid 2px #b94a48;
+			border-radius: 5px;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<b:NavPills>
 			<b:NavLink ui:field="appsMenuItem" title="{messages.applicationsInfo}"><ui:text from="{messages.appsMenuLabel}"/></b:NavLink>
 			<b:NavLink ui:field="wfsMenuItem" title="{messages.workflowsInfo}"><ui:text from="{messages.wfsMenuLabel}"/></b:NavLink>
 			<b:NavLink ui:field="devMenuItem" title="{messages.developmentInfo}"><ui:text from="{messages.devMenuLabel}"/></b:NavLink>
+			<b:NavLink ui:field="suMenuItem" title="{messages.sudoInfo}"><ui:text from="{messages.sudoMenuLabel}"/></b:NavLink>
 		</b:NavPills>
 	</g:FlowPanel>
 </ui:UiBinder>

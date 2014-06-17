@@ -9,4 +9,7 @@ public interface MenuViewMessages extends Messages {
 	String applicationsInfo();
 	String workflowsInfo();
 	String developmentInfo();
+	String sudoInfo();
+	String sudoMenuLabel();
+	String sudoUserMenuLabel(String login);
 }

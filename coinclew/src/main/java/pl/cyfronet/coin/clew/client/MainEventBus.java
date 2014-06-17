@@ -17,6 +17,7 @@ import pl.cyfronet.coin.clew.client.widgets.keymanager.KeyManagerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.menu.MenuPresenter;
 import pl.cyfronet.coin.clew.client.widgets.root.RootPresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.StartInstancePresenter;
+import pl.cyfronet.coin.clew.client.widgets.su.SuPresenter;
 import pl.cyfronet.coin.clew.client.widgets.workflows.WorkflowsPresenter;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -141,4 +142,10 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = RootPresenter.class)
 	void showStartApplicationProgress(boolean show);
+
+	@Event(handlers = {MenuPresenter.class, SuPresenter.class}, historyConverter = TabHistoryConverter.class)
+	void switchToSuView();
+
+	@Event(handlers = MenuPresenter.class)
+	void suUserChanged(String suUser);
 }

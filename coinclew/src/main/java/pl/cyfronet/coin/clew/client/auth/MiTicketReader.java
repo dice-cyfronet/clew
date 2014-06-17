@@ -17,6 +17,7 @@ import com.google.inject.Singleton;
 public class MiTicketReader {
 	private static final String DEVELOPER_ROLE = "developer";
 	private static final String ROLE_DELIMITER = ",";
+	private static final String CLOUDADMIN_ROLE = "cloudadmin";
 	private DevelopmentProperties devProperties;
 	
 	public MiTicketReader() {
@@ -72,6 +73,12 @@ public class MiTicketReader {
 	
 	public String getCfToken() {
 		return devProperties.cloudFacadeKey();
+	}
+	
+	public boolean isCloudAdmin() {
+		List<String> roles = getRoles();
+		
+		return roles.contains(CLOUDADMIN_ROLE);
 	}
 	
 	private List<String> getRoles() {

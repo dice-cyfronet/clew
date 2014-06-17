@@ -23,4 +23,8 @@ public interface UserService extends RestService {
 	@GET
 	@Path("users?login={login}")
 	void getUserForLogin(@PathParam("login") String userLogin, MethodCallback<UsersResponse> methodCallback);
+
+	@GET
+	@Path("users")
+	void getUsers(MethodCallback<UsersResponse> methodCallback);
 }
