@@ -22,7 +22,7 @@ public interface InstanceMessages extends Messages {
 	String sshHelpBlock(String publicIp, String sourcePort);
 	String sshHelpHeader();
 	String getEmptyDescription();
-	String prepaidUntil(String prepaidUntil);
+	String prepaidUntil(String prepaidUntil, String flavorName, Float cpus, Float ram, Float hdd);
 	String noVmsLabel();
 	String noVmsShortLabel();
 }

@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
@@ -17,6 +17,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVmsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RedirectionsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
@@ -24,6 +25,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
+import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
@@ -32,7 +34,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
@@ -76,7 +77,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 		
 		view.getCost().setText(costIndicator(applianceInstance));
-		view.setPrepaid(formatDate(applianceInstance.getPrepaidUntil()));
 		
 		if(!applianceInstance.getDescription().isEmpty()) {
 			view.getDescription().setText(applianceInstance.getDescription());
@@ -147,7 +147,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 	
-	private void updateStatus(ApplianceVm applianceVm) {
+	private void updateStatus(final ApplianceVm applianceVm) {
 		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 		
 		if(applianceVm.getState() != null) {
@@ -161,6 +161,19 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.collapseDetails();
 				view.enableCollapsable(false);
 			}
+			
+			cloudFacadeController.getFlavors(Arrays.asList(new String[] {applianceVm.getFlavorId()}), new FlavorsCallback() {
+				@Override
+				public void processFlavors(List<Flavor> flavors) {
+					if(flavors != null && flavors.size() == 1) {
+						Flavor flavor = flavors.get(0);
+						view.setFlavorDetails(formatDate(applianceInstance.getPrepaidUntil()), flavor.getName(),
+								flavor.getCpu(), flavor.getMemory(), flavor.getHdd());
+					} else {
+						log.error("Flavors for virtual machine with id {} are missing", applianceVm.getId());
+					}
+				}
+			});
 		}
 	}
 	

@@ -525,8 +525,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void setPrepaid(String prepaidUntil) {
-		prepaidTooltip.setText(messages.prepaidUntil(prepaidUntil));
+	public void setFlavorDetails(String prepaidUntil, String flavorName, Float cpus, Float ram, Float hdd) {
+		prepaidTooltip.setText(messages.prepaidUntil(prepaidUntil, flavorName, cpus, ram, hdd));
 		prepaidTooltip.reconfigure();
 	}
 
