@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -146,7 +147,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 	
-	private void updateStatus(ApplianceVm applianceVm) {
+	private void updateStatus(final ApplianceVm applianceVm) {
 		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 		
 		if(applianceVm.getState() != null) {
@@ -161,7 +162,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.enableCollapsable(false);
 			}
 			
-			cloudFacadeController.getFlavors(applianceVm.getId(), new FlavorsCallback() {
+			cloudFacadeController.getFlavors(Arrays.asList(new String[] {applianceVm.getFlavorId()}), new FlavorsCallback() {
 				@Override
 				public void processFlavors(List<Flavor> flavors) {
 					if(flavors != null && flavors.size() == 1) {

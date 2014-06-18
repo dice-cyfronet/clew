@@ -11,6 +11,8 @@ public class ApplianceVm {
 	private String ip;
 	@Json(name = "compute_site_id")
 	private String computeSiteId;
+	@Json(name = "flavor_id")
+	private String flavorId;
 	
 	public String getId() {
 		return id;
@@ -47,5 +49,11 @@ public class ApplianceVm {
 	}
 	public void setComputeSiteId(String computeSiteId) {
 		this.computeSiteId = computeSiteId;
+	}
+	public String getFlavorId() {
+		return flavorId;
+	}
+	public void setFlavorId(String flavorId) {
+		this.flavorId = flavorId;
 	}
 }

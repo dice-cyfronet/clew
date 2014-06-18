@@ -1704,8 +1704,8 @@ public class CloudFacadeController {
 		});
 	}
 	
-	public void getFlavors(String virtualMachineId, final FlavorsCallback callback) {
-		flavorService.getFlavors(virtualMachineId, new MethodCallback<FlavorsResponse>() {
+	public void getFlavors(List<String> flavorIds, final FlavorsCallback callback) {
+		flavorService.getFlavors(join(flavorIds, ","), new MethodCallback<FlavorsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				simpleErrorHandler.displayError(exception.getMessage());
