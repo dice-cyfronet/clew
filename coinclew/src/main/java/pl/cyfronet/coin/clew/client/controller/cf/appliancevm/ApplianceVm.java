@@ -11,7 +11,7 @@ public class ApplianceVm {
 	private String ip;
 	@Json(name = "compute_site_id")
 	private String computeSiteId;
-	@Json(name = "flavor_id")
+	@Json(name = "virtual_machine_flavor_id")
 	private String flavorId;
 	
 	public String getId() {
