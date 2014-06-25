@@ -30,11 +30,6 @@
 				<ui:text from="{messages.startApplicationInProgress}"/>
 			</span>
 		</g:HTMLPanel>
-		<g:FlowPanel addStyleNames="{style.note}">
-			<b:Label type="WARNING" addStyleNames="{style.label}">
-				<ui:text from="{messages.costNote}"/>
-			</b:Label>
-		</g:FlowPanel>
 		<g:FlowPanel ui:field="popups"/>
 	</g:FlowPanel>
 </ui:UiBinder>
