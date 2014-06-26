@@ -13,8 +13,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeDispatcher;
 @Options(dispatcher = CloudFacadeDispatcher.class)
 public interface PortMappingService extends RestService {
 	@GET
-	@Path("port_mappings?appliance_id={id}")
-	void getPortMappings(@PathParam("id") String applianceId, MethodCallback<PortMappingResponse> methodCallback);
+	@Path("port_mappings?virtual_machine_id={id}")
+	void getPortMappingsForVirtualMachineId(@PathParam("id") String virtualMachineId, MethodCallback<PortMappingResponse> methodCallback);
 
 	@GET
 	@Path("port_mappings?port_mapping_template_id={id}")

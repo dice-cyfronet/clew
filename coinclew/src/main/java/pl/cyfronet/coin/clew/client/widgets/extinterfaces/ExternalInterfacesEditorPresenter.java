@@ -121,7 +121,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							view.enableEndpoints(true);
 							view.addHttpMappingEndpointOption(portMappingTemplate.getId(), portMappingTemplate.getServiceName(), portMappingTemplate.getTargetPort());
 							view.showEndpointTargetPortHelpBlock(false);
-							cloudFacadeController.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new HttpMappingsCallback() {
+							cloudFacadeController.getHttpMappingsForPortMappingTemplateIdOrInstanceId(portMappingTemplate.getId(), null, new HttpMappingsCallback() {
 								@Override
 								public void processHttpMappings(final List<HttpMapping> httpMappings) {
 									String httpUrl = Arrays.asList(new String[] {"http", "http_https"}).contains(portMappingTemplate.getApplicationProtocol()) ? "" : null;
@@ -199,7 +199,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 								view.showNoEndpointsLabel(true);
 							}
 							
-							cloudFacadeController.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+							cloudFacadeController.getPortMappingsForPortMappingTemplateIdOrVirtualMachineId(portMappingTemplate.getId(), null, new PortMappingsCallback() {
 								@Override
 								public void processPortMappings(List<PortMapping> portMappings) {
 									String publicIp = "";
@@ -625,7 +625,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					@Override
 					public void processEndpoint(final Endpoint endpoint) {
 						view.showNoEndpointsLabel(false);
-						cloudFacadeController.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new HttpMappingsCallback() {
+						cloudFacadeController.getHttpMappingsForPortMappingTemplateIdOrInstanceId(portMappingTemplateId, null, new HttpMappingsCallback() {
 							@Override
 							public void processHttpMappings(List<HttpMapping> httpMappings) {
 								clearEndpointForm();

@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.controller.cf.applianceinstance;
 
+import java.util.List;
+
 import org.fusesource.restygwt.client.Json;
 
 public class ApplianceInstance extends NewApplianceInstance {
@@ -18,6 +20,8 @@ public class ApplianceInstance extends NewApplianceInstance {
 	private String stateExplanation;
 	@Json(name = "amount_billed")
 	private long amountBilled;
+	@Json(name = "virtual_machine_ids")
+	private List<String> virtualMachineIds;
 	
 	public long getAmountBilled() {
 		return amountBilled;
@@ -54,5 +58,11 @@ public class ApplianceInstance extends NewApplianceInstance {
 	}
 	public void setConfigurationInstanceId(String configurationInstanceId) {
 		this.configurationInstanceId = configurationInstanceId;
+	}
+	public List<String> getVirtualMachineIds() {
+		return virtualMachineIds;
+	}
+	public void setVirtualMachineIds(List<String> virtualMachineIds) {
+		this.virtualMachineIds = virtualMachineIds;
 	}
 }
