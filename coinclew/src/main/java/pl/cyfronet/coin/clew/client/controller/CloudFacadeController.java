@@ -575,22 +575,6 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getHttpMappings(String applianceInstanceId, final HttpMappingsCallback httpMappingsCallback) {
-		httpMappingService.getHttpMappings(applianceInstanceId, new MethodCallback<HttpMappingResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, HttpMappingResponse response) {
-				if (httpMappingsCallback != null) {
-					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
-				}
-			}
-		});
-	}
-
 	public void getEndpoints(String portMappingTemplateId, final EndpointsCallback endpointsCallback) {
 		endpointService.getEndpoints(portMappingTemplateId, new MethodCallback<EndpointsResponse>() {
 			@Override
@@ -953,7 +937,7 @@ public class CloudFacadeController {
 	}
 
 	public void getPortMappings(String applianceInstanceId, final PortMappingsCallback portMappingsCallback) {
-		portMappingService.getPortMappings(applianceInstanceId, new MethodCallback<PortMappingResponse>() {
+		portMappingService.getPortMappingsForVirtualMachineId(applianceInstanceId, new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				simpleErrorHandler.displayError(exception.getMessage());
@@ -1111,36 +1095,68 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getPortMappingsForPortMappingTemplateId(String portMappingTemplateId, final PortMappingsCallback portMappingsCallback) {
-		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, PortMappingResponse response) {
-				if (portMappingsCallback != null) {
-					portMappingsCallback.processPortMappings(response.getPortMappings());
+	public void getPortMappingsForPortMappingTemplateIdOrVirtualMachineId(String portMappingTemplateId, String virtualMachineId, final PortMappingsCallback portMappingsCallback) {
+		if(virtualMachineId == null) {
+			portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					simpleErrorHandler.displayError(exception.getMessage());
 				}
-			}
-		});
+	
+				@Override
+				public void onSuccess(Method method, PortMappingResponse response) {
+					if (portMappingsCallback != null) {
+						portMappingsCallback.processPortMappings(response.getPortMappings());
+					}
+				}
+			});
+		} else {
+			portMappingService.getPortMappingsForVirtualMachineId(virtualMachineId, new MethodCallback<PortMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					simpleErrorHandler.displayError(exception.getMessage());
+				}
+
+				@Override
+				public void onSuccess(Method method, PortMappingResponse response) {
+					if (portMappingsCallback != null) {
+						portMappingsCallback.processPortMappings(response.getPortMappings());
+					}
+				}
+			});
+		}
 	}
 
-	public void getHttpMappingsForPortMappingTemplateId(String portMappingTemplateId, final HttpMappingsCallback httpMappingsCallback) {
-		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());	
-			}
-
-			@Override
-			public void onSuccess(Method method, HttpMappingResponse response) {
-				if (httpMappingsCallback != null) {
-					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+	public void getHttpMappingsForPortMappingTemplateIdOrInstanceId(String portMappingTemplateId, String instanceId, final HttpMappingsCallback httpMappingsCallback) {
+		if(instanceId == null) {
+			httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					simpleErrorHandler.displayError(exception.getMessage());	
 				}
-			}
-		});
+	
+				@Override
+				public void onSuccess(Method method, HttpMappingResponse response) {
+					if (httpMappingsCallback != null) {
+						httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+					}
+				}
+			});
+		} else {
+			httpMappingService.getHttpMappings(instanceId, new MethodCallback<HttpMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					simpleErrorHandler.displayError(exception.getMessage());
+				}
+
+				@Override
+				public void onSuccess(Method method, HttpMappingResponse response) {
+					if (httpMappingsCallback != null) {
+						httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+					}
+				}
+			});
+		}
 	}
 
 	public void removeEndpoint(String endpointId, final Command command) {
@@ -1256,11 +1272,11 @@ public class CloudFacadeController {
 		});
 	}
 	
-	public void getRedirectionsForApplianceType(String applianceTypeId, final RedirectionsCallback callback) {
-		getPortMappingTemplates(applianceTypeId, new PortMappingTemplatesCallback() {
+	public void getRedirectionsForAppliance(final ApplianceInstance instance, final RedirectionsCallback callback) {
+		getPortMappingTemplates(instance.getApplianceTypeId(), new PortMappingTemplatesCallback() {
 			@Override
 			public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-				buildRedirections(portMappingTemplates, callback);
+				buildRedirections(portMappingTemplates, instance.getId(), instance.getVirtualMachineIds().get(0), callback);
 			}
 		});
 	}
@@ -1269,21 +1285,21 @@ public class CloudFacadeController {
 		getPortMappingTemplatesForDevelopmentModePropertySetId(devPropertySetId, new PortMappingTemplatesCallback() {
 			@Override
 			public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-				buildRedirections(portMappingTemplates, callback);
+				buildRedirections(portMappingTemplates, null, null, callback);
 			}
 		});
 	}
 
-	protected void buildRedirections(List<PortMappingTemplate> portMappingTemplates, final RedirectionsCallback callback) {
+	protected void buildRedirections(List<PortMappingTemplate> portMappingTemplates, String instanceId, String virtualMachineId, final RedirectionsCallback callback) {
 		final List<Redirection> redirections = new ArrayList<Redirection>();
 		
-		if (portMappingTemplates.size() == 0 && callback != null) {
+		if(portMappingTemplates.size() == 0 && callback != null) {
 			callback.processRedirections(redirections);
 		}
 		
 		final List<MutableBoolean> finishedCallbacks = new ArrayList<MutableBoolean>();
 		
-		for (PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+		for(PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 			final Redirection redirection = new Redirection();
 			redirection.setId(portMappingTemplate.getId());
 			redirection.setName(portMappingTemplate.getServiceName());
@@ -1296,7 +1312,7 @@ public class CloudFacadeController {
 				//fetching http mappings ...
 				final MutableBoolean httpMappingsFinished = new MutableBoolean();
 				finishedCallbacks.add(httpMappingsFinished);
-				getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new HttpMappingsCallback() {
+				getHttpMappingsForPortMappingTemplateIdOrInstanceId(portMappingTemplate.getId(), instanceId, new HttpMappingsCallback() {
 					@Override
 					public void processHttpMappings(List<HttpMapping> httpMappings) {
 						for (HttpMapping httpMapping : httpMappings) {
@@ -1330,7 +1346,7 @@ public class CloudFacadeController {
 				//fetching port mappings
 				final MutableBoolean portMappingsFinished = new MutableBoolean();
 				finishedCallbacks.add(portMappingsFinished);
-				getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+				getPortMappingsForPortMappingTemplateIdOrVirtualMachineId(portMappingTemplate.getId(), virtualMachineId, new PortMappingsCallback() {
 					@Override
 					public void processPortMappings(List<PortMapping> portMappings) {
 						redirection.setPortMappings(portMappings);

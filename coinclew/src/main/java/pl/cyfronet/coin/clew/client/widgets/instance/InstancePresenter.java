@@ -194,7 +194,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					});
 				}});
 		} else {
-			cloudFacadeController.getRedirectionsForApplianceType(applianceInstance.getApplianceTypeId(), new RedirectionsCallback() {
+			cloudFacadeController.getRedirectionsForAppliance(applianceInstance, new RedirectionsCallback() {
 				@Override
 				public void processRedirections(List<Redirection> redirections) {
 					displayRedirections(redirections);
@@ -281,7 +281,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					}
 				}
 			} else {
-				if (redirection.getPortMappings().size() > 0) {
+				if(redirection.getPortMappings().size() > 0) {
 					//TODO(DH): for now only the first port mapping is used
 					PortMapping portMapping = redirection.getPortMappings().get(0);
 					currentOtherServices.add(redirection.getId());

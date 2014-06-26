@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.controller.cf.applianceinstance;
 
+import java.util.List;
+
 import org.fusesource.restygwt.client.Json;
 
 public class ApplianceInstance extends NewApplianceInstance {
@@ -21,6 +23,8 @@ public class ApplianceInstance extends NewApplianceInstance {
 	@Json(name = "prepaid_until")
 	private String prepaidUntil;
 	private String description;
+	@Json(name = "virtual_machine_ids")
+	private List<String> virtualMachineIds;
 	
 	public String getPrepaidUntil() {
 		return prepaidUntil;
@@ -69,5 +73,11 @@ public class ApplianceInstance extends NewApplianceInstance {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public List<String> getVirtualMachineIds() {
+		return virtualMachineIds;
+	}
+	public void setVirtualMachineIds(List<String> virtualMachineIds) {
+		this.virtualMachineIds = virtualMachineIds;
 	}
 }
