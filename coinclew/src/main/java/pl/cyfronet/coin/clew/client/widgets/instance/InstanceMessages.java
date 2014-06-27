@@ -25,4 +25,6 @@ public interface InstanceMessages extends Messages {
 	String prepaidUntil(String prepaidUntil, String flavorName, Float cpus, Float ram, Float hdd);
 	String noVmsLabel();
 	String noVmsShortLabel();
+	String rebootTooltip();
+	String confirmReboot();
 }

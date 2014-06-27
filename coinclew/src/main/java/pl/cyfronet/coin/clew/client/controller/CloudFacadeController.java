@@ -26,6 +26,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstancesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstanceRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.RebootRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetService;
@@ -1747,6 +1748,26 @@ public class CloudFacadeController {
 			public void onSuccess(Method method, FlavorsResponse response) {
 				if(callback != null) {
 					callback.processFlavors(response.getFlavors());
+				}
+			}
+		});
+	}
+
+	public void rebootApplianceInstance(String instanceId, final Command command) {
+		applianceInstancesService.reboot(instanceId, new RebootRequest(), new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				simpleErrorHandler.displayError(exception.getMessage());
+				
+				if(command != null) {
+					command.execute();
+				}
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if(command != null) {
+					command.execute();
 				}
 			}
 		});

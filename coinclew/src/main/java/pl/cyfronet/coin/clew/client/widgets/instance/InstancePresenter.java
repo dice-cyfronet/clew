@@ -86,6 +86,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		
 //		view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
 		
+		if(developmentMode) {
+			view.addRebootControl();
+		}
+		
 		if (enableShutdown) {
 			view.addShutdownControl();
 		}
@@ -155,11 +159,13 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.enableSave(true);
 				view.enableExternalInterfaces(true);
 				view.enableCollapsable(true);
-			} else if(applianceVm.getState().equals("saving")) {
+				view.enableReboot(true);
+			} else if(applianceVm.getState().equals("saving") || applianceVm.getState().equals("reboot")) {
 				view.enableSave(false);
 				view.enableExternalInterfaces(false);
 				view.collapseDetails();
 				view.enableCollapsable(false);
+				view.enableReboot(false);
 			}
 			
 			cloudFacadeController.getFlavors(Arrays.asList(new String[] {applianceVm.getFlavorId()}), new FlavorsCallback() {
@@ -411,5 +417,18 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 
 	public void updateEndpoints() {
 		displayDetails();
+	}
+
+	@Override
+	public void onReboot() {
+		if(view.confirmInstanceReboot()) {
+			view.setRebootBusyState(true);
+			cloudFacadeController.rebootApplianceInstance(applianceInstance.getId(), new Command() {
+				@Override
+				public void execute() {
+					view.setRebootBusyState(false);
+				}
+			});
+		}
 	}
 }
