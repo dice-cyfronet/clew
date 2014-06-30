@@ -26,7 +26,7 @@ public class MiTicketReader {
 
 	public boolean isDeveloper() {
 		if (getTicket() == null) {
-			if(Window.Location.getParameter("developer") != null &&Window.Location.getParameter("developer").equalsIgnoreCase("true")) {
+			if(Window.Location.getParameter("developer") != null && Window.Location.getParameter("developer").equalsIgnoreCase("true")) {
 				return true;
 			}
 			
@@ -66,6 +66,10 @@ public class MiTicketReader {
 				
 				return login;
 			}
+		}
+		
+		if(Window.Location.getParameter("login") != null) {
+			return Window.Location.getParameter("login");
 		}
 
 		return devProperties.developmentUserLogin();
