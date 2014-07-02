@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IApplicationsPresenter;
@@ -135,8 +134,8 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 			}
 
 			@Override
-			public void onError(CloudFacadeErrorCodes errorCodes) {
-				eventBus.displayError(ErrorCode.CF_ERROR);
+			public void onError(CloudFacadeError error) {
+				eventBus.displayError(error);
 				
 				if(timer == null) {
 					timer = new Timer() {

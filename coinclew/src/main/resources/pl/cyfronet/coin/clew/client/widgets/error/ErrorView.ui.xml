@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.error.ErrorViewMessages" field="messages"/>
+	<ui:style>
+		.popup {
+			margin: 20px;
+			z-index: 2000;
+		}
+		.notification {
+			font-size: smaller;
+			text-align: right;
+			font-style: italic;
+		}
+		@external gwt-PopupPanel;
+		.gwt-PopupPanel {
+			width: 50%;
+		}
+	</ui:style>
+	<g:FlowPanel>
+		<g:PopupPanel ui:field="popup" addStyleNames="{style.popup} alert alert-error">
+			<g:FlowPanel>
+				<g:HTML ui:field="message"/>
+				<g:HTML addStyleNames="{style.notification}">
+					<ui:text from="{messages.closeNotification}"/>
+				</g:HTML>
+			</g:FlowPanel>
+		</g:PopupPanel>
+	</g:FlowPanel>
+</ui:UiBinder>

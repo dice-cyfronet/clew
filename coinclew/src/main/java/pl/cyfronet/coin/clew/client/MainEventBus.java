@@ -3,6 +3,7 @@ package pl.cyfronet.coin.clew.client;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsPresenter;
@@ -38,7 +39,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	void start();
 	
 	@Event(handlers = RootPresenter.class)
-	void displayError(ErrorCode errorCode);
+	void displayError(CloudFacadeError error);
 	
 	@Event(handlers = RootPresenter.class)
 	void setMenu(IsWidget menu);

@@ -19,7 +19,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMapping
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatePropertiesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingTemplatesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.PortMappingsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
@@ -524,7 +524,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					}
 
 					@Override
-					public void onError(CloudFacadeErrorCodes errorCodes) {
+					public void onError(CloudFacadeError error) {
 						view.setUpdateExternalInterfaceBusyState(false);
 						view.displayGeneralExternalInterfaceUpdateErrorMessage();
 					}});
@@ -570,8 +570,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					}
 
 					@Override
-					public void onError(CloudFacadeErrorCodes errorCodes) {
-						portMappingTemplateCallback.onError(errorCodes);
+					public void onError(CloudFacadeError error) {
+						portMappingTemplateCallback.onError(error);
 					}
 				});
 			} else {
@@ -584,8 +584,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					}
 
 					@Override
-					public void onError(CloudFacadeErrorCodes errorCodes) {
-						portMappingTemplateCallback.onError(errorCodes);
+					public void onError(CloudFacadeError error) {
+						portMappingTemplateCallback.onError(error);
 					}
 				});
 			}
@@ -600,8 +600,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					}
 
 					@Override
-					public void onError(CloudFacadeErrorCodes errorCodes) {
-						portMappingTemplateCallback.onError(errorCodes);
+					public void onError(CloudFacadeError error) {
+						portMappingTemplateCallback.onError(error);
 					}
 				});
 			} else {
@@ -614,8 +614,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 					}
 
 					@Override
-					public void onError(CloudFacadeErrorCodes errorCodes) {
-						portMappingTemplateCallback.onError(errorCodes);
+					public void onError(CloudFacadeError error) {
+						portMappingTemplateCallback.onError(error);
 					}
 				});
 			}

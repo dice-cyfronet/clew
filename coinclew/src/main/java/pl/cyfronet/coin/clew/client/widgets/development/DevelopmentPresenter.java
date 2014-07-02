@@ -11,14 +11,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.OwnedApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.user.User;
@@ -175,8 +174,8 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			}
 
 			@Override
-			public void onError(CloudFacadeErrorCodes errorCodes) {
-				eventBus.displayError(ErrorCode.CF_ERROR);
+			public void onError(CloudFacadeError error) {
+				eventBus.displayError(error);
 				
 				if(timer == null) {
 					timer = new Timer() {
