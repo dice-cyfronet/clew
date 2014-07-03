@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.error.ErrorViewMessages" field="messages"/>
-	<ui:style>
+	<ui:style type="pl.cyfronet.coin.clew.client.widgets.error.ErrorView.Style">
 		.popup {
 			margin: 20px;
 			z-index: 2000;
@@ -16,15 +16,35 @@
 		.gwt-PopupPanel {
 			width: 50%;
 		}
+		.detailsHeader {
+			font-weight: bold;
+		}
+		.fieldError {
+			font-style: italic;
+			margin-right: 10px;
+		}
+		.mainMessage {
+			margin-left: 10px;
+		}
+		.details {
+			margin-left: 10px;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<g:PopupPanel ui:field="popup" addStyleNames="{style.popup} alert alert-error">
-			<g:FlowPanel>
-				<g:HTML ui:field="message"/>
+			<g:HTMLPanel>
+				<h4>
+					<g:HTML><ui:text from="{messages.headerLabel}"/></g:HTML>
+				</h4>
+				<g:HTML ui:field="message" addStyleNames="{style.mainMessage}"/>
+				<g:HTMLPanel ui:field="details" visible="false">
+					<g:HTML addStyleNames="{style.detailsHeader}"><ui:text from="{messages.detailsLabel}"/></g:HTML>
+					<g:FlowPanel ui:field="detailsList" addStyleNames="{style.details}"/>
+				</g:HTMLPanel>
 				<g:HTML addStyleNames="{style.notification}">
 					<ui:text from="{messages.closeNotification}"/>
 				</g:HTML>
-			</g:FlowPanel>
+			</g:HTMLPanel>
 		</g:PopupPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

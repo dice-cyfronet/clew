@@ -20,7 +20,7 @@ public class PopupErrorHandler {
 	public void displayError(CloudFacadeError error) {
 		log.error(error.getMessage());
 		
-		view.setMessage(error.getMessage());
+		view.setError(error);
 		view.show();
 		
 		if(timer != null) {

@@ -617,14 +617,14 @@ public class CloudFacadeController {
 		userKeyService.addUserKey(keyRequest, new MethodCallback<UserKeyRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				if (keyUploadCallback != null) {
+				if(keyUploadCallback != null) {
 					keyUploadCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
 			@Override
 			public void onSuccess(Method method, UserKeyRequestResponse response) {
-				if (keyUploadCallback != null) {
+				if(keyUploadCallback != null) {
 					keyUploadCallback.onSuccess(response.getUserKey());
 				}
 			}
