@@ -159,13 +159,19 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.enableSave(true);
 				view.enableExternalInterfaces(true);
 				view.enableCollapsable(true);
-				view.enableReboot(true);
+				
+				if(developmentMode) {
+					view.enableReboot(true);
+				}
 			} else if(applianceVm.getState().equals("saving") || applianceVm.getState().equals("reboot")) {
 				view.enableSave(false);
 				view.enableExternalInterfaces(false);
 				view.collapseDetails();
 				view.enableCollapsable(false);
-				view.enableReboot(false);
+				
+				if(developmentMode) {
+					view.enableReboot(false);
+				}
 			}
 			
 			cloudFacadeController.getFlavors(Arrays.asList(new String[] {applianceVm.getFlavorId()}), new FlavorsCallback() {
@@ -188,7 +194,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	private void displayDetails() {
-		if (developmentMode) {
+		if(developmentMode) {
 			cloudFacadeController.getDevelopmentModePropertySet(applianceInstance.getId(), new DevelopmentModePropertySetCallback() {
 				@Override
 				public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
