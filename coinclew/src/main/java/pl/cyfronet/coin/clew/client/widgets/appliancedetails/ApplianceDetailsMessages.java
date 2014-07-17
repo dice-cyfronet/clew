@@ -17,4 +17,6 @@ public interface ApplianceDetailsMessages extends Messages {
 	String flavorError();
 	String flavorDetails(String name, String cost);
 	String preferencesError();
+	String anyComputeSiteLabel();
+	String computeSiteLabel();
 }

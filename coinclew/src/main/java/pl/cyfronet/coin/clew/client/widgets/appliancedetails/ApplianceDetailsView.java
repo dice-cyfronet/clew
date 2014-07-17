@@ -10,6 +10,7 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
@@ -316,5 +317,49 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		Label label = new Label(messages.preferencesError());
 		label.setType(LabelType.IMPORTANT);
 		container.add(label);
+	}
+
+	@Override
+	public String getAnyComputeSiteLabel() {
+		return messages.anyComputeSiteLabel();
+	}
+
+	@Override
+	public HasValue<String> addComputeSites(Map<String, String> computeSiteLabels) {
+		ControlLabel label = new ControlLabel(messages.computeSiteLabel());
+		final ListBox computeSites = new ListBox();
+		
+		for(String value : computeSiteLabels.keySet()) {
+			computeSites.addItem(computeSiteLabels.get(value), value);
+		}
+		
+		nameContainer.add(label);
+		nameContainer.add(computeSites);
+		
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return computeSites.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				computeSites.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				computeSites.setSelectedValue(value);
+			}
+		};
 	}
 }

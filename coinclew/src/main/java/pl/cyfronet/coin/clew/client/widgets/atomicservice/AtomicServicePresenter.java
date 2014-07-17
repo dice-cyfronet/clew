@@ -9,7 +9,6 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.GenericErrorCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 

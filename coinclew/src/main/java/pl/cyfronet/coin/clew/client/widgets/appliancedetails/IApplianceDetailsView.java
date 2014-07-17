@@ -30,4 +30,6 @@ public interface IApplianceDetailsView extends IsWidget {
 	void showKeyProgress(boolean show);
 	void showDetailsProgress(boolean show);
 	void showPreferencesError(HasWidgets container);
+	String getAnyComputeSiteLabel();
+	HasValue<String> addComputeSites(Map<String, String> computeSiteLabels);
 }
