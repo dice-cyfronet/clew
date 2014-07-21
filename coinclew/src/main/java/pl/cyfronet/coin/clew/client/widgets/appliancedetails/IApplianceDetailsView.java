@@ -31,5 +31,5 @@ public interface IApplianceDetailsView extends IsWidget {
 	void showDetailsProgress(boolean show);
 	void showPreferencesError(HasWidgets container);
 	String getAnyComputeSiteLabel();
-	HasValue<String> addComputeSites(Map<String, String> computeSiteLabels);
+	HasValue<String> addComputeSites(Map<String, String> computeSiteLabels, String chosenComputeSiteId);
 }

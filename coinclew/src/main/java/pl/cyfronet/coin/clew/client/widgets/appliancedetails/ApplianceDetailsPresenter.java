@@ -148,7 +148,13 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		updateFlavorDetails(applianceType.getId(), applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk());
 		
 		if(applianceType.getComputeSiteIds() != null && applianceType.getComputeSiteIds().size() > 1) {
-			pickedComputeSites.put(initialConfigId, view.addComputeSites(labelComputeSites(computeSites)));
+			String chosenComputeSite = null;
+			
+			if(computeSiteIds != null && computeSiteIds.get(initialConfigId) != null && computeSiteIds.get(initialConfigId).size() == 1) {
+				chosenComputeSite = computeSiteIds.get(initialConfigId).get(0);
+			}
+			
+			pickedComputeSites.put(initialConfigId, view.addComputeSites(labelComputeSites(computeSites), chosenComputeSite));
 		}
 	}
 	

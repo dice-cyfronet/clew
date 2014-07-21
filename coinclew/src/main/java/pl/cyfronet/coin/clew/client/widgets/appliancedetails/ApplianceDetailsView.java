@@ -325,12 +325,16 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 	}
 
 	@Override
-	public HasValue<String> addComputeSites(Map<String, String> computeSiteLabels) {
+	public HasValue<String> addComputeSites(Map<String, String> computeSiteLabels, String chosenComputeSiteId) {
 		ControlLabel label = new ControlLabel(messages.computeSiteLabel());
 		final ListBox computeSites = new ListBox();
 		
 		for(String value : computeSiteLabels.keySet()) {
 			computeSites.addItem(computeSiteLabels.get(value), value);
+		}
+		
+		if(chosenComputeSiteId != null && computeSiteLabels.keySet().contains(chosenComputeSiteId)) {
+			computeSites.setSelectedValue(chosenComputeSiteId);
 		}
 		
 		nameContainer.add(label);
