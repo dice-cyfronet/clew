@@ -9,12 +9,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliancesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateService;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -211,6 +213,10 @@ public class CloudFacadeController {
 		void processComputeSites(List<ComputeSite> computeSites);
 	}
 	
+	public interface AggregateApplianceCallback extends ErrorCallback {
+		void processAppliances(List<AggregateAppliance> appliances);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -228,6 +234,7 @@ public class CloudFacadeController {
 	private PortMappingTemplatePropertyService portMappingTemplatePropertyService;
 	private CfErrorReader errorReader;
 	private FlavorService flavorService;
+	private AggregateService aggregateService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -238,6 +245,7 @@ public class CloudFacadeController {
 			DevelopmentModePropertySetService developmentModePropertySetService,
 			PortMappingService portMappingService, UserService userService,
 			PortMappingTemplatePropertyService portMappingTemplatePropertyService, FlavorService flavorService,
+			AggregateService aggregateService, 
 			PopupErrorHandler popupErrorHandler, CfErrorReader errorReader) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
@@ -254,6 +262,7 @@ public class CloudFacadeController {
 		this.userService = userService;
 		this.portMappingTemplatePropertyService = portMappingTemplatePropertyService;
 		this.flavorService = flavorService;
+		this.aggregateService = aggregateService;
 		this.popupErrorHandler = popupErrorHandler;
 		this.errorReader = errorReader;
 	}
@@ -1757,6 +1766,20 @@ public class CloudFacadeController {
 				if(command != null) {
 					command.execute();
 				}
+			}
+		});
+	}
+	
+	public void aggregatedInstances(Type type, final AggregateApplianceCallback callback) {
+		aggregateService.getAggregateAppliances(type.name(), new MethodCallback<AggregateAppliancesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+			}
+
+			@Override
+			public void onSuccess(Method method, AggregateAppliancesResponse response) {
+				callback.processAppliances(response.getAppliances().getAppliances());
 			}
 		});
 	}

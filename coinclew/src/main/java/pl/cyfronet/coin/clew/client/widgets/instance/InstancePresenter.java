@@ -14,18 +14,12 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceVmsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSiteCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.DevelopmentModePropertySetCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RedirectionsCallback;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregatePortMappingTemplate;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateVm;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancevm.ApplianceVm;
-import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
-import pl.cyfronet.coin.clew.client.controller.cf.devmodepropertyset.DevelopmentModePropertySet;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
-import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
@@ -43,13 +37,13 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	private final static Logger log = LoggerFactory.getLogger(InstancePresenter.class); 
 	
-	private CloudFacadeController cloudFacadeController;
 	private Map<String, IsWidget> webapps;
 	private Map<String, IsWidget> services;
 	private Map<String, IsWidget> otherServices;
 	private boolean developmentMode;
-	private ApplianceInstance applianceInstance;
+	private AggregateAppliance applianceInstance;
 	private MiTicketReader ticketReader;
+	private CloudFacadeController cloudFacadeController;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
@@ -60,10 +54,11 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		otherServices = new HashMap<String, IsWidget>();
 	}
 	
-	public void setInstance(final ApplianceInstance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
+	public void setInstance(AggregateAppliance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
 		this.developmentMode = developmentMode;
 		
-		if (this.applianceInstance != null) {
+		if(this.applianceInstance != null) {
+			this.applianceInstance = applianceInstance;
 			updateView(applianceInstance);
 			
 			return;
@@ -71,8 +66,8 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 
 		this.applianceInstance = applianceInstance;
 		view.getName().setText(applianceInstance.getName());
-		
-		if (applianceInstance.getState() == State.unsatisfied) {
+
+		if(applianceInstance.getState() == State.unsatisfied) {
 			view.setUnsatisfiedState(applianceInstance.getStateExplanation());
 		}
 		
@@ -84,21 +79,19 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			view.setNoDescription();
 		}
 		
-//		view.getSpec().setText(view.getSpecStanza(applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk()));
-		
 		if(developmentMode) {
 			view.addRebootControl();
 		}
 		
-		if (enableShutdown) {
+		if(enableShutdown) {
 			view.addShutdownControl();
 		}
 		
-		if (applianceInstance.getState() == State.satisfied) {
+		if(applianceInstance.getState() == State.satisfied) {
 			displayDetails();
 		}
 		
-		if (developmentMode) {
+		if(developmentMode) {
 			view.addExternalInterfacesControl();
 			view.addSaveControl();
 			
@@ -108,33 +101,23 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			}
 		}
 		
-		if (applianceInstance.getState() == State.satisfied) {
-			cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
-				@Override
-				public void processApplianceVms(List<ApplianceVm> applianceVms) {
-					if (applianceVms.size() > 0) {
-						view.showDetailsPanel(true);
-						view.showNoVmsLabel(false);
-						
-						ApplianceVm applianceVm = applianceVms.get(0);
-						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-						updateStatus(applianceVm);
-						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
-							@Override
-							public void processComputeSite(ComputeSite computeSite) {
-								view.getLocation().setText(computeSite.getName());
-							}
-						});
-					} else {
-						view.showDetailsPanel(false);
-						view.showNoVmsLabel(true);
-						view.getIp().setHTML("&nbsp;");
-						view.getLocation().setHTML("&nbsp;");
-						view.setStatus(view.getNoVmsLabel());
-						view.enableCollapsable(true);
-					}
-				}
-			});
+		if(applianceInstance.getState() == State.satisfied) {
+			if(applianceInstance.getVirtualMachines() != null && applianceInstance.getVirtualMachines().size() > 0) {
+				view.showDetailsPanel(true);
+				view.showNoVmsLabel(false);
+				
+				AggregateVm applianceVm = applianceInstance.getVirtualMachines().get(0);
+				view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+				updateStatus(applianceVm);
+				view.getLocation().setText(applianceVm.getComputeSite().getName());
+			} else {
+				view.showDetailsPanel(false);
+				view.showNoVmsLabel(true);
+				view.getIp().setHTML("&nbsp;");
+				view.getLocation().setHTML("&nbsp;");
+				view.setStatus(view.getNoVmsLabel());
+				view.enableCollapsable(true);
+			}
 		}
 	}
 	
@@ -151,7 +134,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 	
-	private void updateStatus(final ApplianceVm applianceVm) {
+	private void updateStatus(final AggregateVm applianceVm) {
 		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 		
 		if(applianceVm.getState() != null) {
@@ -174,78 +157,57 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			}
 			
-			cloudFacadeController.getFlavors(Arrays.asList(new String[] {applianceVm.getFlavorId()}), new FlavorsCallback() {
-				@Override
-				public void processFlavors(List<Flavor> flavors) {
-					if(flavors != null && flavors.size() == 1) {
-						Flavor flavor = flavors.get(0);
-						view.setFlavorDetails(formatDate(applianceInstance.getPrepaidUntil()), flavor.getName(),
-								flavor.getCpu(), flavor.getMemory(), flavor.getHdd());
-					} else {
-						log.error("Flavors for virtual machine with id {} are missing", applianceVm.getId());
-					}
-				}
-			});
+			if(applianceVm.getFlavor() != null) {
+				view.setFlavorDetails(formatDate(applianceInstance.getPrepaidUntil()),
+						applianceVm.getFlavor().getName(), applianceVm.getFlavor().getCpu(),
+						applianceVm.getFlavor().getMemory(), applianceVm.getFlavor().getHdd());
+			} else {
+				log.error("Flavors for virtual machine with id {} are missing", applianceVm.getId());
+			}
 		}
 	}
 	
-	private String costIndicator(final ApplianceInstance applianceInstance) {
+	private String costIndicator(final AggregateAppliance applianceInstance) {
 		return "$" + NumberFormat.getFormat("0.00").format(((float) applianceInstance.getAmountBilled() / 10000));
 	}
 	
 	private void displayDetails() {
-		if(developmentMode) {
-			cloudFacadeController.getDevelopmentModePropertySet(applianceInstance.getId(), new DevelopmentModePropertySetCallback() {
-				@Override
-				public void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet) {
-					cloudFacadeController.getRedirectionsForDevPropertySetId(developmentModePropertySet.getId(), new RedirectionsCallback() {
-						@Override
-						public void processRedirections(List<Redirection> redirections) {
-							displayRedirections(redirections);
-						}
-					});
-				}});
-		} else {
-			cloudFacadeController.getRedirectionsForAppliance(applianceInstance, new RedirectionsCallback() {
-				@Override
-				public void processRedirections(List<Redirection> redirections) {
-					displayRedirections(redirections);
-				}});
-		}
+		displayRedirections();
 	}
 	
-	private void displayRedirections(List<Redirection> redirections) {
+	private void displayRedirections() {
 		List<String> currentWebapps = new ArrayList<String>();
 		List<String> currentServices = new ArrayList<String>();
 		List<String> currentOtherServices = new ArrayList<String>();
+		List<Redirection> redirections = transform();
 		
-		for (Redirection redirection : redirections) {
-			if (redirection.isHttp()) {
-				if (redirection.getEndpoints() != null) {
-					for (Endpoint endpoint : redirection.getEndpoints()) {
-						if ("webapp".equals(endpoint.getEndpointType())) {
+		for(Redirection redirection : redirections) {
+			if(redirection.isHttp()) {
+				if(redirection.getEndpoints() != null) {
+					for(Endpoint endpoint : redirection.getEndpoints()) {
+						if("webapp".equals(endpoint.getEndpointType())) {
 							currentWebapps.add(endpoint.getId());
 							
 							//before showing a webapp at least one http mapping has to be available
 							if(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null) {
-								if (!webapps.keySet().contains(endpoint.getId())) {
+								if(!webapps.keySet().contains(endpoint.getId())) {
 									String endpointHttpUrl = UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
 											endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
 									String endpointHttpsUrl = UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
 											endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
 									
 									//nx url params fix
-									if (redirection.getName().equals("nx")) {
+									if(redirection.getName().equals("nx")) {
 										Redirection sshRedirection = findSshRedirection(redirections);
 										
-										if (sshRedirection != null && sshRedirection.getPortMappings().size() > 0) {
+										if(sshRedirection != null && sshRedirection.getPortMappings().size() > 0) {
 											PortMapping portMapping = sshRedirection.getPortMappings().get(0);
 											
-											if (endpointHttpUrl != null) {
+											if(endpointHttpUrl != null) {
 												endpointHttpUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
 											}
 											
-											if (endpointHttpsUrl != null) {
+											if(endpointHttpsUrl != null) {
 												endpointHttpsUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
 											}
 										}
@@ -298,10 +260,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					PortMapping portMapping = redirection.getPortMappings().get(0);
 					currentOtherServices.add(redirection.getId());
 					
-					if (!otherServices.keySet().contains(redirection.getId())) {
+					if(!otherServices.keySet().contains(redirection.getId())) {
 						String helpBlock = null;
 						
-						if (redirection.getName().toLowerCase().startsWith("ssh") && developmentMode) {
+						if(redirection.getName().toLowerCase().startsWith("ssh") && developmentMode) {
 							helpBlock = view.getSshHelpBlock(portMapping.getPublicIp(),
 									portMapping.getSourcePort());
 						}
@@ -314,41 +276,80 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			}
 		}
 		
-		for (String webappId : webapps.keySet()) {
-			if (!currentWebapps.contains(webappId)) {
+		for(String webappId : webapps.keySet()) {
+			if(!currentWebapps.contains(webappId)) {
 				view.removeWebapp(webapps.remove(webappId));
 			}
 		}
 		
-		for (String serviceId : services.keySet()) {
+		for(String serviceId : services.keySet()) {
 			if (!currentServices.contains(serviceId)) {
 				view.removeService(services.remove(serviceId));
 			}
 		}
 		
-		for (String otherServiceId : otherServices.keySet()) {
+		for(String otherServiceId : otherServices.keySet()) {
 			if (!currentOtherServices.contains(otherServiceId)) {
 				view.removeOtherService(otherServices.remove(otherServiceId));
 			}
 		}
 		
-		if (webapps.size() == 0) {
+		if(webapps.size() == 0) {
 			view.showNoWebApplicationsLabel(true);
 		} else {
 			view.showNoWebApplicationsLabel(false);
 		}
 		
-		if (services.size() == 0) {
+		if(services.size() == 0) {
 			view.showNoServicesLabel(true);
 		} else {
 			view.showNoServicesLabel(false);
 		}
 		
-		if (otherServices.size() == 0) {
+		if(otherServices.size() == 0) {
 			view.showNoOtherServicesLabel(true);
 		} else {
 			view.showNoOtherServicesLabel(false);
 		}
+	}
+
+	private List<Redirection> transform() {
+		List<Redirection> result = new ArrayList<Redirection>();
+		
+		for(AggregatePortMappingTemplate portMappingTemplate : applianceInstance.getPortMappingTemplates()) {
+			Redirection redirection = new Redirection();
+			redirection.setId(portMappingTemplate.getId());
+			redirection.setName(portMappingTemplate.getServiceName());
+			redirection.setTargetPort(portMappingTemplate.getTargetPort());
+			redirection.setProtocol(portMappingTemplate.getTransportProtocol());
+			result.add(redirection);
+			
+			if(Arrays.asList((new String[] {"http", "https", "http_https"})).contains(
+					portMappingTemplate.getApplicationProtocol())) {
+				redirection.setHttp(true);
+				//fetching http mappings ...
+				for(HttpMapping httpMapping : portMappingTemplate.getHttpMappings()) {
+					if("http".equals(httpMapping.getApplicationProtocol())) {
+						redirection.setHttpUrl(httpMapping.getUrl());
+						redirection.setHttpUrlStatus(httpMapping.getStatus());
+					} else if ("https".equals(httpMapping.getApplicationProtocol())) {
+						redirection.setHttpsUrl(httpMapping.getUrl());
+						redirection.setHttpsUrlStatus(httpMapping.getStatus());
+					}
+				}
+				
+				//...  and endpoints
+				redirection.setEndpoints(portMappingTemplate.getEndpoints());
+			} else {
+				redirection.setHttp(false);
+				//fetching port mappings
+				if(applianceInstance.getVirtualMachines() != null && applianceInstance.getVirtualMachines().size() > 0) {
+					redirection.setPortMappings(applianceInstance.getVirtualMachines().get(0).getPortMappings());
+				}
+			}
+		}
+		
+		return result;
 	}
 
 	private Redirection findSshRedirection(List<Redirection> redirections) {
@@ -375,35 +376,25 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 	
-	private void updateView(ApplianceInstance applianceInstance) {
-		if (applianceInstance.getState() == State.satisfied) {
-			cloudFacadeController.getInstanceVms(applianceInstance.getId(), new ApplianceVmsCallback() {
-				@Override
-				public void processApplianceVms(List<ApplianceVm> applianceVms) {
-					if (applianceVms.size() > 0) {
-						view.showDetailsPanel(true);
-						view.showNoVmsLabel(false);
-						
-						ApplianceVm applianceVm = applianceVms.get(0);
-						view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
-						updateStatus(applianceVm);
-						cloudFacadeController.getComputeSite(applianceVm.getComputeSiteId(), new ComputeSiteCallback() {
-							@Override
-							public void processComputeSite(ComputeSite computeSite) {
-								view.getLocation().setText(computeSite.getName());
-							}
-						});
-						displayDetails();
-					} else {
-						view.showDetailsPanel(false);
-						view.showNoVmsLabel(true);
-						view.getIp().setHTML("&nbsp;");
-						view.getLocation().setHTML("&nbsp;");
-						view.setStatus(view.getNoVmsLabel());
-						view.enableCollapsable(true);
-					}
-				}
-			});
+	private void updateView(AggregateAppliance applianceInstance) {
+		if(applianceInstance.getState() == State.satisfied) {
+			if(applianceInstance.getVirtualMachines().size() > 0) {
+				view.showDetailsPanel(true);
+				view.showNoVmsLabel(false);
+				
+				AggregateVm applianceVm = applianceInstance.getVirtualMachines().get(0);
+				view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+				updateStatus(applianceVm);
+				view.getLocation().setText(applianceVm.getComputeSite().getName());
+				displayDetails();
+			} else {
+				view.showDetailsPanel(false);
+				view.showNoVmsLabel(true);
+				view.getIp().setHTML("&nbsp;");
+				view.getLocation().setHTML("&nbsp;");
+				view.setStatus(view.getNoVmsLabel());
+				view.enableCollapsable(true);
+			}
 		}
 	}
 

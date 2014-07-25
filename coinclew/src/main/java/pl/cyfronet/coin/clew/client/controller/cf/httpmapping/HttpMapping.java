@@ -50,4 +50,11 @@ public class HttpMapping {
 	public void setPortMappingTemplateId(String portMappingTemplateId) {
 		this.portMappingTemplateId = portMappingTemplateId;
 	}
+	@Override
+	public String toString() {
+		return "HttpMapping [id=" + id + ", applicationProtocol="
+				+ applicationProtocol + ", url=" + url + ", applianceId="
+				+ applianceId + ", portMappingTemplateId="
+				+ portMappingTemplateId + ", status=" + status + "]";
+	}
 }

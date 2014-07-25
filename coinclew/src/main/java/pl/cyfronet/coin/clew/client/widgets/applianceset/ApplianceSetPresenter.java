@@ -33,7 +33,7 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 	}
 
 	public void setApplianceSet(ApplianceSet applianceSet) {
-		if (applianceSetId == null) {
+		if(applianceSetId == null) {
 			applianceSetId = applianceSet.getId();
 			view.getName().setText(applianceSet.getName());
 		}
@@ -58,7 +58,8 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 						view.getInstanceContainer().add(presenter.getView().asWidget());
 					}
 					
-					presenter.setInstance(instance, false, false);
+					//TODO: fix this with aggregate method
+//					presenter.setInstance(instance, false, false);
 					currentInstances.add(instance.getId());
 				}
 				

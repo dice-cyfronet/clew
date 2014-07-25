@@ -6,7 +6,6 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstanceService;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstancesResponse;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.junit.client.GWTTestCase;

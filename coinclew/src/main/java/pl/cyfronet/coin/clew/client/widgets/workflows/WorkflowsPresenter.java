@@ -10,7 +10,7 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceSetsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.widgets.applianceset.ApplianceSetPresenter;
 import pl.cyfronet.coin.clew.client.widgets.workflows.IWorkflowsView.IWorkflowsPresenter;
 
@@ -39,7 +39,7 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 	}
 
 	private void loadWorkflows() {
-		cloudFacadeController.getApplianceSets(NewApplianceSet.Type.workflow, new ApplianceSetsCallback() {
+		cloudFacadeController.getApplianceSets(Type.workflow, new ApplianceSetsCallback() {
 			@Override
 			public void processApplianceSet(List<ApplianceSet> applianceSets) {
 				if (applianceSets.size() == 0) {
