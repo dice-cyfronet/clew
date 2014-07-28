@@ -27,6 +27,17 @@ public class AggregateAppliance {
 	
 	@Json(name = "prepaid_until")
 	private String prepaidUntil;
+	
+	@Json(name = "appliance_set_id")
+	private String applianceSetId;
+
+	public String getApplianceSetId() {
+		return applianceSetId;
+	}
+
+	public void setApplianceSetId(String applianceSetId) {
+		this.applianceSetId = applianceSetId;
+	}
 
 	public String getName() {
 		return name;

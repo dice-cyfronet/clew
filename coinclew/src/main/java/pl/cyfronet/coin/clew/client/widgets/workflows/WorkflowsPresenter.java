@@ -8,7 +8,10 @@ import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceSetsCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.widgets.applianceset.ApplianceSetPresenter;
@@ -41,51 +44,72 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 	private void loadWorkflows() {
 		cloudFacadeController.getApplianceSets(Type.workflow, new ApplianceSetsCallback() {
 			@Override
-			public void processApplianceSet(List<ApplianceSet> applianceSets) {
-				if (applianceSets.size() == 0) {
-					view.showNoWorkflowsLabel(true);
-				} else {
-					view.showNoWorkflowsLabel(false);
-				}
-				
-				List<String> currentApplianceSets = new ArrayList<String>();
-				
-				for (ApplianceSet applianceSet : applianceSets) {
-					ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSet.getId());
-					
-					if (presenter == null) {
-						presenter = eventBus.addHandler(ApplianceSetPresenter.class);
-						applianceSetPresenters.put(applianceSet.getId(), presenter);
-						view.getWorkflowsContainer().add(presenter.getView().asWidget());
-					}
-					
-					presenter.setApplianceSet(applianceSet);
-					currentApplianceSets.add(applianceSet.getId());
-				}
-				
-				//removing appliance sets which were not updated in the last request
-				for (Iterator<String> i = applianceSetPresenters.keySet().iterator(); i.hasNext(); ) {
-					String applianceSetId = i.next();
-					
-					if (!currentApplianceSets.contains(applianceSetId)) {
-						ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSetId);
-						presenter.cleanUp();
-						eventBus.removeHandler(presenter);
-						view.getWorkflowsContainer().remove(presenter.getView().asWidget());
-						i.remove();
-					}
-				}
-				
-				if (timer == null) {
-					timer = new Timer() {
-						@Override
-						public void run() {
-							loadWorkflows();
+			public void processApplianceSet(final List<ApplianceSet> applianceSets) {
+				cloudFacadeController.aggregatedInstances(Type.workflow, new AggregateApplianceCallback() {
+					@Override
+					public void onError(CloudFacadeError error) {
+						eventBus.displayError(error);
+						
+						if(timer == null) {
+							timer = new Timer() {
+								@Override
+								public void run() {
+									loadWorkflows();
+								}
+							};
 						}
-					};
-				}
 
-				timer.schedule(REFRESH_MILIS);
+						timer.schedule(REFRESH_MILIS);
+					}
+					
+					@Override
+					public void processAppliances(List<AggregateAppliance> appliances) {
+						if (applianceSets.size() == 0) {
+							view.showNoWorkflowsLabel(true);
+						} else {
+							view.showNoWorkflowsLabel(false);
+						}
+						
+						List<String> currentApplianceSets = new ArrayList<String>();
+						
+						for (ApplianceSet applianceSet : applianceSets) {
+							ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSet.getId());
+							
+							if (presenter == null) {
+								presenter = eventBus.addHandler(ApplianceSetPresenter.class);
+								applianceSetPresenters.put(applianceSet.getId(), presenter);
+								view.getWorkflowsContainer().add(presenter.getView().asWidget());
+							}
+							
+							presenter.setApplianceSet(applianceSet, findAppliances(appliances, applianceSet.getId()));
+							currentApplianceSets.add(applianceSet.getId());
+						}
+						
+						//removing appliance sets which were not updated in the last request
+						for (Iterator<String> i = applianceSetPresenters.keySet().iterator(); i.hasNext(); ) {
+							String applianceSetId = i.next();
+							
+							if (!currentApplianceSets.contains(applianceSetId)) {
+								ApplianceSetPresenter presenter = applianceSetPresenters.get(applianceSetId);
+								presenter.cleanUp();
+								eventBus.removeHandler(presenter);
+								view.getWorkflowsContainer().remove(presenter.getView().asWidget());
+								i.remove();
+							}
+						}
+						
+						if(timer == null) {
+							timer = new Timer() {
+								@Override
+								public void run() {
+									loadWorkflows();
+								}
+							};
+						}
+
+						timer.schedule(REFRESH_MILIS);
+					}
+				});
 			}
 		});
 	}
@@ -110,5 +134,17 @@ public class WorkflowsPresenter extends BasePresenter<IWorkflowsView, MainEventB
 				view.showNoWorkflowsLabel(true);
 			}
 		}
+	}
+	
+	private List<AggregateAppliance> findAppliances(List<AggregateAppliance> appliances, String applianceSetId) {
+		ArrayList<AggregateAppliance> result = new ArrayList<AggregateAppliance>();
+		
+		for(AggregateAppliance appliance : appliances) {
+			if(appliance.getApplianceSetId() != null && appliance.getApplianceSetId().equals(applianceSetId)) {
+				result.add(appliance);
+			}
+		}
+		
+		return result;
 	}
 }
