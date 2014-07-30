@@ -1,4 +1,4 @@
-package pl.cyfronet.coin.clew.client.controller.cf.aggregates;
+package pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance;
 
 import java.util.List;
 

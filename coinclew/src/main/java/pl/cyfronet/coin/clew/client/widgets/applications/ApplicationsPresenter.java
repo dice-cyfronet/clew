@@ -13,7 +13,7 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
-import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IApplicationsPresenter;

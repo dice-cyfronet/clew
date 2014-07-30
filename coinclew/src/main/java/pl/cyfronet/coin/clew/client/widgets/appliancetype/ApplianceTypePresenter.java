@@ -7,11 +7,9 @@ import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSitesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
@@ -22,7 +20,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = ApplianceTypeView.class, multiple = true)
 public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, MainEventBus> implements IApplianceTypePresenter {
-	private ApplianceType applianceType;
+	private AggregateApplianceType applianceType;
 	private CloudFacadeController cloudFacadeController;
 	private boolean developmentMode;
 	
@@ -31,7 +29,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		this.cloudFacadeController = cloudFacadeController;
 	}
 
-	public void setApplianceType(ApplianceType applianceType, boolean developmentMode) {
+	public void setApplianceType(AggregateApplianceType applianceType, boolean developmentMode) {
 		this.applianceType = applianceType;
 		this.developmentMode = developmentMode;
 		view.getName().setText(applianceType.getName());
@@ -44,52 +42,41 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		
 		view.clearInitialConfigsContainer();
 		view.addInitialConfigsProgressIndicator();
-		cloudFacadeController.getInitialConfigurations(applianceType.getId(), new ApplianceConfigurationsCallback() {
-			@Override
-			public void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations) {
-				view.clearInitialConfigsContainer();
-				
-				if (applianceConfigurations.size() == 0) {
-					view.addNoInitialConfigsLabel();
-				} else {
-					view.showInitialConfigs();
+		view.clearInitialConfigsContainer();
+		
+		if (applianceType.getInitialConfigurations().size() == 0) {
+			view.addNoInitialConfigsLabel();
+		} else {
+			view.showInitialConfigs();
 
-					for (ApplianceConfiguration config : applianceConfigurations) {
-						view.addInitialConfigValue(config.getId(), config.getName());
-					}
+			for (ApplianceConfiguration config : applianceType.getInitialConfigurations()) {
+				view.addInitialConfigValue(config.getId(), config.getName());
+			}
+			
+			if(!developmentMode) {
+				view.showFlavorInformation(applianceType.getFlavor().getName(),
+						applianceType.getFlavor().getHourlyCost());
+			}
+			
+			if(applianceType.getComputeSiteIds() != null &&
+					applianceType.getComputeSiteIds().size() > 0) {
+				view.enableControls(true);
+				
+				if(applianceType.getComputeSites().size() > 1) {
+					view.showComputeSiteProgressIndicator(true);
+					view.showComputeSiteProgressIndicator(false);
+					view.showComputeSiteSelector();
+					view.addComputeSite("0", view.getAnyComputeSiteLabel());
 					
-					if(!ApplianceTypePresenter.this.developmentMode) {
-						updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
-								ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
-								ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
-								ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), null);
-					}
-					
-					if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds() != null &&
-							ApplianceTypePresenter.this.applianceType.getComputeSiteIds().size() > 0) {
-						view.enableControls(true);
-						
-						if(ApplianceTypePresenter.this.applianceType.getComputeSiteIds().size() > 1) {
-							view.showComputeSiteProgressIndicator(true);
-							cloudFacadeController.getComputeSites(ApplianceTypePresenter.this.applianceType.getComputeSiteIds(), new ComputeSitesCallback() {
-								@Override
-								public void processComputeSites(List<ComputeSite> computeSites) {
-									view.showComputeSiteProgressIndicator(false);
-									view.showComputeSiteSelector();
-									view.addComputeSite("0", view.getAnyComputeSiteLabel());
-									
-									for(ComputeSite computeSite : computeSites) {
-										view.addComputeSite(computeSite.getId(), computeSite.getName());
-									}
-								}});
-						}
-					} else {
-						view.showComputeSiteProgressIndicator(false);
-						view.showNoComputeSitesMessage();
+					for(ComputeSite computeSite : applianceType.getComputeSites().values()) {
+						view.addComputeSite(computeSite.getId(), computeSite.getName());
 					}
 				}
+			} else {
+				view.showComputeSiteProgressIndicator(false);
+				view.showNoComputeSitesMessage();
 			}
-		});
+		}
 	}
 
 	private void updateFlavorInformation(String applianceTypeId, String cpu, String ram,

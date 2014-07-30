@@ -14,9 +14,12 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
-import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliance;
-import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateAppliancesResponse;
-import pl.cyfronet.coin.clew.client.controller.cf.aggregates.AggregateService;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateApplianceService;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliancesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceTypeService;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceTypesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -217,6 +220,10 @@ public class CloudFacadeController {
 		void processAppliances(List<AggregateAppliance> appliances);
 	}
 	
+	public interface AggregateApplianceTypesCallback extends ErrorCallback {
+		void processApplianceTypes(List<AggregateApplianceType> applianceTypes);
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -234,7 +241,8 @@ public class CloudFacadeController {
 	private PortMappingTemplatePropertyService portMappingTemplatePropertyService;
 	private CfErrorReader errorReader;
 	private FlavorService flavorService;
-	private AggregateService aggregateService;
+	private AggregateApplianceService aggregateService;
+	private AggregateApplianceTypeService aggregateApplianceTypeService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -245,7 +253,7 @@ public class CloudFacadeController {
 			DevelopmentModePropertySetService developmentModePropertySetService,
 			PortMappingService portMappingService, UserService userService,
 			PortMappingTemplatePropertyService portMappingTemplatePropertyService, FlavorService flavorService,
-			AggregateService aggregateService, 
+			AggregateApplianceService aggregateService, AggregateApplianceTypeService aggregateApplianceTypeService, 
 			PopupErrorHandler popupErrorHandler, CfErrorReader errorReader) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
@@ -263,6 +271,7 @@ public class CloudFacadeController {
 		this.portMappingTemplatePropertyService = portMappingTemplatePropertyService;
 		this.flavorService = flavorService;
 		this.aggregateService = aggregateService;
+		this.aggregateApplianceTypeService = aggregateApplianceTypeService;
 		this.popupErrorHandler = popupErrorHandler;
 		this.errorReader = errorReader;
 	}
@@ -1782,5 +1791,37 @@ public class CloudFacadeController {
 				callback.processAppliances(response.getAppliances().getAppliances());
 			}
 		});
+	}
+	
+	public void aggregateApplianceTypes(String mode, final AggregateApplianceTypesCallback callback) {
+		aggregateApplianceTypeService.getAggregateAppliances(mode, new MethodCallback<AggregateApplianceTypesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+			}
+
+			@Override
+			public void onSuccess(Method method, AggregateApplianceTypesResponse response) {
+				List<AggregateApplianceType> applianceTypes = response.getApplianceTypes().getApplianceTypes();
+				collectComputeSites(applianceTypes, response.getApplianceTypes().getComputeSites());
+				callback.processApplianceTypes(applianceTypes);
+			}
+		});
+	}
+	
+	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
+		for(AggregateApplianceType applianceType : applianceTypes) {
+			applianceType.setComputeSites(new HashMap<String, ComputeSite>());
+			
+			for(String computeSiteId : applianceType.getComputeSiteIds()) {
+				for (ComputeSite computeSite : computeSites) {
+					if(computeSite.getId().equals(computeSiteId)) {
+						applianceType.getComputeSites().put(computeSiteId, computeSite);
+						
+						break;
+					}
+				}
+			}
+		}
 	}
 }
