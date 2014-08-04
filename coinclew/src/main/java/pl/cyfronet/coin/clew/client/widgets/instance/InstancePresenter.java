@@ -344,8 +344,20 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				redirection.setHttp(false);
 				//fetching port mappings
 				if(applianceInstance.getVirtualMachines() != null && applianceInstance.getVirtualMachines().size() > 0) {
-					redirection.setPortMappings(applianceInstance.getVirtualMachines().get(0).getPortMappings());
+					redirection.setPortMappings(matchPortMappings(applianceInstance.getVirtualMachines().get(0).getPortMappings(), redirection.getId()));
 				}
+			}
+		}
+		
+		return result;
+	}
+
+	private List<PortMapping> matchPortMappings(List<PortMapping> portMappings, String portMappingTemplateId) {
+		List<PortMapping> result = new ArrayList<PortMapping>();
+
+		for(PortMapping portMapping : portMappings) {
+			if(portMappingTemplateId.equals(portMapping.getPortMappingTemplateId())) {
+				result.add(portMapping);
 			}
 		}
 		
