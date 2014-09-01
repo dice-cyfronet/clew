@@ -7,12 +7,12 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.GenericErrorCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RemoveApplianceTypeCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
-import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -60,21 +60,20 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 
 	@Override
 	public void onRemove() {
-		if (view.confirmRemoval()) {
+		if(view.confirmRemoval()) {
 			view.setRemoveBusyState(true);
-			cloudFacadeController.removeApplianceType(applianceType.getApplianceType().getId(), new Command() {
+			cloudFacadeController.removeApplianceType(applianceType.getApplianceType().getId(), new RemoveApplianceTypeCallback() {
 				@Override
-				public void execute() {
+				public void onError(CloudFacadeError error) {
+					view.setRemoveBusyState(false);
+//					view.showRemovalErrorMessage(message);
+				}
+
+				@Override
+				public void onApplianceTypeRemoved() {
 					view.setRemoveBusyState(false);
 					eventBus.removeApplianceType(applianceType.getApplianceType().getId());
-				}
-			}, new GenericErrorCallback() {
-				@Override
-				public void onError(int statusCode, String message) {
-					view.setRemoveBusyState(false);
-					view.showRemovalErrorMessage(message);
-				}
-			});
+				}});
 		}
 	}
 

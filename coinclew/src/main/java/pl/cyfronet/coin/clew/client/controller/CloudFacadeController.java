@@ -224,6 +224,10 @@ public class CloudFacadeController {
 		void processApplianceTypes(List<AggregateApplianceType> applianceTypes);
 	}
 	
+	public interface RemoveApplianceTypeCallback extends ErrorCallback {
+		void onApplianceTypeRemoved();
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -1509,19 +1513,23 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void removeApplianceType(String applianceTypeId, final Command command, final GenericErrorCallback errorCallback) {
+	public void removeApplianceType(String applianceTypeId, final RemoveApplianceTypeCallback callback) {
 		applianceTypesService.deleteApplianceType(applianceTypeId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				if (errorCallback != null) {
-					errorCallback.onError(method.getResponse().getStatusCode(), errorReader.decodeError(method.getResponse().getText()).getMessage());
+				CloudFacadeError error = errorReader.decodeError(method.getResponse().getText());
+				
+				if(callback != null) {
+					callback.onError(error);
 				}
+				
+				popupErrorHandler.displayError(error);
 			}
 
 			@Override
 			public void onSuccess(Method method, Void response) {
-				if (command != null) {
-					command.execute();
+				if(callback != null) {
+					callback.onApplianceTypeRemoved();
 				}
 			}
 		});
