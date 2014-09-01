@@ -66,7 +66,6 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 				@Override
 				public void onError(CloudFacadeError error) {
 					view.setRemoveBusyState(false);
-//					view.showRemovalErrorMessage(message);
 				}
 
 				@Override

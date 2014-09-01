@@ -140,11 +140,6 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	}
 
 	@Override
-	public void showRemovalErrorMessage(String errorMessage) {
-		Window.alert(errorMessage);
-	}
-
-	@Override
 	public void enableStartButton(boolean enable) {
 		startInstance.setEnabled(enable);
 	}
