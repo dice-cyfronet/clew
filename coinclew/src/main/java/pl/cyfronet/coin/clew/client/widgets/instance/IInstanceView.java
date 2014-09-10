@@ -9,6 +9,7 @@ public interface IInstanceView extends IsWidget {
 		void onShutdownClicked();
 		void onExternalInterfacesClicked();
 		void onSave();
+		void onReboot();
 	}
 
 	HasText getName();
@@ -46,4 +47,8 @@ public interface IInstanceView extends IsWidget {
 	void showDetailsPanel(boolean show);
 	void showNoVmsLabel(boolean show);
 	String getNoVmsLabel();
+	void addRebootControl();
+	void enableReboot(boolean enable);
+	boolean confirmInstanceReboot();
+	void setRebootBusyState(boolean busy);
 }

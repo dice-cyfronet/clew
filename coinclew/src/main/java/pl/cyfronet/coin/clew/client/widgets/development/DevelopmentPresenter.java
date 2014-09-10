@@ -11,15 +11,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.OwnedApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.user.User;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
@@ -137,19 +137,35 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			clearInstancePresenters();
 		}
 		
-		cloudFacadeController.getDevelopmentApplianceInstances(new ApplianceInstancesCallback() {
+		cloudFacadeController.aggregatedInstances(Type.development, new AggregateApplianceCallback() {
 			@Override
-			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
+			public void onError(CloudFacadeError error) {
+				eventBus.displayError(error);
+				
+				if(timer == null) {
+					timer = new Timer() {
+						@Override
+						public void run() {
+							loadInstancesAndAtomicServices(true);
+						}
+					};
+				}
+
+				timer.schedule(REFRESH_MILIS);
+			}
+			
+			@Override
+			public void processAppliances(List<AggregateAppliance> appliances) {
 				view.showInstanceLoadingIndicator(false);
 				
-				if (applianceInstances.size() == 0) {
+				if (appliances.size() == 0) {
 					view.showNoRunningInstancesLabel(true);
 					view.showHeaderRow(false);
 				} else {
 					view.showNoRunningInstancesLabel(false);
 					view.showHeaderRow(true);
 					
-					for (ApplianceInstance instance : applianceInstances) {
+					for (AggregateAppliance instance : appliances) {
 						InstancePresenter presenter = instancePresenters.get(instance.getId());
 						
 						if (presenter == null) {
@@ -172,22 +188,6 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 
 					timer.schedule(REFRESH_MILIS);
 				}
-			}
-
-			@Override
-			public void onError(CloudFacadeErrorCodes errorCodes) {
-				eventBus.displayError(ErrorCode.CF_ERROR);
-				
-				if(timer == null) {
-					timer = new Timer() {
-						@Override
-						public void run() {
-							loadInstancesAndAtomicServices(true);
-						}
-					};
-				}
-
-				timer.schedule(REFRESH_MILIS);
 			}
 		});
 	}

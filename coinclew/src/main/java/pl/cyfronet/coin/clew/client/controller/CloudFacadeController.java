@@ -9,11 +9,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.fusesource.restygwt.client.FailedStatusCodeException;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateApplianceService;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliancesResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceTypeService;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceTypesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigurationService;
@@ -26,6 +32,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceIns
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstancesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.NewApplianceInstanceRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.RebootRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetRequestResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSetService;
@@ -92,12 +99,15 @@ import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
 public class CloudFacadeController {
+	public interface ErrorCallback {
+		void onError(CloudFacadeError error);
+	}
+	
 	public interface ApplianceInstancesCallback extends ErrorCallback {
 		public abstract void processApplianceInstances(List<ApplianceInstance> applianceInstances);
 	}
@@ -154,9 +164,8 @@ public class CloudFacadeController {
 		void processUserKeys(List<UserKey> userKeys);
 	}
 	
-	public interface KeyUploadCallback {
+	public interface KeyUploadCallback extends ErrorCallback {
 		void onSuccess(UserKey userKey);
-		void onError(CloudFacadeErrorCodes errorCodes);
 	}
 	
 	public interface DevelopmentModePropertySetCallback {
@@ -169,10 +178,6 @@ public class CloudFacadeController {
 	
 	public interface EndpointCallback {
 		void processEndpoint(Endpoint endpoint);
-	}
-	
-	public interface ErrorCallback {
-		void onError(CloudFacadeErrorCodes errorCodes);
 	}
 	
 	public interface GenericErrorCallback {
@@ -211,11 +216,23 @@ public class CloudFacadeController {
 		void processComputeSites(List<ComputeSite> computeSites);
 	}
 	
+	public interface AggregateApplianceCallback extends ErrorCallback {
+		void processAppliances(List<AggregateAppliance> appliances);
+	}
+	
+	public interface AggregateApplianceTypesCallback extends ErrorCallback {
+		void processApplianceTypes(List<AggregateApplianceType> applianceTypes);
+	}
+	
+	public interface RemoveApplianceTypeCallback extends ErrorCallback {
+		void onApplianceTypeRemoved();
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
 	private ApplianceConfigurationService applianceConfigurationService;
-	private static SimpleErrorHandler simpleErrorHandler;
+	private PopupErrorHandler popupErrorHandler;
 	private ApplianceVmService applianceVmsService;
 	private ComputeSiteService computeSitesService;
 	private PortMappingTemplateService portMappingTemplateService;
@@ -228,6 +245,8 @@ public class CloudFacadeController {
 	private PortMappingTemplatePropertyService portMappingTemplatePropertyService;
 	private CfErrorReader errorReader;
 	private FlavorService flavorService;
+	private AggregateApplianceService aggregateService;
+	private AggregateApplianceTypeService aggregateApplianceTypeService;
 	
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
@@ -238,7 +257,8 @@ public class CloudFacadeController {
 			DevelopmentModePropertySetService developmentModePropertySetService,
 			PortMappingService portMappingService, UserService userService,
 			PortMappingTemplatePropertyService portMappingTemplatePropertyService, FlavorService flavorService,
-			SimpleErrorHandler simpleErrorHandler, CfErrorReader errorReader) {
+			AggregateApplianceService aggregateService, AggregateApplianceTypeService aggregateApplianceTypeService, 
+			PopupErrorHandler popupErrorHandler, CfErrorReader errorReader) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
 		this.applianceSetService = applianceSetService;
@@ -254,7 +274,9 @@ public class CloudFacadeController {
 		this.userService = userService;
 		this.portMappingTemplatePropertyService = portMappingTemplatePropertyService;
 		this.flavorService = flavorService;
-		CloudFacadeController.simpleErrorHandler = simpleErrorHandler;
+		this.aggregateService = aggregateService;
+		this.aggregateApplianceTypeService = aggregateApplianceTypeService;
+		this.popupErrorHandler = popupErrorHandler;
 		this.errorReader = errorReader;
 	}
 	
@@ -269,7 +291,7 @@ public class CloudFacadeController {
 			
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 		});
 	}
@@ -278,7 +300,7 @@ public class CloudFacadeController {
 		applianceTypesService.getApplianceType(applianceTypeId, new MethodCallback<ApplianceTypeRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -312,7 +334,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							simpleErrorHandler.displayError(exception.getMessage());
+							popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 							checkReturn();
 						}
 
@@ -338,7 +360,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if (applianceInstancesCallback != null) {
-					applianceInstancesCallback.onError(CloudFacadeErrorCodes.ApplianceInstanceRetrievalError);
+					applianceInstancesCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -355,7 +377,7 @@ public class CloudFacadeController {
 		applianceInstancesService.deleteApplianceInstance(applianceInstanceId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -371,7 +393,7 @@ public class CloudFacadeController {
 		applianceSetService.getApplianceSets(new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -394,7 +416,7 @@ public class CloudFacadeController {
 				applianceSetService.addApplianceSet(applianceSetRequest, new MethodCallback<ApplianceSetRequestResponse>() {
 					@Override
 					public void onFailure(Method method, Throwable exception) {
-						simpleErrorHandler.displayError(exception.getMessage());
+						popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 					}
 
 					@Override
@@ -412,7 +434,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.getApplianceConfigurations(applianceTypeId, new MethodCallback<ApplianceConfigurationsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -434,7 +456,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.addApplianceConfiguration(newApplianceConfigurationRequest, new MethodCallback<ApplianceConfigurationRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				Window.alert(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -450,7 +472,7 @@ public class CloudFacadeController {
 		applianceVmsService.getApplianceVms(applianceInstanceId, new MethodCallback<ApplianceVmsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -466,7 +488,7 @@ public class CloudFacadeController {
 		computeSitesService.getComputeSite(computeSiteId, new MethodCallback<ComputeSiteRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -482,7 +504,7 @@ public class CloudFacadeController {
 		applianceSetService.getApplianceSets(type, new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -498,7 +520,7 @@ public class CloudFacadeController {
 		applianceInstancesService.getApplianceInstances(applianceSetId, new MethodCallback<ApplianceInstancesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -514,7 +536,7 @@ public class CloudFacadeController {
 		applianceSetService.deleteApplianceSet(applianceSetId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -530,7 +552,7 @@ public class CloudFacadeController {
 		applianceSetService.getApplianceSets(Type.portal, new MethodCallback<ApplianceSetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -540,7 +562,7 @@ public class CloudFacadeController {
 					applianceInstancesService.getApplianceInstances(portalApplianceSet.getId(), new MethodCallback<ApplianceInstancesResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
-							simpleErrorHandler.displayError(exception.getMessage());
+							popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 						}
 
 						@Override
@@ -563,7 +585,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.getPortMappingTemplates(applianceTypeId, new MethodCallback<PortMappingTemplatesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -575,27 +597,11 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getHttpMappings(String applianceInstanceId, final HttpMappingsCallback httpMappingsCallback) {
-		httpMappingService.getHttpMappings(applianceInstanceId, new MethodCallback<HttpMappingResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, HttpMappingResponse response) {
-				if (httpMappingsCallback != null) {
-					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
-				}
-			}
-		});
-	}
-
 	public void getEndpoints(String portMappingTemplateId, final EndpointsCallback endpointsCallback) {
 		endpointService.getEndpoints(portMappingTemplateId, new MethodCallback<EndpointsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -611,7 +617,7 @@ public class CloudFacadeController {
 		userKeyService.getUserKeys(new MethodCallback<UserKeysResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -633,25 +639,14 @@ public class CloudFacadeController {
 		userKeyService.addUserKey(keyRequest, new MethodCallback<UserKeyRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				//TODO(DH): replace with a generic error handler in future
-				if (exception instanceof FailedStatusCodeException) {
-					if (method.getResponse().getText() != null && method.getResponse().getText().contains("public_key")) {
-						if (keyUploadCallback != null) {
-							keyUploadCallback.onError(CloudFacadeErrorCodes.UserKeyInvalid);
-							
-							return;
-						}
-					}
-				}
-				
-				if (keyUploadCallback != null) {
-					keyUploadCallback.onError(CloudFacadeErrorCodes.UnknownError);
+				if(keyUploadCallback != null) {
+					keyUploadCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
 			@Override
 			public void onSuccess(Method method, UserKeyRequestResponse response) {
-				if (keyUploadCallback != null) {
+				if(keyUploadCallback != null) {
 					keyUploadCallback.onSuccess(response.getUserKey());
 				}
 			}
@@ -665,7 +660,7 @@ public class CloudFacadeController {
 				if(callback != null) {
 					callback.onError(0, exception.getMessage());
 				} else {
-					simpleErrorHandler.displayError(exception.getMessage());
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -682,7 +677,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.deleteApplianceConfiguration(initialConfigurationId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -707,7 +702,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.updateApplianceConfiguration(configId, request, new MethodCallback<ApplianceConfigurationRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -724,7 +719,7 @@ public class CloudFacadeController {
 		applianceConfigurationService.getApplianceConfigurationsForIds(ids, new MethodCallback<ApplianceConfigurationsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -747,7 +742,7 @@ public class CloudFacadeController {
 			
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 		});
 	}
@@ -789,7 +784,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							simpleErrorHandler.displayError(exception.getMessage());
+							popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 							checkReturn();
 						}
 
@@ -814,7 +809,7 @@ public class CloudFacadeController {
 		applianceTypesService.getApplianceTypesForModeAndActiveFlag("development", true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -830,7 +825,7 @@ public class CloudFacadeController {
 		applianceTypesService.getApplianceTypesForModeAndActiveFlag("production", true, new MethodCallback<ApplianceTypesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -875,7 +870,7 @@ public class CloudFacadeController {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
 							failed.add(configurationTemplateId);
-							simpleErrorHandler.displayError(exception.getMessage());
+							popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 							checkReturn();
 						}
 
@@ -903,7 +898,7 @@ public class CloudFacadeController {
 				applianceInstancesService.getApplianceInstances(applianceSet.getId(), new MethodCallback<ApplianceInstancesResponse>() {
 					@Override
 					public void onFailure(Method method, Throwable exception) {
-						simpleErrorHandler.displayError(exception.getMessage());
+						popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 					}
 
 					@Override
@@ -921,7 +916,7 @@ public class CloudFacadeController {
 		developmentModePropertySetService.getDevelopmentModePropertySet(applianceInstanceId, new MethodCallback<DevelopmentModePropertySetsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -940,7 +935,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.getPortMappingTemplatesForIds(join(portMappingTemplateIds, ","), new MethodCallback<PortMappingTemplatesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -953,10 +948,10 @@ public class CloudFacadeController {
 	}
 
 	public void getPortMappings(String applianceInstanceId, final PortMappingsCallback portMappingsCallback) {
-		portMappingService.getPortMappings(applianceInstanceId, new MethodCallback<PortMappingResponse>() {
+		portMappingService.getPortMappingsForVirtualMachineId(applianceInstanceId, new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -972,7 +967,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.removePortMappingTemplate(mappingId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -991,7 +986,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if(portMappingTemplateCallback != null) {
-					portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+					portMappingTemplateCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -1016,7 +1011,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if(portMappingTemplateCallback != null) {
-					portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+					portMappingTemplateCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -1049,7 +1044,7 @@ public class CloudFacadeController {
 		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<HttpMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1074,7 +1069,7 @@ public class CloudFacadeController {
 		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<PortMappingResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1099,7 +1094,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.getPortMappingTemplatesForDevelopmentModePropertySetId(developmentModePropertySetId, new MethodCallback<PortMappingTemplatesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1111,43 +1106,75 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getPortMappingsForPortMappingTemplateId(String portMappingTemplateId, final PortMappingsCallback portMappingsCallback) {
-		portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Method method, PortMappingResponse response) {
-				if (portMappingsCallback != null) {
-					portMappingsCallback.processPortMappings(response.getPortMappings());
+	public void getPortMappingsForPortMappingTemplateIdOrVirtualMachineId(String portMappingTemplateId, String virtualMachineId, final PortMappingsCallback portMappingsCallback) {
+		if(virtualMachineId == null) {
+			portMappingService.getPortMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<PortMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 				}
-			}
-		});
+	
+				@Override
+				public void onSuccess(Method method, PortMappingResponse response) {
+					if (portMappingsCallback != null) {
+						portMappingsCallback.processPortMappings(response.getPortMappings());
+					}
+				}
+			});
+		} else {
+			portMappingService.getPortMappingsForVirtualMachineId(virtualMachineId, new MethodCallback<PortMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+				}
+
+				@Override
+				public void onSuccess(Method method, PortMappingResponse response) {
+					if (portMappingsCallback != null) {
+						portMappingsCallback.processPortMappings(response.getPortMappings());
+					}
+				}
+			});
+		}
 	}
 
-	public void getHttpMappingsForPortMappingTemplateId(String portMappingTemplateId, final HttpMappingsCallback httpMappingsCallback) {
-		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());	
-			}
-
-			@Override
-			public void onSuccess(Method method, HttpMappingResponse response) {
-				if (httpMappingsCallback != null) {
-					httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+	public void getHttpMappingsForPortMappingTemplateIdOrInstanceId(String portMappingTemplateId, String instanceId, final HttpMappingsCallback httpMappingsCallback) {
+		if(instanceId == null) {
+			httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));	
 				}
-			}
-		});
+	
+				@Override
+				public void onSuccess(Method method, HttpMappingResponse response) {
+					if (httpMappingsCallback != null) {
+						httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+					}
+				}
+			});
+		} else {
+			httpMappingService.getHttpMappings(instanceId, new MethodCallback<HttpMappingResponse>() {
+				@Override
+				public void onFailure(Method method, Throwable exception) {
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+				}
+
+				@Override
+				public void onSuccess(Method method, HttpMappingResponse response) {
+					if (httpMappingsCallback != null) {
+						httpMappingsCallback.processHttpMappings(response.getHttpMappings());
+					}
+				}
+			});
+		}
 	}
 
 	public void removeEndpoint(String endpointId, final Command command) {
 		endpointService.deleteEndpoint(endpointId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1175,7 +1202,7 @@ public class CloudFacadeController {
 		endpointService.addEndpoint(request, new MethodCallback<EndpointRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1207,7 +1234,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if (errorCallback != null) {
-					errorCallback.onError(CloudFacadeErrorCodes.ApplianceTypeUpdateError);
+					errorCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -1243,7 +1270,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if (errorCallback != null) {
-					errorCallback.onError(CloudFacadeErrorCodes.ApplianceTypeSaveError);
+					errorCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -1256,11 +1283,11 @@ public class CloudFacadeController {
 		});
 	}
 	
-	public void getRedirectionsForApplianceType(String applianceTypeId, final RedirectionsCallback callback) {
-		getPortMappingTemplates(applianceTypeId, new PortMappingTemplatesCallback() {
+	public void getRedirectionsForAppliance(final ApplianceInstance instance, final RedirectionsCallback callback) {
+		getPortMappingTemplates(instance.getApplianceTypeId(), new PortMappingTemplatesCallback() {
 			@Override
 			public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-				buildRedirections(portMappingTemplates, callback);
+				buildRedirections(portMappingTemplates, instance.getId(), instance.getVirtualMachineIds().get(0), callback);
 			}
 		});
 	}
@@ -1269,21 +1296,21 @@ public class CloudFacadeController {
 		getPortMappingTemplatesForDevelopmentModePropertySetId(devPropertySetId, new PortMappingTemplatesCallback() {
 			@Override
 			public void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates) {
-				buildRedirections(portMappingTemplates, callback);
+				buildRedirections(portMappingTemplates, null, null, callback);
 			}
 		});
 	}
 
-	protected void buildRedirections(List<PortMappingTemplate> portMappingTemplates, final RedirectionsCallback callback) {
+	protected void buildRedirections(List<PortMappingTemplate> portMappingTemplates, String instanceId, String virtualMachineId, final RedirectionsCallback callback) {
 		final List<Redirection> redirections = new ArrayList<Redirection>();
 		
-		if (portMappingTemplates.size() == 0 && callback != null) {
+		if(portMappingTemplates.size() == 0 && callback != null) {
 			callback.processRedirections(redirections);
 		}
 		
 		final List<MutableBoolean> finishedCallbacks = new ArrayList<MutableBoolean>();
 		
-		for (PortMappingTemplate portMappingTemplate : portMappingTemplates) {
+		for(PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 			final Redirection redirection = new Redirection();
 			redirection.setId(portMappingTemplate.getId());
 			redirection.setName(portMappingTemplate.getServiceName());
@@ -1296,7 +1323,7 @@ public class CloudFacadeController {
 				//fetching http mappings ...
 				final MutableBoolean httpMappingsFinished = new MutableBoolean();
 				finishedCallbacks.add(httpMappingsFinished);
-				getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new HttpMappingsCallback() {
+				getHttpMappingsForPortMappingTemplateIdOrInstanceId(portMappingTemplate.getId(), instanceId, new HttpMappingsCallback() {
 					@Override
 					public void processHttpMappings(List<HttpMapping> httpMappings) {
 						for (HttpMapping httpMapping : httpMappings) {
@@ -1330,7 +1357,7 @@ public class CloudFacadeController {
 				//fetching port mappings
 				final MutableBoolean portMappingsFinished = new MutableBoolean();
 				finishedCallbacks.add(portMappingsFinished);
-				getPortMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new PortMappingsCallback() {
+				getPortMappingsForPortMappingTemplateIdOrVirtualMachineId(portMappingTemplate.getId(), virtualMachineId, new PortMappingsCallback() {
 					@Override
 					public void processPortMappings(List<PortMapping> portMappings) {
 						redirection.setPortMappings(portMappings);
@@ -1369,7 +1396,7 @@ public class CloudFacadeController {
 		userService.getUsers(join(userIds, ","), new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1432,7 +1459,7 @@ public class CloudFacadeController {
 
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1448,7 +1475,7 @@ public class CloudFacadeController {
 		userService.getUserForLogin(userLogin, new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1460,7 +1487,7 @@ public class CloudFacadeController {
 					applianceTypesService.getManagedApplianceTypes(new MethodCallback<ApplianceTypesResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
-							simpleErrorHandler.displayError(exception.getMessage());
+							popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 						}
 
 						@Override
@@ -1486,19 +1513,23 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void removeApplianceType(String applianceTypeId, final Command command, final GenericErrorCallback errorCallback) {
+	public void removeApplianceType(String applianceTypeId, final RemoveApplianceTypeCallback callback) {
 		applianceTypesService.deleteApplianceType(applianceTypeId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				if (errorCallback != null) {
-					errorCallback.onError(method.getResponse().getStatusCode(), errorReader.decodeError(method.getResponse().getText()));
+				CloudFacadeError error = errorReader.decodeError(method.getResponse().getText());
+				
+				if(callback != null) {
+					callback.onError(error);
 				}
+				
+				popupErrorHandler.displayError(error);
 			}
 
 			@Override
 			public void onSuccess(Method method, Void response) {
-				if (command != null) {
-					command.execute();
+				if(callback != null) {
+					callback.onApplianceTypeRemoved();
 				}
 			}
 		});
@@ -1515,7 +1546,7 @@ public class CloudFacadeController {
 		portMappingTemplatePropertyService.addPortMappingTemplateProperty(portMappingTemplatePropertyRequest, new MethodCallback<PortMappingTemplatePropertyRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1531,7 +1562,7 @@ public class CloudFacadeController {
 		portMappingTemplatePropertyService.getPortMappings(portMappingTemplatePropertyId, new MethodCallback<PortMappingTemplatePropertiesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1551,7 +1582,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				if(portMappingTemplateCallback != null) {
-					portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+					portMappingTemplateCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
@@ -1576,7 +1607,7 @@ public class CloudFacadeController {
 		portMappingTemplateService.updatePortMappingTemplate(mappingId, request, new MethodCallback<PortMappingTemplateRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				portMappingTemplateCallback.onError(CloudFacadeErrorCodes.PortMappingTemplateUpdateError);
+				portMappingTemplateCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1599,7 +1630,7 @@ public class CloudFacadeController {
 		portMappingTemplatePropertyService.updatePortMappingTemplateProperty(propertyId, portMappingTemplatePropertyRequest, new MethodCallback<PortMappingTemplatePropertyRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1615,7 +1646,7 @@ public class CloudFacadeController {
 		portMappingTemplatePropertyService.removePortMappingTemplateProperety(propertyId, new MethodCallback<Void>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1644,7 +1675,7 @@ public class CloudFacadeController {
 		endpointService.updateEndpoint(endpointId, request, new MethodCallback<EndpointRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1661,7 +1692,7 @@ public class CloudFacadeController {
 			flavorService.getFlavors(applianceTypeId, cpu, memory, disk, new MethodCallback<FlavorsResponse>() {
 				@Override
 				public void onFailure(Method method, Throwable exception) {
-					simpleErrorHandler.displayError(exception.getMessage());
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 				}
 	
 				@Override
@@ -1675,7 +1706,7 @@ public class CloudFacadeController {
 			flavorService.getFlavors(applianceTypeId, cpu, memory, disk, computeSiteId, new MethodCallback<FlavorsResponse>() {
 				@Override
 				public void onFailure(Method method, Throwable exception) {
-					simpleErrorHandler.displayError(exception.getMessage());
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 				}
 	
 				@Override
@@ -1692,7 +1723,7 @@ public class CloudFacadeController {
 		computeSitesService.getComputeSites(join(computeSiteIds, ","), new MethodCallback<ComputeSitesResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1708,7 +1739,7 @@ public class CloudFacadeController {
 		userService.getUsers(new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1724,7 +1755,7 @@ public class CloudFacadeController {
 		flavorService.getFlavors(join(flavorIds, ","), new MethodCallback<FlavorsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				simpleErrorHandler.displayError(exception.getMessage());
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
@@ -1734,5 +1765,71 @@ public class CloudFacadeController {
 				}
 			}
 		});
+	}
+
+	public void rebootApplianceInstance(String instanceId, final Command command) {
+		applianceInstancesService.reboot(instanceId, new RebootRequest(), new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+				
+				if(command != null) {
+					command.execute();
+				}
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				if(command != null) {
+					command.execute();
+				}
+			}
+		});
+	}
+	
+	public void aggregatedInstances(Type type, final AggregateApplianceCallback callback) {
+		aggregateService.getAggregateAppliances(type.name(), new MethodCallback<AggregateAppliancesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+			}
+
+			@Override
+			public void onSuccess(Method method, AggregateAppliancesResponse response) {
+				callback.processAppliances(response.getAppliances().getAppliances());
+			}
+		});
+	}
+	
+	public void aggregateApplianceTypes(String mode, final AggregateApplianceTypesCallback callback) {
+		aggregateApplianceTypeService.getAggregateAppliances(mode, new MethodCallback<AggregateApplianceTypesResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
+			}
+
+			@Override
+			public void onSuccess(Method method, AggregateApplianceTypesResponse response) {
+				List<AggregateApplianceType> applianceTypes = response.getApplianceTypes().getApplianceTypes();
+				collectComputeSites(applianceTypes, response.getApplianceTypes().getComputeSites());
+				callback.processApplianceTypes(applianceTypes);
+			}
+		});
+	}
+	
+	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
+		for(AggregateApplianceType applianceType : applianceTypes) {
+			applianceType.setComputeSites(new HashMap<String, ComputeSite>());
+			
+			for(String computeSiteId : applianceType.getComputeSiteIds()) {
+				for (ComputeSite computeSite : computeSites) {
+					if(computeSite.getId().equals(computeSiteId)) {
+						applianceType.getComputeSites().put(computeSiteId, computeSite);
+						
+						break;
+					}
+				}
+			}
+		}
 	}
 }

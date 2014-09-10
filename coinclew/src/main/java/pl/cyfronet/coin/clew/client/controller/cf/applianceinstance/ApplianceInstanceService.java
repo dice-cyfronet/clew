@@ -29,4 +29,8 @@ public interface ApplianceInstanceService extends RestService {
 	@GET
 	@Path("appliances?appliance_set_id={id}")
 	void getApplianceInstances(@PathParam("id") String appliancesetId, MethodCallback<ApplianceInstancesResponse> methodCallback);
+	
+	@POST
+	@Path("appliances/{id}/action")
+	void reboot(@PathParam("id") String instanceId, RebootRequest rebootRequest, MethodCallback<Void> callback);
 }

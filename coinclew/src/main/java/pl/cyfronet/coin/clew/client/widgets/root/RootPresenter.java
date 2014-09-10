@@ -1,8 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.root;
 
 import pl.cyfronet.coin.clew.client.CloudFacadeEndpointProperty;
-import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.widgets.root.IRootView.IRootPresenter;
 
 import com.google.gwt.user.client.Timer;
@@ -39,9 +39,8 @@ public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implem
 		view.addPopup(widget);
 	}
 	
-	public void onDisplayError(ErrorCode errorCode) {
-		String errorMessage = messages.getString(errorCode.name());
-		view.getErrorLabel().setText(errorMessage);
+	public void onDisplayError(CloudFacadeError error) {
+		view.getErrorLabel().setText(error.getMessage());
 		view.setErrorLabelVisible(true);
 		
 		if (errorTimer != null) {

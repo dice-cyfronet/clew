@@ -5,14 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pl.cyfronet.coin.clew.client.ErrorCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceConfigurationsCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.widgets.applications.IApplicationsView.IApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
 
@@ -23,6 +26,8 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = ApplicationsView.class)
 public class ApplicationsPresenter extends BasePresenter<IApplicationsView, MainEventBus> implements IApplicationsPresenter {
+	private final static Logger log = LoggerFactory.getLogger(ApplicationsPresenter.class);
+	
 	private static final int REFRESH_MILIS = 5000;
 	
 	private CloudFacadeController cloudFacadeController;
@@ -96,20 +101,20 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 			view.showLoadingIndicator(true);
 		}
 		
-		cloudFacadeController.getPortalApplianceInstances(new ApplianceInstancesCallback() {
+		cloudFacadeController.aggregatedInstances(Type.portal, new AggregateApplianceCallback() {
 			@Override
-			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
+			public void processAppliances(List<AggregateAppliance> appliances) {
 				if(!update) {
 					view.showLoadingIndicator(false);
 				}
 				
-				if(applianceInstances.size() == 0) {
+				if(appliances.size() == 0) {
 					view.showNoInstancesLabel(true);
 				} else {
 					view.showHeaderRow(true);
 					view.showNoInstancesLabel(false);
 					
-					for(ApplianceInstance applianceInstance : applianceInstances) {
+					for(AggregateAppliance applianceInstance : appliances) {
 						InstancePresenter presenter = instancePresenters.get(applianceInstance.getId());
 
 						if(presenter == null) {
@@ -135,8 +140,8 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 			}
 
 			@Override
-			public void onError(CloudFacadeErrorCodes errorCodes) {
-				eventBus.displayError(ErrorCode.CF_ERROR);
+			public void onError(CloudFacadeError error) {
+				eventBus.displayError(error);
 				
 				if(timer == null) {
 					timer = new Timer() {

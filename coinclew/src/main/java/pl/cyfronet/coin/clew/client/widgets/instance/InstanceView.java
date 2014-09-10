@@ -61,6 +61,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private boolean collapsed;
 	private Map<String, Label> httpStatuses;
 	private Map<String, Label> httpsStatuses;
+	private Button rebootButton;
 	
 	
 	@UiField HTML name;
@@ -132,7 +133,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void setShutdownBusyState(boolean busy) {
-		if (shutdown != null) {
+		if(shutdown != null) {
 			BootstrapHelpers.setButtonBusyState(shutdown, busy);
 		}
 	}
@@ -303,7 +304,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void addExternalInterfacesControl() {
-		if (externalInterfaces == null) {
+		if(externalInterfaces == null) {
 			externalInterfaces = new Button();
 			externalInterfaces.setIcon(IconType.COGS);
 			externalInterfaces.setType(ButtonType.WARNING);
@@ -323,7 +324,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void addSaveControl() {
-		if (saveButton == null) {
+		if(saveButton == null) {
 			saveButton = new Button();
 			saveButton.setIcon(IconType.SAVE);
 			saveButton.setType(ButtonType.WARNING);
@@ -543,5 +544,42 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public String getNoVmsLabel() {
 		return messages.noVmsShortLabel();
+	}
+
+	@Override
+	public void addRebootControl() {
+		if(rebootButton == null) {
+			rebootButton = new Button();
+			rebootButton.setIcon(IconType.REFRESH);
+			rebootButton.setType(ButtonType.DANGER);
+			rebootButton.setSize(ButtonSize.MINI);
+			rebootButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			rebootButton.setTitle(messages.rebootTooltip());
+			rebootButton.setEnabled(false);
+			rebootButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onReboot();
+				}
+			});
+			controls.add(rebootButton);
+		}
+	}
+
+	@Override
+	public void enableReboot(boolean enable) {
+		rebootButton.setEnabled(enable);
+	}
+
+	@Override
+	public boolean confirmInstanceReboot() {
+		return Window.confirm(messages.confirmReboot());
+	}
+
+	@Override
+	public void setRebootBusyState(boolean busy) {
+		if(rebootButton != null) {
+			BootstrapHelpers.setButtonBusyState(rebootButton, busy);
+		}
 	}
 }

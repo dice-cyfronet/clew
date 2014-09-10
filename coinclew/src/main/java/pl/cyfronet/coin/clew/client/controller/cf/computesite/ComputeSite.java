@@ -54,4 +54,10 @@ public class ComputeSite {
 	public void setConfig(String config) {
 		this.config = config;
 	}
+	@Override
+	public String toString() {
+		return "ComputeSite [id=" + id + ", siteId=" + siteId + ", name="
+				+ name + ", location=" + location + ", siteType=" + siteType
+				+ ", technology=" + technology + ", config=" + config + "]";
+	}
 }

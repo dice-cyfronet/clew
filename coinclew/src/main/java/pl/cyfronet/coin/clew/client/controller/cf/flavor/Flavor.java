@@ -48,4 +48,10 @@ public class Flavor {
 	public void setHourlyCost(Integer hourlyCost) {
 		this.hourlyCost = hourlyCost;
 	}
+	@Override
+	public String toString() {
+		return "Flavor [id=" + id + ", name=" + name + ", cpu=" + cpu
+				+ ", memory=" + memory + ", hdd=" + hdd + ", hourlyCost="
+				+ hourlyCost + "]";
+	}
 }

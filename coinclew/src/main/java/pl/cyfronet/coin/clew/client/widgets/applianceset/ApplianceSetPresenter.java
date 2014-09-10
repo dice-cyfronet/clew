@@ -6,12 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import pl.cyfronet.coin.clew.client.ErrorCode;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstancesCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.ApplianceSet;
 import pl.cyfronet.coin.clew.client.widgets.applianceset.IApplianceSetView.IApplianceSetPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
@@ -33,59 +30,49 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 		instancePresenters = new HashMap<String, InstancePresenter>();
 	}
 
-	public void setApplianceSet(ApplianceSet applianceSet) {
-		if (applianceSetId == null) {
+	public void setApplianceSet(ApplianceSet applianceSet, List<AggregateAppliance> appliances) {
+		if(applianceSetId == null) {
 			applianceSetId = applianceSet.getId();
 			view.getName().setText(applianceSet.getName());
 		}
 		
-		cloudFacadeController.getApplianceInstances(applianceSetId, new ApplianceInstancesCallback() {
-			@Override
-			public void processApplianceInstances(List<ApplianceInstance> applianceInstances) {
-				if (applianceInstances.size() == 0) {
-					view.showNoInstancesLabel(true);
-				} else {
-					view.showNoInstancesLabel(false);
-				}
-				
-				List<String> currentInstances = new ArrayList<String>();
-				
-				for (ApplianceInstance instance : applianceInstances) {
-					InstancePresenter presenter = instancePresenters.get(instance.getId());
-					
-					if (presenter == null) {
-						presenter = eventBus.addHandler(InstancePresenter.class);
-						instancePresenters.put(instance.getId(), presenter);
-						view.getInstanceContainer().add(presenter.getView().asWidget());
-					}
-					
-					presenter.setInstance(instance, false, false);
-					currentInstances.add(instance.getId());
-				}
-				
-				//removing those instances which were not sent during the last update
-				for (Iterator<String> i = instancePresenters.keySet().iterator(); i.hasNext(); ) {
-					String instanceId = i.next();
-					
-					if (!currentInstances.contains(instanceId)) {
-						InstancePresenter presenter = instancePresenters.get(instanceId);
-						eventBus.removeHandler(presenter);
-						view.getInstanceContainer().remove(presenter.getView().asWidget());
-						i.remove();
-					}
-				}
+		if(appliances.size() == 0) {
+			view.showNoInstancesLabel(true);
+		} else {
+			view.showNoInstancesLabel(false);
+		}
+		
+		List<String> currentInstances = new ArrayList<String>();
+		
+		for(AggregateAppliance instance : appliances) {
+			InstancePresenter presenter = instancePresenters.get(instance.getId());
+			
+			if(presenter == null) {
+				presenter = eventBus.addHandler(InstancePresenter.class);
+				instancePresenters.put(instance.getId(), presenter);
+				view.getInstanceContainer().add(presenter.getView().asWidget());
 			}
-
-			@Override
-			public void onError(CloudFacadeErrorCodes errorCodes) {
-				eventBus.displayError(ErrorCode.CF_ERROR);
+			
+			presenter.setInstance(instance, false, false);
+			currentInstances.add(instance.getId());
+		}
+		
+		//removing those instances which were not sent during the last update
+		for(Iterator<String> i = instancePresenters.keySet().iterator(); i.hasNext(); ) {
+			String instanceId = i.next();
+			
+			if (!currentInstances.contains(instanceId)) {
+				InstancePresenter presenter = instancePresenters.get(instanceId);
+				eventBus.removeHandler(presenter);
+				view.getInstanceContainer().remove(presenter.getView().asWidget());
+				i.remove();
 			}
-		});
+		}
 	}
 
 	@Override
 	public void onShutdown() {
-		if (view.confirmShutdown()) {
+		if(view.confirmShutdown()) {
 			view.setShutdownBusyState(true);
 			cloudFacadeController.shutdownApplianceSet(applianceSetId, new Command() {
 				@Override
@@ -98,7 +85,7 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 	}
 
 	public void cleanUp() {
-		for (InstancePresenter instancePresenter : instancePresenters.values()) {
+		for(InstancePresenter instancePresenter : instancePresenters.values()) {
 			eventBus.removeHandler(instancePresenter);
 			view.getInstanceContainer().remove(instancePresenter.getView().asWidget());
 		}

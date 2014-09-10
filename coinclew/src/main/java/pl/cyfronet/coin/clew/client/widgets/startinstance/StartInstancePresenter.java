@@ -10,8 +10,9 @@ import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypesCallback;
-import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
@@ -50,37 +51,33 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		view.getFilter().setText("");
 		view.show();
 		
-		if (developmentMode) {
-			cloudFacadeController.getDevelopmentApplianceTypes(new ApplianceTypesCallback() {
-				@Override
-				public void processApplianceTypes(List<ApplianceType> applianceTypes) {
-					displayApplianceTypes(applianceTypes);
-				}
-			});
-		} else {
-			cloudFacadeController.getProductionApplianceTypes(new ApplianceTypesCallback() {
-				@Override
-				public void processApplianceTypes(List<ApplianceType> applianceTypes) {
-					displayApplianceTypes(applianceTypes);
-				}
-			});
-		}
+		cloudFacadeController.aggregateApplianceTypes(developmentMode ? "development" : "production", new AggregateApplianceTypesCallback() {
+			@Override
+			public void onError(CloudFacadeError error) {
+				//nothing to do here
+			}
+			
+			@Override
+			public void processApplianceTypes(List<AggregateApplianceType> applianceTypes) {
+				displayApplianceTypes(applianceTypes);
+			}
+		});
 	}
 	
-	protected void displayApplianceTypes(List<ApplianceType> applianceTypes) {
+	protected void displayApplianceTypes(List<AggregateApplianceType> applianceTypes) {
 		view.clearApplianceTypeContainer();
 		
-		if (applianceTypes.size() == 0) {
+		if(applianceTypes.size() == 0) {
 			view.addNoApplianceTypesLabel();
 		} else {
-			Collections.sort(applianceTypes, new Comparator<ApplianceType>() {
+			Collections.sort(applianceTypes, new Comparator<AggregateApplianceType>() {
 				@Override
-				public int compare(ApplianceType o1, ApplianceType o2) {
+				public int compare(AggregateApplianceType o1, AggregateApplianceType o2) {
 					return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 				}
 			});
 			
-			for (ApplianceType applianceType : applianceTypes) {
+			for(AggregateApplianceType applianceType : applianceTypes) {
 				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
 				applianceTypePresenters.add(presenter);
 				presenter.setApplianceType(applianceType, developmentMode);

@@ -5,7 +5,7 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ErrorCallback;
-import pl.cyfronet.coin.clew.client.controller.CloudFacadeErrorCodes;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
@@ -128,7 +128,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 						}
 					}, new ErrorCallback() {
 						@Override
-						public void onError(CloudFacadeErrorCodes errorCodes) {
+						public void onError(CloudFacadeError error) {
 							view.setUpdateBusyState(false);
 							view.displayGeneralError();
 						}});
@@ -161,7 +161,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 						}
 					}, new ErrorCallback() {
 						@Override
-						public void onError(CloudFacadeErrorCodes errorCodes) {
+						public void onError(CloudFacadeError error) {
 							view.setSaveBusyState(false);
 							view.displayGeneralSaveError();
 						}});
