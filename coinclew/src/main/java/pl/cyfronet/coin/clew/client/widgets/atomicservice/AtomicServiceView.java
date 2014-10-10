@@ -87,7 +87,7 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 			removeButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			removeButton.setType(ButtonType.DANGER);
 			removeButton.setIcon(IconType.TIMES);
-			removeButton.setSize(ButtonSize.SMALL);
+			removeButton.setSize(ButtonSize.EXTRA_SMALL);
 			removeButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {

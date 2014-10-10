@@ -327,7 +327,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		Button editButton = new Button();
 		editButton.setIcon(IconType.PENCIL);
-		editButton.setSize(ButtonSize.SMALL);
+		editButton.setSize(ButtonSize.EXTRA_SMALL);
 		editButton.setDataToggle(Toggle.BUTTON);
 		editButton.setTitle(messages.editMappingLabel());
 		editButton.addClickHandler(new ClickHandler() {
@@ -340,7 +340,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		Button removeButton = new Button();
 		removeButton.setIcon(IconType.TIMES);
-		removeButton.setSize(ButtonSize.SMALL);
+		removeButton.setSize(ButtonSize.EXTRA_SMALL);
 		removeButton.setType(ButtonType.DANGER);
 		removeButton.setTitle(messages.removeMappingLabel());
 		removeButton.addClickHandler(new ClickHandler() {
@@ -538,7 +538,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		Button editButton = new Button();
 		editButton.setIcon(IconType.PENCIL);
-		editButton.setSize(ButtonSize.SMALL);
+		editButton.setSize(ButtonSize.EXTRA_SMALL);
 		editButton.setDataToggle(Toggle.BUTTON);
 		editButton.setTitle(messages.editEndpointLabel());
 		editButton.addClickHandler(new ClickHandler() {
@@ -551,7 +551,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		Button removeButton = new Button();
 		removeButton.setIcon(IconType.TIMES);
-		removeButton.setSize(ButtonSize.SMALL);
+		removeButton.setSize(ButtonSize.EXTRA_SMALL);
 		removeButton.setType(ButtonType.DANGER);
 		removeButton.setTitle(messages.removeEndpointLabel());
 		removeButton.addClickHandler(new ClickHandler() {

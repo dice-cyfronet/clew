@@ -150,7 +150,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			shutdown = new Button();
 			shutdown.setIcon(IconType.POWER_OFF);
 			shutdown.setType(ButtonType.DANGER);
-			shutdown.setSize(ButtonSize.SMALL);
+			shutdown.setSize(ButtonSize.EXTRA_SMALL);
 			shutdown.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			shutdown.setTitle(messages.shutdownTooltip());
 			shutdown.addClickHandler(new ClickHandler() {
@@ -195,7 +195,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		descriptorButton.setIcon(IconType.FILE);
 		descriptorButton.setType(ButtonType.INFO);
 		descriptorButton.addStyleName(style.descriptor());
-		descriptorButton.setSize(ButtonSize.SMALL);
+		descriptorButton.setSize(ButtonSize.EXTRA_SMALL);
 		
 		if (descriptor != null && !descriptor.trim().isEmpty()) {
 			descriptorButton.setTitle(messages.descriptorButtonTooltip());
@@ -309,7 +309,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			externalInterfaces = new Button();
 			externalInterfaces.setIcon(IconType.COGS);
 			externalInterfaces.setType(ButtonType.WARNING);
-			externalInterfaces.setSize(ButtonSize.SMALL);
+			externalInterfaces.setSize(ButtonSize.EXTRA_SMALL);
 			externalInterfaces.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			externalInterfaces.setTitle(messages.externalInterfacesTooltip());
 			externalInterfaces.setEnabled(false);
@@ -329,7 +329,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			saveButton = new Button();
 			saveButton.setIcon(IconType.SAVE);
 			saveButton.setType(ButtonType.WARNING);
-			saveButton.setSize(ButtonSize.SMALL);
+			saveButton.setSize(ButtonSize.EXTRA_SMALL);
 			saveButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			saveButton.setTitle(messages.saveTooltip());
 			saveButton.setEnabled(false);
@@ -371,7 +371,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		if(helpBlock != null) {
 			Button helpButton = new Button("");
 			helpButton.setIcon(IconType.SIGN_IN);
-			helpButton.setSize(ButtonSize.SMALL);
+			helpButton.setSize(ButtonSize.EXTRA_SMALL);
 			helpButton.setDataToggle(Toggle.BUTTON);
 			helpButton.setType(ButtonType.INFO);
 			helpButton.addStyleName(style.descriptor());
@@ -549,7 +549,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			rebootButton = new Button();
 			rebootButton.setIcon(IconType.REFRESH);
 			rebootButton.setType(ButtonType.DANGER);
-			rebootButton.setSize(ButtonSize.SMALL);
+			rebootButton.setSize(ButtonSize.EXTRA_SMALL);
 			rebootButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			rebootButton.setTitle(messages.rebootTooltip());
 			rebootButton.setEnabled(false);

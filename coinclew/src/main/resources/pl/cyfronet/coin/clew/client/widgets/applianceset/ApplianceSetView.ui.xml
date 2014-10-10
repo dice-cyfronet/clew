@@ -21,7 +21,7 @@
 				<g:HTML ui:field="name" addStyleNames="{style.left} {style.name}"/>
 			</b:Column>
 			<b:Column size="8" addStyleNames="{style.right}">
-				<b:Button ui:field="shutdown" type="DANGER" icon="POWER_OFF"  size="SMALL" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"></b:Button>
+				<b:Button ui:field="shutdown" type="DANGER" icon="POWER_OFF"  size="EXTRA_SMALL" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"></b:Button>
 			</b:Column>
 		</b:Row>
 		<g:FlowPanel ui:field="instancesContainer"/>
