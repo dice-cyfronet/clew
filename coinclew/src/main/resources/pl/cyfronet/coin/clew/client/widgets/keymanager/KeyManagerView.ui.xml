@@ -56,7 +56,7 @@
 		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.hidden} {style.label}"/>
-			<b:Button ui:field="uploadKey" icon="KEY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
+			<b:Button ui:field="uploadKey" icon="KEY" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

@@ -26,7 +26,7 @@
 		<g:FlowPanel ui:field="bodyPanel"/>
 		<g:HTMLPanel ui:field="globalProgress" addStyleNames="{style.progress}" visible="false">
 			<span class="label label-danger">
-				<i class="icon-spinner icon-spin"></i>
+				<i class="fa fa-spinner fa-spin"></i>
 				<ui:text from="{messages.startApplicationInProgress}"/>
 			</span>
 		</g:HTMLPanel>

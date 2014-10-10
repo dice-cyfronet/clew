@@ -84,7 +84,7 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 		if (show) {
 			if (loadingProgress == null) {
 				loadingProgress = new Icon(IconType.SPINNER);
-				loadingProgress.addStyleName("icon-spin");
+				loadingProgress.addStyleName("fa-spin");
 				parameterContainer.add(loadingProgress);
 			}
 		} else {

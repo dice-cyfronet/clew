@@ -79,7 +79,7 @@ public class InitialConfigsEditorView extends Composite implements IInitialConfi
 	@Override
 	public void showProgressIndicator() {
 		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
+		icon.addStyleName("fa-spin");
 		container.add(icon);
 	}
 

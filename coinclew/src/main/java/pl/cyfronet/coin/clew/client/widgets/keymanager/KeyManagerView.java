@@ -113,7 +113,7 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	@Override
 	public void showLoadingProgressIndicator() {
 		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
+		icon.addStyleName("fa-spin");
 		keyContainer.add(icon);
 	}
 

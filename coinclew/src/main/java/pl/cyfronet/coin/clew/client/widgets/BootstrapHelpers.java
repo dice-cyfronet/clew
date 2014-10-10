@@ -14,7 +14,7 @@ public class BootstrapHelpers {
 	private static Map<Button, IconType> originalIcons = new HashMap<Button, IconType>();
 	
 	public static void setButtonBusyState(Button button, boolean busy) {
-		if (busy) {
+		if(busy) {
 			originalIcons.put(button, getIcon(button));
 			button.setIcon(IconType.SPINNER);
 			spinIcon(button);
@@ -46,8 +46,8 @@ public class BootstrapHelpers {
 	private static void stopSpin(Button button) {
 		Element iconElement = DOM.getChild(button.getElement(), 0);
 		
-		if (iconElement != null && iconElement.getClassName() != null &&
-				iconElement.getClassName().endsWith("icon-spin")) {
+		if(iconElement != null && iconElement.getClassName() != null &&
+				iconElement.getClassName().endsWith("fa-spin")) {
 			iconElement.setClassName(iconElement.getClassName().substring(0, iconElement.getClassName().length() - 9).trim());
 		}
 	}
@@ -55,18 +55,18 @@ public class BootstrapHelpers {
 	private static void spinIcon(Button button) {
 		Element iconElement = DOM.getChild(button.getElement(), 0);
 		
-		if (iconElement != null && iconElement.getClassName() != null &&
-				iconElement.getClassName().startsWith("icon-")) {
-			iconElement.setClassName(iconElement.getClassName() + " icon-spin");
+		if(iconElement != null && iconElement.getClassName() != null &&
+				iconElement.getClassName().startsWith("fa fa-")) {
+			iconElement.setClassName(iconElement.getClassName() + " fa-spin");
 		}
 	}
 
 	private static IconType getIcon(Button button) {
 		Element iconElement = DOM.getChild(button.getElement(), 0);
 		
-		if (iconElement != null && iconElement.getClassName() != null &&
-				iconElement.getClassName().startsWith("icon-")) {
-			return IconType.valueOf(iconElement.getClassName().substring(5).replaceAll("-", "_")
+		if(iconElement != null && iconElement.getClassName() != null &&
+				iconElement.getClassName().startsWith("fa fa-")) {
+			return IconType.valueOf(iconElement.getClassName().substring(6).replaceAll("-", "_")
 					.toUpperCase());
 		}
 		

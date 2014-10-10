@@ -21,7 +21,7 @@
 			<g:FlowPanel ui:field="applianceTypeContainer" addStyleNames="{style.container}"/>
 		</b:ModalBody>
 		<b:ModalFooter>
-			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>
+			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

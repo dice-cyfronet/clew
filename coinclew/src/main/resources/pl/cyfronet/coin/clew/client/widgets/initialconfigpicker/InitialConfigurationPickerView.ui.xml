@@ -14,7 +14,7 @@
 			</b:Form>
 		</b:ModalBody>
 		<b:ModalFooter>
-			<b:Button ui:field="startInstance" icon="PLAY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startInstanceLabel}">
+			<b:Button ui:field="startInstance" icon="PLAY" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.startInstanceLabel}">
 				<ui:text from="{messages.startInstanceLabel}"/>
 			</b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>

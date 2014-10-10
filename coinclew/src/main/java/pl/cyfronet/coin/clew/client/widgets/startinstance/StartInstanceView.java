@@ -88,7 +88,7 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	@Override
 	public void showProgressIndicator() {
 		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
+		icon.addStyleName("fa-spin");
 		applianceTypeContainer.add(icon);
 	}
 

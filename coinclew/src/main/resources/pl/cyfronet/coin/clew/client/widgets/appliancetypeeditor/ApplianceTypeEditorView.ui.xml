@@ -80,8 +80,8 @@
 			<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.invisible}"/>
 		</b:ModalBody>
 		<b:ModalFooter>
-			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
-			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
+			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

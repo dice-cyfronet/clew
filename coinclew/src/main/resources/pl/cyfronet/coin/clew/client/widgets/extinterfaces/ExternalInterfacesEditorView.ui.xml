@@ -95,7 +95,7 @@
 							<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>
 							<b:FormLabel><ui:text from="{messages.proxyReadTimeoutLabel}"/></b:FormLabel>
 							<b:TextBox ui:field="proxyReadTimeout" placeholder="{messages.proxyReadTimeoutPlaceholder}" addStyleNames="input-block-level"/>
-							<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
+							<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
 						</b:Form>
 					</b:TabPane>
 					<b:TabPane ui:field="endpoints" b:id="tab2">
@@ -125,7 +125,7 @@
 							<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
 							<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
 							<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
-							<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
+							<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
 						</b:Form>
 					</b:TabPane>
 				</b:TabContent>
