@@ -10,10 +10,12 @@
 		}
 	</ui:style>
 	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
-		<g:HTMLPanel addStyleNames="{style.filter}">
-			<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
-		</g:HTMLPanel>
-		<g:FlowPanel ui:field="applianceTypeContainer"/>
+		<b:ModalBody>
+			<g:HTMLPanel addStyleNames="{style.filter}">
+				<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
+			</g:HTMLPanel>
+			<g:FlowPanel ui:field="applianceTypeContainer"/>
+		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>

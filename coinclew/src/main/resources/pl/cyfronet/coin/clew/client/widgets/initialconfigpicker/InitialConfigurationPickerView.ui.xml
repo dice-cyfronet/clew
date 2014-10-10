@@ -7,10 +7,12 @@
 	
 	</ui:style>
 	<b:Modal ui:field="pickConfigModal" title="{messages.pickConfigModalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
-		<b:Form>
-			<b:FormLabel><ui:text from="{messages.configSelectLabel}"/></b:FormLabel>
-			<b:ListBox ui:field="configListBox" addStyleNames="input-block-level"/>
-		</b:Form>
+		<b:ModalBody>
+			<b:Form>
+				<b:FormLabel><ui:text from="{messages.configSelectLabel}"/></b:FormLabel>
+				<b:ListBox ui:field="configListBox" addStyleNames="input-block-level"/>
+			</b:Form>
+		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Button ui:field="startInstance" icon="PLAY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startInstanceLabel}">
 				<ui:text from="{messages.startInstanceLabel}"/>

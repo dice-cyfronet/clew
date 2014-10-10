@@ -9,18 +9,20 @@
 		}
 	</ui:style>
 	<b:Modal ui:field="modal" title="{messages.modalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
-		<b:Form>
-			<g:FlowPanel ui:field="detailsProgress" visible="false">
-				<b:Icon type="SPINNER" spin="true"></b:Icon>
-			</g:FlowPanel>
-			<g:FlowPanel ui:field="nameContainer"/>
-			<b:FormLabel><ui:text from="{messages.keysLabel}"/></b:FormLabel>
-			<g:FlowPanel ui:field="keyProgress" visible="false">
-				<b:Icon type="SPINNER" spin="true"></b:Icon>
-			</g:FlowPanel>
-			<g:FlowPanel ui:field="container"/>
-			<g:FlowPanel ui:field="flavorContainer" addStyleNames="{style.flavor}"/>
-		</b:Form>
+		<b:ModalBody>
+			<b:Form>
+				<g:FlowPanel ui:field="detailsProgress" visible="false">
+					<b:Icon type="SPINNER" spin="true"></b:Icon>
+				</g:FlowPanel>
+				<g:FlowPanel ui:field="nameContainer"/>
+				<b:FormLabel><ui:text from="{messages.keysLabel}"/></b:FormLabel>
+				<g:FlowPanel ui:field="keyProgress" visible="false">
+					<b:Icon type="SPINNER" spin="true"></b:Icon>
+				</g:FlowPanel>
+				<g:FlowPanel ui:field="container"/>
+				<g:FlowPanel ui:field="flavorContainer" addStyleNames="{style.flavor}"/>
+			</b:Form>
+		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Button ui:field="start" icon="PLAY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startButtonLabel}"><ui:text from="{messages.startButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
