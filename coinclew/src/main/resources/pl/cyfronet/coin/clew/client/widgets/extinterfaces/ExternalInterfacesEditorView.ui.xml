@@ -68,11 +68,11 @@
 		<b:ModalBody>
 			<b:TabPanel addStyleNames="{style.disable-y-scroll}">
 				<b:NavTabs>
-					<b:TabListItem ui:field="mappingsTab" dataTarget="tab1" text="{messages.externalInterfacesTabLabel}" active="true"/>
-					<b:TabListItem ui:field="endpointTab" dataTarget="tab2" text="{messages.endpointsTabLabel}"/>
+					<b:TabListItem ui:field="mappingsTab" dataTarget="#tab1" text="{messages.externalInterfacesTabLabel}" active="true"/>
+					<b:TabListItem ui:field="endpointTab" dataTarget="#tab2" text="{messages.endpointsTabLabel}"/>
 				</b:NavTabs>
 				<b:TabContent>
-					<b:TabPane b:id="tab1">
+					<b:TabPane ui:field="mappings" b:id="tab1" active="true">
 						<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
 						<b:Form>
 							<b:FormLabel><ui:text from="{messages.externalInterfaceName}"/></b:FormLabel>
@@ -98,7 +98,7 @@
 							<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
 						</b:Form>
 					</b:TabPane>
-					<b:TabPane b:id="tab2">
+					<b:TabPane ui:field="endpoints" b:id="tab2">
 						<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
 						<b:Form>
 							<b:FormLabel><ui:text from="{messages.endpointName}"/></b:FormLabel>
@@ -120,13 +120,13 @@
 								<ui:text from="{messages.endpointDescriptor}"/>
 							</b:FormLabel>
 							<b:Tooltip text="{messages.descriptorHelpBlock}">
-								<g:HTML addStyleNames="label label-info"><i class='icon-comment'></i></g:HTML>
+								<g:HTML addStyleNames="label label-info"><i class='fa fa-comment'></i></g:HTML>
 							</b:Tooltip>
 							<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
 							<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
 							<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
 							<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
-					</b:Form>
+						</b:Form>
 					</b:TabPane>
 				</b:TabContent>
 			</b:TabPanel>

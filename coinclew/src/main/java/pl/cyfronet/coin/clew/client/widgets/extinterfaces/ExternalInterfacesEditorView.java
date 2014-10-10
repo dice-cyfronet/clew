@@ -15,6 +15,7 @@ import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.TabListItem;
+import org.gwtbootstrap3.client.ui.TabPane;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
@@ -97,6 +98,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField TabListItem mappingsTab;
 	@UiField CheckBox secured;
 	@UiField Button addEndpoint;
+	@UiField TabPane mappings;
+	@UiField TabPane endpoints;
 
 	public ExternalInterfacesEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -674,7 +677,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 	@Override
 	public void enableEndpoints(boolean enable) {
-		endpointTab.setActive(enable);
+		endpointTab.setEnabled(enable);
 	}
 
 	@Override

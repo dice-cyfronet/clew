@@ -2,6 +2,7 @@ package pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.CheckBox;
+import org.gwtbootstrap3.client.ui.InlineCheckBox;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Modal;
@@ -40,8 +41,8 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiField Modal modal;
 	@UiField TextBox name;
 	@UiField TextArea description;
-	@UiField CheckBox shared;
-	@UiField CheckBox scalable;
+	@UiField InlineCheckBox shared;
+	@UiField InlineCheckBox scalable;
 	@UiField ListBox visibleFor;
 	@UiField Label errorLabel;
 	@UiField ApplianceTypeEditorMessages messages;

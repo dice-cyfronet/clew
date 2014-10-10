@@ -42,13 +42,11 @@
 							<b:TextBox ui:field="keyName" name="user_key[name]" placeholder="{messages.keyNamePlaceholder}" addStyleNames="input-block-level"/>
 						</b:FormGroup>
 						<b:FormGroup>
-							<b:RadioButton ui:field="keyCopiedRadio" name="keyContents" value="true" addStyleNames="{style.radio}"/>
-							<g:InlineHTML><ui:text from="{messages.keyCopiedLabel}"/></g:InlineHTML>
+							<b:Radio ui:field="keyCopiedRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyCopiedLabel}"/>
 							<b:TextArea ui:field="keyPayload" placeholder="{messages.keyPayloadPlaceholder}" addStyleNames="input-block-level {style.text-area}"/>
 						</b:FormGroup>
 						<b:FormGroup>
-							<b:RadioButton ui:field="keyFromFileRadio" name="keyContents" addStyleNames="{style.radio}"/>
-							<g:InlineHTML><ui:text from="{messages.keyFromFileLabel}"/></g:InlineHTML>
+							<b:Radio ui:field="keyFromFileRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyFromFileLabel}"/>
 							<g:FileUpload ui:field="keyUpload" name="user_key[public_key]" enabled="false" addStyleNames="{style.file}"/>
 							<b:HelpBlock addStyleNames="{style.help}"><ui:text from="{messages.keyHelp}"/></b:HelpBlock>
 						</b:FormGroup>

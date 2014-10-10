@@ -24,10 +24,14 @@
 		<b:ModalBody>
 			<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
 			<b:Form>
-				<b:FormLabel><ui:text from="{messages.nameLabel}"/></b:FormLabel>
-				<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
-				<b:FormLabel><ui:text from="{messages.payloadLabel}"/></b:FormLabel>
-				<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.nameLabel}"/></b:FormLabel>
+					<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
+				</b:FormGroup>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.payloadLabel}"/></b:FormLabel>
+					<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
+				</b:FormGroup>
 				<b:HelpBlock>
 					<ul>
 						<li><ui:text from="{messages.payloadHelp}"/></li>

@@ -4,7 +4,7 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Icon;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.Modal;
-import org.gwtbootstrap3.client.ui.RadioButton;
+import org.gwtbootstrap3.client.ui.Radio;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -13,6 +13,7 @@ import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -46,12 +47,13 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	@UiField Button uploadKey;
 	@UiField FileUpload keyUpload;
 	@UiField FormPanel keyUploadForm;
-	@UiField RadioButton keyCopiedRadio;
+	@UiField Radio keyCopiedRadio;
 	@UiField FlowPanel formContainer;
 
 	public KeyManagerView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		keyUploadForm.getElement().setAttribute("encoding", "multipart/form-data");
+		((Element) keyCopiedRadio.getElement().getFirstChild().getFirstChild()).setAttribute("checked", "checked");
 	}
 	
 	@UiHandler("close")
