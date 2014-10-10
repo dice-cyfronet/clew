@@ -49,7 +49,7 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 		if (show) {
 			if (loadingIndicator == null) {
 				loadingIndicator = new Icon(IconType.SPINNER);
-				loadingIndicator.addStyleName("icon-spin");
+				loadingIndicator.addStyleName("fa-spin");
 				instanceContainer.add(loadingIndicator);
 			}
 		} else {

@@ -38,7 +38,7 @@
 			</b:Tooltip>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="remove" icon="TIMES" size="EXTRA_SMALL" type="DANGER" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
+			<b:Button ui:field="remove" icon="TIMES" size="EXTRA_SMALL" type="DANGER" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
 		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

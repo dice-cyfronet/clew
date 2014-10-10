@@ -93,7 +93,7 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 	@Override
 	public void addAtomicServiceProgressIndicator() {
 		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
+		icon.addStyleName("fa-spin");
 		atomicServicesContainer.add(icon);
 	}
 
@@ -107,7 +107,7 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 		if (show) {
 			if (instanceLoadingIndicator == null) {
 				instanceLoadingIndicator = new Icon(IconType.SPINNER);
-				instanceLoadingIndicator.addStyleName("icon-spin");
+				instanceLoadingIndicator.addStyleName("fa-spin");
 				runningInstancesContainer.add(instanceLoadingIndicator);
 			}
 		} else {

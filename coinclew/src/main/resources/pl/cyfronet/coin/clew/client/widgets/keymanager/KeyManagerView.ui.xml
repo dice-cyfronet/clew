@@ -41,22 +41,26 @@
 							<b:FormLabel><ui:text from="{messages.keyNameLabel}"/></b:FormLabel>
 							<b:TextBox ui:field="keyName" name="user_key[name]" placeholder="{messages.keyNamePlaceholder}" addStyleNames="input-block-level"/>
 						</b:FormGroup>
-						<b:FormGroup>
-							<b:Radio ui:field="keyCopiedRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyCopiedLabel}"/>
+						<g:HTMLPanel addStyleNames="form-group">
+							<label>
+								<b:Radio ui:field="keyCopiedRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyCopiedLabel}"/>
+							</label>
 							<b:TextArea ui:field="keyPayload" placeholder="{messages.keyPayloadPlaceholder}" addStyleNames="input-block-level {style.text-area}"/>
-						</b:FormGroup>
-						<b:FormGroup>
-							<b:Radio ui:field="keyFromFileRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyFromFileLabel}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel addStyleNames="form-group">
+							<label>
+								<b:Radio ui:field="keyFromFileRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyFromFileLabel}"/>
+							</label>
 							<g:FileUpload ui:field="keyUpload" name="user_key[public_key]" enabled="false" addStyleNames="{style.file}"/>
 							<b:HelpBlock addStyleNames="{style.help}"><ui:text from="{messages.keyHelp}"/></b:HelpBlock>
-						</b:FormGroup>
+						</g:HTMLPanel>
 					</g:FlowPanel>
 				</g:FormPanel>
 			</g:FlowPanel>
 		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.hidden} {style.label}"/>
-			<b:Button ui:field="uploadKey" icon="KEY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
+			<b:Button ui:field="uploadKey" icon="KEY" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.uploadKeyButtonLabel}"><ui:text from="{messages.uploadKeyButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

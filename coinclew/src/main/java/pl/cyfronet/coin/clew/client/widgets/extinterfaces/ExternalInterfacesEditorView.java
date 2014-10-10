@@ -151,7 +151,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		if (show) {
 			if (endpointsLoadingIndicator == null) {
 				endpointsLoadingIndicator = new Icon(IconType.SPINNER);
-				endpointsLoadingIndicator.addStyleName("icon-spin");
+				endpointsLoadingIndicator.addStyleName("fa-spin");
 				endpointContainer.add(endpointsLoadingIndicator);
 			}
 		} else {
@@ -187,7 +187,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		if (show) {
 			if (externalInterfacesLoadingIndicator == null) {
 				externalInterfacesLoadingIndicator = new Icon(IconType.SPINNER);
-				externalInterfacesLoadingIndicator.addStyleName("icon-spin");
+				externalInterfacesLoadingIndicator.addStyleName("fa-spin");
 				externalInterfaceContainer.add(externalInterfacesLoadingIndicator);
 			}
 		} else {

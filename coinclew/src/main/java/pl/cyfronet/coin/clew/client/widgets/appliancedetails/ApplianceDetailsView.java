@@ -8,7 +8,7 @@ import org.gwtbootstrap3.client.ui.Icon;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Modal;
-import org.gwtbootstrap3.client.ui.RadioButton;
+import org.gwtbootstrap3.client.ui.Radio;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.LabelType;
@@ -88,7 +88,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasValue<Boolean> addKey(String id, String name) {
-		RadioButton button = new RadioButton(name);
+		Radio button = new Radio(name);
 		button.setName("key");
 		button.setFormValue(id);
 		container.add(button);

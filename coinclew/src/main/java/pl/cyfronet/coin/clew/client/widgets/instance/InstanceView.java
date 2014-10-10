@@ -151,7 +151,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			shutdown.setIcon(IconType.POWER_OFF);
 			shutdown.setType(ButtonType.DANGER);
 			shutdown.setSize(ButtonSize.EXTRA_SMALL);
-			shutdown.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
+			shutdown.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
 			shutdown.setTitle(messages.shutdownTooltip());
 			shutdown.addClickHandler(new ClickHandler() {
 				@Override
@@ -310,7 +310,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			externalInterfaces.setIcon(IconType.COGS);
 			externalInterfaces.setType(ButtonType.WARNING);
 			externalInterfaces.setSize(ButtonSize.EXTRA_SMALL);
-			externalInterfaces.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
+			externalInterfaces.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
 			externalInterfaces.setTitle(messages.externalInterfacesTooltip());
 			externalInterfaces.setEnabled(false);
 			externalInterfaces.addClickHandler(new ClickHandler() {
@@ -330,7 +330,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			saveButton.setIcon(IconType.SAVE);
 			saveButton.setType(ButtonType.WARNING);
 			saveButton.setSize(ButtonSize.EXTRA_SMALL);
-			saveButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
+			saveButton.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
 			saveButton.setTitle(messages.saveTooltip());
 			saveButton.setEnabled(false);
 			saveButton.addClickHandler(new ClickHandler() {
@@ -550,7 +550,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			rebootButton.setIcon(IconType.REFRESH);
 			rebootButton.setType(ButtonType.DANGER);
 			rebootButton.setSize(ButtonSize.EXTRA_SMALL);
-			rebootButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
+			rebootButton.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
 			rebootButton.setTitle(messages.rebootTooltip());
 			rebootButton.setEnabled(false);
 			rebootButton.addClickHandler(new ClickHandler() {

@@ -107,7 +107,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public void addInitialConfigsProgressIndicator() {
 		Icon icon = new Icon(IconType.SPINNER);
-		icon.addStyleName("icon-spin");
+		icon.addStyleName("fa-spin");
 		initialConfigsContainer.add(icon);
 	}
 
