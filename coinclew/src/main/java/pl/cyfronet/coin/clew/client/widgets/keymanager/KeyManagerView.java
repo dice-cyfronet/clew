@@ -1,20 +1,19 @@
 package pl.cyfronet.coin.clew.client.widgets.keymanager;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.Radio;
+import org.gwtbootstrap3.client.ui.TextArea;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.FileUpload;
-import com.github.gwtbootstrap.client.ui.Form;
-import com.github.gwtbootstrap.client.ui.Form.SubmitCompleteEvent;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.RadioButton;
-import com.github.gwtbootstrap.client.ui.TextArea;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -22,7 +21,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Hidden;
@@ -44,11 +46,14 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	@UiField Label errorLabel;
 	@UiField Button uploadKey;
 	@UiField FileUpload keyUpload;
-	@UiField Form keyUploadForm;
-	@UiField RadioButton keyCopiedRadio;
+	@UiField FormPanel keyUploadForm;
+	@UiField Radio keyCopiedRadio;
+	@UiField FlowPanel formContainer;
 
 	public KeyManagerView() {
 		initWidget(uiBinder.createAndBindUi(this));
+		keyUploadForm.getElement().setAttribute("encoding", "multipart/form-data");
+		((Element) keyCopiedRadio.getElement().getFirstChild().getFirstChild()).setAttribute("checked", "checked");
 	}
 	
 	@UiHandler("close")
@@ -178,7 +183,7 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 
 	@Override
 	public void addHiddenField(String name, String value) {
-		keyUploadForm.add(new Hidden(name, value));
+		formContainer.add(new Hidden(name, value));
 	}
 
 	@Override

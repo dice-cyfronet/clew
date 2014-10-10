@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServiceMessages" field="messages"/>
 	<ui:style>
 		.title {
@@ -60,10 +60,10 @@
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="buttons" addStyleNames="{style.buttons}">
-				<b:Button ui:field="startInstance" icon="PLAY" size="MINI" type="SUCCESS" title="{messages.startInstanceTooltip}" enabled="false"/>
-				<b:Button ui:field="editProperties" icon="PENCIL" size="MINI" type="WARNING" title="{messages.editPropertiesTooltip}"/>
-				<b:Button ui:field="editExternalInterfaces" icon="COGS" size="MINI" type="WARNING" title="{messages.editExternalInterfacesTooltip}"/>
-				<b:Button ui:field="editInitialConfigs" icon="LIST_UL" size="MINI" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>
+				<b:Button ui:field="startInstance" icon="PLAY" size="EXTRA_SMALL" type="SUCCESS" title="{messages.startInstanceTooltip}" enabled="false"/>
+				<b:Button ui:field="editProperties" icon="PENCIL" size="EXTRA_SMALL" type="WARNING" title="{messages.editPropertiesTooltip}"/>
+				<b:Button ui:field="editExternalInterfaces" icon="COGS" size="EXTRA_SMALL" type="WARNING" title="{messages.editExternalInterfacesTooltip}"/>
+				<b:Button ui:field="editInitialConfigs" icon="LIST_UL" size="EXTRA_SMALL" type="WARNING" title="{messages.editInitialConfigsTooltip}"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
 	</g:HTMLPanel>

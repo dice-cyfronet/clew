@@ -3,23 +3,24 @@ package pl.cyfronet.coin.clew.client.widgets.instance;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ButtonGroup;
+import org.gwtbootstrap3.client.ui.Collapse;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.Popover;
+import org.gwtbootstrap3.client.ui.Tooltip;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
+import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.gwtbootstrap3.client.ui.constants.Toggle;
+import org.gwtbootstrap3.client.ui.constants.Trigger;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
-import com.github.gwtbootstrap.client.ui.Collapse;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.Popover;
-import com.github.gwtbootstrap.client.ui.Tooltip;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
-import com.github.gwtbootstrap.client.ui.constants.Placement;
-import com.github.gwtbootstrap.client.ui.constants.Trigger;
-import com.github.gwtbootstrap.client.ui.constants.VisibilityChange;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -147,10 +148,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void addShutdownControl() {
 		if (shutdown == null) {
 			shutdown = new Button();
-			shutdown.setIcon(IconType.OFF);
+			shutdown.setIcon(IconType.POWER_OFF);
 			shutdown.setType(ButtonType.DANGER);
-			shutdown.setSize(ButtonSize.MINI);
-			shutdown.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			shutdown.setSize(ButtonSize.EXTRA_SMALL);
+			shutdown.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			shutdown.setTitle(messages.shutdownTooltip());
 			shutdown.addClickHandler(new ClickHandler() {
 				@Override
@@ -194,7 +195,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		descriptorButton.setIcon(IconType.FILE);
 		descriptorButton.setType(ButtonType.INFO);
 		descriptorButton.addStyleName(style.descriptor());
-		descriptorButton.setSize(ButtonSize.MINI);
+		descriptorButton.setSize(ButtonSize.EXTRA_SMALL);
 		
 		if (descriptor != null && !descriptor.trim().isEmpty()) {
 			descriptorButton.setTitle(messages.descriptorButtonTooltip());
@@ -308,8 +309,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			externalInterfaces = new Button();
 			externalInterfaces.setIcon(IconType.COGS);
 			externalInterfaces.setType(ButtonType.WARNING);
-			externalInterfaces.setSize(ButtonSize.MINI);
-			externalInterfaces.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			externalInterfaces.setSize(ButtonSize.EXTRA_SMALL);
+			externalInterfaces.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			externalInterfaces.setTitle(messages.externalInterfacesTooltip());
 			externalInterfaces.setEnabled(false);
 			externalInterfaces.addClickHandler(new ClickHandler() {
@@ -328,8 +329,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			saveButton = new Button();
 			saveButton.setIcon(IconType.SAVE);
 			saveButton.setType(ButtonType.WARNING);
-			saveButton.setSize(ButtonSize.MINI);
-			saveButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			saveButton.setSize(ButtonSize.EXTRA_SMALL);
+			saveButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			saveButton.setTitle(messages.saveTooltip());
 			saveButton.setEnabled(false);
 			saveButton.addClickHandler(new ClickHandler() {
@@ -367,25 +368,20 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		info.addStyleName(style.links());
 		panel.add(info);
 		
-		if (helpBlock != null) {
-			Button helpButton = new Button("", IconType.SIGNIN);
-			helpButton.setSize(ButtonSize.MINI);
-			helpButton.setToggle(true);
+		if(helpBlock != null) {
+			Button helpButton = new Button("");
+			helpButton.setIcon(IconType.SIGN_IN);
+			helpButton.setSize(ButtonSize.EXTRA_SMALL);
+			helpButton.setDataToggle(Toggle.BUTTON);
 			helpButton.setType(ButtonType.INFO);
 			helpButton.addStyleName(style.descriptor());
-			helpButton.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					Popover.changeVisibility(event.getRelativeElement(), VisibilityChange.TOGGLE.get());
-				}
-			});
 			
 			Popover helpPopover = new Popover();
-			helpPopover.setText(helpBlock);
+			helpPopover.setContent(helpBlock);
 			helpPopover.setWidget(helpButton);
 			helpPopover.setPlacement(Placement.LEFT);
-			helpPopover.setHeading(messages.sshHelpHeader());
-			helpPopover.setTrigger(Trigger.MANUAL);
+			helpPopover.setTitle(messages.sshHelpHeader());
+			helpPopover.setTrigger(Trigger.CLICK);
 			
 			panel.add(new InlineHTML("&nbsp;"));
 			namePanel.add(helpPopover);
@@ -421,9 +417,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		status.clear();
 		
 		Label unsatisfiedLabel = new Label(messages.unsatisfiedLabel());
-		unsatisfiedLabel.setType(LabelType.IMPORTANT);
+		unsatisfiedLabel.setType(LabelType.DANGER);
 		
-		Tooltip tooltip = new Tooltip(stateExplanation);
+		Tooltip tooltip = new Tooltip();
+		tooltip.setText(stateExplanation);
 		tooltip.add(unsatisfiedLabel);
 		status.add(tooltip);
 	}
@@ -499,7 +496,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		} else if("ok".equals(status)) {
 			return LabelType.SUCCESS;
 		} else if("lost".equals(status)) {
-			return LabelType.IMPORTANT;
+			return LabelType.DANGER;
 		} else {
 			return LabelType.DEFAULT;
 		}
@@ -552,8 +549,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			rebootButton = new Button();
 			rebootButton.setIcon(IconType.REFRESH);
 			rebootButton.setType(ButtonType.DANGER);
-			rebootButton.setSize(ButtonSize.MINI);
-			rebootButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			rebootButton.setSize(ButtonSize.EXTRA_SMALL);
+			rebootButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			rebootButton.setTitle(messages.rebootTooltip());
 			rebootButton.setEnabled(false);
 			rebootButton.addClickHandler(new ClickHandler() {

@@ -1,9 +1,11 @@
 package pl.cyfronet.coin.clew.client.widgets.initialconfigpicker;
 
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Modal;
+
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigpicker.IInitialConfigurationPickerView.IInitialConfigurationPickerPresenter;
 
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -83,17 +85,17 @@ public class InitialConfigurationPickerView extends Composite implements IInitia
 
 			@Override
 			public String getValue() {
-				return configListBox.getValue();
+				return configListBox.getValue(configListBox.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				configListBox.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(configListBox, value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				configListBox.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(configListBox, value);
 			}
 		};
 	}

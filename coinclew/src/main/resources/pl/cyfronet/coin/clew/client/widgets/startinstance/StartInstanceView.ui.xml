@@ -1,21 +1,27 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.startinstance.StartInstanceMessages" field="messages"/>
 	<ui:style>
 		.filter {
 			text-align: right;
 			margin-bottom: 20px;
 		}
+		.container {
+			float: left;
+			width: 100%;
+		}
 	</ui:style>
-	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
-		<g:HTMLPanel addStyleNames="{style.filter}">
-			<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
-		</g:HTMLPanel>
-		<g:FlowPanel ui:field="applianceTypeContainer"/>
+	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
+		<b:ModalBody addStyleNames="clearfix">
+			<g:HTMLPanel addStyleNames="{style.filter}">
+				<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
+			</g:HTMLPanel>
+			<g:FlowPanel ui:field="applianceTypeContainer" addStyleNames="{style.container}"/>
+		</b:ModalBody>
 		<b:ModalFooter>
-			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>
+			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

@@ -1,28 +1,30 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsMessages" field="messages"/>
 	<ui:style>
 		.flavor {
 			text-align: right;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
-		<b:Form>
-			<g:FlowPanel ui:field="detailsProgress" visible="false">
-				<b:Icon type="SPINNER" spin="true"></b:Icon>
-			</g:FlowPanel>
-			<g:FlowPanel ui:field="nameContainer"/>
-			<b:ControlLabel><ui:text from="{messages.keysLabel}"/></b:ControlLabel>
-			<g:FlowPanel ui:field="keyProgress" visible="false">
-				<b:Icon type="SPINNER" spin="true"></b:Icon>
-			</g:FlowPanel>
-			<g:FlowPanel ui:field="container"/>
-			<g:FlowPanel ui:field="flavorContainer" addStyleNames="{style.flavor}"/>
-		</b:Form>
+	<b:Modal ui:field="modal" title="{messages.modalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
+		<b:ModalBody>
+			<b:Form>
+				<g:FlowPanel ui:field="detailsProgress" visible="false">
+					<b:Icon type="SPINNER" spin="true"></b:Icon>
+				</g:FlowPanel>
+				<g:FlowPanel ui:field="nameContainer"/>
+				<b:FormLabel><ui:text from="{messages.keysLabel}"/></b:FormLabel>
+				<g:FlowPanel ui:field="keyProgress" visible="false">
+					<b:Icon type="SPINNER" spin="true"></b:Icon>
+				</g:FlowPanel>
+				<g:FlowPanel ui:field="container"/>
+				<g:FlowPanel ui:field="flavorContainer" addStyleNames="{style.flavor}"/>
+			</b:Form>
+		</b:ModalBody>
 		<b:ModalFooter>
-			<b:Button ui:field="start" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startButtonLabel}"><ui:text from="{messages.startButtonLabel}"/></b:Button>
+			<b:Button ui:field="start" icon="PLAY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startButtonLabel}"><ui:text from="{messages.startButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

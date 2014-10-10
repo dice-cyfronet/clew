@@ -1,15 +1,17 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.CheckBox;
+import org.gwtbootstrap3.client.ui.InlineCheckBox;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.TextArea;
+import org.gwtbootstrap3.client.ui.TextBox;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.IApplianceTypeEditorView.IApplianceTypeEditorPresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.CheckBox;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.TextArea;
-import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -39,8 +41,8 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 	@UiField Modal modal;
 	@UiField TextBox name;
 	@UiField TextArea description;
-	@UiField CheckBox shared;
-	@UiField CheckBox scalable;
+	@UiField InlineCheckBox shared;
+	@UiField InlineCheckBox scalable;
 	@UiField ListBox visibleFor;
 	@UiField Label errorLabel;
 	@UiField ApplianceTypeEditorMessages messages;
@@ -174,12 +176,12 @@ public class ApplianceTypeEditorView extends Composite implements IApplianceType
 
 			@Override
 			public String getValue() {
-				return visibleFor.getValue();
+				return visibleFor.getValue(visibleFor.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				visibleFor.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(visibleFor, value);
 			}
 
 			@Override

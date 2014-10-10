@@ -1,15 +1,16 @@
 package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ButtonGroup;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -83,10 +84,10 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	public void addRemoveButton() {
 		if (removeButton == null) {
 			removeButton = new Button();
-			removeButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			removeButton.setDataLoadingText("<i class='icon-spinner icon-spin'></i>");
 			removeButton.setType(ButtonType.DANGER);
-			removeButton.setIcon(IconType.REMOVE);
-			removeButton.setSize(ButtonSize.MINI);
+			removeButton.setIcon(IconType.TIMES);
+			removeButton.setSize(ButtonSize.EXTRA_SMALL);
 			removeButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -112,7 +113,7 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 		if (active) {
 			if (inactiveLabel == null) {
 				inactiveLabel = new Label(messages.inactiveLabel());
-				inactiveLabel.setType(LabelType.IMPORTANT);
+				inactiveLabel.setType(LabelType.DANGER);
 				inactiveContainer.add(inactiveLabel);
 			}
 		} else {

@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.initialconfigseditor.InitialConfigsEditorMessages" field="messages"/>
 	<ui:style>
 		.container {
@@ -20,22 +20,28 @@
 			visibility: hidden;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
-		<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
-		<b:Form>
-			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
-			<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
-			<b:ControlLabel><ui:text from="{messages.payloadLabel}"/></b:ControlLabel>
-			<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
-			<b:HelpBlock>
-				<ul>
-					<li><ui:text from="{messages.payloadHelp}"/></li>
-					<li><ui:text from="{messages.payloadHelp2}"/></li>
-					<li><ui:text from="{messages.payloadHelp3}"/></li>
-				</ul>
-			</b:HelpBlock>
-		</b:Form>
-		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.hidden}"/>
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
+		<b:ModalBody>
+			<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
+			<b:Form>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.nameLabel}"/></b:FormLabel>
+					<b:TextBox ui:field="name" addStyleNames="input-block-level" placeholder="{messages.namePlaceholder}"/>
+				</b:FormGroup>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.payloadLabel}"/></b:FormLabel>
+					<b:TextArea ui:field="payload" addStyleNames="input-block-level {style.text-area}" placeholder="{messages.payloadPlaceholder}"/>
+				</b:FormGroup>
+				<b:HelpBlock>
+					<ul>
+						<li><ui:text from="{messages.payloadHelp}"/></li>
+						<li><ui:text from="{messages.payloadHelp2}"/></li>
+						<li><ui:text from="{messages.payloadHelp3}"/></li>
+					</ul>
+				</b:HelpBlock>
+			</b:Form>
+			<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.hidden}"/>
+		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Button ui:field="process" type="SUCCESS"><ui:text from="{messages.processConfig}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>

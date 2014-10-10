@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.userkey.UserKeyMessages" field="messages"/>
 	<ui:style>
 		.details {
@@ -38,7 +38,7 @@
 			</b:Tooltip>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="remove" icon="REMOVE" size="MINI" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
+			<b:Button ui:field="remove" icon="TIMES" size="EXTRA_SMALL" type="DANGER" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;" title="{messages.removeTooltip}"/>
 		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

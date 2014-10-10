@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.su.SuViewMessages" field="messages"/>
 	<ui:style>
 		.user {
@@ -11,30 +11,24 @@
 	<g:FlowPanel>
 		<g:FlowPanel>
 			<b:Form type="HORIZONTAL">
-				<b:Fieldset>
-					<b:ControlGroup>
-						<b:ControlLabel><ui:text from="{messages.currentSuUserLabel}"/></b:ControlLabel>
-						<b:Controls>
-							<b:Label ui:field="userLabel" type="SUCCESS" addStyleNames="{style.user}"><ui:text from="{messages.suUserNone}"/></b:Label>
-						</b:Controls>
-					</b:ControlGroup>
-				</b:Fieldset>
-				<b:Fieldset>
-					<b:ControlGroup>
-						<b:ControlLabel><ui:text from="{messages.selectUserLabel}"/></b:ControlLabel>
-						<b:Controls>
-							<b:ListBox ui:field="userList"></b:ListBox>
-							<b:Icon ui:field="loadingIndicator" type="SPINNER" spin="true" visible="false"></b:Icon>
-						</b:Controls>
-					</b:ControlGroup>
-				</b:Fieldset>
-				<b:Fieldset>
-					<b:ControlGroup>
-						<b:Controls>
-							<b:Button ui:field="switchUser"><ui:text from="{messages.suButtonLabel}"/></b:Button>
-						</b:Controls>
-					</b:ControlGroup>
-				</b:Fieldset>
+				<b:FieldSet>
+					<b:FormGroup>
+						<b:FormLabel><ui:text from="{messages.currentSuUserLabel}"/></b:FormLabel>
+						<b:Label ui:field="userLabel" type="SUCCESS" addStyleNames="{style.user}"><ui:text from="{messages.suUserNone}"/></b:Label>
+					</b:FormGroup>
+				</b:FieldSet>
+				<b:FieldSet>
+					<b:FormGroup>
+						<b:FormLabel><ui:text from="{messages.selectUserLabel}"/></b:FormLabel>
+						<b:ListBox ui:field="userList"></b:ListBox>
+						<b:Icon ui:field="loadingIndicator" type="SPINNER" spin="true" visible="false"></b:Icon>
+					</b:FormGroup>
+				</b:FieldSet>
+				<b:FieldSet>
+					<b:FormGroup>
+						<b:Button ui:field="switchUser"><ui:text from="{messages.suButtonLabel}"/></b:Button>
+					</b:FormGroup>
+				</b:FieldSet>
 			</b:Form>
 		</g:FlowPanel>
 	</g:FlowPanel>
