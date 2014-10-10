@@ -6,25 +6,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ButtonGroup;
+import org.gwtbootstrap3.client.ui.CheckBox;
+import org.gwtbootstrap3.client.ui.HelpBlock;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.TabListItem;
+import org.gwtbootstrap3.client.ui.TextArea;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
+import org.gwtbootstrap3.client.ui.constants.Toggle;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.IExternalInterfacesView.IExternalInterfacesPresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
-import com.github.gwtbootstrap.client.ui.CheckBox;
-import com.github.gwtbootstrap.client.ui.HelpBlock;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.Tab;
-import com.github.gwtbootstrap.client.ui.TabPanel;
-import com.github.gwtbootstrap.client.ui.TextArea;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -92,8 +93,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 	@UiField HelpBlock endpointTargetPortHelpBlock;
 	@UiField TextBox proxySendTimeout;
 	@UiField TextBox proxyReadTimeout;
-	@UiField TabPanel tabs;
-	@UiField Tab endpointTab;
+	@UiField TabListItem endpointTab;
+	@UiField TabListItem mappingsTab;
 	@UiField CheckBox secured;
 	@UiField Button addEndpoint;
 
@@ -229,12 +230,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 			@Override
 			public String getValue() {
-				return externalInterfaceTransportProtocol.getValue();
+				return externalInterfaceTransportProtocol.getValue(externalInterfaceTransportProtocol.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				externalInterfaceTransportProtocol.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(externalInterfaceTransportProtocol, value);
 			}
 
 			@Override
@@ -326,8 +327,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		Button editButton = new Button();
 		editButton.setIcon(IconType.PENCIL);
-		editButton.setSize(ButtonSize.MINI);
-		editButton.setToggle(true);
+		editButton.setSize(ButtonSize.SMALL);
+		editButton.setDataToggle(Toggle.BUTTON);
 		editButton.setTitle(messages.editMappingLabel());
 		editButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -338,8 +339,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		mappingEditButtons.put(mappingId, editButton);
 		
 		Button removeButton = new Button();
-		removeButton.setIcon(IconType.REMOVE);
-		removeButton.setSize(ButtonSize.MINI);
+		removeButton.setIcon(IconType.TIMES);
+		removeButton.setSize(ButtonSize.SMALL);
 		removeButton.setType(ButtonType.DANGER);
 		removeButton.setTitle(messages.removeMappingLabel());
 		removeButton.addClickHandler(new ClickHandler() {
@@ -394,12 +395,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 			@Override
 			public String getValue() {
-				return externalInterfaceApplicationProtocol.getValue();
+				return externalInterfaceApplicationProtocol.getValue(externalInterfaceApplicationProtocol.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				externalInterfaceApplicationProtocol.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(externalInterfaceApplicationProtocol, value);
 			}
 
 			@Override
@@ -450,12 +451,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 			@Override
 			public String getValue() {
-				return endpointType.getValue();
+				return endpointType.getValue(endpointType.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				endpointType.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(endpointType, value);
 			}
 
 			@Override
@@ -479,12 +480,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 			@Override
 			public String getValue() {
-				return endpointTargetPort.getValue();
+				return endpointTargetPort.getValue(endpointTargetPort.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				endpointTargetPort.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(endpointTargetPort, value);
 			}
 
 			@Override
@@ -537,8 +538,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		
 		Button editButton = new Button();
 		editButton.setIcon(IconType.PENCIL);
-		editButton.setSize(ButtonSize.MINI);
-		editButton.setToggle(true);
+		editButton.setSize(ButtonSize.SMALL);
+		editButton.setDataToggle(Toggle.BUTTON);
 		editButton.setTitle(messages.editEndpointLabel());
 		editButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -549,8 +550,8 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		endpointEditButtons.put(endpointId, editButton);
 		
 		Button removeButton = new Button();
-		removeButton.setIcon(IconType.REMOVE);
-		removeButton.setSize(ButtonSize.MINI);
+		removeButton.setIcon(IconType.TIMES);
+		removeButton.setSize(ButtonSize.SMALL);
 		removeButton.setType(ButtonType.DANGER);
 		removeButton.setTitle(messages.removeEndpointLabel());
 		removeButton.addClickHandler(new ClickHandler() {
@@ -668,12 +669,12 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 
 	@Override
 	public void switchToMappingsTab() {
-		tabs.selectTab(0);
+		mappingsTab.setActive(true);
 	}
 
 	@Override
 	public void enableEndpoints(boolean enable) {
-		endpointTab.setEnabled(enable);
+		endpointTab.setActive(enable);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorMessages" field="messages"/>
 	<ui:style>
 		.invisible {
@@ -17,23 +17,23 @@
 			margin: 10px 0px;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
 		<b:Form>
-			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.nameLabel}"/></b:FormLabel>
 			<b:TextBox ui:field="name" placeholder="{messages.namePlaceholder}" addStyleNames="input-block-level"/>
-			<b:ControlLabel><ui:text from="{messages.descriptionLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.descriptionLabel}"/></b:FormLabel>
 			<b:TextArea ui:field="description" placeholder="{messages.descriptionPlaceholder}" addStyleNames="input-block-level"/>
 			<g:HTMLPanel addStyleNames="{style.checkboxes}">
 				<b:CheckBox ui:field="shared" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.sharedLabel}"/></b:CheckBox>
 				<b:CheckBox ui:field="scalable" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.scalableLabel}"/></b:CheckBox>
 			</g:HTMLPanel>
-			<b:ControlLabel><ui:text from="{messages.visibleForLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.visibleForLabel}"/></b:FormLabel>
 			<b:ListBox ui:field="visibleFor" addStyleNames="input-block-level">
 				<g:item value="all"><ui:text from="{messages.visibilityAll}"/></g:item>
 				<g:item value="owner"><ui:text from="{messages.visibilityOwner}"/></g:item>
 				<g:item value="developer"><ui:text from="{messages.visibilityDeveloper}"/></g:item>
 			</b:ListBox>
-			<b:ControlLabel><ui:text from="{messages.coresLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.coresLabel}"/></b:FormLabel>
 			<g:HTMLPanel addStyleNames="input-prepend">
 				<div class="btn-group dropup">
 					<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -44,7 +44,7 @@
 				</div>
 				<b:TextBox ui:field="cores"/>
 			</g:HTMLPanel>
-			<b:ControlLabel><ui:text from="{messages.ramLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.ramLabel}"/></b:FormLabel>
 			<g:HTMLPanel addStyleNames="input-prepend">
 				<div class="btn-group dropup">
 					<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -55,7 +55,7 @@
 				</div>
 				<b:TextBox ui:field="ram"/>
 			</g:HTMLPanel>
-			<b:ControlLabel><ui:text from="{messages.diskLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.diskLabel}"/></b:FormLabel>
 			<g:HTMLPanel addStyleNames="input-prepend">
 				<div class="btn-group dropup">
 					<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -67,10 +67,10 @@
 				<b:TextBox ui:field="disk"/>
 			</g:HTMLPanel>
 		</b:Form>
-		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.invisible}"/>
+		<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.invisible}"/>
 		<b:ModalFooter>
-			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
-			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
+			<b:Button ui:field="update" icon="REFRESH" type="WARNING" visible="false" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.updateButtonLabel}"><ui:text from="{messages.updateButtonLabel}"/></b:Button>
+			<b:Button ui:field="save" icon="SAVE" type="WARNING" visible="false" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveButtonLabel}"><ui:text from="{messages.saveButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>
 	</b:Modal>

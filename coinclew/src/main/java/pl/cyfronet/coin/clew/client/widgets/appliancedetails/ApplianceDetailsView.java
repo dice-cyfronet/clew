@@ -2,20 +2,21 @@ package pl.cyfronet.coin.clew.client.widgets.appliancedetails;
 
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.FormLabel;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.RadioButton;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.listbox.EditableListBox;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ControlLabel;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.RadioButton;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -87,7 +88,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasValue<Boolean> addKey(String id, String name) {
-		RadioButton button = new RadioButton("key", name);
+		RadioButton button = new RadioButton(name);
+		button.setName("key");
 		button.setFormValue(id);
 		container.add(button);
 		
@@ -101,7 +103,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasText addName(String name) {
-		ControlLabel label = new ControlLabel(messages.nameLabel(name));
+		FormLabel label = new FormLabel();
+		label.setText(messages.nameLabel(name));
 		TextBox nameBox = new TextBox();
 		nameBox.setPlaceholder(messages.namePlaceholder());
 		nameContainer.add(label);
@@ -127,7 +130,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasValue<String> addCores(Map<String, String> options, String value, final String applianceTypeId) {
-		ControlLabel label = new ControlLabel(messages.coresLabel());
+		FormLabel label = new FormLabel();
+		label.setText(messages.coresLabel());
 		final EditableListBox listBox = createListBox(options, value);
 		nameContainer.add(label);		
 		nameContainer.add(listBox);
@@ -179,7 +183,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasValue<String> addRam(Map<String, String> options, String value, final String applianceTypeId) {
-		ControlLabel label = new ControlLabel(messages.ramLabel());
+		FormLabel label = new FormLabel();
+		label.setText(messages.ramLabel());
 		final EditableListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
@@ -219,7 +224,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasValue<String> addDisk(Map<String, String> options, String value, final String applianceTypeId) {
-		ControlLabel label = new ControlLabel(messages.diskLabel());
+		FormLabel label = new FormLabel();
+		label.setText(messages.diskLabel());
 		final EditableListBox listBox = createListBox(options, value);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
@@ -277,7 +283,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		container.clear();
 		
 		Label label = new Label(messages.flavorError());
-		label.setType(LabelType.IMPORTANT);
+		label.setType(LabelType.DANGER);
 		container.add(label);
 	}
 
@@ -315,7 +321,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		container.clear();
 		
 		Label label = new Label(messages.preferencesError());
-		label.setType(LabelType.IMPORTANT);
+		label.setType(LabelType.DANGER);
 		container.add(label);
 	}
 
@@ -326,7 +332,8 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 	@Override
 	public HasValue<String> addComputeSites(Map<String, String> computeSiteLabels, String chosenComputeSiteId) {
-		ControlLabel label = new ControlLabel(messages.computeSiteLabel());
+		FormLabel label = new FormLabel();
+		label.setText(messages.computeSiteLabel());
 		final ListBox computeSites = new ListBox();
 		
 		for(String value : computeSiteLabels.keySet()) {
@@ -334,7 +341,7 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		}
 		
 		if(chosenComputeSiteId != null && computeSiteLabels.keySet().contains(chosenComputeSiteId)) {
-			computeSites.setSelectedValue(chosenComputeSiteId);
+			BootstrapHelpers.setListBoxValue(computeSites, chosenComputeSiteId);
 		}
 		
 		nameContainer.add(label);
@@ -352,17 +359,17 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 
 			@Override
 			public String getValue() {
-				return computeSites.getValue();
+				return computeSites.getValue(computeSites.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				computeSites.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(computeSites, value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				computeSites.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(computeSites, value);
 			}
 		};
 	}

@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.extinterfaces.ExternalInterfacesEditorMessages" field="messages"/>
 	<ui:style type="pl.cyfronet.coin.clew.client.widgets.extinterfaces.ExternalInterfacesEditorView.Styles">
 		.center {
@@ -64,66 +64,72 @@
 			text-align: left;
 		}
 	</ui:style>
-	<b:Modal ui:field="modal"  title="{messages.modalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
-		<b:TabPanel ui:field="tabs" addStyleNames="{style.disable-y-scroll}">
-			<b:Tab heading="{messages.externalInterfacesTabLabel}" active="true">
-				<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
-				<b:Form>
-					<b:ControlLabel><ui:text from="{messages.externalInterfaceName}"/></b:ControlLabel>
-					<b:TextBox ui:field="externalInterfaceName" placeholder="{messages.externalInterfacePlaceholder}" addStyleNames="input-block-level"/>
-					<b:ControlLabel><ui:text from="{messages.externalInterfacePortNumber}"/></b:ControlLabel>
-					<b:TextBox ui:field="externalInterfacePort" placeholder="{messages.externalInterfacePortNumberPlaceholder}" addStyleNames="input-block-level"/>
-					<b:ControlLabel><ui:text from="{messages.externalInterfaceTransportProtocol}"/></b:ControlLabel>
-					<b:ListBox ui:field="externalInterfaceTransportProtocol" addStyleNames="input-block-level">
-						<g:item value="tcp"><ui:text from="{messages.externalInterfaceTcpProtocol}"/></g:item>
-						<g:item value="udp"><ui:text from="{messages.externalInterfaceUdpProtocol}"/></g:item>
-					</b:ListBox>
-					<b:ControlLabel><ui:text from="{messages.externalInterfaceApplicationProtocol}"/></b:ControlLabel>
-					<b:ListBox ui:field="externalInterfaceApplicationProtocol" addStyleNames="input-block-level">
-						<g:item value="none"><ui:text from="{messages.externalInterfaceNoneType}"/></g:item>
-						<g:item value="http"><ui:text from="{messages.externalInterfaceHttpType}"/></g:item>
-						<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
-						<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
-					</b:ListBox>
-					<b:ControlLabel><ui:text from="{messages.proxySendTimeoutLabel}"/></b:ControlLabel>
-					<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>
-					<b:ControlLabel><ui:text from="{messages.proxyReadTimeoutLabel}"/></b:ControlLabel>
-					<b:TextBox ui:field="proxyReadTimeout" placeholder="{messages.proxyReadTimeoutPlaceholder}" addStyleNames="input-block-level"/>
-					<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
-				</b:Form>
-			</b:Tab>
-			<b:Tab ui:field="endpointTab" heading="{messages.endpointsTabLabel}">
-				<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
-				<b:Form>
-					<b:ControlLabel><ui:text from="{messages.endpointName}"/></b:ControlLabel>
-					<b:TextBox ui:field="endpointName" placeholder="{messages.endpointNamePlaceholder}" addStyleNames="input-block-level"/>
-					<b:ControlLabel><ui:text from="{messages.endpointTypeLabel}"/></b:ControlLabel>
-					<b:ListBox ui:field="endpointType" addStyleNames="input-block-level">
-						<g:item value="webapp"><ui:text from="{messages.webappEndpointType}"/></g:item>
-						<g:item value="rest"><ui:text from="{messages.restEndpointType}"/></g:item>
-						<g:item value="ws"><ui:text from="{messages.wsEndpointType}"/></g:item>
-					</b:ListBox>
-					<b:ControlLabel><ui:text from="{messages.endpointInvocationPath}"/></b:ControlLabel>
-					<b:TextBox ui:field="endpointInvocationPath" placeholder="{messages.endpointInvocationPathPlaceholder}" addStyleNames="input-block-level"/>
-					<b:ControlLabel><ui:text from="{messages.endpointTargetPort}"/></b:ControlLabel>
-					<b:ListBox ui:field="endpointTargetPort" addStyleNames="input-block-level"/>
-					<b:HelpBlock ui:field="endpointTargetPortHelpBlock"><ui:text from="{messages.endpointTargetPortHelp}"/></b:HelpBlock>
-					<b:ControlLabel><ui:text from="{messages.endpointDescription}"/></b:ControlLabel>
-					<b:TextArea ui:field="endpointDescription" placeholder="{messages.endpointDescriptionPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
-					<b:ControlLabel>
-						<ui:text from="{messages.endpointDescriptor}"/>
+	<b:Modal ui:field="modal"  title="{messages.modalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
+		<b:TabPanel addStyleNames="{style.disable-y-scroll}">
+			<b:NavTabs>
+				<b:TabListItem ui:field="mappingsTab" dataTarget="tab1" text="{messages.externalInterfacesTabLabel}" active="true"/>
+				<b:TabListItem ui:field="endpointTab" dataTarget="tab2" text="{messages.endpointsTabLabel}"/>
+			</b:NavTabs>
+			<b:TabContent>
+				<b:TabPane b:id="tab1">
+					<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
+					<b:Form>
+						<b:FormLabel><ui:text from="{messages.externalInterfaceName}"/></b:FormLabel>
+						<b:TextBox ui:field="externalInterfaceName" placeholder="{messages.externalInterfacePlaceholder}" addStyleNames="input-block-level"/>
+						<b:FormLabel><ui:text from="{messages.externalInterfacePortNumber}"/></b:FormLabel>
+						<b:TextBox ui:field="externalInterfacePort" placeholder="{messages.externalInterfacePortNumberPlaceholder}" addStyleNames="input-block-level"/>
+						<b:FormLabel><ui:text from="{messages.externalInterfaceTransportProtocol}"/></b:FormLabel>
+						<b:ListBox ui:field="externalInterfaceTransportProtocol" addStyleNames="input-block-level">
+							<g:item value="tcp"><ui:text from="{messages.externalInterfaceTcpProtocol}"/></g:item>
+							<g:item value="udp"><ui:text from="{messages.externalInterfaceUdpProtocol}"/></g:item>
+						</b:ListBox>
+						<b:FormLabel><ui:text from="{messages.externalInterfaceApplicationProtocol}"/></b:FormLabel>
+						<b:ListBox ui:field="externalInterfaceApplicationProtocol" addStyleNames="input-block-level">
+							<g:item value="none"><ui:text from="{messages.externalInterfaceNoneType}"/></g:item>
+							<g:item value="http"><ui:text from="{messages.externalInterfaceHttpType}"/></g:item>
+							<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
+							<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
+						</b:ListBox>
+						<b:FormLabel><ui:text from="{messages.proxySendTimeoutLabel}"/></b:FormLabel>
+						<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>
+						<b:FormLabel><ui:text from="{messages.proxyReadTimeoutLabel}"/></b:FormLabel>
+						<b:TextBox ui:field="proxyReadTimeout" placeholder="{messages.proxyReadTimeoutPlaceholder}" addStyleNames="input-block-level"/>
+						<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
+					</b:Form>
+				</b:TabPane>
+				<b:TabPane b:id="tab2">
+					<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
+					<b:Form>
+						<b:FormLabel><ui:text from="{messages.endpointName}"/></b:FormLabel>
+						<b:TextBox ui:field="endpointName" placeholder="{messages.endpointNamePlaceholder}" addStyleNames="input-block-level"/>
+						<b:FormLabel><ui:text from="{messages.endpointTypeLabel}"/></b:FormLabel>
+						<b:ListBox ui:field="endpointType" addStyleNames="input-block-level">
+							<g:item value="webapp"><ui:text from="{messages.webappEndpointType}"/></g:item>
+							<g:item value="rest"><ui:text from="{messages.restEndpointType}"/></g:item>
+							<g:item value="ws"><ui:text from="{messages.wsEndpointType}"/></g:item>
+						</b:ListBox>
+						<b:FormLabel><ui:text from="{messages.endpointInvocationPath}"/></b:FormLabel>
+						<b:TextBox ui:field="endpointInvocationPath" placeholder="{messages.endpointInvocationPathPlaceholder}" addStyleNames="input-block-level"/>
+						<b:FormLabel><ui:text from="{messages.endpointTargetPort}"/></b:FormLabel>
+						<b:ListBox ui:field="endpointTargetPort" addStyleNames="input-block-level"/>
+						<b:HelpBlock ui:field="endpointTargetPortHelpBlock"><ui:text from="{messages.endpointTargetPortHelp}"/></b:HelpBlock>
+						<b:FormLabel><ui:text from="{messages.endpointDescription}"/></b:FormLabel>
+						<b:TextArea ui:field="endpointDescription" placeholder="{messages.endpointDescriptionPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+						<b:FormLabel>
+							<ui:text from="{messages.endpointDescriptor}"/>
+						</b:FormLabel>
 						<b:Tooltip text="{messages.descriptorHelpBlock}">
 							<g:HTML addStyleNames="label label-info"><i class='icon-comment'></i></g:HTML>
 						</b:Tooltip>
-					</b:ControlLabel>
-					<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
-					<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
-					<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
-					<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
+						<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+						<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
+						<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
+						<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
 				</b:Form>
-			</b:Tab>
+				</b:TabPane>
+			</b:TabContent>
 		</b:TabPanel>
-		<b:Label ui:field="errorLabel" type="IMPORTANT" addStyleNames="{style.invisible}"/>
+		<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.invisible}"/>
 		<b:ModalFooter>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
 		</b:ModalFooter>

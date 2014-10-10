@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.instance.InstanceMessages" field="messages"/>
 	<ui:style type="pl.cyfronet.coin.clew.client.widgets.instance.InstanceView.Styles">
 		.spacey-row {
@@ -144,15 +144,15 @@
 		<g:FlowPanel ui:field="status" addStyleNames="{style.status}"><g:HTML>&nbsp;</g:HTML></g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.bill}">
 			<b:Tooltip ui:field="prepaidTooltip" placement="TOP">
-				<b:Label ui:field="bill" type="IMPORTANT"/>
+				<b:Label ui:field="bill" type="DANGER"/>
 			</b:Tooltip>
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:ButtonGroup ui:field="controls" addStyleNames="{style.buttons}">
-				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="MINI" toggle="true" title="{messages.detailsTooltip}" enabled="false"/>
+				<b:Button ui:field="showDetails" icon="REORDER" type="INFO" size="SMALL" dataToggle="BUTTON" title="{messages.detailsTooltip}" enabled="false"/>
 			</b:ButtonGroup>
 		</g:FlowPanel>
-		<b:Collapse ui:field="collapse" defaultOpen="false">
+		<b:Collapse ui:field="collapse" toggle="false">
 			<g:FlowPanel addStyleNames="{style.details}">
 				<g:HTML ui:field="description" addStyleNames="{style.description} muted"/>
 				<g:FlowPanel ui:field="details" addStyleNames="{style.column-panel}">

@@ -1,10 +1,11 @@
 package pl.cyfronet.coin.clew.client.widgets.su;
 
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
+
 import pl.cyfronet.coin.clew.client.widgets.su.ISuView.ISuPresenter;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -66,7 +67,7 @@ public class SuView extends Composite implements ISuView, ReverseViewInterface<I
 
 	@Override
 	public String getSelectedUser() {
-		return userList.getValue();
+		return userList.getValue(userList.getSelectedIndex());
 	}
 
 	@Override

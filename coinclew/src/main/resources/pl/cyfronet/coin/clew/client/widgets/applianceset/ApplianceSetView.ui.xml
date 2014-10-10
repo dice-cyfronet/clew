@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.applianceset.ApplianceSetMessages" field="messages"/>
 	<ui:style>
 		.left {
@@ -21,7 +21,7 @@
 				<g:HTML ui:field="name" addStyleNames="{style.left} {style.name}"/>
 			</b:Column>
 			<b:Column size="8" addStyleNames="{style.right}">
-				<b:Button ui:field="shutdown" type="DANGER" icon="OFF"  size="MINI" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"></b:Button>
+				<b:Button ui:field="shutdown" type="DANGER" icon="POWER_OFF"  size="SMALL" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt;"></b:Button>
 			</b:Column>
 		</b:Row>
 		<g:FlowPanel ui:field="instancesContainer"/>

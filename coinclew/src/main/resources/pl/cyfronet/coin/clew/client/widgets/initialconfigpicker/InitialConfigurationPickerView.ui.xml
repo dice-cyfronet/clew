@@ -1,18 +1,18 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.initialconfigpicker.InitialConfigurationPickerMessages" field="messages"/>
 	<ui:style>
 	
 	</ui:style>
-	<b:Modal ui:field="pickConfigModal" title="{messages.pickConfigModalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
+	<b:Modal ui:field="pickConfigModal" title="{messages.pickConfigModalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
 		<b:Form>
-			<b:ControlLabel><ui:text from="{messages.configSelectLabel}"/></b:ControlLabel>
+			<b:FormLabel><ui:text from="{messages.configSelectLabel}"/></b:FormLabel>
 			<b:ListBox ui:field="configListBox" addStyleNames="input-block-level"/>
 		</b:Form>
 		<b:ModalFooter>
-			<b:Button ui:field="startInstance" icon="PLAY" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startInstanceLabel}">
+			<b:Button ui:field="startInstance" icon="PLAY" type="SUCCESS" dataLoadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startInstanceLabel}">
 				<ui:text from="{messages.startInstanceLabel}"/>
 			</b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>

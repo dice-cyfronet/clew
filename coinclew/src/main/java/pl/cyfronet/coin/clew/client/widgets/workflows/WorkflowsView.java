@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.workflows;
 
-import com.github.gwtbootstrap.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Label;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

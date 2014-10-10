@@ -6,9 +6,9 @@
 	<inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name="org.fusesource.restygwt.RestyGWT"/>
 	<inherits name="com.google.gwt.inject.Inject"/>
-	<inherits name="com.github.gwtbootstrap.BootstrapNoResources"/>
 	<inherits name="de.benediktmeurer.gwt.slf4j.jul.JUL"/>
 	<inherits name='com.mvp4g.Mvp4gModule'/>
+	<inherits name="org.gwtbootstrap3.GwtBootstrap3CDN"/>
 	
 	<source path="client"/>
 	<entry-point class="pl.cyfronet.coin.clew.client.ClewEntryPoint"/>

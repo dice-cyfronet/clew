@@ -2,9 +2,9 @@
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	
+
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>pl.cyfronet.coin</groupId>
 		<artifactId>coin</artifactId>
@@ -15,26 +15,30 @@
 	<packaging>war</packaging>
 
 	<name>CORS Cloud Facade Web Client</name>
-	
+
 	<properties>
 		<gwt.version>2.6.1</gwt.version>
-		<gwt.bootstrap.version>2.3.2.0</gwt.bootstrap.version>
+		<gwt.bootstrap.version>0.8.1</gwt.bootstrap.version>
 		<gwt.gin.version>2.1.1</gwt.gin.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<log4j.version>1.2.17</log4j.version>
 		<junit.version>4.11</junit.version>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 			<id>gwt-bootstrap-snapshot</id>
 			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
-			<snapshots><enabled>true</enabled></snapshots>
-			<releases><enabled>false</enabled></releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<finalName>clew</finalName>
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
@@ -126,19 +130,21 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.gwtbootstrap</groupId>
-			<artifactId>gwt-bootstrap</artifactId>
-			<version>${gwt.bootstrap.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>de.benediktmeurer.gwt-slf4j</groupId>
-		    <artifactId>gwt-slf4j</artifactId>
-		    <version>0.0.2</version>
+			<groupId>de.benediktmeurer.gwt-slf4j</groupId>
+			<artifactId>gwt-slf4j</artifactId>
+			<version>0.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.mvp4g</groupId>
 			<artifactId>mvp4g</artifactId>
 			<version>1.4.0</version>
+		</dependency>
+		
+		<!-- GWT Bootstrap dependencies -->
+		<dependency>
+			<groupId>org.gwtbootstrap3</groupId>
+			<artifactId>gwtbootstrap3</artifactId>
+			<version>${gwt.bootstrap.version}</version>
 		</dependency>
 
 		<!-- JAX-RS dependencies -->
@@ -164,7 +170,7 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		
+
 		<!-- Testing dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

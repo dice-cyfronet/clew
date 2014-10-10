@@ -1,8 +1,9 @@
 package pl.cyfronet.coin.clew.client.widgets.menu;
 
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+
 import pl.cyfronet.coin.clew.client.widgets.menu.IMenuView.IMenuPresenter;
 
-import com.github.gwtbootstrap.client.ui.NavLink;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -25,10 +26,10 @@ public class MenuView extends Composite implements IMenuView , ReverseViewInterf
 	
 	private IMenuPresenter presenter;
 	
-	@UiField NavLink appsMenuItem;
-	@UiField NavLink wfsMenuItem;
-	@UiField NavLink devMenuItem;
-	@UiField NavLink suMenuItem;
+	@UiField AnchorListItem appsMenuItem;
+	@UiField AnchorListItem wfsMenuItem;
+	@UiField AnchorListItem devMenuItem;
+	@UiField AnchorListItem suMenuItem;
 	@UiField MenuViewMessages messages;
 	@UiField Style style;
 	

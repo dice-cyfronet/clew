@@ -4,18 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Form;
+import org.gwtbootstrap3.client.ui.FormLabel;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.IInitialConfigEmbedView.IInitialConfigEmbedPresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ControlLabel;
-import com.github.gwtbootstrap.client.ui.Form;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.PasswordTextBox;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -26,6 +25,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -107,7 +108,8 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 			Form form = new Form();
 			
 			for (String parameter : parameters) {
-				ControlLabel controlLabel = new ControlLabel(parameter);
+				FormLabel controlLabel = new FormLabel();
+				controlLabel.setText(parameter);
 				form.add(controlLabel);
 				
 				TextBox value = null;
@@ -118,7 +120,7 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 					value = new TextBox();
 				}
 				
-				value.setPlaceholder(messages.parameterValuePlaceholder());
+				value.getElement().setAttribute("placeholder", messages.parameterValuePlaceholder());
 				value.addStyleName("input-block-level");
 				result.put(parameter, value);
 				form.add(value);

@@ -3,8 +3,10 @@ package pl.cyfronet.coin.clew.client.widgets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 
@@ -28,6 +30,16 @@ public class BootstrapHelpers {
 			}
 			
 			button.setEnabled(true);
+		}
+	}
+	
+	public static void setListBoxValue(ListBox listBox, String value) {
+		for(int i = 0; i < listBox.getItemCount(); i++) {
+			if(listBox.getValue(i) != null && listBox.getValue(i).equals(value)) {
+				listBox.setSelectedIndex(i);
+				
+				break;
+			}
 		}
 	}
 

@@ -1,17 +1,17 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.CheckBox;
+import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.LabelType;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.CheckBox;
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -158,17 +158,17 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 			@Override
 			public String getValue() {
-				return initialConfigs.getValue();
+				return initialConfigs.getValue(initialConfigs.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				initialConfigs.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(initialConfigs, value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				initialConfigs.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(initialConfigs, value);
 			}
 		};
 	}
@@ -203,7 +203,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@Override
 	public void showFlavorError() {
 		flavorContainer.clear();
-		Label label = new Label(LabelType.IMPORTANT, messages.flavorError());
+		Label label = new Label(LabelType.DANGER, messages.flavorError());
 		label.getElement().getStyle().setWhiteSpace(WhiteSpace.NORMAL);
 		label.getElement().getStyle().setMarginRight(5, Unit.PX);
 		flavorContainer.add(label);
@@ -222,7 +222,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 	@Override
 	public void showNoComputeSitesMessage() {
-		computeSiteContainer.add(new Label(LabelType.IMPORTANT, messages.noComputeSite()));
+		computeSiteContainer.add(new Label(LabelType.DANGER, messages.noComputeSite()));
 	}
 
 	@Override
@@ -255,17 +255,17 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 			@Override
 			public String getValue() {
-				return computeSites.getValue();
+				return computeSites.getValue(computeSites.getSelectedIndex());
 			}
 
 			@Override
 			public void setValue(String value) {
-				computeSites.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(computeSites, value);
 			}
 
 			@Override
 			public void setValue(String value, boolean fireEvents) {
-				computeSites.setSelectedValue(value);
+				BootstrapHelpers.setListBoxValue(computeSites, value);
 			}
 		};
 	}

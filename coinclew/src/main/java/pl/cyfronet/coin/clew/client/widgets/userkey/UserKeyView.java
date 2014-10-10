@@ -1,9 +1,10 @@
 package pl.cyfronet.coin.clew.client.widgets.userkey;
 
+import org.gwtbootstrap3.client.ui.Button;
+
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.userkey.IUserKeyView.IUserKeyPresenter;
 
-import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
