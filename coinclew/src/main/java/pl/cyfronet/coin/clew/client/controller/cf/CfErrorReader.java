@@ -15,6 +15,14 @@ public class CfErrorReader {
 	}
 	
 	public CloudFacadeError decodeError(String json) {
+		if(json == null || json.isEmpty()) {
+			CloudFacadeError error = new CloudFacadeError();
+			error.setMessage("Unknown error");
+			error.setType("uknown");
+			
+			return error;
+		}
+		
 		return codec.decode(JSONParser.parseStrict(json));
 	}
 }
