@@ -25,8 +25,6 @@ public class BootstrapHelpers {
 			
 			if (originalIcon != null) {
 				button.setIcon(originalIcon);
-			} else {
-				button.setIcon(IconType.QUESTION);
 			}
 			
 			button.setEnabled(true);

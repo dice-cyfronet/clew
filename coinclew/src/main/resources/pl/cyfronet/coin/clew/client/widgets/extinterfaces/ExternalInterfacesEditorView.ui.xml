@@ -75,56 +75,82 @@
 					<b:TabPane ui:field="mappings" b:id="tab1" active="true">
 						<g:FlowPanel ui:field="externalInterfaceContainer" addStyleNames="{style.center}"/>
 						<b:Form>
-							<b:FormLabel><ui:text from="{messages.externalInterfaceName}"/></b:FormLabel>
-							<b:TextBox ui:field="externalInterfaceName" placeholder="{messages.externalInterfacePlaceholder}" addStyleNames="input-block-level"/>
-							<b:FormLabel><ui:text from="{messages.externalInterfacePortNumber}"/></b:FormLabel>
-							<b:TextBox ui:field="externalInterfacePort" placeholder="{messages.externalInterfacePortNumberPlaceholder}" addStyleNames="input-block-level"/>
-							<b:FormLabel><ui:text from="{messages.externalInterfaceTransportProtocol}"/></b:FormLabel>
-							<b:ListBox ui:field="externalInterfaceTransportProtocol" addStyleNames="input-block-level">
-								<g:item value="tcp"><ui:text from="{messages.externalInterfaceTcpProtocol}"/></g:item>
-								<g:item value="udp"><ui:text from="{messages.externalInterfaceUdpProtocol}"/></g:item>
-							</b:ListBox>
-							<b:FormLabel><ui:text from="{messages.externalInterfaceApplicationProtocol}"/></b:FormLabel>
-							<b:ListBox ui:field="externalInterfaceApplicationProtocol" addStyleNames="input-block-level">
-								<g:item value="none"><ui:text from="{messages.externalInterfaceNoneType}"/></g:item>
-								<g:item value="http"><ui:text from="{messages.externalInterfaceHttpType}"/></g:item>
-								<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
-								<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
-							</b:ListBox>
-							<b:FormLabel><ui:text from="{messages.proxySendTimeoutLabel}"/></b:FormLabel>
-							<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>
-							<b:FormLabel><ui:text from="{messages.proxyReadTimeoutLabel}"/></b:FormLabel>
-							<b:TextBox ui:field="proxyReadTimeout" placeholder="{messages.proxyReadTimeoutPlaceholder}" addStyleNames="input-block-level"/>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.externalInterfaceName}"/></b:FormLabel>
+								<b:TextBox ui:field="externalInterfaceName" placeholder="{messages.externalInterfacePlaceholder}" addStyleNames="input-block-level"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.externalInterfacePortNumber}"/></b:FormLabel>
+								<b:TextBox ui:field="externalInterfacePort" placeholder="{messages.externalInterfacePortNumberPlaceholder}" addStyleNames="input-block-level"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.externalInterfaceTransportProtocol}"/></b:FormLabel>
+								<b:ListBox ui:field="externalInterfaceTransportProtocol" addStyleNames="input-block-level">
+									<g:item value="tcp"><ui:text from="{messages.externalInterfaceTcpProtocol}"/></g:item>
+									<g:item value="udp"><ui:text from="{messages.externalInterfaceUdpProtocol}"/></g:item>
+								</b:ListBox>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.externalInterfaceApplicationProtocol}"/></b:FormLabel>
+								<b:ListBox ui:field="externalInterfaceApplicationProtocol" addStyleNames="input-block-level">
+									<g:item value="none"><ui:text from="{messages.externalInterfaceNoneType}"/></g:item>
+									<g:item value="http"><ui:text from="{messages.externalInterfaceHttpType}"/></g:item>
+									<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
+									<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
+								</b:ListBox>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.proxySendTimeoutLabel}"/></b:FormLabel>
+								<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.proxyReadTimeoutLabel}"/></b:FormLabel>
+								<b:TextBox ui:field="proxyReadTimeout" placeholder="{messages.proxyReadTimeoutPlaceholder}" addStyleNames="input-block-level"/>
+							</b:FormGroup>
 							<b:Button ui:field="addExternalInterface" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.addExternalInterfaceButtonLabel}"><ui:text from="{messages.addExternalInterfaceButtonLabel}"/></b:Button>
 						</b:Form>
 					</b:TabPane>
 					<b:TabPane ui:field="endpoints" b:id="tab2">
 						<g:FlowPanel ui:field="endpointContainer" addStyleNames="{style.center}"/>
 						<b:Form>
-							<b:FormLabel><ui:text from="{messages.endpointName}"/></b:FormLabel>
-							<b:TextBox ui:field="endpointName" placeholder="{messages.endpointNamePlaceholder}" addStyleNames="input-block-level"/>
-							<b:FormLabel><ui:text from="{messages.endpointTypeLabel}"/></b:FormLabel>
-							<b:ListBox ui:field="endpointType" addStyleNames="input-block-level">
-								<g:item value="webapp"><ui:text from="{messages.webappEndpointType}"/></g:item>
-								<g:item value="rest"><ui:text from="{messages.restEndpointType}"/></g:item>
-								<g:item value="ws"><ui:text from="{messages.wsEndpointType}"/></g:item>
-							</b:ListBox>
-							<b:FormLabel><ui:text from="{messages.endpointInvocationPath}"/></b:FormLabel>
-							<b:TextBox ui:field="endpointInvocationPath" placeholder="{messages.endpointInvocationPathPlaceholder}" addStyleNames="input-block-level"/>
-							<b:FormLabel><ui:text from="{messages.endpointTargetPort}"/></b:FormLabel>
-							<b:ListBox ui:field="endpointTargetPort" addStyleNames="input-block-level"/>
-							<b:HelpBlock ui:field="endpointTargetPortHelpBlock"><ui:text from="{messages.endpointTargetPortHelp}"/></b:HelpBlock>
-							<b:FormLabel><ui:text from="{messages.endpointDescription}"/></b:FormLabel>
-							<b:TextArea ui:field="endpointDescription" placeholder="{messages.endpointDescriptionPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
-							<b:FormLabel>
-								<ui:text from="{messages.endpointDescriptor}"/>
-							</b:FormLabel>
-							<b:Tooltip text="{messages.descriptorHelpBlock}">
-								<g:HTML addStyleNames="label label-info"><i class='fa fa-comment'></i></g:HTML>
-							</b:Tooltip>
-							<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
-							<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
-							<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.endpointName}"/></b:FormLabel>
+								<b:TextBox ui:field="endpointName" placeholder="{messages.endpointNamePlaceholder}" addStyleNames="input-block-level"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.endpointTypeLabel}"/></b:FormLabel>
+								<b:ListBox ui:field="endpointType" addStyleNames="input-block-level">
+									<g:item value="webapp"><ui:text from="{messages.webappEndpointType}"/></g:item>
+									<g:item value="rest"><ui:text from="{messages.restEndpointType}"/></g:item>
+									<g:item value="ws"><ui:text from="{messages.wsEndpointType}"/></g:item>
+								</b:ListBox>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.endpointInvocationPath}"/></b:FormLabel>
+								<b:TextBox ui:field="endpointInvocationPath" placeholder="{messages.endpointInvocationPathPlaceholder}" addStyleNames="input-block-level"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.endpointTargetPort}"/></b:FormLabel>
+								<b:ListBox ui:field="endpointTargetPort" addStyleNames="input-block-level"/>
+								<b:HelpBlock ui:field="endpointTargetPortHelpBlock"><ui:text from="{messages.endpointTargetPortHelp}"/></b:HelpBlock>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel><ui:text from="{messages.endpointDescription}"/></b:FormLabel>
+								<b:TextArea ui:field="endpointDescription" placeholder="{messages.endpointDescriptionPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:FormLabel>
+									<ui:text from="{messages.endpointDescriptor}"/>
+								</b:FormLabel>
+								<b:Tooltip text="{messages.descriptorHelpBlock}">
+									<g:HTML addStyleNames="label label-info"><i class='fa fa-comment'></i></g:HTML>
+								</b:Tooltip>
+								<b:TextArea ui:field="endpointDescriptor" placeholder="{messages.endpointDescriptorPlaceholder}" addStyleNames="input-block-level {style.noresize}"/>
+							</b:FormGroup>
+							<b:FormGroup>
+								<b:CheckBox ui:field="secured"><ui:text from="{messages.securedLabel}"/></b:CheckBox>
+								<b:HelpBlock><ui:text from="{messages.securedHelp}"/></b:HelpBlock>
+							</b:FormGroup>
 							<b:Button ui:field="addEndpoint" icon="PLUS" type="SUCCESS" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.addEndpointButtonLabel}"><ui:text from="{messages.addEndpointButtonLabel}"/></b:Button>
 						</b:Form>
 					</b:TabPane>
