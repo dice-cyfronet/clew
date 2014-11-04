@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pl.cyfronet.coin.clew.client.CloudFacadeEndpointProperty;
 import pl.cyfronet.coin.clew.client.DevelopmentProperties;
 
 import com.google.gwt.core.client.GWT;
@@ -19,9 +20,11 @@ public class MiTicketReader {
 	private static final String ROLE_DELIMITER = ",";
 	private static final String CLOUDADMIN_ROLE = "cloudadmin";
 	private DevelopmentProperties devProperties;
+	private CloudFacadeEndpointProperty cfProperties;
 	
 	public MiTicketReader() {
 		devProperties = GWT.create(DevelopmentProperties.class);
+		cfProperties = new CloudFacadeEndpointProperty();
 	}
 
 	public boolean isDeveloper() {
@@ -67,11 +70,21 @@ public class MiTicketReader {
 				return login;
 			}
 		}
+		
+		String login = cfProperties.getUsername();
+		
+		if(login != null) {
+			return login;
+		}
 
 		return devProperties.developmentUserLogin();
 	}
 	
 	public String getCfToken() {
+		String privateToken = cfProperties.getPrivateToken();
+		if(privateToken != null) {
+			return privateToken;
+		}
 		return devProperties.cloudFacadeKey();
 	}
 	

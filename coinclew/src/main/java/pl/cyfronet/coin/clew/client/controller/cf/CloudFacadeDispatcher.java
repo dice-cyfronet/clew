@@ -22,14 +22,13 @@ public class CloudFacadeDispatcher implements Dispatcher {
 		String ticket = ticketReader.getTicket();
 		
 		if (ticket == null) {
-			if(Window.Location.getParameter("private_token") != null) {
-				builder.setHeader("PRIVATE-TOKEN", Window.Location.getParameter("private_token"));
-			} else if (ticketReader.getCfToken().equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
+			String cfToken = ticketReader.getCfToken(); 
+			if (cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
 				builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
 				
 				return null;
 			} else {
-				builder.setHeader("PRIVATE-TOKEN", ticketReader.getCfToken());
+				builder.setHeader("PRIVATE-TOKEN", cfToken);
 			}
 		} else {
 			builder.setHeader("MI-TICKET", ticket);
