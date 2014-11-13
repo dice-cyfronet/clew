@@ -1,6 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.root;
 
-import pl.cyfronet.coin.clew.client.CloudFacadeEndpointProperty;
+import pl.cyfronet.coin.clew.client.CloudFacadeOverrideProperties;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.widgets.root.IRootView.IRootPresenter;
@@ -15,10 +15,10 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implements IRootPresenter {
 	private RootMessages messages;
 	private Timer errorTimer;
-	private CloudFacadeEndpointProperty properties;
+	private CloudFacadeOverrideProperties properties;
 
 	@Inject
-	public RootPresenter(RootMessages messages, CloudFacadeEndpointProperty properties) {
+	public RootPresenter(RootMessages messages, CloudFacadeOverrideProperties properties) {
 		this.messages = messages;
 		this.properties = properties;
 	}

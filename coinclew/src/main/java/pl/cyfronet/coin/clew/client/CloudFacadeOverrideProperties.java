@@ -6,11 +6,11 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Window;
 
-public class CloudFacadeEndpointProperty {
+public class CloudFacadeOverrideProperties {
 	private ClewProperties properties;
 	private Dictionary dictionary;
 
-	public CloudFacadeEndpointProperty() {
+	public CloudFacadeOverrideProperties() {
 		properties = GWT.create(ClewProperties.class);
 		
 		try {
@@ -22,11 +22,12 @@ public class CloudFacadeEndpointProperty {
 
 	public String getCloudFacadeEndpoint() {
 		String endpoint = getDictionaryProperty("cloudFacadeUrl");
-		if (endpoint == null) {
+		
+		if(endpoint == null) {
 			endpoint = properties.getCloudFacadeRootUrl();
 		}
 		
-		return endpoint;		
+		return endpoint;
 	}
 	
 	public String getPrivateToken() {		
@@ -43,14 +44,16 @@ public class CloudFacadeEndpointProperty {
 	
 	private String getProperty(String propertyName) {
 		String property = getDictionaryProperty(propertyName);
+		
 		if(property == null) {
 			property = Window.Location.getParameter(propertyName);
 		}
+		
 		return property;
 	}
 	
 	private String getDictionaryProperty(String propertyName) {
-		if (dictionary != null && dictionary.keySet().contains(propertyName)) {
+		if(dictionary != null && dictionary.keySet().contains(propertyName)) {
 			return dictionary.get(propertyName);
 		}
 		
