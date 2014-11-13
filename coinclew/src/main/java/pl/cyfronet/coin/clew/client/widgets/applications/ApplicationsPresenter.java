@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
@@ -26,8 +23,6 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = ApplicationsView.class)
 public class ApplicationsPresenter extends BasePresenter<IApplicationsView, MainEventBus> implements IApplicationsPresenter {
-	private final static Logger log = LoggerFactory.getLogger(ApplicationsPresenter.class);
-	
 	private static final int REFRESH_MILIS = 5000;
 	
 	private CloudFacadeController cloudFacadeController;
