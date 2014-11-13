@@ -11,7 +11,7 @@ import com.mvp4g.client.Mvp4gModule;
 public class ClewEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
-		CloudFacadeEndpointProperty cloudFacadeEndpointProperty = new CloudFacadeEndpointProperty();
+		CloudFacadeOverrideProperties cloudFacadeEndpointProperty = new CloudFacadeOverrideProperties();
 		Defaults.setServiceRoot(cloudFacadeEndpointProperty.getCloudFacadeEndpoint());
 		
 		Mvp4gModule module = (Mvp4gModule) GWT.create(Mvp4gModule.class);

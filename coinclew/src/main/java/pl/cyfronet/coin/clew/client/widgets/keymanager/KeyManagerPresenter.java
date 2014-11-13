@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.ClewProperties;
-import pl.cyfronet.coin.clew.client.CloudFacadeEndpointProperty;
+import pl.cyfronet.coin.clew.client.CloudFacadeOverrideProperties;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
@@ -27,11 +27,11 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 	private Map<String, UserKeyPresenter> keyPresenters;
 	private MiTicketReader ticketReader;
 	private ClewProperties properties;
-	private CloudFacadeEndpointProperty cloudFacadeEndpointProperty;
+	private CloudFacadeOverrideProperties cloudFacadeEndpointProperty;
 
 	@Inject
 	public KeyManagerPresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader,
-			ClewProperties properties, CloudFacadeEndpointProperty cloudFacadeEndpointProperty) {
+			ClewProperties properties, CloudFacadeOverrideProperties cloudFacadeEndpointProperty) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.ticketReader = ticketReader;
 		this.properties = properties;
