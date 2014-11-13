@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.FieldSet;
 import org.gwtbootstrap3.client.ui.Form;
+import org.gwtbootstrap3.client.ui.FormGroup;
 import org.gwtbootstrap3.client.ui.FormLabel;
 import org.gwtbootstrap3.client.ui.Icon;
+import org.gwtbootstrap3.client.ui.Input;
 import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.Legend;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.InputType;
 
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.IInitialConfigEmbedView.IInitialConfigEmbedPresenter;
@@ -23,10 +28,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
@@ -99,34 +101,33 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 	public Map<String, HasText> addParameters(String applianceTypeName, String configName, List<String> parameters) {
 		Map<String, HasText> result = new HashMap<String, HasText>();
 		
-		FlowPanel panel = new FlowPanel();
-		HTML header = new HTML(applianceTypeName + " (" + configName + ")");
-		header.addStyleName(style.header());
-		panel.add(header);
+		Form panel = new Form();
+		FieldSet fieldSet = new FieldSet();
+		panel.add(fieldSet);
+		
+		Legend legend = new Legend(applianceTypeName + " (" + configName + ")");
+		fieldSet.add(legend);
 		
 		if (parameters.size() > 0) {
-			Form form = new Form();
-			
 			for (String parameter : parameters) {
+				FormGroup group = new FormGroup();
 				FormLabel controlLabel = new FormLabel();
 				controlLabel.setText(parameter);
-				form.add(controlLabel);
+				group.add(controlLabel);
 				
-				TextBox value = null;
+				Input value = null;
 				
 				if(parameter.toLowerCase().endsWith("password")) {
-					value = new PasswordTextBox();
+					value = new Input(InputType.PASSWORD);
 				} else {
-					value = new TextBox();
+					value = new Input(InputType.TEXT);
 				}
 				
-				value.getElement().setAttribute("placeholder", messages.parameterValuePlaceholder());
-				value.addStyleName("input-block-level");
+				value.setPlaceholder(messages.parameterValuePlaceholder());
 				result.put(parameter, value);
-				form.add(value);
+				group.add(value);
+				fieldSet.add(group);
 			}
-			
-			panel.add(form);
 		} else {
 			Label label = new Label(messages.noParametersLabel());
 			panel.add(label);
