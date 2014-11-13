@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pl.cyfronet.coin.clew.client.CloudFacadeOverrideProperties;
 import pl.cyfronet.coin.clew.client.DevelopmentProperties;
 
 import com.google.gwt.core.client.GWT;
@@ -18,14 +19,17 @@ public class MiTicketReader {
 	private static final String DEVELOPER_ROLE = "developer";
 	private static final String ROLE_DELIMITER = ",";
 	private static final String CLOUDADMIN_ROLE = "cloudadmin";
+	
 	private DevelopmentProperties devProperties;
+	private CloudFacadeOverrideProperties cfProperties;
 	
 	public MiTicketReader() {
 		devProperties = GWT.create(DevelopmentProperties.class);
+		cfProperties = new CloudFacadeOverrideProperties();
 	}
 
 	public boolean isDeveloper() {
-		if (getTicket() == null) {
+		if(getTicket() == null) {
 			if(Window.Location.getParameter("developer") != null && Window.Location.getParameter("developer").equalsIgnoreCase("true")) {
 				return true;
 			}
@@ -56,26 +60,34 @@ public class MiTicketReader {
 	public String getUserLogin() {
 		String ticket = getTicket();
 		
-		if (ticket != null) {
+		if(ticket != null) {
 			String decoded = decodeBase64(ticket);
 			RegExp regexp = RegExp.compile("^uid=(.*?);.*");
 			MatchResult matchResult = regexp.exec(decoded);
 			
-			if (matchResult.getGroupCount() > 1) {
+			if(matchResult.getGroupCount() > 1) {
 				String login = matchResult.getGroup(1);
 				
 				return login;
 			}
 		}
 		
-		if(Window.Location.getParameter("login") != null) {
-			return Window.Location.getParameter("login");
+		String login = cfProperties.getUsername();
+		
+		if(login != null) {
+			return login;
 		}
 
 		return devProperties.developmentUserLogin();
 	}
 	
 	public String getCfToken() {
+		String privateToken = cfProperties.getPrivateToken();
+		
+		if(privateToken != null) {
+			return privateToken;
+		}
+		
 		return devProperties.cloudFacadeKey();
 	}
 	
@@ -89,13 +101,13 @@ public class MiTicketReader {
 		List<String> result = new ArrayList<String>();
 		String ticket = getTicket();
 		
-		if (ticket != null) {
+		if(ticket != null) {
 			String decoded = decodeBase64(ticket);
 			
 			RegExp regexp = RegExp.compile(".*tokens=(.*?);.*");
 			MatchResult matchResult = regexp.exec(decoded);
 			
-			if (matchResult != null && matchResult.getGroupCount() > 1) {
+			if(matchResult != null && matchResult.getGroupCount() > 1) {
 				String roles = matchResult.getGroup(1);
 				String[] splitRoles = roles.split(ROLE_DELIMITER);
 				result.addAll(Arrays.asList(splitRoles));

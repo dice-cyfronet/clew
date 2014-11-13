@@ -10,7 +10,6 @@ import pl.cyfronet.coin.clew.client.widgets.su.SuPresenter;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestException;
-import com.google.gwt.user.client.Window;
 
 public class CloudFacadeDispatcher implements Dispatcher {
 	public static final CloudFacadeDispatcher INSTANCE = new CloudFacadeDispatcher();
@@ -21,15 +20,14 @@ public class CloudFacadeDispatcher implements Dispatcher {
 		MiTicketReader ticketReader = new MiTicketReader();
 		String ticket = ticketReader.getTicket();
 		
-		if (ticket == null) {
-			if(Window.Location.getParameter("private_token") != null) {
-				builder.setHeader("PRIVATE-TOKEN", Window.Location.getParameter("private_token"));
-			} else if (ticketReader.getCfToken().equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
+		if(ticket == null) {
+			String cfToken = ticketReader.getCfToken(); 
+			if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
 				builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
 				
 				return null;
 			} else {
-				builder.setHeader("PRIVATE-TOKEN", ticketReader.getCfToken());
+				builder.setHeader("PRIVATE-TOKEN", cfToken);
 			}
 		} else {
 			builder.setHeader("MI-TICKET", ticket);
