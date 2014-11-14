@@ -12,7 +12,7 @@ import com.google.gwt.junit.tools.GWTTestSuite;
  * TODO(DH): Ignoring until Java 1.8 support is in place.
  */
 public class ClewGwtTestSuiteIgnore extends GWTTestSuite {
-	public static final String CLOUD_FACADE_URL = "http://149.156.10.137/api/v1";
+	public static final String CLOUD_FACADE_URL = "https://vph-dev.cyfronet.pl/api/v1";
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite();

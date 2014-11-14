@@ -24,6 +24,7 @@
 		<log4j.version>1.2.17</log4j.version>
 		<junit.version>4.11</junit.version>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+		<gatling.version>2.0.0</gatling.version>
 	</properties>
 	
 	<repositories>
@@ -103,6 +104,14 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>io.gatling</groupId>
+				<artifactId>gatling-maven-plugin</artifactId>
+				<version>${gatling.version}</version>
+				<configuration>
+					<simulationClass>test.CfApiTestSimulation</simulationClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -171,6 +180,20 @@
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<!-- Gatling test dependencies -->
+		<dependency>
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>2.0.0-RC6</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
