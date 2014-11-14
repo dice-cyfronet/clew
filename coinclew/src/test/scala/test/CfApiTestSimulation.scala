@@ -16,7 +16,7 @@ object ConfigurationSequence {
 			//create development workflow
 			exec(http("Creating development workflow")
 				.post("/appliance_sets")
-				.body(StringBody("""{}""")).asJSON
+				.body(StringBody("""{"name": "Performance test development appliance set", "priority": 50, "type": "development"}""")).asJSON
 			)
 		}
 }
@@ -24,15 +24,35 @@ object ConfigurationSequence {
 object AtmoDevelopmentSequence {
 	val sequence =
 		//check for development workflow
-		exec(http("Getting development appliance sets")
+		exec(http("Counting dev appliance sets")
 				.get("/appliance_sets?appliance_set_type=development")
-				.check(jsonPath("$.appliance_sets").count.saveAs("devWorkflows")))
+				.check(jsonPath("$.appliance_sets").count.saveAs("devWorkflows"))
+		)
 		//check until development workflow exists - another scenario should take care of creating it
-		.asLongAs(session => session("devWorkflows").as[Int] < 1) {
-			exec(http("Getting development appliance sets")
+//		.asLongAs(session => session("devWorkflows").as[Int] < 1) {
+//			exec(http("Checking if dev appliance set exists")
+//				.get("/appliance_sets?appliance_set_type=development")
+//				.check(jsonPath("$.appliance_sets").count.saveAs("devWorkflows"))
+//			)
+//			.pause(1)
+//		}
+		//check one more time and remember appliance set id
+		.exec(http("Storing appliance set id")
 				.get("/appliance_sets?appliance_set_type=development")
-				.check(jsonPath("$.appliance_sets").count.saveAs("devWorkflows")))
-				.pause(1)
+				.check(jsonPath("$.appliance_sets").count.saveAs("devWorkflowsss"))
+		)
+		//printing session
+		.exec {session =>
+			println(session("devWorkflows"))
+			println(session("devWorkflows").as[Int])
+			println(session("devWorkflowsss"))
+			println(session("devWorkflowsss").as[Int])
+			session
+		}
+		//in the end remove the development appliance set and its appliances
+		.doIf(session => session("devWorkflowId") != null) {
+			exec(http("Removing development appliance set")
+				.delete("/appliance_sets/${devWorkflowId}"))
 		}
 			
 			
@@ -139,16 +159,18 @@ class CfApiTestSimulation extends Simulation {
 	
 	val httpProtocol = http
 		.baseURL(baseUrl)
-		.header("MI-TICKET", "dWlkPWRoYXJlemxhazt2YWxpZHVudGlsPTE0MTU5MDI2NzQ7Y2lwPTAuMC4wLjA7dG9rZW5zPVZQSC1TaGFyZSBkZXZlbG9wZXJzLGRoYXJlemxhayxldWhlYXJ0IEFNREIgY29tcHV0YXRpb25hbCBtZXNoZXNfZGF0YXNldF9yZWFkLHZwaCxWUEgsZGV2ZWxvcGVyO3VkYXRhPWRoYXJlemxhayxEYW5pZWwgSGFyZXpsYWssZC5oYXJlemxha0BjeWYta3IuZWR1LnBsLCxQT0xBTkQsMzA5NTA7c2lnPU1DMENGUUR1SEZsdW9Ob2lFSGhiR2hhMmkzNnJCOXhIZ3dJVWFkdlcxYjQxZWhNYTRId0RTOHRpSHREREpQaz0=")
+		.header("MI-TICKET", "dWlkPWRoYXJlemxhazt2YWxpZHVudGlsPTE0MTU5OTY3MDM7Y2lwPTAuMC4wLjA7dG9rZW5zPVZQSC1TaGFyZSBkZXZlbG9wZXJzLGRoYXJlemxhayxldWhlYXJ0IEFNREIgY29tcHV0YXRpb25hbCBtZXNoZXNfZGF0YXNldF9yZWFkLHZwaCxWUEgsZGV2ZWxvcGVyO3VkYXRhPWRoYXJlemxhayxEYW5pZWwgSGFyZXpsYWssZC5oYXJlemxha0BjeWYta3IuZWR1LnBsLCxQT0xBTkQsMzA5NTA7c2lnPU1Dd0NGQ0JxRTAySHpmVW9lVCttV0E2Q1VsYTJJQ0M1QWhRWGxCRzkveTNRTitDNWhvVWVYV0J4d0pVdDNRPT0=")
 		.inferHtmlResources()
 		.acceptHeader("*/*")
 		.userAgentHeader("curl/7.37.1")
 
+//	val configurationScenario = scenario("Atmosphere configuration scenario").exec(ConfigurationSequence.sequence)
 	val atmoDevelopmentScenario = scenario("Atmosphere development scenario").exec(AtmoDevelopmentSequence.sequence)
-	val atmoProductionScenario = scenario("Atmosphere production scenario").exec(AtmoProductionSequence.sequence)
-	val atmoWorkflowScenario = scenario("Atmosphere workflow scenario").exec(AtmoWorkflowSequence.sequence)
+//	val atmoProductionScenario = scenario("Atmosphere production scenario").exec(AtmoProductionSequence.sequence)
+//	val atmoWorkflowScenario = scenario("Atmosphere workflow scenario").exec(AtmoWorkflowSequence.sequence)
 
 	setUp(
+//		configurationScenario.inject(atOnceUsers(1)),
 		atmoDevelopmentScenario.inject(atOnceUsers(1))
 //		atmoProductionScenario.inject(atOnceUsers(50)),
 //		atmoWorkflowScenario.inject(atOnceUsers(50))
