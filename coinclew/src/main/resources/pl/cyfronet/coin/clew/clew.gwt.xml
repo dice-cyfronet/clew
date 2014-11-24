@@ -14,14 +14,10 @@
 	<entry-point class="pl.cyfronet.coin.clew.client.ClewEntryPoint"/>
 	
 	<!-- Logging configuration -->
-	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 	<set-property name="gwt.logging.logLevel" value="FINE"/>
 	
 	<!-- locale setup -->
 	<extend-property name="locale" values="en"/>
 	<set-property-fallback name="locale" value="en"/>
 	<set-property name="locale" value="en"/>
-	
-	<!-- Super Dev Mode properties -->
-	<add-linker name="xsiframe"/>
 </module>
