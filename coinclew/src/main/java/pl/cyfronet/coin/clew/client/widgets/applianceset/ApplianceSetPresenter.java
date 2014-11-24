@@ -33,7 +33,12 @@ public class ApplianceSetPresenter extends BasePresenter<IApplianceSetView, Main
 	public void setApplianceSet(ApplianceSet applianceSet, List<AggregateAppliance> appliances) {
 		if(applianceSetId == null) {
 			applianceSetId = applianceSet.getId();
-			view.getName().setText(applianceSet.getName());
+			
+			if(applianceSet.getName() != null && !applianceSet.getName().isEmpty()) {
+				view.getName().setText(applianceSet.getName());
+			} else {
+				view.showEmptyNamePlaceholder();
+			}
 		}
 		
 		if(appliances.size() == 0) {

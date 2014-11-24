@@ -14,4 +14,5 @@ public interface IApplianceSetView extends IsWidget {
 	HasWidgets getInstanceContainer();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmShutdown();
+	void showEmptyNamePlaceholder();
 }

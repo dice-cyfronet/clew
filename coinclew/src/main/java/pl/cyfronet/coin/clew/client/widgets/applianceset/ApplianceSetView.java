@@ -84,4 +84,9 @@ public class ApplianceSetView extends Composite implements IApplianceSetView, Re
 	public boolean confirmShutdown() {
 		return Window.confirm(messages.shutdownConfirmation());
 	}
+
+	@Override
+	public void showEmptyNamePlaceholder() {
+		name.setHTML(messages.getEmptyName());
+	}
 }
