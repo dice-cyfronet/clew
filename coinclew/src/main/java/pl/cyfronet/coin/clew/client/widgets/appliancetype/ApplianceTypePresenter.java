@@ -54,8 +54,12 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 			}
 			
 			if(!developmentMode) {
-				view.showFlavorInformation(applianceType.getFlavor().getName(),
-						applianceType.getFlavor().getHourlyCost());
+				if(applianceType.getFlavor() != null) {
+					view.showFlavorInformation(applianceType.getFlavor().getName(),
+							applianceType.getFlavor().getHourlyCost());
+				} else {
+					view.showNoFlavorInformation();
+				}
 			}
 			
 			if(applianceType.getComputeSiteIds() != null &&
