@@ -48,12 +48,12 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	public void onRemoveInstance(String applianceInstanceId) {
 		InstancePresenter instancePresenter = instancePresenters.get(applianceInstanceId);
 		
-		if (instancePresenter != null) {
+		if(instancePresenter != null) {
 			eventBus.removeHandler(instancePresenter);
 			view.getInstanceContainer().remove(instancePresenter.getView().asWidget());
 			instancePresenters.remove(applianceInstanceId);
 			
-			if (instancePresenters.size() == 0) {
+			if(instancePresenters.size() == 0) {
 				view.showHeaderRow(false);
 				view.showNoInstancesLabel(true);
 				onDeactivateApplicationsRefresh();
@@ -66,7 +66,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	}
 	
 	public void onDeactivateApplicationsRefresh() {
-		if (timer != null) {
+		if(timer != null) {
 			timer.cancel();
 			timer = null;
 		}
@@ -93,6 +93,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 		view.showNoInstancesLabel(false);
 		
 		if(!update) {
+			clearInstances();
 			view.showLoadingIndicator(true);
 		}
 		
@@ -150,5 +151,15 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 				timer.schedule(REFRESH_MILIS);
 			}
 		});
+	}
+
+	private void clearInstances() {
+		for(InstancePresenter instancePresenter : instancePresenters.values()) {
+			eventBus.removeHandler(instancePresenter);
+		}
+		
+		instancePresenters.clear();
+		view.getInstanceContainer().clear();
+		view.showHeaderRow(false);
 	}
 }
