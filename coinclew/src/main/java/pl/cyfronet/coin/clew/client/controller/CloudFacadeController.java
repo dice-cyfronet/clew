@@ -42,6 +42,8 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.T
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSetRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeRequestResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeSaveInPlace;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeSaveInPlaceRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypeService;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceTypesResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.SaveApplianceType;
@@ -116,7 +118,7 @@ public class CloudFacadeController {
 		void processApplianceTypes(List<ApplianceType> applianceTypes);
 	}
 	
-	public interface ApplianceTypeCallback {
+	public interface ApplianceTypeCallback extends ErrorCallback {
 		void processApplianceType(ApplianceType applianceType);
 	}
 	
@@ -226,6 +228,10 @@ public class CloudFacadeController {
 	
 	public interface RemoveApplianceTypeCallback extends ErrorCallback {
 		void onApplianceTypeRemoved();
+	}
+	
+	public interface ApplianceInstanceCallback extends ErrorCallback {
+		public abstract void processApplianceInstance(ApplianceInstance applianceInstance);
 	}
 	
 	private ApplianceTypeService applianceTypesService;
@@ -1817,6 +1823,26 @@ public class CloudFacadeController {
 		});
 	}
 	
+	public void getApplianceInstance(String applianceInstanceId, final ApplianceInstanceCallback callback) {
+		applianceInstancesService.getApplianceInstance(applianceInstanceId, new MethodCallback<ApplianceInstancesResponse>() {
+			@Override
+			public void onSuccess(Method method, ApplianceInstancesResponse response) {
+				if(response.getApplianceInstances() != null && response.getApplianceInstances().size() > 0) {
+					callback.processApplianceInstance(response.getApplianceInstances().get(0));
+				} else {
+					callback.processApplianceInstance(null);
+				}
+			}
+
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				CloudFacadeError error = errorReader.decodeError(method.getResponse().getText());
+				popupErrorHandler.displayError(error);
+				callback.onError(error);
+			}
+		});
+	}
+	
 	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
 		for(AggregateApplianceType applianceType : applianceTypes) {
 			applianceType.setComputeSites(new HashMap<String, ComputeSite>());
@@ -1831,5 +1857,26 @@ public class CloudFacadeController {
 				}
 			}
 		}
+	}
+
+	public void saveApplianceTypeInPlace(String applianceInstanceId, String applianceTypeId, final ApplianceTypeCallback callback) {
+		ApplianceTypeSaveInPlace applianceType = new ApplianceTypeSaveInPlace();
+		applianceType.setApplianceInstanceId(applianceInstanceId);
+		
+		ApplianceTypeSaveInPlaceRequest request = new ApplianceTypeSaveInPlaceRequest();
+		request.setApplianceType(applianceType);
+		applianceTypesService.saveInPlace(applianceTypeId, request, new MethodCallback<ApplianceTypeRequestResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				CloudFacadeError error = errorReader.decodeError(method.getResponse().getText());
+				popupErrorHandler.displayError(error);
+				callback.onError(error);
+			}
+
+			@Override
+			public void onSuccess(Method method, ApplianceTypeRequestResponse response) {
+				callback.processApplianceType(response.getApplianceType());
+			}
+		});
 	}
 }

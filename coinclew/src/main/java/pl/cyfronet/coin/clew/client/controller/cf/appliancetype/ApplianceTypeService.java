@@ -47,4 +47,8 @@ public interface ApplianceTypeService extends RestService {
 	@GET
 	@Path("appliance_types?mode=manage")
 	void getManagedApplianceTypes(MethodCallback<ApplianceTypesResponse> methodCallback);
+
+	@PUT
+	@Path("appliance_types/{id}")
+	void saveInPlace(@PathParam("id") String applianceTypeId, ApplianceTypeSaveInPlaceRequest request, MethodCallback<ApplianceTypeRequestResponse> methodCallback);
 }

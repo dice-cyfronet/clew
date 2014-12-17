@@ -12,6 +12,11 @@
             <stringProp name="Argument.value">vph-dev.cyfronet.pl/api/v1</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="workflowType" elementType="Argument">
+            <stringProp name="Argument.name">workflowType</stringProp>
+            <stringProp name="Argument.value">workflow</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
@@ -35,7 +40,7 @@
         <collectionProp name="HeaderManager.headers">
           <elementProp name="" elementType="Header">
             <stringProp name="Header.name">MI-TICKET</stringProp>
-            <stringProp name="Header.value">dWlkPWRoYXJlemxhazt2YWxpZHVudGlsPTE0MTg3NzIwMDI7Y2lwPTAuMC4wLjA7dG9rZW5zPVZQSC1TaGFyZSBkZXZlbG9wZXJzLGRoYXJlemxhayxldWhlYXJ0IEFNREIgY29tcHV0YXRpb25hbCBtZXNoZXNfZGF0YXNldF9yZWFkLHZwaCxWUEgsZGV2ZWxvcGVyO3VkYXRhPWRoYXJlemxhayxEYW5pZWwgSGFyZXpsYWssZC5oYXJlemxha0BjeWYta3IuZWR1LnBsLCxQT0xBTkQsMzA5NTA7c2lnPU1DMENGRzJFNzBYM05uL0tQNTd6QVVjUkl4djd2SkRFQWhVQXZlV2NvVTgxTzNYekNQalJsVnZTZUdCOW1sWT0=</stringProp>
+            <stringProp name="Header.value">dWlkPWRoYXJlemxhazt2YWxpZHVudGlsPTE0MTg4NDEyMzY7Y2lwPTAuMC4wLjA7dG9rZW5zPVZQSC1TaGFyZSBkZXZlbG9wZXJzLGRoYXJlemxhayxldWhlYXJ0IEFNREIgY29tcHV0YXRpb25hbCBtZXNoZXNfZGF0YXNldF9yZWFkLHZwaCxWUEgsZGV2ZWxvcGVyO3VkYXRhPWRoYXJlemxhayxEYW5pZWwgSGFyZXpsYWssZC5oYXJlemxha0BjeWYta3IuZWR1LnBsLCxQT0xBTkQsMzA5NTA7c2lnPU1Dd0NGQ2pwOS8wMTRnaHdCR0U4QkNVTFQzYUxWbXlWQWhRVVd4cEtvMzYrUDRQbGMxczMwem0vdytXZkNBPT0=</stringProp>
           </elementProp>
         </collectionProp>
       </HeaderManager>
@@ -55,7 +60,7 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </SetupThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Extract dev appliance set id" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Extract appliance set id" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -65,7 +70,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/appliance_sets?appliance_set_type=development</stringProp>
+          <stringProp name="HTTPSampler.path">/appliance_sets?appliance_set_type=${workflowType}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -129,13 +134,13 @@
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create dev appliance set" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create appliance set" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;name&quot;: &quot;Performance test development appliance set&quot;, &quot;priority&quot;: 50, &quot;appliance_set_type&quot;: &quot;development&quot;}</stringProp>
+                  <stringProp name="Argument.value">{&quot;name&quot;: &quot;Performance test development appliance set&quot;, &quot;priority&quot;: 50, &quot;appliance_set_type&quot;: &quot;${workflowType}&quot;}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -192,14 +197,14 @@
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Development scenario" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Run and check status scenario" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">20</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">120</stringProp>
+        <stringProp name="ThreadGroup.num_threads">30</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">180</stringProp>
         <longProp name="ThreadGroup.start_time">1415970545000</longProp>
         <longProp name="ThreadGroup.end_time">1415970545000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
@@ -207,7 +212,7 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Extract dev appliance set id" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Extract appliance set id" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -217,7 +222,7 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/appliance_sets?appliance_set_type=development</stringProp>
+          <stringProp name="HTTPSampler.path">/appliance_sets?appliance_set_type=${workflowType}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -526,13 +531,47 @@ vars.put(&quot;applianceTypeId&quot;, source);</stringProp>
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
+          <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>false</xml>
+                <fieldNames>false</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+                <threadCounts>true</threadCounts>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="RespTimeGraph.interval">1000</stringProp>
+          </ResultCollector>
+          <hashTree/>
         </hashTree>
-        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Repeat 50 times" enabled="true">
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Repeat 100 times" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
-          <stringProp name="LoopController.loops">50</stringProp>
+          <stringProp name="LoopController.loops">100</stringProp>
         </LoopController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Check dev instances" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Check instances" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -542,7 +581,7 @@ vars.put(&quot;applianceTypeId&quot;, source);</stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/clew/appliance_instances?appliance_set_type=development</stringProp>
+            <stringProp name="HTTPSampler.path">/clew/appliance_instances?appliance_set_type=${workflowType}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -616,6 +655,7 @@ vars.put(&quot;applianceTypeId&quot;, source);</stringProp>
                 </value>
               </objProp>
               <stringProp name="filename"></stringProp>
+              <stringProp name="RespTimeGraph.interval">1000</stringProp>
             </ResultCollector>
             <hashTree/>
           </hashTree>

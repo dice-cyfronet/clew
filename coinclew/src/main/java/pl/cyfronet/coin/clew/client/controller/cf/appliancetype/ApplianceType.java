@@ -8,6 +8,7 @@ public class ApplianceType extends NewApplianceType {
 	private String id;
 	@Json(name = "compute_site_ids")
 	private List<String> computeSiteIds;
+	private String applianceInstanceId;
 
 	public String getId() {
 		return id;
@@ -44,5 +45,11 @@ public class ApplianceType extends NewApplianceType {
 	}
 	public void setComputeSiteIds(List<String> computeSiteIds) {
 		this.computeSiteIds = computeSiteIds;
+	}
+	public String getApplianceInstanceId() {
+		return applianceInstanceId;
+	}
+	public void setApplianceInstanceId(String applianceInstanceId) {
+		this.applianceInstanceId = applianceInstanceId;
 	}
 }
