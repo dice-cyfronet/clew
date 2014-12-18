@@ -6,10 +6,10 @@ import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.ISt
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,6 +19,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,15 +32,16 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	private IStartInstancePresenter presenter;
 	private Timer filterTimer;
 	
-	@UiField Modal startInstanceModal;
+	@UiField HTMLPanel startInstanceModal;
 	@UiField FlowPanel applianceTypeContainer;
 	@UiField StartInstanceMessages messages;
 	@UiField Button startSelected;
 	@UiField TextBox filterAppsBox;
+	@UiField HeadingElement title;
 
 	public StartInstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		startInstanceModal.setWidth(1000);
+		startInstanceModal.getElement().setId("startPopup");
 	}
 	
 	@UiHandler("close")
@@ -80,9 +82,9 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	}
 
 	@Override
-	public void show() {
-		startInstanceModal.show();
-	}
+	public native void show() /*-{
+		$wnd.jQuery('#startPopup').modal('show');
+	}-*/;
 
 	@Override
 	public void showProgressIndicator() {
@@ -107,9 +109,9 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	}
 
 	@Override
-	public void hide() {
-		startInstanceModal.hide();
-	}
+	public native void hide() /*-{
+		$wnd.jQuery('#startPopup').modal('hide');
+	}-*/;
 
 	@Override
 	public void showNoApplianceTypesSelected() {
@@ -128,11 +130,11 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 
 	@Override
 	public void setDevelopmentModeTitle() {
-		startInstanceModal.setTitle(messages.startDevInstanceModalHeader());
+		title.setInnerText(messages.startDevInstanceModalHeader());
 	}
 
 	@Override
 	public void setPortalModeTitle() {
-		startInstanceModal.setTitle(messages.startInstanceModalHeader());
+		title.setInnerText(messages.startInstanceModalHeader());
 	}
 }

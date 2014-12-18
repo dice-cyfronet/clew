@@ -6,17 +6,33 @@
 	<ui:style>
 		.filter {
 			text-align: right;
-			margin-bottom: 20px;
+			float: right;
+		}
+		.modal {
+			width: 1000px;
+			margin-left: -500px;
+		}
+		.title {
+			float: left;
+		}
+		.clear {
+			clear: both;
 		}
 	</ui:style>
-	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
-		<g:HTMLPanel addStyleNames="{style.filter}">
-			<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
-		</g:HTMLPanel>
-		<g:FlowPanel ui:field="applianceTypeContainer"/>
-		<b:ModalFooter>
+	<g:HTMLPanel debugId="startPopup" ui:field="startInstanceModal" addStyleNames="modal hide fade {style.modal}">
+		<div class="modal-header">
+			<h3 ui:field="title" class="{style.title}"><ui:text from="{messages.startInstanceModalHeader}"/></h3>
+			<g:HTMLPanel addStyleNames="{style.filter}">
+				<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
+			</g:HTMLPanel>
+			<g:FlowPanel addStyleNames="{style.clear}"/>
+		</div>
+		<div class="modal-body">
+			<g:FlowPanel ui:field="applianceTypeContainer"/>
+		</div>
+		<div class="modal-footer">
 			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>
 			<b:Button ui:field="close"><ui:text from="{messages.closeButtonLabel}"/></b:Button>
-		</b:ModalFooter>
-	</b:Modal>
+		</div>
+	</g:HTMLPanel>
 </ui:UiBinder>
