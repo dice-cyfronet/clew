@@ -50,8 +50,12 @@ public class MiTicketReader {
 		
 		String ticket = Cookies.getCookie("vph-tkt");
 		
-		if (ticket != null) {
+		if(ticket != null) {
 			ticket = ticket.replaceAll("\"", "");
+		}
+		
+		if(ticket == null) {
+			ticket = cfProperties.getTicket();
 		}
 		
 		return ticket;
