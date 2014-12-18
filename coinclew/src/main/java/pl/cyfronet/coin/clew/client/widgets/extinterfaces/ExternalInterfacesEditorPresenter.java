@@ -37,7 +37,7 @@ import com.mvp4g.client.presenter.BasePresenter;
 @Presenter(view = ExternalInterfacesEditorView.class)
 public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalInterfacesView, MainEventBus> implements IExternalInterfacesPresenter {
 	private static final String PROXY_READ_TIMEOUT = "proxy_read_timeout";
-	private static final String PROXY_SENT_TIMEOUT = "proxy_sent_timeout";
+	private static final String PROXY_SEND_TIMEOUT = "proxy_send_timeout";
 	
 	private CloudFacadeController cloudFacadeController;
 	private String applianceInstanceId;
@@ -409,12 +409,12 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 						final List<String> ongoingRequests = new ArrayList<String>();
 						
 						if (!proxySendTimeout.isEmpty()) {
-							ongoingRequests.add(PROXY_SENT_TIMEOUT);
+							ongoingRequests.add(PROXY_SEND_TIMEOUT);
 							
-							if(mappingProperties.get(portMappingTemplate.getId()) != null && mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SENT_TIMEOUT) != null) {
+							if(mappingProperties.get(portMappingTemplate.getId()) != null && mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SEND_TIMEOUT) != null) {
 								cloudFacadeController.updatePortMappingProperty(portMappingTemplate.getId(),
-										mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SENT_TIMEOUT).getId(),
-										mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SENT_TIMEOUT).getKey(), proxySendTimeout, new Command(){
+										mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SEND_TIMEOUT).getId(),
+										mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SEND_TIMEOUT).getKey(), proxySendTimeout, new Command(){
 											@Override
 											public void execute() {
 												if(ongoingRequests.size() == 1) {
@@ -424,11 +424,11 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 														eventBus.externalInterfacesChanged(applianceInstanceId);
 													}
 												} else {
-													ongoingRequests.remove(PROXY_SENT_TIMEOUT);
+													ongoingRequests.remove(PROXY_SEND_TIMEOUT);
 												}
 											}});
 							} else {
-								cloudFacadeController.addPortMappingProperty(portMappingTemplate.getId(), PROXY_SENT_TIMEOUT, proxySendTimeout, new Command() {
+								cloudFacadeController.addPortMappingProperty(portMappingTemplate.getId(), PROXY_SEND_TIMEOUT, proxySendTimeout, new Command() {
 									@Override
 									public void execute() {
 										if(ongoingRequests.size() == 1) {
@@ -438,15 +438,15 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 												eventBus.externalInterfacesChanged(applianceInstanceId);
 											}
 										} else {
-											ongoingRequests.remove(PROXY_SENT_TIMEOUT);
+											ongoingRequests.remove(PROXY_SEND_TIMEOUT);
 										}
 									}
 								});
 							}
 						} else if(mappingProperties.get(portMappingTemplate.getId()) != null &&
-								mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SENT_TIMEOUT) != null) {
-							ongoingRequests.add(PROXY_SENT_TIMEOUT);
-							cloudFacadeController.removePortMappingProperty(mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SENT_TIMEOUT).getId(), new Command() {
+								mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SEND_TIMEOUT) != null) {
+							ongoingRequests.add(PROXY_SEND_TIMEOUT);
+							cloudFacadeController.removePortMappingProperty(mappingProperties.get(portMappingTemplate.getId()).get(PROXY_SEND_TIMEOUT).getId(), new Command() {
 								@Override
 								public void execute() {
 									if(ongoingRequests.size() == 1) {
@@ -455,7 +455,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 										if (applianceInstanceId != null) {
 											eventBus.externalInterfacesChanged(applianceInstanceId);
 										} else {
-											ongoingRequests.remove(PROXY_SENT_TIMEOUT);
+											ongoingRequests.remove(PROXY_SEND_TIMEOUT);
 										}
 									}
 								}});
@@ -784,8 +784,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 			view.getApplicationProtocol().setValue(mapping.getApplicationProtocol());
 			
 			if(mappingProperties.get(mappingId) != null) {
-				if(mappingProperties.get(mappingId).get(PROXY_SENT_TIMEOUT) != null) {
-					view.getProxySendTimeout().setValue(mappingProperties.get(mappingId).get(PROXY_SENT_TIMEOUT).getValue());
+				if(mappingProperties.get(mappingId).get(PROXY_SEND_TIMEOUT) != null) {
+					view.getProxySendTimeout().setValue(mappingProperties.get(mappingId).get(PROXY_SEND_TIMEOUT).getValue());
 				}
 				
 				if(mappingProperties.get(mappingId).get(PROXY_READ_TIMEOUT) != null) {
