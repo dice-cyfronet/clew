@@ -42,6 +42,10 @@ public class CloudFacadeOverrideProperties {
 		return properties.buildInfo();
 	}
 	
+	public String getTicket() {
+		return getDictionaryProperty("vphTicket");
+	}
+	
 	private String getProperty(String propertyName) {
 		String property = getDictionaryProperty(propertyName);
 		

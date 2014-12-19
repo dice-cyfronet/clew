@@ -63,6 +63,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Map<String, Label> httpStatuses;
 	private Map<String, Label> httpsStatuses;
 	private Button rebootButton;
+	private Button saveInPlaceButton;
 	
 	
 	@UiField HTML name;
@@ -327,7 +328,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void addSaveControl() {
 		if(saveButton == null) {
 			saveButton = new Button();
-			saveButton.setIcon(IconType.SAVE);
+			saveButton.setIcon(IconType.COPY);
 			saveButton.setType(ButtonType.WARNING);
 			saveButton.setSize(ButtonSize.EXTRA_SMALL);
 			saveButton.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
@@ -577,6 +578,50 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void setRebootBusyState(boolean busy) {
 		if(rebootButton != null) {
 			BootstrapHelpers.setButtonBusyState(rebootButton, busy);
+		}
+	}
+
+	@Override
+	public void addSaveInPlaceControl() {
+		if(saveInPlaceButton == null) {
+			saveInPlaceButton = new Button();
+			saveInPlaceButton.setIcon(IconType.SAVE);
+			saveInPlaceButton.setType(ButtonType.WARNING);
+			saveInPlaceButton.setSize(ButtonSize.SMALL);
+			saveInPlaceButton.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
+			saveInPlaceButton.setTitle(messages.saveInPlaceTooltip());
+			saveInPlaceButton.setEnabled(false);
+			saveInPlaceButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onSaveInPlace();
+				}
+			});
+			controls.insert(saveInPlaceButton, 0);
+		}
+	}
+
+	@Override
+	public boolean saveInPlaceConfirmation() {
+		return Window.confirm(messages.confirmSaveInPlace());
+	}
+
+	@Override
+	public String missingApplianceType() {
+		return messages.missingApplianceType();
+	}
+
+	@Override
+	public void setSaveInPlaceBusyState(boolean state) {
+		if(saveInPlaceButton != null) {
+			BootstrapHelpers.setButtonBusyState(saveInPlaceButton, state);
+		}
+	}
+
+	@Override
+	public void enableSaveInPlace(boolean enable) {
+		if(saveInPlaceButton != null) {
+			saveInPlaceButton.setEnabled(enable);
 		}
 	}
 }

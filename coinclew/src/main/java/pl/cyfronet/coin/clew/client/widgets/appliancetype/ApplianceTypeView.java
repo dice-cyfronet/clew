@@ -269,4 +269,15 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 			}
 		};
 	}
+
+	@Override
+	public void showNoFlavorInformation() {
+		flavorContainer.clear();
+		com.google.gwt.user.client.ui.Label label = new com.google.gwt.user.client.ui.Label(messages.noFlavorInfo());
+		label.getElement().getStyle().setWhiteSpace(WhiteSpace.NORMAL);
+		label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
+		label.getElement().getStyle().setProperty("fontSize", "smaller");
+		flavorContainer.add(label);
+	}
 }

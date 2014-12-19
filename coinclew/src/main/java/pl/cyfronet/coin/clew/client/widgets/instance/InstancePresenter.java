@@ -14,10 +14,15 @@ import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstanceCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregatePortMappingTemplate;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateVm;
+import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
+import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
@@ -94,6 +99,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		if(developmentMode) {
 			view.addExternalInterfacesControl();
 			view.addSaveControl();
+			view.addSaveInPlaceControl();
 			
 			if(applianceInstance.getState() == State.unsatisfied) {
 				view.enableExternalInterfaces(false);
@@ -140,6 +146,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		if(applianceVm.getState() != null) {
 			if(applianceVm.getState().equals("active")) {
 				view.enableSave(true);
+				view.enableSaveInPlace(true);
 				view.enableExternalInterfaces(true);
 				view.enableCollapsable(true);
 				
@@ -148,6 +155,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			} else if(applianceVm.getState().equals("saving") || applianceVm.getState().equals("reboot")) {
 				view.enableSave(false);
+				view.enableSaveInPlace(false);
 				view.enableExternalInterfaces(false);
 				view.collapseDetails();
 				view.enableCollapsable(false);
@@ -439,5 +447,45 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				}
 			});
 		}
+	}
+
+	@Override
+	public void onSaveInPlace() {
+		if(view.saveInPlaceConfirmation()) {
+			saveInPlace();
+		}
+	}
+
+	private void saveInPlace() {
+		view.setSaveInPlaceBusyState(true);
+		cloudFacadeController.getApplianceInstance(applianceInstance.getId(), new ApplianceInstanceCallback() {
+			@Override
+			public void processApplianceInstance(ApplianceInstance applianceInstance) {
+				if(applianceInstance != null) {
+					cloudFacadeController.saveApplianceTypeInPlace(applianceInstance.getId(), applianceInstance.getApplianceTypeId(), new ApplianceTypeCallback() {
+						@Override
+						public void onError(CloudFacadeError error) {
+							view.setSaveInPlaceBusyState(false);
+						}
+						
+						@Override
+						public void processApplianceType(ApplianceType applianceType) {
+							view.setSaveInPlaceBusyState(false);
+							eventBus.updateApplianceTypeView(applianceType);
+						}
+					});
+				} else {
+					CloudFacadeError error = new CloudFacadeError();
+					error.setMessage(view.missingApplianceType());
+					eventBus.displayError(error);
+					view.setSaveInPlaceBusyState(false);
+				}
+			}
+
+			@Override
+			public void onError(CloudFacadeError error) {
+				view.setSaveInPlaceBusyState(false);
+			}
+		});
 	}
 }

@@ -6,19 +6,31 @@
 	<ui:style>
 		.filter {
 			text-align: right;
-			margin-bottom: 20px;
+			float: right;
 		}
-		.container {
+		.modal {
+			width: 1000px;
+		}
+		.title {
 			float: left;
-			width: 100%;
+		}
+		.clear {
+			clear: both;
 		}
 	</ui:style>
-	<b:Modal ui:field="startInstanceModal" title="{messages.startInstanceModalHeader}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
-		<b:ModalBody addStyleNames="clearfix">
-			<g:HTMLPanel addStyleNames="{style.filter}">
-				<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
+	<b:Modal ui:field="startInstanceModal" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
+		<b:ModalHeader>
+			<g:HTMLPanel>
+				<h3 ui:field="title" class="{style.title}"><ui:text from="{messages.startInstanceModalHeader}"/></h3>
+				<g:HTMLPanel addStyleNames="{style.filter}">
+					<b:TextBox ui:field="filterAppsBox" placeholder="{messages.filterBoxPlaceholderLabel}"/>
+				</g:HTMLPanel>
+				<g:FlowPanel addStyleNames="{style.clear}"/>
 			</g:HTMLPanel>
-			<g:FlowPanel ui:field="applianceTypeContainer" addStyleNames="{style.container}"/>
+		</b:ModalHeader>
+		<b:ModalBody>
+			<g:FlowPanel ui:field="applianceTypeContainer"/>
+			<g:FlowPanel addStyleNames="{style.clear}"/>
 		</b:ModalBody>
 		<b:ModalFooter>
 			<b:Button ui:field="startSelected" type="PRIMARY" icon="PLAY" dataLoadingText="&lt;i class='fa fa-spinner fa-spin'&gt;&lt;/i&gt; {messages.startselectedButtonLabel}"><ui:text from="{messages.startselectedButtonLabel}"/></b:Button>

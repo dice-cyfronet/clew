@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.controller.cf;
 
 import org.fusesource.restygwt.client.JsonEncoderDecoder;
+import org.fusesource.restygwt.client.JsonEncoderDecoder.DecodingException;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.json.client.JSONParser;
@@ -15,14 +16,14 @@ public class CfErrorReader {
 	}
 	
 	public CloudFacadeError decodeError(String json) {
-		if(json == null || json.isEmpty()) {
+		try {
+			return codec.decode(JSONParser.parseStrict(json));
+		} catch(DecodingException e) {
 			CloudFacadeError error = new CloudFacadeError();
+			error.setType("unknown");
 			error.setMessage("Unknown error");
-			error.setType("uknown");
 			
 			return error;
 		}
-		
-		return codec.decode(JSONParser.parseStrict(json));
 	}
 }

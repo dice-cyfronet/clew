@@ -27,4 +27,7 @@ public interface InstanceMessages extends Messages {
 	String noVmsShortLabel();
 	String rebootTooltip();
 	String confirmReboot();
+	String saveInPlaceTooltip();
+	String missingApplianceType();
+	String confirmSaveInPlace();
 }

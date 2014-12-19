@@ -99,6 +99,11 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 				view.getRam().setValue(safeValue(applianceType.getPreferenceMemory()));
 				view.getDisk().setValue(safeValue(applianceType.getPreferenceDisk()));
 			}
+
+			@Override
+			public void onError(CloudFacadeError error) {
+				//ignoring
+			}
 		});
 	}
 
@@ -125,6 +130,11 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 							view.setUpdateBusyState(false);
 							view.showModal(false);
 							eventBus.updateApplianceTypeView(applianceType);
+						}
+
+						@Override
+						public void onError(CloudFacadeError error) {
+							//ignoring
 						}
 					}, new ErrorCallback() {
 						@Override
@@ -158,6 +168,11 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 							view.setSaveBusyState(false);
 							view.showModal(false);
 							eventBus.updateApplianceTypeView(applianceType);
+						}
+
+						@Override
+						public void onError(CloudFacadeError error) {
+							//ignoring
 						}
 					}, new ErrorCallback() {
 						@Override

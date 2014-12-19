@@ -21,7 +21,8 @@ public class CloudFacadeDispatcher implements Dispatcher {
 		String ticket = ticketReader.getTicket();
 		
 		if(ticket == null) {
-			String cfToken = ticketReader.getCfToken(); 
+			String cfToken = ticketReader.getCfToken();
+			
 			if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
 				builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
 				

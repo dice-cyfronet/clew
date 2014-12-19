@@ -10,6 +10,7 @@ public interface IInstanceView extends IsWidget {
 		void onExternalInterfacesClicked();
 		void onSave();
 		void onReboot();
+		void onSaveInPlace();
 	}
 
 	HasText getName();
@@ -51,4 +52,9 @@ public interface IInstanceView extends IsWidget {
 	void enableReboot(boolean enable);
 	boolean confirmInstanceReboot();
 	void setRebootBusyState(boolean busy);
+	void addSaveInPlaceControl();
+	boolean saveInPlaceConfirmation();
+	String missingApplianceType();
+	void setSaveInPlaceBusyState(boolean state);
+	void enableSaveInPlace(boolean enable);
 }

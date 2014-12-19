@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
@@ -26,8 +23,6 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = ApplicationsView.class)
 public class ApplicationsPresenter extends BasePresenter<IApplicationsView, MainEventBus> implements IApplicationsPresenter {
-	private final static Logger log = LoggerFactory.getLogger(ApplicationsPresenter.class);
-	
 	private static final int REFRESH_MILIS = 5000;
 	
 	private CloudFacadeController cloudFacadeController;
@@ -53,12 +48,12 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	public void onRemoveInstance(String applianceInstanceId) {
 		InstancePresenter instancePresenter = instancePresenters.get(applianceInstanceId);
 		
-		if (instancePresenter != null) {
+		if(instancePresenter != null) {
 			eventBus.removeHandler(instancePresenter);
 			view.getInstanceContainer().remove(instancePresenter.getView().asWidget());
 			instancePresenters.remove(applianceInstanceId);
 			
-			if (instancePresenters.size() == 0) {
+			if(instancePresenters.size() == 0) {
 				view.showHeaderRow(false);
 				view.showNoInstancesLabel(true);
 				onDeactivateApplicationsRefresh();
@@ -71,7 +66,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 	}
 	
 	public void onDeactivateApplicationsRefresh() {
-		if (timer != null) {
+		if(timer != null) {
 			timer.cancel();
 			timer = null;
 		}
@@ -98,6 +93,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 		view.showNoInstancesLabel(false);
 		
 		if(!update) {
+			clearInstances();
 			view.showLoadingIndicator(true);
 		}
 		
@@ -155,5 +151,15 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 				timer.schedule(REFRESH_MILIS);
 			}
 		});
+	}
+
+	private void clearInstances() {
+		for(InstancePresenter instancePresenter : instancePresenters.values()) {
+			eventBus.removeHandler(instancePresenter);
+		}
+		
+		instancePresenters.clear();
+		view.getInstanceContainer().clear();
+		view.showHeaderRow(false);
 	}
 }

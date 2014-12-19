@@ -13,13 +13,11 @@ import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = RootView.class)
 public class RootPresenter extends BasePresenter<IRootView, MainEventBus> implements IRootPresenter {
-	private RootMessages messages;
 	private Timer errorTimer;
 	private CloudFacadeOverrideProperties properties;
 
 	@Inject
-	public RootPresenter(RootMessages messages, CloudFacadeOverrideProperties properties) {
-		this.messages = messages;
+	public RootPresenter(CloudFacadeOverrideProperties properties) {
 		this.properties = properties;
 	}
 	

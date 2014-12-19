@@ -11,6 +11,7 @@ import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,6 +38,7 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 	@UiField StartInstanceMessages messages;
 	@UiField Button startSelected;
 	@UiField TextBox filterAppsBox;
+	@UiField HeadingElement title;
 
 	public StartInstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -129,11 +131,11 @@ public class StartInstanceView extends Composite implements IStartInstanceView, 
 
 	@Override
 	public void setDevelopmentModeTitle() {
-		startInstanceModal.setTitle(messages.startDevInstanceModalHeader());
+		title.setInnerText(messages.startDevInstanceModalHeader());
 	}
 
 	@Override
 	public void setPortalModeTitle() {
-		startInstanceModal.setTitle(messages.startInstanceModalHeader());
+		title.setInnerText(messages.startInstanceModalHeader());
 	}
 }

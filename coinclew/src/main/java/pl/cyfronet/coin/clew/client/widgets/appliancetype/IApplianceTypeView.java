@@ -31,4 +31,5 @@ public interface IApplianceTypeView extends IsWidget {
 	void showComputeSiteSelector();
 	String getAnyComputeSiteLabel();
 	HasValue<String> getComputeSites();
+	void showNoFlavorInformation();
 }
