@@ -587,7 +587,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			saveInPlaceButton = new Button();
 			saveInPlaceButton.setIcon(IconType.SAVE);
 			saveInPlaceButton.setType(ButtonType.WARNING);
-			saveInPlaceButton.setSize(ButtonSize.SMALL);
+			saveInPlaceButton.setSize(ButtonSize.EXTRA_SMALL);
 			saveInPlaceButton.setDataLoadingText("<i class='fa fa-spinner fa-spin'></i>");
 			saveInPlaceButton.setTitle(messages.saveInPlaceTooltip());
 			saveInPlaceButton.setEnabled(false);
