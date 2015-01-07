@@ -108,15 +108,15 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	}
 
 	@Override
-	public void showInactiveLabel(boolean active) {
-		if (active) {
-			if (inactiveLabel == null) {
-				inactiveLabel = new Label(messages.inactiveLabel());
+	public void showInactiveLabel(boolean active, boolean saving) {
+		if(active) {
+			if(inactiveLabel == null) {
+				inactiveLabel = new Label(saving ? messages.savingLabel() : messages.inactiveLabel());
 				inactiveLabel.setType(LabelType.IMPORTANT);
 				inactiveContainer.add(inactiveLabel);
 			}
 		} else {
-			if (inactiveLabel != null) {
+			if(inactiveLabel != null) {
 				inactiveContainer.clear();
 				inactiveContainer.add(new InlineHTML("&nbsp;"));
 				inactiveLabel = null;

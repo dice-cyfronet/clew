@@ -11,4 +11,5 @@ public interface AtomicServiceMessages extends Messages {
 	String editExternalInterfacesTooltip();
 	String startInstanceTooltip();
 	String noInitialConfigsMessage();
+	String savingLabel();
 }

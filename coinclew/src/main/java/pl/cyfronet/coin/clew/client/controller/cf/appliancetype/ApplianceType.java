@@ -9,6 +9,7 @@ public class ApplianceType extends NewApplianceType {
 	@Json(name = "compute_site_ids")
 	private List<String> computeSiteIds;
 	private String applianceInstanceId;
+	private boolean saving;
 
 	public String getId() {
 		return id;
@@ -51,5 +52,11 @@ public class ApplianceType extends NewApplianceType {
 	}
 	public void setApplianceInstanceId(String applianceInstanceId) {
 		this.applianceInstanceId = applianceInstanceId;
+	}
+	public boolean isSaving() {
+		return saving;
+	}
+	public void setSaving(boolean saving) {
+		this.saving = saving;
 	}
 }
