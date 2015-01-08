@@ -133,13 +133,19 @@
 		.column-row {
 			display: table-row;
 		}
+		.ipLabel {
+			float: left;
+		}
+		.moreButton {
+			margin-left: 5px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.panel}">
 		<g:FlowPanel addStyleNames="{style.name}">
 			<g:HTML ui:field="name" addStyleNames="{style.inner-name}">&nbsp;</g:HTML>
 		</g:FlowPanel>
 		<!-- <g:HTML ui:field="spec" addStyleNames="{style.spec}">&nbsp;</g:HTML> -->
-		<g:HTML ui:field="ip" addStyleNames="{style.ip}">&nbsp;</g:HTML>
+		<g:HTMLPanel ui:field="ip" addStyleNames="{style.ip}">&nbsp;</g:HTMLPanel>
 		<g:HTML ui:field="location" addStyleNames="{style.location}">&nbsp;</g:HTML>
 		<g:FlowPanel ui:field="status" addStyleNames="{style.status}"><g:HTML>&nbsp;</g:HTML></g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.bill}">
@@ -176,5 +182,8 @@
 				</g:FlowPanel>
 			</g:FlowPanel>
 		</b:Collapse>
+		<b:Modal ui:field="popup" keyboard="false" animation="true" backdrop="STATIC">
+			<g:FlowPanel ui:field="popupContent"/>
+		</b:Modal>
 	</g:FlowPanel>
 </ui:UiBinder>

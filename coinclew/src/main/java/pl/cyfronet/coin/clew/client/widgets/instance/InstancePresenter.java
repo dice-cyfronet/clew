@@ -113,17 +113,32 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.showNoVmsLabel(false);
 				
 				AggregateVm applianceVm = applianceInstance.getVirtualMachines().get(0);
-				view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+				
+				if(applianceVm.getIp() != null) {
+					view.setIp(applianceVm.getIp(), applianceInstance.getVirtualMachines().size() > 1);
+				} else {
+					view.setIp("&nbsp;", false);
+				}
+				
 				updateStatus(applianceVm);
 				view.getLocation().setText(applianceVm.getComputeSite().getName());
 			} else {
 				view.showDetailsPanel(false);
 				view.showNoVmsLabel(true);
-				view.getIp().setHTML("&nbsp;");
+				view.setIp("&nbsp;", false);
 				view.getLocation().setHTML("&nbsp;");
 				view.setStatus(view.getNoVmsLabel());
 				view.enableCollapsable(true);
 			}
+		}
+	}
+	
+	@Override
+	public void onShowAllIps() {
+		view.showIpsModal();
+		
+		for(AggregateVm vm : applianceInstance.getVirtualMachines()) {
+			view.addIpToModal(vm.getIp());
 		}
 	}
 	
@@ -403,14 +418,20 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.showNoVmsLabel(false);
 				
 				AggregateVm applianceVm = applianceInstance.getVirtualMachines().get(0);
-				view.getIp().setHTML(applianceVm.getIp() != null ? applianceVm.getIp() : "&nbsp;");
+				
+				if(applianceVm.getIp() != null) {
+					view.setIp(applianceVm.getIp(), applianceInstance.getVirtualMachines().size() > 1);
+				} else {
+					view.setIp("&nbsp;", false);
+				}
+				
 				updateStatus(applianceVm);
 				view.getLocation().setText(applianceVm.getComputeSite().getName());
 				displayDetails();
 			} else {
 				view.showDetailsPanel(false);
 				view.showNoVmsLabel(true);
-				view.getIp().setHTML("&nbsp;");
+				view.setIp("&nbsp;", false);
 				view.getLocation().setHTML("&nbsp;");
 				view.setStatus(view.getNoVmsLabel());
 				view.enableCollapsable(true);

@@ -887,7 +887,7 @@ public class CloudFacadeController {
 						}
 						
 						private void checkReturn() {
-							if (started.size() + failed.size() == parameterValues.keySet().size() && command != null) {
+							if(started.size() + failed.size() == parameterValues.keySet().size() && command != null) {
 								command.execute();
 							}
 						}

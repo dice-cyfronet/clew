@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -49,6 +50,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		String detailsName();
 		String links();
 		String statusLabel();
+		String ipLabel();
+		String moreButton();
 	}
 	
 	private IInstancePresenter presenter;
@@ -68,7 +71,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField HTML name;
 //	@UiField HTML spec;
 	@UiField InstanceMessages messages;
-	@UiField HTML ip;
+	@UiField HTMLPanel ip;
 	@UiField HTML location;
 	@UiField FlowPanel status;
 	@UiField ButtonGroup controls;
@@ -83,6 +86,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@UiField Tooltip prepaidTooltip;
 	@UiField FlowPanel details;
 	@UiField FlowPanel noVmsLabel;
+	@UiField Modal popup;
+	@UiField FlowPanel popupContent;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -123,8 +128,27 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public HasHTML getIp() {
-		return ip;
+	public void setIp(String ip, boolean multipleInstances) {
+		this.ip.clear();
+		
+		HTML label = new HTML(ip);
+		label.setStyleName(style.ipLabel());
+		
+		if(multipleInstances) {
+			this.ip.add(label);
+			Button button = new Button("", IconType.PLUS, new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onShowAllIps();
+				}
+			});
+			button.setSize(ButtonSize.MINI);
+			button.addStyleName(style.moreButton());
+			button.setTitle(messages.moreIps());
+			this.ip.add(button);
+		} else {
+			this.ip.add(label);
+		}
 	}
 
 	@Override
@@ -626,5 +650,16 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		if(saveInPlaceButton != null) {
 			saveInPlaceButton.setEnabled(enable);
 		}
+	}
+
+	@Override
+	public void showIpsModal() {
+		popup.setTitle(messages.ipsTitle());
+		popup.show();
+	}
+
+	@Override
+	public void addIpToModal(String ip) {
+		popupContent.add(new com.google.gwt.user.client.ui.Label(ip));
 	}
 }

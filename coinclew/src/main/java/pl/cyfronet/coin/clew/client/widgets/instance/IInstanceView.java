@@ -11,12 +11,13 @@ public interface IInstanceView extends IsWidget {
 		void onSave();
 		void onReboot();
 		void onSaveInPlace();
+		void onShowAllIps();
 	}
 
 	HasText getName();
 //	HasText getSpec();
 	String getSpecStanza(String cpu, String ram, String disk);
-	HasHTML getIp();
+	void setIp(String ip, boolean multipleInstances);
 	HasHTML getLocation();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
@@ -57,4 +58,6 @@ public interface IInstanceView extends IsWidget {
 	String missingApplianceType();
 	void setSaveInPlaceBusyState(boolean state);
 	void enableSaveInPlace(boolean enable);
+	void showIpsModal();
+	void addIpToModal(String ip);
 }
