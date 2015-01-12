@@ -18,4 +18,5 @@ public interface IDevelopmentView extends IsWidget {
 	void showInstanceLoadingIndicator(boolean show);
 	void showHeaderRow(boolean show);
 	void insert(Widget widget, int index);
+	void insertInstance(Widget widget, int index);
 }
