@@ -43,7 +43,7 @@
 						</b:FormGroup>
 						<g:HTMLPanel addStyleNames="form-group">
 							<label>
-								<b:Radio ui:field="keyCopiedRadio" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyCopiedLabel}"/>
+								<b:Radio ui:field="keyCopiedRadio" value="true" name="keyContents" addStyleNames="{style.radio}" text="{messages.keyCopiedLabel}"/>
 							</label>
 							<b:TextArea ui:field="keyPayload" placeholder="{messages.keyPayloadPlaceholder}" addStyleNames="input-block-level {style.text-area}"/>
 						</g:HTMLPanel>

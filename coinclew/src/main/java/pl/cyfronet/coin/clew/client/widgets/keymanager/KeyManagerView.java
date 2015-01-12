@@ -13,7 +13,6 @@ import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
 import pl.cyfronet.coin.clew.client.widgets.keymanager.IKeyManagerView.IKeyManagerPresenter;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -53,7 +52,6 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	public KeyManagerView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		keyUploadForm.getElement().setAttribute("encoding", "multipart/form-data");
-		((Element) keyCopiedRadio.getElement().getFirstChild().getFirstChild()).setAttribute("checked", "checked");
 	}
 	
 	@UiHandler("close")
@@ -205,6 +203,7 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 	@Override
 	public void resetForm() {
 		keyUploadForm.reset();
+		keyCopiedRadio.setValue(true);
 		keyUpload.setEnabled(false);
 		keyPayload.setEnabled(true);
 	}
