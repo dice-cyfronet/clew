@@ -1,5 +1,8 @@
 package pl.cyfronet.coin.clew.client;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.MissingResourceException;
 
 import com.google.gwt.core.shared.GWT;
@@ -52,6 +55,17 @@ public class CloudFacadeOverrideProperties {
 
 	public String getCsrfToken() {
 		return getDictionaryProperty("csrf_token");
+	}
+	
+	public List<String> getRoles() {
+		List<String> result = new ArrayList<>();
+		String roles = getDictionaryProperty("roles");
+		
+		if(roles != null) {
+			result.addAll(Arrays.asList(roles.split(",")));
+		}
+		
+		return result;
 	}
 	
 	private String getProperty(String propertyName) {

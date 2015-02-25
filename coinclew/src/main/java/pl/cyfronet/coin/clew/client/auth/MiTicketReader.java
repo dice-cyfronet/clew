@@ -11,7 +11,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -29,11 +28,7 @@ public class MiTicketReader {
 	}
 
 	public boolean isDeveloper() {
-		if(getTicket() == null) {
-			if(Window.Location.getParameter("developer") != null && Window.Location.getParameter("developer").equalsIgnoreCase("true")) {
-				return true;
-			}
-			
+		if(getTicket() == null && cfProperties.getRoles().isEmpty()) {
 			//not in an MI environment, overriding development mode
 			return !devProperties.developmentUserLogin().equals(DevelopmentProperties.MISSING);
 		}
@@ -111,6 +106,8 @@ public class MiTicketReader {
 	
 	private List<String> getRoles() {
 		List<String> result = new ArrayList<String>();
+		result.addAll(cfProperties.getRoles());
+		
 		String ticket = getTicket();
 		
 		if(ticket != null) {
