@@ -1,6 +1,9 @@
 package pl.cyfronet.coin.clew.client.widgets.applications;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +119,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 						if(presenter == null) {
 							presenter = eventBus.addHandler(InstancePresenter.class);
 							instancePresenters.put(applianceInstance.getId(), presenter);
-							view.getInstanceContainer().add(presenter.getView().asWidget());
+							view.insertInstance(presenter.getView().asWidget(), calculateInstanceIndex(applianceInstance.getName()));
 						}
 						
 						presenter.setInstance(applianceInstance, true, false);
@@ -151,6 +154,26 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 				timer.schedule(REFRESH_MILIS);
 			}
 		});
+	}
+	
+	private int calculateInstanceIndex(String name) {
+		List<String> names = new ArrayList<String>();
+		names.add(name);
+		
+		for(InstancePresenter presenter : instancePresenters.values()) {
+			if(presenter.getInstance() != null) {
+				names.add(presenter.getInstance().getName());
+			}
+		}
+		
+		Collections.sort(names, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareToIgnoreCase(o2);
+			}
+		});
+		
+		return names.indexOf(name);
 	}
 
 	private void clearInstances() {

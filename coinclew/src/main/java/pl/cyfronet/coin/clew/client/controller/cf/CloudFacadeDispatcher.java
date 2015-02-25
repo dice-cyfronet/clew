@@ -16,22 +16,33 @@ public class CloudFacadeDispatcher implements Dispatcher {
 	
 	@Override
 	public Request send(Method method, RequestBuilder builder) throws RequestException {
-		//trying to retrieve MI token, if it is not there falling back to private key
 		MiTicketReader ticketReader = new MiTicketReader();
-		String ticket = ticketReader.getTicket();
 		
-		if(ticket == null) {
-			String cfToken = ticketReader.getCfToken();
-			
-			if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
-				builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
-				
-				return null;
-			} else {
-				builder.setHeader("PRIVATE-TOKEN", cfToken);
+		//if a csrf token was passed through the overrides let's use it
+		String csrfHeaderName = ticketReader.getCsrfHeaderName();
+		String csrfToken = ticketReader.getCsrfToken();
+		
+		if(csrfHeaderName != null && csrfToken != null) {
+			if(!builder.getHTTPMethod().equalsIgnoreCase("GET")) {
+				builder.setHeader(csrfHeaderName, csrfToken);
 			}
 		} else {
-			builder.setHeader("MI-TICKET", ticket);
+			//trying to retrieve MI token, if it is not there falling back to private key
+			String ticket = ticketReader.getTicket();
+			
+			if(ticket == null) {
+				String cfToken = ticketReader.getCfToken();
+				
+				if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
+					builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
+					
+					return null;
+				} else {
+					builder.setHeader("PRIVATE-TOKEN", cfToken);
+				}
+			} else {
+				builder.setHeader("MI-TICKET", ticket);
+			}
 		}
 		
 		if(SuPresenter.getSuUser() != null) {

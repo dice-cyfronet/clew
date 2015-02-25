@@ -94,4 +94,9 @@ public class ApplicationsView extends Composite implements IApplicationsView, Re
 	public void showNoInitialConfigurationsMessage() {
 		Window.alert(messages.noInitialConfigurationsMessage());
 	}
+
+	@Override
+	public void insertInstance(Widget widget, int index) {
+		instanceContainer.insert(widget, index);
+	}
 }

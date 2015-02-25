@@ -20,7 +20,7 @@ public class ClewEntryPoint implements EntryPoint {
 		ClewProperties clewProperties = GWT.create(ClewProperties.class);
 		RootPanel rootPanel = RootPanel.get(clewProperties.getDashboardContainerId());
 		
-		if (rootPanel == null) {
+		if(rootPanel == null) {
 			rootPanel = RootPanel.get();
 		}
 		

@@ -101,6 +101,14 @@ public class MiTicketReader {
 		return roles.contains(CLOUDADMIN_ROLE);
 	}
 	
+	public String getCsrfHeaderName() {
+		return cfProperties.getCsrfHeaderName();
+	}
+	
+	public String getCsrfToken() {
+		return cfProperties.getCsrfToken();
+	}
+	
 	private List<String> getRoles() {
 		List<String> result = new ArrayList<String>();
 		String ticket = getTicket();

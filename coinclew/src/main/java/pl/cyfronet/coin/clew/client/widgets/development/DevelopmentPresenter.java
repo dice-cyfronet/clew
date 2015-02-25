@@ -110,7 +110,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 
 	private void loadInstancesAndAtomicServices(boolean update) {
-		if (update) {
+		if(update) {
 			boolean isInactive = false;
 			
 			for (String atomicServiceId : atomicServicePresenters.keySet()) {
@@ -121,7 +121,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 				}
 			}
 			
-			if (isInactive) {
+			if(isInactive) {
 				loadAtomicServices(update);
 			}
 		} else {
@@ -130,7 +130,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		
 		view.showNoRunningInstancesLabel(false);
 		
-		if (!update) {
+		if(!update) {
 			view.getInstanceContainer().clear();
 			view.showInstanceLoadingIndicator(true);
 			view.showHeaderRow(false);
@@ -158,26 +158,33 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			public void processAppliances(List<AggregateAppliance> appliances) {
 				view.showInstanceLoadingIndicator(false);
 				
-				if (appliances.size() == 0) {
+				if(appliances.size() == 0) {
 					view.showNoRunningInstancesLabel(true);
 					view.showHeaderRow(false);
 				} else {
 					view.showNoRunningInstancesLabel(false);
 					view.showHeaderRow(true);
 					
-					for (AggregateAppliance instance : appliances) {
+					Collections.sort(appliances, new Comparator<AggregateAppliance>() {
+						@Override
+						public int compare(AggregateAppliance o1, AggregateAppliance o2) {
+							return o1.getName().compareToIgnoreCase(o2.getName());
+						}
+					});
+					
+					for(AggregateAppliance instance : appliances) {
 						InstancePresenter presenter = instancePresenters.get(instance.getId());
 						
-						if (presenter == null) {
+						if(presenter == null) {
 							presenter = eventBus.addHandler(InstancePresenter.class);
 							instancePresenters.put(instance.getId(), presenter);
-							view.getInstanceContainer().add(presenter.getView().asWidget());
+							view.insertInstance(presenter.getView().asWidget(), calculateInstanceIndex(instance.getName()));
 						}
 						
 						presenter.setInstance(instance, true, true);
 					}
 					
-					if (timer == null) {
+					if(timer == null) {
 						timer = new Timer() {
 							@Override
 							public void run() {
@@ -192,6 +199,29 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 		});
 	}
 
+	private int calculateInstanceIndex(String name) {
+		List<String> names = new ArrayList<String>();
+		names.add(name);
+		
+		for(InstancePresenter presenter : instancePresenters.values()) {
+			if(presenter.getInstance() != null) {
+				names.add(presenter.getInstance().getName());
+			}
+		}
+		
+		Collections.sort(names, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareToIgnoreCase(o2);
+			}
+		});
+		
+		int index = names.indexOf(name);
+		log.debug("Inserting appliance instance with index {}", index);
+		
+		return index;
+	}
+
 	private void clearInstancePresenters() {
 		for (Iterator<String> i = instancePresenters.keySet().iterator(); i.hasNext();) {
 			String instanceId = i.next();
@@ -202,7 +232,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	}
 
 	private void loadAtomicServices(final boolean update) {
-		if (!update) {
+		if(!update) {
 			view.getAtomicServicesContainer().clear();
 			view.addAtomicServiceProgressIndicator();
 			clearAtomicService();
@@ -212,18 +242,18 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 			public void processOwnedApplianceTypes(List<OwnedApplianceType> applianceTypes) {
 				view.showNoAtomicServicesLabel(false);
 				
-				if (applianceTypes.size() == 0) {
+				if(applianceTypes.size() == 0) {
 					view.getAtomicServicesContainer().clear();
 					view.showNoAtomicServicesLabel(true);
 				} else {
-					if (!update) {
+					if(!update) {
 						view.getAtomicServicesContainer().clear();
 					}
 					
-					for (OwnedApplianceType applianceType : applianceTypes) {
+					for(OwnedApplianceType applianceType : applianceTypes) {
 						AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getApplianceType().getId());
 						
-						if (presenter == null) {
+						if(presenter == null) {
 							presenter = eventBus.addHandler(AtomicServicePresenter.class);
 							atomicServicePresenters.put(applianceType.getApplianceType().getId(), presenter);
 							view.insert(presenter.getView().asWidget(), calculateApplianceTypeIndex(applianceType.getApplianceType().getName()));

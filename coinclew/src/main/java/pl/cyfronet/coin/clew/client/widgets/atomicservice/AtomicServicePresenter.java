@@ -37,7 +37,7 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 	public void setApplianceType(OwnedApplianceType applianceType) {
 		this.applianceType = applianceType;
 		view.getName().setText(applianceType.getApplianceType().getName());
-		view.showInactiveLabel(!applianceType.getApplianceType().isActive());
+		view.showInactiveLabel(!applianceType.getApplianceType().isActive(), applianceType.getApplianceType().isSaving());
 		
 		if(applianceType.getApplianceType().isActive()) {
 			view.enableStartButton(true);

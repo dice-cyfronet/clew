@@ -127,6 +127,10 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 	
+	public AggregateAppliance getInstance() {
+		return applianceInstance;
+	}
+	
 	private String formatDate(String dateValue) {
 		try {
 			DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);

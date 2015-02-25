@@ -127,4 +127,9 @@ public class DevelopmentView extends Composite implements IDevelopmentView, Reve
 	public void insert(Widget widget, int index) {
 		atomicServicesContainer.insert(widget, index);
 	}
+
+	@Override
+	public void insertInstance(Widget widget, int index) {
+		runningInstancesContainer.insert(widget, index);
+	}
 }

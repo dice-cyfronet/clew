@@ -46,6 +46,14 @@ public class CloudFacadeOverrideProperties {
 		return getDictionaryProperty("vphTicket");
 	}
 	
+	public String getCsrfHeaderName() {
+		return getDictionaryProperty("csrf_header_name");
+	}
+
+	public String getCsrfToken() {
+		return getDictionaryProperty("csrf_token");
+	}
+	
 	private String getProperty(String propertyName) {
 		String property = getDictionaryProperty(propertyName);
 		
