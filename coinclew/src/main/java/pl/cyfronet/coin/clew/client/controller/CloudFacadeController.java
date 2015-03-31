@@ -318,7 +318,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypes(final List<String> configurationTemplateIds, final Map<String, List<String>> computeSiteIds, final Command command) {
+	public void startApplianceTypes(final List<String> configurationTemplateIds, final Map<String, List<String>> computeSiteIds, final Map<String, String> teams, final Command command) {
 		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -334,6 +334,10 @@ public class CloudFacadeController {
 					
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
+					}
+					
+					if(teams != null && teams.get(configurationTemplateId) != null) {
+						applianceInstance.setTeamId(teams.get(configurationTemplateId));
 					}
 					
 					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
@@ -1842,6 +1846,26 @@ public class CloudFacadeController {
 			}
 		});
 	}
+	
+	public void getUserWithLogin(String userLogin, final UserCallback callback) {
+		userService.getUserForLogin(userLogin, new MethodCallback<UsersResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				CloudFacadeError error = errorReader.decodeError(method.getResponse().getText());
+				popupErrorHandler.displayError(error);
+				
+			}
+
+			@Override
+			public void onSuccess(Method method, UsersResponse response) {
+				if(response.getUsers() != null && response.getUsers().size() == 1) {
+					callback.processUser(response.getUsers().get(0));
+				} else {
+					callback.processUser(null);
+				}
+			}
+		});
+	};
 	
 	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
 		for(AggregateApplianceType applianceType : applianceTypes) {

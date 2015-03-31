@@ -32,4 +32,8 @@ public interface IApplianceTypeView extends IsWidget {
 	String getAnyComputeSiteLabel();
 	HasValue<String> getComputeSites();
 	void showNoFlavorInformation();
+	void showTeamSelector();
+	void addTeam(String teamId, String teamName);
+	String getAnyTeamLabel();
+	HasValue<String> getTeams();
 }

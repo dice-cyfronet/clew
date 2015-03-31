@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.List;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -96,8 +97,7 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 				if (applianceConfigurations.size() == 0) {
 					view.showNoInitialConfigurationsMessage();
 				} else if (applianceConfigurations.size() == 1) {
-					eventBus.startApplications(
-							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), null, true);
+					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, true, null);
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, true);
 				}

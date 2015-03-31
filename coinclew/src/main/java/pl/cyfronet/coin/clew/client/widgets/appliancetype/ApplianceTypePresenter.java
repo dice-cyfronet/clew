@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.appliancetype;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.Aggre
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
+import pl.cyfronet.coin.clew.client.controller.cf.user.Team;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
 import com.google.inject.Inject;
@@ -29,7 +31,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		this.cloudFacadeController = cloudFacadeController;
 	}
 
-	public void setApplianceType(AggregateApplianceType applianceType, boolean developmentMode) {
+	public void setApplianceType(AggregateApplianceType applianceType, boolean developmentMode, List<Team> teams) {
 		this.applianceType = applianceType;
 		this.developmentMode = developmentMode;
 		view.getName().setText(applianceType.getName());
@@ -67,7 +69,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				view.enableControls(true);
 				
 				if(applianceType.getComputeSites().size() > 1) {
-					view.showComputeSiteProgressIndicator(true);
 					view.showComputeSiteProgressIndicator(false);
 					view.showComputeSiteSelector();
 					view.addComputeSite("0", view.getAnyComputeSiteLabel());
@@ -80,7 +81,70 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				view.showComputeSiteProgressIndicator(false);
 				view.showNoComputeSitesMessage();
 			}
+			
+			if(teams != null && teams.size() > 0) {
+				view.showTeamSelector();
+				view.addTeam("0", view.getAnyTeamLabel());
+				
+				for(Team team : teams) {
+					view.addTeam(team.getId(), team.getShortName());
+				}
+			}
 		}
+	}
+
+	@Override
+	public void onStartApplianceType() {
+		String initialConfigurationId = view.getInitialConfigs().getValue();
+		eventBus.hideStartInstanceModal();
+		
+		Map<String, String> teams = new HashMap<String, String>();
+		teams.put(initialConfigurationId, getTeamId());
+		eventBus.startApplications(asList(initialConfigurationId), collectComputeSiteIds(), developmentMode, teams);
+	}
+
+	public String getSelectedInitialConfigId() {
+		if(view.getChecked().getValue()) {
+			return view.getInitialConfigs().getValue();
+		}
+		
+		return null;
+	}
+
+	public boolean matchesFilter(String filterText) {
+		return applianceType.getName() != null && applianceType.getName().toLowerCase().contains(filterText.toLowerCase()) ||
+				applianceType.getDescription() != null && applianceType.getDescription().toLowerCase().contains(filterText.toLowerCase());
+	}
+	
+	public String getSelectedComputeSiteId() {
+		return view.getComputeSites().getValue();
+	}
+
+	@Override
+	public void onComputeSiteChanged() {
+		String computeSiteId = view.getComputeSites().getValue();
+		
+		if(!computeSiteId.equals("0")) {
+			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
+					ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
+					ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
+					ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), computeSiteId);
+		} else {
+			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
+				ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
+				ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
+				ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), null);
+		}
+	}
+
+	public String getTeamId() {
+		String teamId = view.getTeams().getValue();
+		
+		if(teamId != null && !teamId.equals("0")) {
+			return teamId;
+		}
+		
+		return null;
 	}
 
 	private void updateFlavorInformation(String applianceTypeId, String cpu, String ram,
@@ -102,13 +166,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				});
 	}
 
-	@Override
-	public void onStartApplianceType() {
-		String initialConfigurationId = view.getInitialConfigs().getValue();
-		eventBus.hideStartInstanceModal();
-		eventBus.startApplications(Arrays.asList(new String[] {initialConfigurationId}), collectComputeSiteIds(), developmentMode);
-	}
-
 	private Map<String, List<String>> collectComputeSiteIds() {
 		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
 		
@@ -117,7 +174,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				if(view.getComputeSites().getValue().equals("0")) {
 					computeSiteIds.put(view.getInitialConfigs().getValue(), applianceType.getComputeSiteIds());
 				} else {
-					computeSiteIds.put(view.getInitialConfigs().getValue(), Arrays.asList(new String[] {view.getComputeSites().getValue()}));
+					computeSiteIds.put(view.getInitialConfigs().getValue(), asList(view.getComputeSites().getValue()));
 				}
 			} else {
 				computeSiteIds.put(view.getInitialConfigs().getValue(), applianceType.getComputeSiteIds());
@@ -129,19 +186,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		return computeSiteIds;
 	}
 
-	public String getSelectedInitialConfigId() {
-		if (view.getChecked().getValue()) {
-			return view.getInitialConfigs().getValue();
-		}
-		
-		return null;
-	}
-
-	public boolean matchesFilter(String filterText) {
-		return applianceType.getName() != null && applianceType.getName().toLowerCase().contains(filterText.toLowerCase()) ||
-				applianceType.getDescription() != null && applianceType.getDescription().toLowerCase().contains(filterText.toLowerCase());
-	}
-	
 	private Flavor getCheapest(List<Flavor> flavors) {
 		Flavor result = null;
 		
@@ -152,26 +196,5 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		}
 		
 		return result;
-	}
-
-	public String getSelectedComputeSiteId() {
-		return view.getComputeSites().getValue();
-	}
-
-	@Override
-	public void onComputeSiteChanged() {
-		String computeSiteId = view.getComputeSites().getValue();
-		
-		if(!computeSiteId.equals("0")) {
-			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
-					ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
-					ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
-					ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), computeSiteId);
-		} else {
-			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
-				ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
-				ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
-				ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), null);
-		}
 	}
 }

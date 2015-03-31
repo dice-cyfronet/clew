@@ -11,6 +11,7 @@ public class User {
 	private String fullName;
 	private String email;
 	private List<String> roles;
+	private List<Team> teams;
 	
 	public String getId() {
 		return id;
@@ -41,5 +42,11 @@ public class User {
 	}
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+	public List<Team> getTeams() {
+		return teams;
+	}
+	public void setTeams(List<Team> teams) {
+		this.teams = teams;
 	}
 }

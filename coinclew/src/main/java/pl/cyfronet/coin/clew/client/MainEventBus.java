@@ -94,7 +94,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	void editInitialConfiguration(String initialConfigurationId);
 
 	@Event(handlers = InitialConfigEmbedPresenter.class)
-	void startApplications(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds, boolean developmentMode);
+	void startApplications(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds, boolean developmentMode, Map<String, String> teams);
 
 	@Event(handlers = ApplicationsPresenter.class)
 	void deactivateApplicationsRefresh();

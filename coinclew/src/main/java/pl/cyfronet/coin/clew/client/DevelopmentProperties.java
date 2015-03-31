@@ -18,4 +18,7 @@ public interface DevelopmentProperties extends Constants {
 	
 	@DefaultStringValue(MISSING)
 	String ticketOverride();
+	
+	@DefaultStringValue(MISSING)
+	String proxyBase64();
 }

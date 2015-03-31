@@ -36,7 +36,8 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 		eventBus.addPopup(view);
 	}
 	
-	public void onStartApplications(final List<String> initialConfigurationIds, final Map<String, List<String>> computeSiteIds, boolean developmentMode) {
+	public void onStartApplications(final List<String> initialConfigurationIds, final Map<String, List<String>> computeSiteIds, boolean developmentMode,
+			final Map<String, String> teams) {
 		this.developmentMode = developmentMode;
 		this.computeSiteIds = computeSiteIds;
 		eventBus.showStartApplicationProgress(true);
@@ -86,7 +87,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 						eventBus.showStartApplicationProgress(false);
 						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds, computeSiteIds);
 					} else {
-						cloudFacadeController.startApplianceTypes(initialConfigurationIds, computeSiteIds, new Command() {
+						cloudFacadeController.startApplianceTypes(initialConfigurationIds, computeSiteIds, teams, new Command() {
 							@Override
 							public void execute() {
 								eventBus.showStartApplicationProgress(false);

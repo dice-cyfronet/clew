@@ -18,7 +18,8 @@ public class NewApplianceInstance {
 	private Map<String, String> developmentProperties;
 	@Json(name = "compute_site_ids")
 	private List<String> computeSiteIds;
-	
+	@Json(name = "team_id")
+	private String teamId;
 	
 	public String getConfigurationTemplateId() {
 		return configurationTemplateId;
@@ -62,5 +63,11 @@ public class NewApplianceInstance {
 	}
 	public void setComputeSiteIds(List<String> computeSiteIds) {
 		this.computeSiteIds = computeSiteIds;
+	}
+	public String getTeamId() {
+		return teamId;
+	}
+	public void setTeamId(String teamId) {
+		this.teamId = teamId;
 	}
 }
