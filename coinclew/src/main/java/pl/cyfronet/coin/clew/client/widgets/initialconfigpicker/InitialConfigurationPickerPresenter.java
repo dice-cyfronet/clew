@@ -1,6 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.initialconfigpicker;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.List;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
@@ -33,6 +34,6 @@ public class InitialConfigurationPickerPresenter extends BasePresenter<IInitialC
 	public void onStartInstance() {
 		String configId = view.getConfig().getValue();
 		view.showModal(false);
-		eventBus.startApplications(Arrays.asList(new String[] {configId}), null, developmentMode);
+		eventBus.startApplications(asList(configId), null, developmentMode, null);
 	}
 }

@@ -68,7 +68,7 @@
 		}
 		.picker-panel {
 			float: left;
-			width: 50%;
+			width: 33%;
 		}
 		.list-container {
 			height: 30px;
@@ -91,14 +91,21 @@
 					<g:HTML addStyleNames="{style.init-conf-label}"><ui:text from="{messages.pickInitConfigLabel}"/>:</g:HTML>
 					<g:FlowPanel addStyleNames="{style.list-container}">
 						<g:FlowPanel ui:field="initialConfigsContainer" addStyleNames="{style.left-margin}"/>
-						<b:ListBox ui:field="initialConfigs" visible="false"/>
+						<b:ListBox ui:field="initialConfigs" addStyleNames="span2" visible="false"/>
 					</g:FlowPanel>
 				</g:FlowPanel>
 				<g:FlowPanel addStyleNames="{style.picker-panel}">
 					<g:HTML ui:field="computeSitesLabel" addStyleNames="{style.init-conf-label}" visible="false"><ui:text from="{messages.pickComputeSiteLabel}"/>:</g:HTML>
 					<g:FlowPanel addStyleNames="{style.list-container}">
 						<g:FlowPanel ui:field="computeSiteContainer" addStyleNames="{style.left-margin}"/>
-						<b:ListBox ui:field="computeSites" visible="false"/>
+						<b:ListBox ui:field="computeSites" addStyleNames="span2" visible="false"/>
+					</g:FlowPanel>
+				</g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.picker-panel}">
+					<g:HTML ui:field="teamsLabel" addStyleNames="{style.init-conf-label}" visible="false"><ui:text from="{messages.pickTeamLabel}"/>:</g:HTML>
+					<g:FlowPanel addStyleNames="{style.list-container}">
+						<g:FlowPanel ui:field="teamContainer" addStyleNames="{style.left-margin}"/>
+						<b:ListBox ui:field="teams" addStyleNames="span2" visible="false"/>
 					</g:FlowPanel>
 				</g:FlowPanel>
 			</g:FlowPanel>

@@ -18,35 +18,39 @@ public class CloudFacadeDispatcher implements Dispatcher {
 	public Request send(Method method, RequestBuilder builder) throws RequestException {
 		MiTicketReader ticketReader = new MiTicketReader();
 		
-		//if a csrf token was passed through the overrides let's use it
-		String csrfHeaderName = ticketReader.getCsrfHeaderName();
-		String csrfToken = ticketReader.getCsrfToken();
-		
-		if(csrfHeaderName != null && csrfToken != null) {
-			if(!builder.getHTTPMethod().equalsIgnoreCase("GET")) {
-				builder.setHeader(csrfHeaderName, csrfToken);
-			}
+		if(ticketReader.getBase64Proxy() != null) {
+			builder.setHeader("PROXY", ticketReader.getBase64Proxy());
 		} else {
-			//trying to retrieve MI token, if it is not there falling back to private key
-			String ticket = ticketReader.getTicket();
+			//if a csrf token was passed through the overrides let's use it
+			String csrfHeaderName = ticketReader.getCsrfHeaderName();
+			String csrfToken = ticketReader.getCsrfToken();
 			
-			if(ticket == null) {
-				String cfToken = ticketReader.getCfToken();
-				
-				if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
-					builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
-					
-					return null;
-				} else {
-					builder.setHeader("PRIVATE-TOKEN", cfToken);
+			if(csrfHeaderName != null && csrfToken != null) {
+				if(!builder.getHTTPMethod().equalsIgnoreCase("GET")) {
+					builder.setHeader(csrfHeaderName, csrfToken);
 				}
 			} else {
-				builder.setHeader("MI-TICKET", ticket);
+				//trying to retrieve MI token, if it is not there falling back to private key
+				String ticket = ticketReader.getTicket();
+				
+				if(ticket == null) {
+					String cfToken = ticketReader.getCfToken();
+					
+					if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
+						builder.getCallback().onError(null, new IllegalArgumentException("Authentication token is missing"));
+						
+						return null;
+					} else {
+						builder.setHeader("PRIVATE-TOKEN", cfToken);
+					}
+				} else {
+					builder.setHeader("MI-TICKET", ticket);
+				}
 			}
-		}
-		
-		if(SuPresenter.getSuUser() != null) {
-			builder.setHeader("HTTP-SUDO", SuPresenter.getSuUser());
+			
+			if(SuPresenter.getSuUser() != null) {
+				builder.setHeader("HTTP-SUDO", SuPresenter.getSuUser());
+			}
 		}
 		
 		return builder.send();

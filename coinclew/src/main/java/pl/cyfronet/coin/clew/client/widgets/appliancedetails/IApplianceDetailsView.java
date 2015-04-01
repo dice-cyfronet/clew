@@ -32,4 +32,7 @@ public interface IApplianceDetailsView extends IsWidget {
 	void showPreferencesError(HasWidgets container);
 	String getAnyComputeSiteLabel();
 	HasValue<String> addComputeSites(Map<String, String> computeSiteLabels, String chosenComputeSiteId);
+	String getAnyTeamLabel();
+	HasValue<String> addTeamsSelector(Map<String, String> options, String selectedTeam);
+	void addSeparator();
 }

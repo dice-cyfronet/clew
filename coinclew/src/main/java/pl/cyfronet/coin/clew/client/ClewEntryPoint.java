@@ -13,6 +13,7 @@ public class ClewEntryPoint implements EntryPoint {
 	public void onModuleLoad() {
 		CloudFacadeOverrideProperties cloudFacadeEndpointProperty = new CloudFacadeOverrideProperties();
 		Defaults.setServiceRoot(cloudFacadeEndpointProperty.getCloudFacadeEndpoint());
+		Defaults.ignoreJsonNulls();
 		
 		Mvp4gModule module = (Mvp4gModule) GWT.create(Mvp4gModule.class);
 		module.createAndStartModule();

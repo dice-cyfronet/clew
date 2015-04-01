@@ -1,7 +1,8 @@
 package pl.cyfronet.coin.clew.client.widgets.applications;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -83,8 +84,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 				if(applianceConfigurations.size() == 0) {
 					view.showNoInitialConfigurationsMessage();
 				} else if(applianceConfigurations.size() == 1) {
-					eventBus.startApplications(
-							Arrays.asList(new String[] {applianceConfigurations.get(0).getId()}), null, false);
+					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, false, null);
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, false);
 				}

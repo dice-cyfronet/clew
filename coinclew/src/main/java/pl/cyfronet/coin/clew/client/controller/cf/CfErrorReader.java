@@ -18,7 +18,7 @@ public class CfErrorReader {
 	public CloudFacadeError decodeError(String json) {
 		try {
 			return codec.decode(JSONParser.parseStrict(json));
-		} catch(DecodingException e) {
+		} catch(DecodingException | IllegalArgumentException e) {
 			CloudFacadeError error = new CloudFacadeError();
 			error.setType("unknown");
 			error.setMessage("Unknown error");
