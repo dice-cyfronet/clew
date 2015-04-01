@@ -54,6 +54,8 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 	@UiField FlowPanel computeSiteContainer;
 	@UiField ListBox computeSites;
 	@UiField HTML computeSitesLabel;
+	@UiField HTML teamsLabel;
+	@UiField ListBox teams;
 	
 	public ApplianceTypeView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -278,5 +280,50 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 		label.getElement().getStyle().setProperty("fontSize", "smaller");
 		flavorContainer.add(label);
+	}
+
+	@Override
+	public void showTeamSelector() {
+		teamsLabel.setVisible(true);
+		teams.setVisible(true);
+	}
+
+	@Override
+	public void addTeam(String teamId, String teamName) {
+		teams.addItem(teamName, teamId);
+	}
+
+	@Override
+	public String getAnyTeamLabel() {
+		return messages.anyTeamLabel();
+	}
+
+	@Override
+	public HasValue<String> getTeams() {
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return teams.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				teams.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				teams.setSelectedValue(value);
+			}
+		};
 	}
 }

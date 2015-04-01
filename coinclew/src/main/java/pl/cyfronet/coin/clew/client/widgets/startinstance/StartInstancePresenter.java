@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
+import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceTypesCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.AggregateApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.user.User;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
@@ -32,10 +35,12 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	 */
 	private String postponedQuery;
 	private boolean presentersLoaded;
+	private MiTicketReader ticketReader;
 
 	@Inject
-	public StartInstancePresenter(CloudFacadeController cloudFacadeController) {
+	public StartInstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
+		this.ticketReader = ticketReader;
 		applianceTypePresenters = new ArrayList<ApplianceTypePresenter>();
 	}
 	
@@ -50,21 +55,27 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		view.showProgressIndicator();
 		view.getFilter().setText("");
 		view.show();
-		
 		cloudFacadeController.aggregateApplianceTypes(developmentMode ? "development" : "production", new AggregateApplianceTypesCallback() {
 			@Override
 			public void onError(CloudFacadeError error) {
-				//nothing to do here
+				eventBus.displayError(error);
 			}
 			
 			@Override
-			public void processApplianceTypes(List<AggregateApplianceType> applianceTypes) {
-				displayApplianceTypes(applianceTypes);
+			public void processApplianceTypes(final List<AggregateApplianceType> applianceTypes) {
+				cloudFacadeController.getUserWithLogin(ticketReader.getUserLogin(), new UserCallback() {
+					@Override
+					public void processUser(User user) {
+						if(user != null) {
+							displayApplianceTypes(applianceTypes, user);
+						}
+					}
+				});
 			}
 		});
 	}
 	
-	protected void displayApplianceTypes(List<AggregateApplianceType> applianceTypes) {
+	protected void displayApplianceTypes(List<AggregateApplianceType> applianceTypes, User user) {
 		view.clearApplianceTypeContainer();
 		
 		if(applianceTypes.size() == 0) {
@@ -80,7 +91,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			for(AggregateApplianceType applianceType : applianceTypes) {
 				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
 				applianceTypePresenters.add(presenter);
-				presenter.setApplianceType(applianceType, developmentMode);
+				presenter.setApplianceType(applianceType, developmentMode, user.getTeams());
 				view.getApplianceTypeContainer().add(presenter.getView().asWidget());
 			}
 			
@@ -115,8 +126,9 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	public void onStartSelected() {
 		List<String> initialConfigurationIds = new ArrayList<String>();
 		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
+		Map<String, String> teams = new HashMap<String, String>();
 		
-		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
+		for(ApplianceTypePresenter presenter : applianceTypePresenters) {
 			String initialConfigId = presenter.getSelectedInitialConfigId();
 			
 			if (initialConfigId != null) {
@@ -128,13 +140,16 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			if(computeSiteId != null && !computeSiteId.equals("0")) {
 				computeSiteIds.put(initialConfigId, Arrays.asList(new String[] {computeSiteId}));
 			}
+			
+			String teamId = presenter.getTeamId();
+			teams.put(initialConfigId, teamId);
 		}
 		
-		if (initialConfigurationIds.size() == 0) {
+		if(initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
 			onHideStartInstanceModal();
-			eventBus.startApplications(initialConfigurationIds, computeSiteIds, developmentMode);
+			eventBus.startApplications(initialConfigurationIds, computeSiteIds, developmentMode, teams);
 		}
 	}
 

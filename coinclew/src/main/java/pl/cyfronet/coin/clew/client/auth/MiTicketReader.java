@@ -129,4 +129,12 @@ public class MiTicketReader {
 	private native String decodeBase64(String base64String) /*-{
 		return atob(base64String);
 	}-*/;
+
+	public String getBase64Proxy() {
+		if(!devProperties.proxyBase64().equals(DevelopmentProperties.MISSING)) {
+			return devProperties.proxyBase64();
+		}
+		
+		return null;
+	}
 }

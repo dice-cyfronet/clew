@@ -295,7 +295,6 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		FlowPanel flavorContainer = new FlowPanel();
 		flavorContainer.getElement().getStyle().setMarginBottom(20, Unit.PX);
 		nameContainer.add(flavorContainer);
-		nameContainer.getElement().appendChild(DOM.createElement("hr"));
 		
 		return flavorContainer;
 	}
@@ -365,5 +364,58 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 				computeSites.setSelectedValue(value);
 			}
 		};
+	}
+
+	@Override
+	public HasValue<String> addTeamsSelector(Map<String, String> options, String selectedTeam) {
+		ControlLabel label = new ControlLabel(messages.teamsLabel());
+		final ListBox listBox = new ListBox();
+		
+		for(String id : options.keySet()) {
+			listBox.addItem(options.get(id), id);
+		}
+		
+		if(selectedTeam != null) {
+			listBox.setSelectedValue(selectedTeam);
+		}
+		
+		nameContainer.add(label);
+		nameContainer.add(listBox);
+		
+		return new HasValue<String>() {
+			@Override
+			public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+				return null;
+			}
+
+			@Override
+			public void fireEvent(GwtEvent<?> event) {
+			}
+
+			@Override
+			public String getValue() {
+				return listBox.getValue();
+			}
+
+			@Override
+			public void setValue(String value) {
+				listBox.setSelectedValue(value);
+			}
+
+			@Override
+			public void setValue(String value, boolean fireEvents) {
+				listBox.setSelectedValue(value);
+			}
+		};
+	}
+
+	@Override
+	public String getAnyTeamLabel() {
+		return messages.anyTeamLabel();
+	}
+
+	@Override
+	public void addSeparator() {
+		nameContainer.getElement().appendChild(DOM.createElement("hr"));
 	}
 }
