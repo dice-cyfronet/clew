@@ -847,8 +847,9 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String, Map<String, String>> parameterValues,
-			final Map<String, String> cores, final Map<String, String> rams, final Map<String, String> disks, final Map<String, List<String>> computeSiteIds, final Command command) {
+	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String,
+			Map<String, String>> parameterValues, final Map<String, String> cores, final Map<String, String> rams, final Map<String, String> disks,
+			final Map<String, String> teams, final Map<String, List<String>> computeSiteIds, final Command command) {
 		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -872,6 +873,10 @@ public class CloudFacadeController {
 					
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
+					}
+					
+					if(teams != null && teams.get(configurationTemplateId) != null) {
+						applianceInstance.setTeamId(teams.get(configurationTemplateId));
 					}
 					
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();

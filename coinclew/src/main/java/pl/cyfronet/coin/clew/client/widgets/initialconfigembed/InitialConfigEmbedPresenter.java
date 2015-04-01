@@ -25,6 +25,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 	private Map<String, Map<String, HasText>> params;
 	private boolean developmentMode;
 	private Map<String, List<String>> computeSiteIds;
+	private Map<String, String> teams;
 
 	@Inject
 	public InitialConfigEmbedPresenter(CloudFacadeController cloudFacadeController) {
@@ -40,6 +41,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 			final Map<String, String> teams) {
 		this.developmentMode = developmentMode;
 		this.computeSiteIds = computeSiteIds;
+		this.teams = teams;
 		eventBus.showStartApplicationProgress(true);
 		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
 			@Override
@@ -85,7 +87,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 				} else {
 					if (InitialConfigEmbedPresenter.this.developmentMode) {
 						eventBus.showStartApplicationProgress(false);
-						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds, computeSiteIds);
+						eventBus.showApplianceStartDetailsEditorForConfigIds(initialConfigurationIds, computeSiteIds, teams);
 					} else {
 						cloudFacadeController.startApplianceTypes(initialConfigurationIds, computeSiteIds, teams, new Command() {
 							@Override
@@ -115,7 +117,7 @@ public class InitialConfigEmbedPresenter extends BasePresenter<IInitialConfigEmb
 		
 		if (developmentMode) {
 			view.showModal(false);
-			eventBus.showApplianceStartDetailsEditorForConfigParams(parameterValues, computeSiteIds);
+			eventBus.showApplianceStartDetailsEditorForConfigParams(parameterValues, computeSiteIds, teams);
 		} else {
 			view.setStartBusyState(true);
 			cloudFacadeController.startApplianceTypes(parameterValues, computeSiteIds, new Command() {

@@ -33,7 +33,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 	}
 
 	public void onShowAtomicServiceEditor(String applianceTypeOrInstanceId, boolean saveMode) {
-		if (saveMode) {
+		if(saveMode) {
 			applianceId = applianceTypeOrInstanceId;
 		} else {
 			applianceTypeId = applianceTypeOrInstanceId;
@@ -43,7 +43,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		view.showModal(true);
 		applyMode();
 		
-		if (saveMode) {
+		if(saveMode) {
 			clearControls();
 		} else {
 			loadProperties();
@@ -102,7 +102,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 
 			@Override
 			public void onError(CloudFacadeError error) {
-				//ignoring
+				eventBus.displayError(error);
 			}
 		});
 	}
@@ -134,7 +134,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 
 						@Override
 						public void onError(CloudFacadeError error) {
-							//ignoring
+							eventBus.displayError(error);
 						}
 					}, new ErrorCallback() {
 						@Override

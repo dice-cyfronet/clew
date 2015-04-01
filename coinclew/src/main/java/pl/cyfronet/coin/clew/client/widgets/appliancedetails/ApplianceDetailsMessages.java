@@ -19,4 +19,6 @@ public interface ApplianceDetailsMessages extends Messages {
 	String preferencesError();
 	String anyComputeSiteLabel();
 	String computeSiteLabel();
+	String anyTeamLabel();
+	String teamsLabel();
 }

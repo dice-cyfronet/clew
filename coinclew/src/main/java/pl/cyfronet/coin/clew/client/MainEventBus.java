@@ -112,10 +112,11 @@ public interface MainEventBus extends EventBusWithLookup {
 	void updateApplianceTypeView(ApplianceType applianceType);
 
 	@Event(handlers = ApplianceDetailsPresenter.class)
-	void showApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds);
+	void showApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds, Map<String, String> teams);
 
 	@Event(handlers = ApplianceDetailsPresenter.class)
-	void showApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds);
+	void showApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds,
+			Map<String, String> teams);
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void deactivateDevelopmentRefresh();
