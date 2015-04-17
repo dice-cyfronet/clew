@@ -131,7 +131,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 		for(ApplianceTypePresenter presenter : applianceTypePresenters) {
 			String initialConfigId = presenter.getSelectedInitialConfigId();
 			
-			if (initialConfigId != null) {
+			if(initialConfigId != null) {
 				initialConfigurationIds.add(initialConfigId);
 			}
 			

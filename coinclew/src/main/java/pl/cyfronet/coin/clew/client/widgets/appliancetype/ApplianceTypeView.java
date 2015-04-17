@@ -160,7 +160,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 			@Override
 			public String getValue() {
-				return initialConfigs.getValue(initialConfigs.getSelectedIndex());
+				return initialConfigs.getSelectedValue();
 			}
 
 			@Override
@@ -257,7 +257,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 			@Override
 			public String getValue() {
-				return computeSites.getValue(computeSites.getSelectedIndex());
+				return computeSites.getSelectedValue();
 			}
 
 			@Override
@@ -313,7 +313,7 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 
 			@Override
 			public String getValue() {
-				return teams.getValue(teams.getSelectedIndex());
+				return teams.getSelectedValue();
 			}
 
 			@Override
