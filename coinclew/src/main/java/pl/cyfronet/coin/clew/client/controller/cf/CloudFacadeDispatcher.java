@@ -19,7 +19,7 @@ public class CloudFacadeDispatcher implements Dispatcher {
 		MiTicketReader ticketReader = new MiTicketReader();
 		
 		//if pesent let's pass the project indicator down to cloud facade
-		if(ticketReader.getProject() != null) {
+		if(ticketReader.getProject() != null && !ticketReader.getProject().isEmpty()) {
 			builder.setHeader("PROJECT", ticketReader.getProject());
 		}
 		

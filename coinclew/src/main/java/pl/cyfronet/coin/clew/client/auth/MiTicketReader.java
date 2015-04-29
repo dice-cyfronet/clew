@@ -126,10 +126,6 @@ public class MiTicketReader {
 		return result;
 	}
 
-	private native String decodeBase64(String base64String) /*-{
-		return atob(base64String);
-	}-*/;
-
 	public String getBase64Proxy() {
 		if(!devProperties.proxyBase64().equals(DevelopmentProperties.MISSING)) {
 			return devProperties.proxyBase64();
@@ -137,8 +133,17 @@ public class MiTicketReader {
 		
 		return null;
 	}
-
+	
 	public String getProject() {
+		if(!devProperties.project().equals(DevelopmentProperties.MISSING)) {
+			return devProperties.project();
+		}
+		
 		return cfProperties.getProject();
 	}
+	
+	private native String decodeBase64(String base64String) /*-{
+		return atob(base64String);
+	}-*/;
+
 }
