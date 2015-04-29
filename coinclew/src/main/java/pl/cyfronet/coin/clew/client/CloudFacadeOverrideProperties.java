@@ -86,8 +86,7 @@ public class CloudFacadeOverrideProperties {
 		return null;
 	}
 
-	public String getBase64Proxy() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getProject() {
+		return getProperty("project");
 	}
 }

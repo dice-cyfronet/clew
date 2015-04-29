@@ -18,6 +18,11 @@ public class CloudFacadeDispatcher implements Dispatcher {
 	public Request send(Method method, RequestBuilder builder) throws RequestException {
 		MiTicketReader ticketReader = new MiTicketReader();
 		
+		//if pesent let's pass the project indicator down to cloud facade
+		if(ticketReader.getProject() != null) {
+			builder.setHeader("PROJECT", ticketReader.getProject());
+		}
+		
 		if(ticketReader.getBase64Proxy() != null) {
 			builder.setHeader("PROXY", ticketReader.getBase64Proxy());
 		} else {

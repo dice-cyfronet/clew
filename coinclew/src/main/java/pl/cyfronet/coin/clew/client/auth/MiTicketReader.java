@@ -137,4 +137,8 @@ public class MiTicketReader {
 		
 		return null;
 	}
+
+	public String getProject() {
+		return cfProperties.getProject();
+	}
 }
