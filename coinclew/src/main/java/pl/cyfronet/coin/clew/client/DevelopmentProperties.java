@@ -21,4 +21,7 @@ public interface DevelopmentProperties extends Constants {
 	
 	@DefaultStringValue(MISSING)
 	String proxyBase64();
+
+	@DefaultStringValue(MISSING)
+	String project();
 }

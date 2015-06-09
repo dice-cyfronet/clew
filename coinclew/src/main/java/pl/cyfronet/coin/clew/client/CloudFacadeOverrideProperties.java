@@ -85,4 +85,8 @@ public class CloudFacadeOverrideProperties {
 		
 		return null;
 	}
+
+	public String getProject() {
+		return getProperty("project");
+	}
 }
