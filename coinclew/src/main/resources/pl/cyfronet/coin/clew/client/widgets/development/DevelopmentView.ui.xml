@@ -68,8 +68,6 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
-		<g:FlowPanel ui:field="atomicServicesContainer" addStyleNames="{style.container}"/>
 		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
 		<g:FlowPanel ui:field="headerRow" visible="false" addStyleNames="{style.header-row}">
 			<g:HTML addStyleNames="{style.name} {style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
@@ -81,6 +79,8 @@
 			<g:HTML addStyleNames="{style.instance-actions} {style.right} {style.header}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="runningInstancesContainer" addStyleNames="{style.container}"/>
+		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
+		<g:FlowPanel ui:field="atomicServicesContainer" addStyleNames="{style.container}"/>
 		<g:FlowPanel addStyleNames="{style.actions}">
 			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
 			<b:Button ui:field="manageUserKeys" addStyleNames="{style.action}"><ui:text from="{messages.manageUserKeysButtonLabel}"/></b:Button>
