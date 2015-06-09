@@ -50,13 +50,13 @@ public interface MainEventBus extends EventBusWithLookup {
 	@Event(handlers = RootPresenter.class)
 	void addPopup(IsWidget widget);
 	
-	@InitHistory
 	@Event(handlers = {MenuPresenter.class, ApplicationsPresenter.class}, historyConverter = TabHistoryConverter.class)
 	void switchToApplicationsView();
 
 	@Event(handlers = {MenuPresenter.class, WorkflowsPresenter.class}, historyConverter = TabHistoryConverter.class)
 	void switchToWorkflowsView();
 	
+	@InitHistory
 	@Event(handlers = {MenuPresenter.class, DevelopmentPresenter.class}, historyConverter = TabHistoryConverter.class)
 	void switchToDevelopmentView();
 
