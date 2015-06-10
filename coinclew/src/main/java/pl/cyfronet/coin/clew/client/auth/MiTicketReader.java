@@ -10,7 +10,6 @@ import pl.cyfronet.coin.clew.client.DevelopmentProperties;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Cookies;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -43,17 +42,7 @@ public class MiTicketReader {
 			return devProperties.ticketOverride();
 		}
 		
-		String ticket = Cookies.getCookie("vph-tkt");
-		
-		if(ticket != null) {
-			ticket = ticket.replaceAll("\"", "");
-		}
-		
-		if(ticket == null) {
-			ticket = cfProperties.getTicket();
-		}
-		
-		return ticket;
+		return cfProperties.getTicket();
 	}
 	
 	public String getUserLogin() {
@@ -145,5 +134,4 @@ public class MiTicketReader {
 	private native String decodeBase64(String base64String) /*-{
 		return atob(base64String);
 	}-*/;
-
 }
