@@ -21,9 +21,9 @@ public class BootstrapHelpers {
 			button.setEnabled(false);
 		} else {
 			IconType originalIcon = originalIcons.remove(button);
-			stopSpin(button);
 			
-			if (originalIcon != null) {
+			if(originalIcon != null) {
+				stopSpin(button);
 				button.setIcon(originalIcon);
 			}
 			
