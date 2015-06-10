@@ -44,8 +44,10 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 		
 		String ticket = ticketReader.getTicket();
 		
-		if (ticket != null) {
+		if(ticket != null) {
 			view.addHiddenField("mi_ticket", ticket);
+		} else if(ticketReader.getCsrfHeaderName() != null && ticketReader.getCsrfToken() != null) {
+			view.addHiddenField(ticketReader.getCsrfHeaderName(), ticketReader.getCsrfToken());
 		} else {
 			if(Window.Location.getParameter("private_token") != null) {
 				view.addHiddenField("private_token", Window.Location.getParameter("private_token"));
@@ -66,7 +68,7 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 	public void onRemoveUserKey(String userKeyId) {
 		UserKeyPresenter presenter = keyPresenters.get(userKeyId);
 		
-		if (presenter != null) {
+		if(presenter != null) {
 			eventBus.removeHandler(presenter);
 			view.getKeysContainer().remove(presenter.getView().asWidget());
 			keyPresenters.remove(userKeyId);
@@ -78,10 +80,10 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 		String keyName = view.getKeyName().getText().trim();
 		view.clearMessages();
 		
-		if (view.isCopiedKey()) {
+		if(view.isCopiedKey()) {
 			String keyContents = view.getKeyContents().getText().trim();
 			
-			if (keyName.isEmpty() || keyContents.isEmpty()) {
+			if(keyName.isEmpty() || keyContents.isEmpty()) {
 				view.displayNameOrContentsEmptyMessage();
 			} else {
 				view.setUploadBusyState(true);
@@ -109,7 +111,7 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 					}});
 			}
 		} else {
-			if (!view.isKeyFileSelected() || keyName.isEmpty()) {
+			if(!view.isKeyFileSelected() || keyName.isEmpty()) {
 				view.displayNameOrFileEmptyMessage();
 			} else {
 				view.setUploadBusyState(true);
@@ -125,7 +127,7 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 	}
 	
 	private void clearKeyPresenters() {
-		for (String userKeyId : keyPresenters.keySet()) {
+		for(String userKeyId : keyPresenters.keySet()) {
 			eventBus.removeHandler(keyPresenters.get(userKeyId));
 		}
 		
@@ -141,7 +143,7 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 			public void processUserKeys(List<UserKey> userKeys) {
 				view.getKeysContainer().clear();
 				
-				if (userKeys.size() == 0) {
+				if(userKeys.size() == 0) {
 					view.getKeysContainer().clear();
 					view.showNoKeysLabel(true);
 				} else {
