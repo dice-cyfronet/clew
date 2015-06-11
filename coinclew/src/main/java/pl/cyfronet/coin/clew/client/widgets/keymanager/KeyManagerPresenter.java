@@ -46,8 +46,8 @@ public class KeyManagerPresenter extends BasePresenter<IKeyManagerView, MainEven
 		
 		if(ticket != null) {
 			view.addHiddenField("mi_ticket", ticket);
-		} else if(ticketReader.getCsrfHeaderName() != null && ticketReader.getCsrfToken() != null) {
-			view.addHiddenField(ticketReader.getCsrfHeaderName(), ticketReader.getCsrfToken());
+		} else if(ticketReader.getCsrfFieldName() != null && ticketReader.getCsrfToken() != null) {
+			view.addHiddenField(ticketReader.getCsrfFieldName(), ticketReader.getCsrfToken());
 		} else {
 			if(Window.Location.getParameter("private_token") != null) {
 				view.addHiddenField("private_token", Window.Location.getParameter("private_token"));

@@ -57,6 +57,10 @@ public class CloudFacadeOverrideProperties {
 		return getDictionaryProperty("csrf_token");
 	}
 	
+	public String getCsrfFieldName() {
+		return getDictionaryProperty("csrf_form_field_name");
+	}
+	
 	public List<String> getRoles() {
 		List<String> result = new ArrayList<>();
 		String roles = getDictionaryProperty("roles");
