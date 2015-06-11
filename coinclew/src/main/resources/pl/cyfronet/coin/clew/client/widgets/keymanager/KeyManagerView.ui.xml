@@ -35,7 +35,7 @@
 		<b:ModalBody>
 			<g:FlowPanel ui:field="keyContainer" addStyleNames="{style.keys}"/>
 			<g:FlowPanel>
-				<g:FormPanel ui:field="keyUploadForm" method="POST">
+				<g:FormPanel ui:field="keyUploadForm" method="POST" encoding="multipart/form-data">
 					<g:FlowPanel ui:field="formContainer">
 						<b:FormGroup>
 							<b:FormLabel><ui:text from="{messages.keyNameLabel}"/></b:FormLabel>

@@ -51,7 +51,6 @@ public class KeyManagerView extends Composite implements IKeyManagerView, Revers
 
 	public KeyManagerView() {
 		initWidget(uiBinder.createAndBindUi(this));
-		keyUploadForm.getElement().setAttribute("encoding", "multipart/form-data");
 	}
 	
 	@UiHandler("close")
