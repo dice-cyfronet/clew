@@ -93,6 +93,10 @@ public class MiTicketReader {
 		return cfProperties.getCsrfToken();
 	}
 	
+	public String getCsrfFieldName() {
+		return cfProperties.getCsrfFieldName();
+	}
+	
 	private List<String> getRoles() {
 		List<String> result = new ArrayList<String>();
 		result.addAll(cfProperties.getRoles());
