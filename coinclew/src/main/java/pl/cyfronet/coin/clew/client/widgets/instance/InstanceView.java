@@ -368,7 +368,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		info.addStyleName(style.links());
 		panel.add(info);
 		
-		if (helpBlock != null) {
+		if(helpBlock != null) {
 			Button helpButton = new Button("", IconType.SIGNIN);
 			helpButton.setSize(ButtonSize.MINI);
 			helpButton.setToggle(true);
@@ -383,6 +383,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			
 			Popover helpPopover = new Popover();
 			helpPopover.setText(helpBlock);
+			helpPopover.setHtml(true);
 			helpPopover.setWidget(helpButton);
 			helpPopover.setPlacement(Placement.LEFT);
 			helpPopover.setHeading(messages.sshHelpHeader());
