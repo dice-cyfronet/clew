@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel>
+		<div ui:field="name"/>
+		<div ui:field="links">
+			<div>
+				<a ui:field="httpLink" target="_blank">http</a>
+				<span></span>
+			</div>
+			<div>
+				<a ui:field="httpsLink" target="_blank">https</a>
+				<span></span>
+			</div>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>

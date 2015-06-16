@@ -238,13 +238,13 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		panel.add(links);
 		links.addStyleName(style.links());
 		
-		if (httpUrl != null) {
+		if(httpUrl != null) {
 			Label status = new Label(httpUrlStatus);
 			links.add(createEndpointPanel(status, httpUrl, httpUrlStatus, "http"));
 			httpStatuses.put(redirectionId, status);
 		}
 		
-		if (httpsUrl != null) {
+		if(httpsUrl != null) {
 			Label status = new Label(httpsUrlStatus);
 			links.add(createEndpointPanel(status, httpsUrl, httpsUrlStatus, "https"));
 			httpsStatuses.put(redirectionId, status);
