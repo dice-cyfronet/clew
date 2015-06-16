@@ -379,6 +379,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			
 			Popover helpPopover = new Popover();
 			helpPopover.setContent(helpBlock);
+			helpPopover.setIsHtml(true);
 			helpPopover.setWidget(helpButton);
 			helpPopover.setPlacement(Placement.LEFT);
 			helpPopover.setTitle(messages.sshHelpHeader());
