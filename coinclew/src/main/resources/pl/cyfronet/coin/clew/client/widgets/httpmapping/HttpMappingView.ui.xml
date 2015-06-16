@@ -1,0 +1,22 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:style>
+	</ui:style>
+	<g:HTMLPanel>
+		<g:HTML ui:field="name"/>
+		<g:FlowPanel>
+			<g:FlowPanel>
+				<g:Anchor ui:field="httpLink"/>
+				<b:Label ui:field="httpStatus"></b:Label>
+				<b:Button ui:field="changeHttpAlias" icon="PLUG"></b:Button>
+			</g:FlowPanel>
+			<g:FlowPanel>
+				<g:Anchor ui:field="httpsLink"/>
+				<b:Label ui:field="httpsStatus"></b:Label>
+				<b:Button ui:field="changeHttpsAlias" icon="PLUG"></b:Button>
+			</g:FlowPanel>
+		</g:FlowPanel>
+	</g:HTMLPanel>
+</ui:UiBinder>
