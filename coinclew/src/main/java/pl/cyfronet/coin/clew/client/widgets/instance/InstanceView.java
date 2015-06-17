@@ -1,13 +1,9 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
 import org.gwtbootstrap3.client.ui.Collapse;
 import org.gwtbootstrap3.client.ui.Label;
-import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.Popover;
 import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
@@ -19,6 +15,7 @@ import org.gwtbootstrap3.client.ui.constants.Toggle;
 import org.gwtbootstrap3.client.ui.constants.Trigger;
 
 import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
+import pl.cyfronet.coin.clew.client.widgets.httpmapping.IHttpMappingView;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -29,7 +26,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -49,7 +45,6 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		String service();
 		String detailsName();
 		String links();
-		String statusLabel();
 	}
 	
 	private IInstancePresenter presenter;
@@ -60,14 +55,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	private Label noWebApplicationLabel;
 	private Label noOtherServicesLabel;
 	private boolean collapsed;
-	private Map<String, Label> httpStatuses;
-	private Map<String, Label> httpsStatuses;
 	private Button rebootButton;
 	private Button saveInPlaceButton;
 	
-	
 	@UiField HTML name;
-//	@UiField HTML spec;
 	@UiField InstanceMessages messages;
 	@UiField HTML ip;
 	@UiField HTML location;
@@ -88,8 +79,6 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
 		collapsed = true;
-		httpStatuses = new HashMap<String, Label>();
-		httpsStatuses = new HashMap<String, Label>();
 	}
 	
 	@UiHandler("showDetails")
@@ -112,11 +101,6 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public HasText getName() {
 		return name;
 	}
-
-//	@Override
-//	public HasText getSpec() {
-//		return spec;
-//	}
 
 	@Override
 	public String getSpecStanza(String cpu, String ram, String disk) {
@@ -147,7 +131,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void addShutdownControl() {
-		if (shutdown == null) {
+		if(shutdown == null) {
 			shutdown = new Button();
 			shutdown.setIcon(IconType.POWER_OFF);
 			shutdown.setType(ButtonType.DANGER);
@@ -164,119 +148,8 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		}
 	}
 
-	@Override
-	public IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor,
-			String redirectionId, String httpUrlStatus, String httpsUrlStatus) {
-		FlowPanel panel = new FlowPanel();
-		panel.addStyleName(style.service());
-		
-		FlowPanel namePanel = new FlowPanel();
-		InlineHTML nameWidget = new InlineHTML(name);
-		nameWidget.addStyleName(style.detailsName());
-		namePanel.add(nameWidget);
-		panel.add(namePanel);
-		
-		FlowPanel links = new FlowPanel();
-		panel.add(links);
-		links.addStyleName(style.links());
-		
-		if (httpUrl != null) {
-			Label status = new Label(httpUrlStatus);
-			links.add(createEndpointPanel(status, httpUrl, httpUrlStatus, "http"));
-			httpStatuses.put(redirectionId, status);
-		}
-		
-		if (httpsUrl != null) {
-			Label status = new Label(httpsUrlStatus);
-			links.add(createEndpointPanel(status, httpsUrl, httpsUrlStatus, "https"));
-			httpsStatuses.put(redirectionId, status);
-		}
-		
-		Button descriptorButton = new Button();
-		descriptorButton.setIcon(IconType.FILE);
-		descriptorButton.setType(ButtonType.INFO);
-		descriptorButton.addStyleName(style.descriptor());
-		descriptorButton.setSize(ButtonSize.EXTRA_SMALL);
-		
-		if (descriptor != null && !descriptor.trim().isEmpty()) {
-			descriptorButton.setTitle(messages.descriptorButtonTooltip());
-		} else {
-			descriptorButton.setTitle(messages.noDescriptorButtonTooltip());
-		}
-		
-		if (descriptor != null && !descriptor.trim().isEmpty()) {
-			final Modal modal = new Modal();
-			modal.setTitle(messages.descriptorModalTitle());
-			modal.add(new HTML(descriptor));
-			panel.add(modal);
-			descriptorButton.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					modal.show();
-				}
-			});
-		} else {
-			descriptorButton.setEnabled(false);
-		}
-		
-		namePanel.add(descriptorButton);
-		serviceContainer.add(panel);
-		
-		return panel;
-	}
-
-	@Override
-	public IsWidget addWebApplication(String name, String httpUrl, String httpsUrl,
-			String redirectionId, String httpUrlStatus, String httpsUrlStatus) {
-		FlowPanel panel = new FlowPanel();
-		panel.addStyleName(style.service());
-		
-		HTML nameWidget = new HTML(name);
-		nameWidget.addStyleName(style.detailsName());
-		panel.add(nameWidget);
-		
-		FlowPanel links = new FlowPanel();
-		panel.add(links);
-		links.addStyleName(style.links());
-		
-		if (httpUrl != null) {
-			Label status = new Label(httpUrlStatus);
-			links.add(createEndpointPanel(status, httpUrl, httpUrlStatus, "http"));
-			httpStatuses.put(redirectionId, status);
-		}
-		
-		if (httpsUrl != null) {
-			Label status = new Label(httpsUrlStatus);
-			links.add(createEndpointPanel(status, httpsUrl, httpsUrlStatus, "https"));
-			httpsStatuses.put(redirectionId, status);
-		}
-		
-		webApplicationsContainer.add(panel);
-		
-		return panel;
-	}
-
-	private Widget createEndpointPanel(Label statusLabel, String httpUrl, String httpUrlStatus, String anchorName) {
-		FlowPanel endpointPanel = new FlowPanel();
-		endpointPanel.getElement().getStyle().setProperty("display", "table-row");
-		Anchor http = new Anchor(anchorName, httpUrl);
-		http.setTarget("_blank");
-		http.addStyleName(style.anchor());
-		endpointPanel.add(http);
-		statusLabel.addStyleName(style.statusLabel());
-		statusLabel.setType(getStatusLabelType(httpUrlStatus));
-		
-		FlowPanel statusPanel = new FlowPanel();
-		statusPanel.getElement().getStyle().setProperty("display", "table-cell");
-		statusPanel.add(statusLabel);
-		endpointPanel.add(statusPanel);
-		
-		return endpointPanel;
-	}
-
-	@Override
 	public void showNoServicesLabel(boolean show) {
-		if (show) {
+		if(show) {
 			if (noServiceLabel == null) {
 				noServiceLabel = new Label(messages.noServicesLabel());
 				serviceContainer.add(noServiceLabel);
@@ -291,7 +164,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void showNoWebApplicationsLabel(boolean show) {
-		if (show) {
+		if(show) {
 			if (noWebApplicationLabel == null) {
 				noWebApplicationLabel = new Label(messages.noWebApplicationsLabel());
 				webApplicationsContainer.add(noWebApplicationLabel);
@@ -396,13 +269,13 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void showNoOtherServicesLabel(boolean show) {
-		if (show) {
-			if (noOtherServicesLabel == null) {
+		if(show) {
+			if(noOtherServicesLabel == null) {
 				noOtherServicesLabel = new Label(messages.noOtherServices());
 				otherServiceContainer.add(noOtherServicesLabel);
 			}
 		} else {
-			if (noOtherServicesLabel != null) {
+			if(noOtherServicesLabel != null) {
 				otherServiceContainer.remove(noOtherServicesLabel);
 				noOtherServicesLabel = null;
 			}
@@ -489,38 +362,6 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		if(!collapsed) {
 			showDetailsClicked(null);
 			showDetails.setActive(false);
-		}
-	}
-	
-	private LabelType getStatusLabelType(String status) {
-		if("pending".equals(status)) {
-			return LabelType.WARNING;
-		} else if("ok".equals(status)) {
-			return LabelType.SUCCESS;
-		} else if("lost".equals(status)) {
-			return LabelType.DANGER;
-		} else {
-			return LabelType.DEFAULT;
-		}
-	}
-
-	@Override
-	public void updateHttpStatus(String redirectionId, String status) {
-		Label statusLabel = httpStatuses.get(redirectionId);
-		
-		if(statusLabel != null) {
-			statusLabel.setType(getStatusLabelType(status));
-			statusLabel.setText(status);
-		}
-	}
-
-	@Override
-	public void updateHttpsStatus(String redirectionId, String status) {
-		Label statusLabel = httpsStatuses.get(redirectionId);
-		
-		if(statusLabel != null) {
-			statusLabel.setType(getStatusLabelType(status));
-			statusLabel.setText(status);
 		}
 	}
 
@@ -624,5 +465,15 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		if(saveInPlaceButton != null) {
 			saveInPlaceButton.setEnabled(enable);
 		}
+	}
+
+	@Override
+	public void addWebApplication(IsWidget view) {
+		webApplicationsContainer.add(view);
+	}
+
+	@Override
+	public void addService(IHttpMappingView view) {
+		serviceContainer.add(view);
 	}
 }

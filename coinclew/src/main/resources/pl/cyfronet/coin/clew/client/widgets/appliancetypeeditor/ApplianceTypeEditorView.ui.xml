@@ -20,62 +20,62 @@
 	<b:Modal ui:field="modal" title="{messages.modalTitle}" closable="false" dataKeyboard="false" fade="true" dataBackdrop="STATIC">
 		<b:ModalBody>
 			<b:Form>
-					<b:FormGroup>
-						<b:FormLabel><ui:text from="{messages.nameLabel}"/></b:FormLabel>
-						<b:TextBox ui:field="name" placeholder="{messages.namePlaceholder}" addStyleNames="input-block-level"/>
-					</b:FormGroup>
-					<b:FormGroup>
-						<b:FormLabel><ui:text from="{messages.descriptionLabel}"/></b:FormLabel>
-						<b:TextArea ui:field="description" placeholder="{messages.descriptionPlaceholder}" addStyleNames="input-block-level"/>
-					</b:FormGroup>
-					<g:HTMLPanel addStyleNames="{style.checkboxes}">
-						<b:InlineCheckBox ui:field="shared" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.sharedLabel}"/></b:InlineCheckBox>
-						<b:InlineCheckBox ui:field="scalable" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.scalableLabel}"/></b:InlineCheckBox>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.nameLabel}"/></b:FormLabel>
+					<b:TextBox ui:field="name" placeholder="{messages.namePlaceholder}" addStyleNames="input-block-level"/>
+				</b:FormGroup>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.descriptionLabel}"/></b:FormLabel>
+					<b:TextArea ui:field="description" placeholder="{messages.descriptionPlaceholder}" addStyleNames="input-block-level"/>
+				</b:FormGroup>
+				<g:HTMLPanel addStyleNames="{style.checkboxes}">
+					<b:InlineCheckBox ui:field="shared" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.sharedLabel}"/></b:InlineCheckBox>
+					<b:InlineCheckBox ui:field="scalable" addStyleNames="{style.inline-checkbox}"><ui:text from="{messages.scalableLabel}"/></b:InlineCheckBox>
+				</g:HTMLPanel>
+				<b:FormGroup>
+					<b:FormLabel><ui:text from="{messages.visibleForLabel}"/></b:FormLabel>
+					<b:ListBox ui:field="visibleFor" addStyleNames="input-block-level">
+						<g:item value="all"><ui:text from="{messages.visibilityAll}"/></g:item>
+						<g:item value="owner"><ui:text from="{messages.visibilityOwner}"/></g:item>
+						<g:item value="developer"><ui:text from="{messages.visibilityDeveloper}"/></g:item>
+					</b:ListBox>
+				</b:FormGroup>
+				<g:HTMLPanel addStyleNames="form-group">
+					<label><ui:text from="{messages.coresLabel}"/></label>
+					<g:HTMLPanel addStyleNames="input-group">
+						<div class="input-group-btn">
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul ui:field="coresList" class="dropdown-menu"></ul>
+						</div>
+						<b:TextBox ui:field="cores"/>
 					</g:HTMLPanel>
-					<b:FormGroup>
-						<b:FormLabel><ui:text from="{messages.visibleForLabel}"/></b:FormLabel>
-						<b:ListBox ui:field="visibleFor" addStyleNames="input-block-level">
-							<g:item value="all"><ui:text from="{messages.visibilityAll}"/></g:item>
-							<g:item value="owner"><ui:text from="{messages.visibilityOwner}"/></g:item>
-							<g:item value="developer"><ui:text from="{messages.visibilityDeveloper}"/></g:item>
-						</b:ListBox>
-					</b:FormGroup>
-					<g:HTMLPanel addStyleNames="form-group">
-						<label><ui:text from="{messages.coresLabel}"/></label>
-						<g:HTMLPanel addStyleNames="input-group">
-							<div class="input-group-btn">
-								<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-									<span class="caret"></span>
-								</button>
-								<ul ui:field="coresList" class="dropdown-menu"></ul>
-							</div>
-							<b:TextBox ui:field="cores"/>
-						</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="form-group">
+					<label><ui:text from="{messages.ramLabel}"/></label>
+					<g:HTMLPanel addStyleNames="input-group">
+						<div class="input-group-btn">
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul ui:field="ramList" class="dropdown-menu"></ul>
+						</div>
+						<b:TextBox ui:field="ram"/>
 					</g:HTMLPanel>
-					<g:HTMLPanel addStyleNames="form-group">
-						<label><ui:text from="{messages.ramLabel}"/></label>
-						<g:HTMLPanel addStyleNames="input-group">
-							<div class="input-group-btn">
-								<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-									<span class="caret"></span>
-								</button>
-								<ul ui:field="ramList" class="dropdown-menu"></ul>
-							</div>
-							<b:TextBox ui:field="ram"/>
-						</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel addStyleNames="form-group">
+					<label><ui:text from="{messages.diskLabel}"/></label>
+					<g:HTMLPanel addStyleNames="input-group">
+						<div class="input-group-btn">
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul ui:field="diskList" class="dropdown-menu"></ul>
+						</div>
+						<b:TextBox ui:field="disk"/>
 					</g:HTMLPanel>
-					<g:HTMLPanel addStyleNames="form-group">
-						<label><ui:text from="{messages.diskLabel}"/></label>
-						<g:HTMLPanel addStyleNames="input-group">
-							<div class="input-group-btn">
-								<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-									<span class="caret"></span>
-								</button>
-								<ul ui:field="diskList" class="dropdown-menu"></ul>
-							</div>
-							<b:TextBox ui:field="disk"/>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
+				</g:HTMLPanel>
 			</b:Form>
 			<b:Label ui:field="errorLabel" type="DANGER" addStyleNames="{style.invisible}"/>
 		</b:ModalBody>

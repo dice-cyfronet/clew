@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import static pl.cyfronet.coin.clew.client.UrlHelper.joinUrl;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,6 +29,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
+import pl.cyfronet.coin.clew.client.widgets.httpmapping.HttpMappingPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -42,8 +45,8 @@ import com.mvp4g.client.presenter.BasePresenter;
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	private final static Logger log = LoggerFactory.getLogger(InstancePresenter.class); 
 	
-	private Map<String, IsWidget> webapps;
-	private Map<String, IsWidget> services;
+	private Map<String, HttpMappingPresenter> webapps;
+	private Map<String, HttpMappingPresenter> services;
 	private Map<String, IsWidget> otherServices;
 	private boolean developmentMode;
 	private AggregateAppliance applianceInstance;
@@ -54,9 +57,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	public InstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.ticketReader = ticketReader;
-		webapps = new HashMap<String, IsWidget>();
-		services = new HashMap<String, IsWidget>();
-		otherServices = new HashMap<String, IsWidget>();
+		webapps = new HashMap<>();
+		services = new HashMap<>();
+		otherServices = new HashMap<>();
 	}
 	
 	public void setInstance(AggregateAppliance applianceInstance, final boolean enableShutdown, final boolean developmentMode) {
@@ -203,10 +206,25 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							//before showing a webapp at least one http mapping has to be available
 							if(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null) {
 								if(!webapps.keySet().contains(endpoint.getId())) {
-									String endpointHttpUrl = UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
+									String endpointHttpUrl = joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
 											endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
-									String endpointHttpsUrl = UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
+									String endpointHttpsUrl = joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
 											endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null);
+									String customHttpUrl = null;
+									String customHttpsUrl = null;
+									String invovationPath = endpoint.getInvocationPath();
+									
+									if(redirection.getCustomHttpAlias() != null && redirection.getCustomHttpUrl() != null) {
+										customHttpUrl = joinUrl(redirection.getCustomHttpUrl(), endpoint.getInvocationPath(),
+												endpoint.isSecured() ? ticketReader.getUserLogin() : null,
+														endpoint.isSecured() ? ticketReader.getTicket() : null);
+									}
+									
+									if(redirection.getCustomHttpsAlias() != null && redirection.getCustomHttpsUrl() != null) {
+										customHttpsUrl = joinUrl(redirection.getCustomHttpsUrl(), endpoint.getInvocationPath(),
+												endpoint.isSecured() ? ticketReader.getUserLogin() : null,
+														endpoint.isSecured() ? ticketReader.getTicket() : null);
+									}
 									
 									//nx url params fix
 									if(redirection.getName().equals("nx")) {
@@ -214,28 +232,44 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 										
 										if(sshRedirection != null && sshRedirection.getPortMappings().size() > 0) {
 											PortMapping portMapping = sshRedirection.getPortMappings().get(0);
+											invovationPath += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
 											
 											if(endpointHttpUrl != null) {
 												endpointHttpUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
 											}
 											
+											if(customHttpUrl != null) {
+												customHttpUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+											}
+											
 											if(endpointHttpsUrl != null) {
 												endpointHttpsUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
+											}
+											
+											if(customHttpsUrl != null) {
+												customHttpsUrl += "?nxport=" + portMapping.getSourcePort() + "&nxhost=" + portMapping.getPublicIp();
 											}
 										}
 									}
 									
-									IsWidget widget = view.addWebApplication(endpoint.getName(), endpointHttpUrl, endpointHttpsUrl,
-											redirection.getId(), redirection.getHttpUrlStatus(), redirection.getHttpsUrlStatus());
-									webapps.put(endpoint.getId(), widget);
+									HttpMappingPresenter presenter = eventBus.addHandler(HttpMappingPresenter.class);
+									view.addWebApplication(presenter.getView());
+									presenter.setHttpMapping(endpoint.getName(), endpointHttpUrl, endpointHttpsUrl, redirection.getHttpUrlStatus(),
+											redirection.getHttpsUrlStatus(), redirection.getCustomHttpAlias(), customHttpUrl,
+											redirection.getCustomHttpsAlias(), customHttpsUrl, redirection.getHttpMappingId(),
+											redirection.getHttpsMappingId(), invovationPath, null);
+									webapps.put(endpoint.getId(), presenter);
 								} else {
-									//updating endpoint status
-									if(redirection.getHttpUrl() != null) {
-										view.updateHttpStatus(redirection.getId(), redirection.getHttpUrlStatus());
-									}
+									HttpMappingPresenter presenter = webapps.get(endpoint.getId());
 									
-									if(redirection.getHttpsUrl() != null) {
-										view.updateHttpsStatus(redirection.getId(), redirection.getHttpsUrlStatus());
+									if(presenter != null) {
+										if(redirection.getHttpUrl() != null) {
+											presenter.updateHttpStatus(redirection.getHttpUrlStatus());
+										}
+										
+										if(redirection.getHttpsUrl() != null) {
+											presenter.updateHttpsStatus(redirection.getHttpsUrlStatus());
+										}
 									}
 								}
 							}
@@ -244,22 +278,36 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 							
 							//before showing a service at least one http mapping has to be available
 							if(redirection.getHttpUrl() != null || redirection.getHttpsUrl() != null) {
-								if (!services.keySet().contains(endpoint.getId())) {
-									IsWidget widget = view.addService(endpoint.getName(),
-											UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
-													endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
+								if(!services.keySet().contains(endpoint.getId())) {
+									HttpMappingPresenter presenter = eventBus.addHandler(HttpMappingPresenter.class);
+									view.addService(presenter.getView());
+									presenter.setHttpMapping(endpoint.getName(), UrlHelper.joinUrl(redirection.getHttpUrl(), endpoint.getInvocationPath(),
+													endpoint.isSecured() ? ticketReader.getUserLogin() : null,
+															endpoint.isSecured() ? ticketReader.getTicket() : null),
 											UrlHelper.joinUrl(redirection.getHttpsUrl(), endpoint.getInvocationPath(),
-													endpoint.isSecured() ? ticketReader.getUserLogin() : null, endpoint.isSecured() ? ticketReader.getTicket() : null),
-											endpoint.getDescriptor(), redirection.getId(), redirection.getHttpUrlStatus(), redirection.getHttpsUrlStatus());
-									services.put(endpoint.getId(), widget);
+													endpoint.isSecured() ? ticketReader.getUserLogin() : null,
+															endpoint.isSecured() ? ticketReader.getTicket() : null),
+											redirection.getHttpUrlStatus(), redirection.getHttpsUrlStatus(), redirection.getCustomHttpAlias(),
+											UrlHelper.joinUrl(redirection.getCustomHttpUrl(), endpoint.getInvocationPath(),
+													endpoint.isSecured() ? ticketReader.getUserLogin() : null,
+															endpoint.isSecured() ? ticketReader.getTicket() : null), redirection.getCustomHttpsAlias(),
+											UrlHelper.joinUrl(redirection.getCustomHttpsUrl(), endpoint.getInvocationPath(),
+													endpoint.isSecured() ? ticketReader.getUserLogin() : null,
+															endpoint.isSecured() ? ticketReader.getTicket() : null),
+											redirection.getHttpMappingId(), redirection.getHttpsMappingId(), endpoint.getInvocationPath(),
+											endpoint.getDescriptor());
+									services.put(endpoint.getId(), presenter);
 								} else {
-									//updating endpoint status
-									if(redirection.getHttpUrl() != null) {
-										view.updateHttpStatus(redirection.getId(), redirection.getHttpUrlStatus());
-									}
+									HttpMappingPresenter presenter = services.get(endpoint.getId());
 									
-									if(redirection.getHttpsUrl() != null) {
-										view.updateHttpsStatus(redirection.getId(), redirection.getHttpsUrlStatus());
+									if(presenter != null) {
+										if(redirection.getHttpUrl() != null) {
+											presenter.updateHttpStatus(redirection.getHttpUrlStatus());
+										}
+										
+										if(redirection.getHttpsUrl() != null) {
+											presenter.updateHttpsStatus(redirection.getHttpsUrlStatus());
+										}
 									}
 								}
 							}
@@ -290,13 +338,17 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		
 		for(String webappId : webapps.keySet()) {
 			if(!currentWebapps.contains(webappId)) {
-				view.removeWebapp(webapps.remove(webappId));
+				HttpMappingPresenter presenter = webapps.remove(webappId);
+				view.removeWebapp(presenter.getView());
+				eventBus.removeHandler(presenter);
 			}
 		}
 		
 		for(String serviceId : services.keySet()) {
 			if (!currentServices.contains(serviceId)) {
-				view.removeService(services.remove(serviceId));
+				HttpMappingPresenter presenter = services.remove(serviceId);
+				view.removeService(presenter.getView());
+				eventBus.removeHandler(presenter);
 			}
 		}
 		
@@ -344,9 +396,15 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 					if("http".equals(httpMapping.getApplicationProtocol())) {
 						redirection.setHttpUrl(httpMapping.getUrl());
 						redirection.setHttpUrlStatus(httpMapping.getStatus());
+						redirection.setCustomHttpAlias(httpMapping.getCustonName());
+						redirection.setCustomHttpUrl(httpMapping.getCustromUrl());
+						redirection.setHttpMappingId(httpMapping.getId());
 					} else if ("https".equals(httpMapping.getApplicationProtocol())) {
 						redirection.setHttpsUrl(httpMapping.getUrl());
 						redirection.setHttpsUrlStatus(httpMapping.getStatus());
+						redirection.setCustomHttpsAlias(httpMapping.getCustonName());
+						redirection.setCustomHttpsUrl(httpMapping.getCustromUrl());
+						redirection.setHttpsMappingId(httpMapping.getId());
 					}
 				}
 				
