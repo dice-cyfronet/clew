@@ -6,11 +6,13 @@ import java.util.Map;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.AliasResponseHttpMapping;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.ApplianceDetailsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.appliancetypeeditor.ApplianceTypeEditorPresenter;
 import pl.cyfronet.coin.clew.client.widgets.applications.ApplicationsPresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.DevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.extinterfaces.ExternalInterfacesEditorPresenter;
+import pl.cyfronet.coin.clew.client.widgets.httpmapping.HttpMappingPresenter;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.InitialConfigEmbedPresenter;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigpicker.InitialConfigurationPickerPresenter;
 import pl.cyfronet.coin.clew.client.widgets.initialconfigseditor.InitialConfigsEditorPresenter;
@@ -150,4 +152,7 @@ public interface MainEventBus extends EventBusWithLookup {
 
 	@Event(handlers = MenuPresenter.class)
 	void suUserChanged(String suUser);
+
+	@Event(handlers = HttpMappingPresenter.class)
+	void httpMappingAliasChanged(String httpMappingId, AliasResponseHttpMapping httpMapping);
 }

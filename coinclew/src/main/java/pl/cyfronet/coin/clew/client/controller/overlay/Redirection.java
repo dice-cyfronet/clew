@@ -17,7 +17,49 @@ public class Redirection {
 	private List<PortMapping> portMappings;
 	private String httpUrlStatus;
 	private String httpsUrlStatus;
+	private String customHttpAlias;
+	private String customHttpsAlias;
+	private String customHttpUrl;
+	private String customHttpsUrl;
+	private String httpMappingId;
+	private String httpsMappingId;
 	
+	public String getHttpMappingId() {
+		return httpMappingId;
+	}
+	public void setHttpMappingId(String httpMappingId) {
+		this.httpMappingId = httpMappingId;
+	}
+	public String getHttpsMappingId() {
+		return httpsMappingId;
+	}
+	public void setHttpsMappingId(String httpsMappingId) {
+		this.httpsMappingId = httpsMappingId;
+	}
+	public String getCustomHttpAlias() {
+		return customHttpAlias;
+	}
+	public void setCustomHttpAlias(String customHttpAlias) {
+		this.customHttpAlias = customHttpAlias;
+	}
+	public String getCustomHttpsAlias() {
+		return customHttpsAlias;
+	}
+	public void setCustomHttpsAlias(String customHttpsAlias) {
+		this.customHttpsAlias = customHttpsAlias;
+	}
+	public String getCustomHttpUrl() {
+		return customHttpUrl;
+	}
+	public void setCustomHttpUrl(String customHttpUrl) {
+		this.customHttpUrl = customHttpUrl;
+	}
+	public String getCustomHttpsUrl() {
+		return customHttpsUrl;
+	}
+	public void setCustomHttpsUrl(String customHttpsUrl) {
+		this.customHttpsUrl = customHttpsUrl;
+	}
 	public String getHttpUrlStatus() {
 		return httpUrlStatus;
 	}

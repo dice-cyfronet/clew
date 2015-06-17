@@ -67,9 +67,13 @@ import pl.cyfronet.coin.clew.client.controller.cf.endpoint.NewEndpointRequest;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.FlavorService;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.FlavorsResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.AliasHttpMapping;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.AliasRequest;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.AliasResponse;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.AliasResponseHttpMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
-import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingService;
+import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMappingsResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMappingResponse;
 import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMappingService;
@@ -231,7 +235,11 @@ public class CloudFacadeController {
 	}
 	
 	public interface ApplianceInstanceCallback extends ErrorCallback {
-		public abstract void processApplianceInstance(ApplianceInstance applianceInstance);
+		void processApplianceInstance(ApplianceInstance applianceInstance);
+	}
+	
+	public interface AliasCallback extends ErrorCallback {
+		void onAliasChanged(AliasResponseHttpMapping aliasResponseHttpMapping);
 	}
 	
 	private ApplianceTypeService applianceTypesService;
@@ -1056,14 +1064,14 @@ public class CloudFacadeController {
 	}
 
 	private void waitForHttpMappings(final PortMappingTemplate portMappingTemplate, final PortMappingTemplateCallback portMappingTemplateCallback) {
-		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<HttpMappingResponse>() {
+		httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplate.getId(), new MethodCallback<HttpMappingsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 			}
 
 			@Override
-			public void onSuccess(Method method, HttpMappingResponse response) {
+			public void onSuccess(Method method, HttpMappingsResponse response) {
 				if (response.getHttpMappings().size() == 0) {
 					new Timer() {
 						@Override
@@ -1155,28 +1163,28 @@ public class CloudFacadeController {
 
 	public void getHttpMappingsForPortMappingTemplateIdOrInstanceId(String portMappingTemplateId, String instanceId, final HttpMappingsCallback httpMappingsCallback) {
 		if(instanceId == null) {
-			httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingResponse>() {
+			httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingsResponse>() {
 				@Override
 				public void onFailure(Method method, Throwable exception) {
 					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));	
 				}
 	
 				@Override
-				public void onSuccess(Method method, HttpMappingResponse response) {
+				public void onSuccess(Method method, HttpMappingsResponse response) {
 					if (httpMappingsCallback != null) {
 						httpMappingsCallback.processHttpMappings(response.getHttpMappings());
 					}
 				}
 			});
 		} else {
-			httpMappingService.getHttpMappings(instanceId, new MethodCallback<HttpMappingResponse>() {
+			httpMappingService.getHttpMappings(instanceId, new MethodCallback<HttpMappingsResponse>() {
 				@Override
 				public void onFailure(Method method, Throwable exception) {
 					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse().getText()));
 				}
 
 				@Override
-				public void onSuccess(Method method, HttpMappingResponse response) {
+				public void onSuccess(Method method, HttpMappingsResponse response) {
 					if (httpMappingsCallback != null) {
 						httpMappingsCallback.processHttpMappings(response.getHttpMappings());
 					}
@@ -1345,9 +1353,15 @@ public class CloudFacadeController {
 							if ("http".equals(httpMapping.getApplicationProtocol())) {
 								redirection.setHttpUrl(httpMapping.getUrl());
 								redirection.setHttpUrlStatus(httpMapping.getStatus());
+								redirection.setCustomHttpAlias(httpMapping.getCustonName());
+								redirection.setCustomHttpUrl(httpMapping.getCustromUrl());
+								redirection.setHttpMappingId(httpMapping.getId());
 							} else if ("https".equals(httpMapping.getApplicationProtocol())) {
 								redirection.setHttpsUrl(httpMapping.getUrl());
 								redirection.setHttpsUrlStatus(httpMapping.getStatus());
+								redirection.setCustomHttpsAlias(httpMapping.getCustonName());
+								redirection.setCustomHttpsUrl(httpMapping.getCustromUrl());
+								redirection.setHttpsMappingId(httpMapping.getId());
 							}
 						}
 						
@@ -1905,6 +1919,27 @@ public class CloudFacadeController {
 			@Override
 			public void onSuccess(Method method, ApplianceTypeRequestResponse response) {
 				callback.processApplianceType(response.getApplianceType());
+			}
+		});
+	}
+
+	public void setAlias(String httpMappingId, String alias, final AliasCallback callback) {
+		AliasHttpMapping aliasHttpMapping = new AliasHttpMapping();
+		aliasHttpMapping.setCustomName(alias);
+		
+		AliasRequest aliasRequest = new AliasRequest();
+		aliasRequest.setAliasHttpMapping(aliasHttpMapping);
+		httpMappingService.setAlias(httpMappingId, aliasRequest, new MethodCallback<AliasResponse>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				CloudFacadeError error = errorReader.decodeError(method.getResponse().getText());
+				popupErrorHandler.displayError(error);
+				callback.onError(error);
+			}
+
+			@Override
+			public void onSuccess(Method method, AliasResponse response) {
+				callback.onAliasChanged(response.getAliasResponseHttpMapping());
 			}
 		});
 	}
