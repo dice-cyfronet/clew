@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.fusesource.restygwt.client.Json;
 
-public class HttpMappingResponse {
+public class HttpMappingsResponse {
 	@Json(name = "http_mappings")
 	private List<HttpMapping> httpMappings;
 

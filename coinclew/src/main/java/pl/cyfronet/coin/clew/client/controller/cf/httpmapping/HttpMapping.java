@@ -5,15 +5,38 @@ import org.fusesource.restygwt.client.Json;
 public class HttpMapping {
 	private String id;
 	@Json(name = "application_protocol")
+	
 	private String applicationProtocol;
+	
 	private String url;
+	
 	@Json(name = "appliance_id")
 	private String applianceId;
+	
 	@Json(name = "port_mapping_template_id")
 	private String portMappingTemplateId;
+	
 	@Json(name = "monitoring_status")
 	private String status;
 	
+	@Json(name = "custom_name")
+	private String custonName;
+	
+	@Json(name = "custom_url")
+	private String custromUrl;
+	
+	public String getCustonName() {
+		return custonName;
+	}
+	public void setCustonName(String custonName) {
+		this.custonName = custonName;
+	}
+	public String getCustromUrl() {
+		return custromUrl;
+	}
+	public void setCustromUrl(String custromUrl) {
+		this.custromUrl = custromUrl;
+	}
 	public String getStatus() {
 		return status;
 	}

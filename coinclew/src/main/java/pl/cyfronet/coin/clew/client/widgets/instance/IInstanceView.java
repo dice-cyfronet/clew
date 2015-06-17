@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import pl.cyfronet.coin.clew.client.widgets.httpmapping.IHttpMappingView;
+
 import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -14,15 +16,12 @@ public interface IInstanceView extends IsWidget {
 	}
 
 	HasText getName();
-//	HasText getSpec();
 	String getSpecStanza(String cpu, String ram, String disk);
 	HasHTML getIp();
 	HasHTML getLocation();
 	void setShutdownBusyState(boolean busy);
 	boolean confirmInstanceShutdown();
 	void addShutdownControl();
-	IsWidget addService(String name, String httpUrl, String httpsUrl, String descriptor, String redirectionId, String httpUrlStatus, String httpsUrlStatus);
-	IsWidget addWebApplication(String name, String httpUrl, String httpsUrl, String redirectionId, String httpUrlStatus, String httpsUrlStatus);
 	void showNoServicesLabel(boolean show);
 	void showNoWebApplicationsLabel(boolean show);
 	void addExternalInterfacesControl();
@@ -42,8 +41,6 @@ public interface IInstanceView extends IsWidget {
 	void enableExternalInterfaces(boolean enable);
 	void enableCollapsable(boolean enable);
 	void collapseDetails();
-	void updateHttpStatus(String redirectionId, String status);
-	void updateHttpsStatus(String redirectionId, String ststus);
 	void setFlavorDetails(String prepaidUntil, String flavorName, Float cpus, Float ram, Float hdd);
 	void showDetailsPanel(boolean show);
 	void showNoVmsLabel(boolean show);
@@ -57,4 +54,6 @@ public interface IInstanceView extends IsWidget {
 	String missingApplianceType();
 	void setSaveInPlaceBusyState(boolean state);
 	void enableSaveInPlace(boolean enable);
+	void addWebApplication(IsWidget view);
+	void addService(IHttpMappingView view);
 }

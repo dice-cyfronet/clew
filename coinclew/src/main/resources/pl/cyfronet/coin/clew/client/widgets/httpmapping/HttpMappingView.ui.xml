@@ -1,0 +1,70 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.coin.clew.client.widgets.httpmapping.HttpMappingMessages" field="messages"/>
+	<ui:style>
+		.service {
+			margin-top: 5px;
+			text-align: left;
+			float: left;
+			width: 100%;
+		}
+		.detailsName {
+			font-weight: bold;
+			text-align: left;
+			padding-left: 30px;
+		}
+		.linkPanel {
+			padding-left: 40px;
+			padding-right: 10px;
+			margin-top: 10px;
+		}
+		.anchor {
+			width: 3em;
+		}
+		.namePanel {
+			padding-right: 10px;
+		}
+		.aliasButton {
+			margin-left: 5px;
+		}
+	</ui:style>
+	<g:HTMLPanel addStyleNames="{style.service}">
+		<g:FlowPanel addStyleNames="{style.namePanel} clearfix">
+			<g:Label ui:field="name" addStyleNames="{style.detailsName} pull-left"/>
+			<b:Button ui:field="showDescriptor" icon="FILE" size="MINI" title="{messages.showDescriptorTitle}" addStyleNames="pull-right" visible="false"/>
+		</g:FlowPanel>
+		<g:FlowPanel>
+			<g:FlowPanel ui:field="httpPanel" visible="false" addStyleNames="{style.linkPanel} clearfix">
+				<g:Anchor ui:field="httpLink" target="_blank" addStyleNames="pull-left {style.anchor}">http</g:Anchor>
+				<b:Label ui:field="httpStatus" addStyleNames="pull-left"/>
+				<b:Button ui:field="changeHttpAlias" icon="BOLT" size="MINI" title="{messages.changeAliasTitle}"
+						addStyleNames="{style.aliasButton} pull-right"/>
+				<g:Label ui:field="noHttpAlias" text="{messages.noAliasLabel}" addStyleNames="muted pull-right" visible="false"/>
+				<g:Anchor ui:field="httpAliasAnchor" target="_blank" addStyleNames="pull-right" visible="false"/>
+			</g:FlowPanel>
+			<g:FlowPanel ui:field="httpsPanel" visible="false" addStyleNames="{style.linkPanel} clearfix">
+				<g:Anchor ui:field="httpsLink" target="_blank" addStyleNames="pull-left {style.anchor}">https</g:Anchor>
+				<b:Label ui:field="httpsStatus" addStyleNames="pull-left"/>
+				<b:Button ui:field="changeHttpsAlias" icon="BOLT" size="MINI" title="{messages.changeAliasTitle}"
+						addStyleNames="{style.aliasButton} pull-right"/>
+				<g:Label ui:field="noHttpsAlias" text="{messages.noAliasLabel}" addStyleNames="muted pull-right" visible="false"/>
+				<g:Anchor ui:field="httpsAliasAnchor" target="_blank" addStyleNames="pull-right" visible="false"/>
+			</g:FlowPanel>
+		</g:FlowPanel>
+		<b:Modal ui:field="aliasModal" title="{messages.aliasModalLabel}" keyboard="false" animation="true" backdrop="STATIC">
+			<b:Form>
+				<b:ControlLabel><ui:text from="{messages.aliasLabel}"/></b:ControlLabel>
+				<b:TextBox ui:field="alias" placeholder="{messages.aliasPlaceholder}" addStyleNames="input-block-level"/>
+				<b:HelpBlock text="{messages.aliasHelpBlock}"/>
+			</b:Form>
+			<b:ModalFooter>
+				<b:Button ui:field="updateAlias" text="{messages.updateAliasButtonLabel}" icon="ARROW_RIGHT" type="SUCCESS"/>
+			</b:ModalFooter>
+		</b:Modal>
+		<b:Modal ui:field="descriptorModal" title="{messages.descriptorModalTitle}" keyboard="false" animation="true" backdrop="STATIC">
+			<g:HTML ui:field="descriptor"/>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder>

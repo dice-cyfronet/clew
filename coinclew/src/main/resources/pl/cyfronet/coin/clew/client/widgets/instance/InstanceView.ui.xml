@@ -115,9 +115,6 @@
 		.buttons {
 			padding-right: 5px;
 		}
-		.statusLabel {
-			margin-bottom: 5px;
-		}
 		.column-panel {
 			display: table;
 			width: 100%;
