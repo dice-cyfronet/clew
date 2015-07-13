@@ -14,7 +14,7 @@
 			text-align: right;
 		}
 		.text-area {
-			resize: none;
+			resize: vertical;
 		}
 		.hidden {
 			visibility: hidden;

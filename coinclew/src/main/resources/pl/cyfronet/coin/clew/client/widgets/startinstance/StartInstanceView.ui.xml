@@ -8,9 +8,6 @@
 			text-align: right;
 			float: right;
 		}
-		.modal {
-			width: 1000px;
-		}
 		.title {
 			float: left;
 		}

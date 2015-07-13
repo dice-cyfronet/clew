@@ -40,6 +40,7 @@ public class InitialConfigsEditorView extends Composite implements IInitialConfi
 	
 	public InitialConfigsEditorView() {
 		initWidget(uiBinder.createAndBindUi(this));
+		modal.setWidth("1000px");
 	}
 	
 	@UiHandler("close")
