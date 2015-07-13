@@ -14,13 +14,18 @@
 			text-align: right;
 		}
 		.text-area {
-			resize: none;
+			resize: vertical;
 		}
 		.hidden {
 			visibility: hidden;
 		}
+		.modal {
+			width: 1000px;
+			margin-left: -500px;
+		}
 	</ui:style>
-	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC">
+	<b:Modal ui:field="modal" title="{messages.modalTitle}" closeVisible="false" keyboard="false" animation="true" backdrop="STATIC"
+			addStyleNames="{style.modal}">
 		<g:FlowPanel ui:field="container" addStyleNames="{style.container}"/>
 		<b:Form>
 			<b:ControlLabel><ui:text from="{messages.nameLabel}"/></b:ControlLabel>
