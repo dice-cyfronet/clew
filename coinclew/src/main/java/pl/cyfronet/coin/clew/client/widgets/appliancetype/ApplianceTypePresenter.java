@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.FlavorsCallback;
@@ -13,12 +17,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliancetype.Aggre
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
-import pl.cyfronet.coin.clew.client.controller.cf.user.Team;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
-
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = ApplianceTypeView.class, multiple = true)
 public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, MainEventBus> implements IApplianceTypePresenter {
@@ -31,7 +30,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		this.cloudFacadeController = cloudFacadeController;
 	}
 
-	public void setApplianceType(AggregateApplianceType applianceType, boolean developmentMode, List<Team> teams) {
+	public void setApplianceType(AggregateApplianceType applianceType, boolean developmentMode) {
 		this.applianceType = applianceType;
 		this.developmentMode = developmentMode;
 		view.getName().setText(applianceType.getName());
@@ -81,15 +80,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				view.showComputeSiteProgressIndicator(false);
 				view.showNoComputeSitesMessage();
 			}
-			
-			if(teams != null && teams.size() > 0) {
-				view.showTeamSelector();
-				view.addTeam("0", view.getAnyTeamLabel());
-				
-				for(Team team : teams) {
-					view.addTeam(team.getId(), team.getShortName());
-				}
-			}
 		}
 	}
 
@@ -97,10 +87,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	public void onStartApplianceType() {
 		String initialConfigurationId = view.getInitialConfigs().getValue();
 		eventBus.hideStartInstanceModal();
-		
-		Map<String, String> teams = new HashMap<String, String>();
-		teams.put(initialConfigurationId, getTeamId());
-		eventBus.startApplications(asList(initialConfigurationId), collectComputeSiteIds(), developmentMode, teams);
+		eventBus.startApplications(asList(initialConfigurationId), collectComputeSiteIds(), developmentMode);
 	}
 
 	public String getSelectedInitialConfigId() {
@@ -135,16 +122,6 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 				ApplianceTypePresenter.this.applianceType.getPreferenceMemory(),
 				ApplianceTypePresenter.this.applianceType.getPreferenceDisk(), null);
 		}
-	}
-
-	public String getTeamId() {
-		String teamId = view.getTeams().getValue();
-		
-		if(teamId != null && !teamId.equals("0")) {
-			return teamId;
-		}
-		
-		return null;
 	}
 
 	private void updateFlavorInformation(String applianceTypeId, String cpu, String ram,

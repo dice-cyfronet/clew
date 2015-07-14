@@ -12,6 +12,11 @@ import java.util.Map;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import pl.cyfronet.coin.clew.client.controller.cf.CfErrorReader;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
@@ -102,11 +107,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKeysResponse;
 import pl.cyfronet.coin.clew.client.controller.overlay.MutableBoolean;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
-
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Timer;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 @Singleton
 public class CloudFacadeController {
@@ -326,7 +326,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void startApplianceTypes(final List<String> configurationTemplateIds, final Map<String, List<String>> computeSiteIds, final Map<String, String> teams, final Command command) {
+	public void startApplianceTypes(final List<String> configurationTemplateIds, final Map<String, List<String>> computeSiteIds, final Command command) {
 		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -342,10 +342,6 @@ public class CloudFacadeController {
 					
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
-					}
-					
-					if(teams != null && teams.get(configurationTemplateId) != null) {
-						applianceInstance.setTeamId(teams.get(configurationTemplateId));
 					}
 					
 					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
@@ -857,7 +853,7 @@ public class CloudFacadeController {
 
 	public void startApplianceTypesInDevelopment(final Map<String, String> overrideNames, final String keyId, final Map<String,
 			Map<String, String>> parameterValues, final Map<String, String> cores, final Map<String, String> rams, final Map<String, String> disks,
-			final Map<String, String> teams, final Map<String, List<String>> computeSiteIds, final Command command) {
+			final Map<String, List<String>> computeSiteIds, final Command command) {
 		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
@@ -881,10 +877,6 @@ public class CloudFacadeController {
 					
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
-					}
-					
-					if(teams != null && teams.get(configurationTemplateId) != null) {
-						applianceInstance.setTeamId(teams.get(configurationTemplateId));
 					}
 					
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();

@@ -68,7 +68,7 @@
 		}
 		.picker-panel {
 			float: left;
-			width: 33%;
+			width: 49%;
 		}
 		.list-container {
 			height: 30px;
@@ -99,13 +99,6 @@
 					<g:FlowPanel addStyleNames="{style.list-container}">
 						<g:FlowPanel ui:field="computeSiteContainer" addStyleNames="{style.left-margin}"/>
 						<b:ListBox ui:field="computeSites" addStyleNames="span2" visible="false"/>
-					</g:FlowPanel>
-				</g:FlowPanel>
-				<g:FlowPanel addStyleNames="{style.picker-panel}">
-					<g:HTML ui:field="teamsLabel" addStyleNames="{style.init-conf-label}" visible="false"><ui:text from="{messages.pickTeamLabel}"/>:</g:HTML>
-					<g:FlowPanel addStyleNames="{style.list-container}">
-						<g:FlowPanel ui:field="teamContainer" addStyleNames="{style.left-margin}"/>
-						<b:ListBox ui:field="teams" addStyleNames="span2" visible="false"/>
 					</g:FlowPanel>
 				</g:FlowPanel>
 			</g:FlowPanel>

@@ -96,7 +96,7 @@ public interface MainEventBus extends EventBusWithLookup {
 	void editInitialConfiguration(String initialConfigurationId);
 
 	@Event(handlers = InitialConfigEmbedPresenter.class)
-	void startApplications(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds, boolean developmentMode, Map<String, String> teams);
+	void startApplications(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds, boolean developmentMode);
 
 	@Event(handlers = ApplicationsPresenter.class)
 	void deactivateApplicationsRefresh();
@@ -114,11 +114,10 @@ public interface MainEventBus extends EventBusWithLookup {
 	void updateApplianceTypeView(ApplianceType applianceType);
 
 	@Event(handlers = ApplianceDetailsPresenter.class)
-	void showApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds, Map<String, String> teams);
+	void showApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds);
 
 	@Event(handlers = ApplianceDetailsPresenter.class)
-	void showApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds,
-			Map<String, String> teams);
+	void showApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds);
 
 	@Event(handlers = DevelopmentPresenter.class)
 	void deactivateDevelopmentRefresh();

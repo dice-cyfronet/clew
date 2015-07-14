@@ -97,7 +97,7 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 				if (applianceConfigurations.size() == 0) {
 					view.showNoInitialConfigurationsMessage();
 				} else if (applianceConfigurations.size() == 1) {
-					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, true, null);
+					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, true);
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, true);
 				}

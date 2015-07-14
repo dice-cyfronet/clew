@@ -91,7 +91,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			for(AggregateApplianceType applianceType : applianceTypes) {
 				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
 				applianceTypePresenters.add(presenter);
-				presenter.setApplianceType(applianceType, developmentMode, user.getTeams());
+				presenter.setApplianceType(applianceType, developmentMode);
 				view.getApplianceTypeContainer().add(presenter.getView().asWidget());
 			}
 			
@@ -126,7 +126,6 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	public void onStartSelected() {
 		List<String> initialConfigurationIds = new ArrayList<String>();
 		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
-		Map<String, String> teams = new HashMap<String, String>();
 		
 		for(ApplianceTypePresenter presenter : applianceTypePresenters) {
 			String initialConfigId = presenter.getSelectedInitialConfigId();
@@ -140,16 +139,13 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			if(computeSiteId != null && !computeSiteId.equals("0")) {
 				computeSiteIds.put(initialConfigId, Arrays.asList(new String[] {computeSiteId}));
 			}
-			
-			String teamId = presenter.getTeamId();
-			teams.put(initialConfigId, teamId);
 		}
 		
 		if(initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
 			onHideStartInstanceModal();
-			eventBus.startApplications(initialConfigurationIds, computeSiteIds, developmentMode, teams);
+			eventBus.startApplications(initialConfigurationIds, computeSiteIds, developmentMode);
 		}
 	}
 

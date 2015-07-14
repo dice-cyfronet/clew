@@ -8,6 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
+
 import pl.cyfronet.coin.clew.client.ClewProperties;
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
@@ -22,18 +30,9 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigu
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.flavor.Flavor;
-import pl.cyfronet.coin.clew.client.controller.cf.user.Team;
 import pl.cyfronet.coin.clew.client.controller.cf.user.User;
 import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
-
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = ApplianceDetailsView.class)
 public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsView, MainEventBus> implements IApplianceDetailsPresenter {
@@ -50,7 +49,6 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private Map<String, List<String>> computeSiteIds;
 	private Map<String, HasValue<String>> pickedComputeSites;
 	private MiTicketReader ticketReader;
-	private Map<String, HasValue<String>> teams;
 
 	@Inject
 	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController, ClewProperties properties, MiTicketReader ticketReader) {
@@ -65,15 +63,13 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		flavorContainers = new HashMap<>();
 		applianceTypeIdToInitialConfigIdMapping = new HashMap<>();
 		pickedComputeSites = new HashMap<>();
-		teams = new HashMap<>();
 	}
 	
 	public void onStart() {
 		eventBus.addPopup(view);
 	}
 	
-	public void onShowApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds,
-			Map<String, String> teams) {
+	public void onShowApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds) {
 		this.computeSiteIds = computeSiteIds;
 		parameterValues = new HashMap<String, Map<String, String>>();
 		
@@ -81,14 +77,13 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 			parameterValues.put(initialConfigurationId, new HashMap<String, String>());
 		}
 		
-		loadKeysAndNamesAndShowModal(initialConfigurationIds, teams);
+		loadKeysAndNamesAndShowModal(initialConfigurationIds);
 	}
 
-	public void onShowApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds,
-			Map<String, String> teams) {
+	public void onShowApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds) {
 		this.parameterValues = parameterValues;
 		this.computeSiteIds = computeSiteIds;
-		loadKeysAndNamesAndShowModal(new ArrayList<String>(parameterValues.keySet()), teams);
+		loadKeysAndNamesAndShowModal(new ArrayList<String>(parameterValues.keySet()));
 	}
 
 	@Override
@@ -112,10 +107,9 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		Map<String, String> cores = createPreferenceMapping(this.cores);
 		Map<String, String> rams = createPreferenceMapping(this.rams);
 		Map<String, String> disks = createPreferenceMapping(this.disks);
-		Map<String, String> teams = createTeamsMapping();
 		updateComputeSites();
 		view.setStartBusyState(true);
-		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, cores, rams, disks, teams, computeSiteIds, new Command() {
+		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, cores, rams, disks, computeSiteIds, new Command() {
 			@Override
 			public void execute() {
 				view.setStartBusyState(false);
@@ -125,18 +119,6 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		});
 	}
 
-	private Map<String, String> createTeamsMapping() {
-		Map<String, String> result = new HashMap<>();
-		
-		for(String initialConfigId : teams.keySet()) {
-			if(!teams.get(initialConfigId).getValue().equals("0")) {
-				result.put(initialConfigId, teams.get(initialConfigId).getValue());
-			}
-		}
-		
-		return result;
-	}
-
 	@Override
 	public void onPreferenceChanged(String applianceTypeId) {
 		String initialConfigId = applianceTypeIdToInitialConfigIdMapping.get(applianceTypeId);
@@ -144,7 +126,7 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 				disks.get(initialConfigId).getValue());
 	}
 
-	private void loadKeysAndNamesAndShowModal(List<String> initialConfigurationIds, final Map<String, String> teams) {
+	private void loadKeysAndNamesAndShowModal(List<String> initialConfigurationIds) {
 		view.getNameContainer().clear();
 		names.clear();
 		view.getKeyContainer().clear();
@@ -166,8 +148,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 										public void processUser(User user) {
 											view.showDetailsProgress(false);
 											
-											for (ApplianceType applianceType : applianceTypes) { 
-												addDetails(applianceConfigurations, applianceType, computeSites, user.getTeams(), teams);
+											for(ApplianceType applianceType : applianceTypes) { 
+												addDetails(applianceConfigurations, applianceType, computeSites);
 											}
 										}
 									});
@@ -179,8 +161,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 								public void processUser(User user) {
 									view.showDetailsProgress(false);
 									
-									for (ApplianceType applianceType : applianceTypes) { 
-										addDetails(applianceConfigurations, applianceType, null, user.getTeams(), teams);
+									for(ApplianceType applianceType : applianceTypes) { 
+										addDetails(applianceConfigurations, applianceType, null);
 									}
 								}
 							});
@@ -207,8 +189,7 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		});
 	}
 	
-	private void addDetails(List<ApplianceConfiguration> applianceConfigurations, ApplianceType applianceType, List<ComputeSite> computeSites, List<Team> teams,
-			Map<String, String> selectedTeams) {
+	private void addDetails(List<ApplianceConfiguration> applianceConfigurations, ApplianceType applianceType, List<ComputeSite> computeSites) {
 		String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
 		names.put(initialConfigId, view.addName(applianceType.getName()));
 		cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()),
@@ -231,19 +212,6 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 			}
 			
 			pickedComputeSites.put(initialConfigId, view.addComputeSites(labelComputeSites(computeSites), chosenComputeSite));
-			view.addSeparator();
-			separatorAdded = true;
-		}
-		
-		if(teams != null && teams.size() > 0) {
-			Map<String, String> options = new LinkedHashMap<>();
-			options.put("0", view.getAnyTeamLabel());
-			
-			for(Team team : teams) {
-				options.put(team.getId(), team.getShortName());
-			}
-			
-			this.teams.put(initialConfigId, view.addTeamsSelector(options, selectedTeams != null ? selectedTeams.get(initialConfigId) : null));
 			view.addSeparator();
 			separatorAdded = true;
 		}

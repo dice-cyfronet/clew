@@ -84,7 +84,7 @@ public class ApplicationsPresenter extends BasePresenter<IApplicationsView, Main
 				if(applianceConfigurations.size() == 0) {
 					view.showNoInitialConfigurationsMessage();
 				} else if(applianceConfigurations.size() == 1) {
-					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, false, null);
+					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, false);
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, false);
 				}
