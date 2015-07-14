@@ -50,7 +50,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		} else {
 			view.showInitialConfigs();
 
-			for (ApplianceConfiguration config : applianceType.getInitialConfigurations()) {
+			for(ApplianceConfiguration config : applianceType.getInitialConfigurations()) {
 				view.addInitialConfigValue(config.getId(), config.getName());
 			}
 			
@@ -75,6 +75,8 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 					for(ComputeSite computeSite : applianceType.getComputeSites().values()) {
 						view.addComputeSite(computeSite.getId(), computeSite.getName());
 					}
+				} else {
+					view.showSingleComputeSiteLabel(applianceType.getComputeSites().values().iterator().next().getName());
 				}
 			} else {
 				view.showComputeSiteProgressIndicator(false);

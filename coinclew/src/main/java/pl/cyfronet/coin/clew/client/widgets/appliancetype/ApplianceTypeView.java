@@ -8,11 +8,9 @@ import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.LabelType;
 
-import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
-import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -33,6 +31,9 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
+
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
+import pl.cyfronet.coin.clew.client.widgets.appliancetype.IApplianceTypeView.IApplianceTypePresenter;
 
 public class ApplianceTypeView extends Composite implements IApplianceTypeView, ReverseViewInterface<IApplianceTypePresenter> {
 	private static ApplianceTypeViewUiBinder uiBinder = GWT.create(ApplianceTypeViewUiBinder.class);
@@ -279,5 +280,14 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);
 		label.getElement().getStyle().setProperty("fontSize", "smaller");
 		flavorContainer.add(label);
+	}
+
+	@Override
+	public void showSingleComputeSiteLabel(String computeSiteName) {
+		HTML label = new HTML(messages.singleComputeSiteLabel(computeSiteName));
+		label.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		label.getElement().getStyle().setPaddingTop(23, Unit.PX);
+		label.getElement().getStyle().setFontSize(14, Unit.PX);
+		computeSiteContainer.add(label);;
 	}
 }

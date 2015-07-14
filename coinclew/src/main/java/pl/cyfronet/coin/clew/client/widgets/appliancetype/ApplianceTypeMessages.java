@@ -14,4 +14,5 @@ public interface ApplianceTypeMessages extends Messages {
 	String noComputeSite();
 	String anyComputeSiteLabel();
 	String noFlavorInfo();
+	String singleComputeSiteLabel(String computeSiteName);
 }

@@ -95,7 +95,9 @@
 					</g:FlowPanel>
 				</g:FlowPanel>
 				<g:FlowPanel addStyleNames="{style.picker-panel}">
-					<g:HTML ui:field="computeSitesLabel" addStyleNames="{style.init-conf-label}" visible="false"><ui:text from="{messages.pickComputeSiteLabel}"/>:</g:HTML>
+					<g:HTML ui:field="computeSitesLabel" addStyleNames="{style.init-conf-label}" visible="false">
+						<ui:text from="{messages.pickComputeSiteLabel}"/>:
+					</g:HTML>
 					<g:FlowPanel addStyleNames="{style.list-container}">
 						<g:FlowPanel ui:field="computeSiteContainer" addStyleNames="{style.left-margin}"/>
 						<b:ListBox ui:field="computeSites" addStyleNames="span2" visible="false"/>
