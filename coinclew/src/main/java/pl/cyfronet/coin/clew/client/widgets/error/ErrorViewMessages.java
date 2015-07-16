@@ -4,7 +4,8 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface ErrorViewMessages extends Messages {
 	String accessForbidden();
-	String closeNotification();
 	String detailsLabel();
 	String headerLabel();
+	String requestIdHeader();
+	String requestIdNotice();
 }
