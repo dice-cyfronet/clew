@@ -95,6 +95,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 
 	@Override
 	public void onStartApplianceType() {
+		view.enableStartButton(false);
 		String initialConfigurationId = view.getInitialConfigs().getValue();
 		eventBus.hideStartInstanceModal();
 		

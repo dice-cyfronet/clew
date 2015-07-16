@@ -36,4 +36,5 @@ public interface IApplianceTypeView extends IsWidget {
 	void addTeam(String teamId, String teamName);
 	String getAnyTeamLabel();
 	HasValue<String> getTeams();
+	void enableStartButton(boolean disable);
 }

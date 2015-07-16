@@ -49,7 +49,83 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 			loadProperties();
 		}
 	}
+
+	@Override
+	public void onUpdate() {
+		String name = view.getName().getText().trim();
+		String description = view.getDescription().getText().trim();
+		boolean shared = view.getShared().getValue();
+		boolean scalable = view.getScalable().getValue();
+		String visibleFor = view.getVisibleFor().getValue();
+		String cores = view.getCores().getValue();
+		String ram = view.getRam().getValue();
+		String disk = view.getDisk().getValue();
+		view.clearErrorMessages();
+		
+		if (name.isEmpty()) {
+			view.displayNameEmptyMessage();
+		} else {
+			view.setUpdateBusyState(true);
+			cloudFacadeController.updateApplianceType(applianceTypeId, name, description, shared, scalable, visibleFor, cores, ram, disk,
+					new ApplianceTypeCallback() {
+						@Override
+						public void processApplianceType(ApplianceType applianceType) {
+							view.setUpdateBusyState(false);
+							view.showModal(false);
+							eventBus.updateApplianceTypeView(applianceType);
+						}
 	
+						@Override
+						public void onError(CloudFacadeError error) {
+							eventBus.displayError(error);
+						}
+					}, new ErrorCallback() {
+						@Override
+						public void onError(CloudFacadeError error) {
+							view.setUpdateBusyState(false);
+							view.displayGeneralError();
+						}});
+		}
+	}
+
+	@Override
+	public void onSave() {
+		String name = view.getName().getText().trim();
+		String description = view.getDescription().getText().trim();
+		boolean shared = view.getShared().getValue();
+		boolean scalable = view.getScalable().getValue();
+		String visibleFor = view.getVisibleFor().getValue();
+		String cores = view.getCores().getValue();
+		String ram = view.getRam().getValue();
+		String disk = view.getDisk().getValue();
+		view.clearErrorMessages();
+		
+		if (name.isEmpty()) {
+			view.displayNameEmptyMessage();
+		} else {
+			view.setSaveBusyState(true);
+			cloudFacadeController.saveApplianceType(applianceId, name, description, shared, scalable,
+					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
+						@Override
+						public void processApplianceType(ApplianceType applianceType) {
+							view.setSaveBusyState(false);
+							view.showModal(false);
+							eventBus.updateApplianceTypeView(applianceType);
+						}
+	
+						@Override
+						public void onError(CloudFacadeError error) {
+							//ignoring - handled by the error callback passed below
+						}
+					}, new ErrorCallback() {
+						@Override
+						public void onError(CloudFacadeError error) {
+							view.setSaveBusyState(false);
+							view.displayGeneralSaveError();
+						}});
+		}
+	}
+
 	private void setOptions() {
 		for(String value : properties.coreOptions()) {
 			view.addCoreOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
@@ -108,82 +184,6 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		});
 	}
 
-	@Override
-	public void onUpdate() {
-		String name = view.getName().getText().trim();
-		String description = view.getDescription().getText().trim();
-		boolean shared = view.getShared().getValue();
-		boolean scalable = view.getScalable().getValue();
-		String visibleFor = view.getVisibleFor().getValue();
-		String cores = view.getCores().getValue();
-		String ram = view.getRam().getValue();
-		String disk = view.getDisk().getValue();
-		view.clearErrorMessages();
-		
-		if (name.isEmpty()) {
-			view.displayNameEmptyMessage();
-		} else {
-			view.setUpdateBusyState(true);
-			cloudFacadeController.updateApplianceType(applianceTypeId, name, description, shared, scalable,
-					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
-						@Override
-						public void processApplianceType(ApplianceType applianceType) {
-							view.setUpdateBusyState(false);
-							view.showModal(false);
-							eventBus.updateApplianceTypeView(applianceType);
-						}
-
-						@Override
-						public void onError(CloudFacadeError error) {
-							eventBus.displayError(error);
-						}
-					}, new ErrorCallback() {
-						@Override
-						public void onError(CloudFacadeError error) {
-							view.setUpdateBusyState(false);
-							view.displayGeneralError();
-						}});
-		}
-	}
-
-	@Override
-	public void onSave() {
-		String name = view.getName().getText().trim();
-		String description = view.getDescription().getText().trim();
-		boolean shared = view.getShared().getValue();
-		boolean scalable = view.getScalable().getValue();
-		String visibleFor = view.getVisibleFor().getValue();
-		String cores = view.getCores().getValue();
-		String ram = view.getRam().getValue();
-		String disk = view.getDisk().getValue();
-		view.clearErrorMessages();
-		
-		if (name.isEmpty()) {
-			view.displayNameEmptyMessage();
-		} else {
-			view.setSaveBusyState(true);
-			cloudFacadeController.saveApplianceType(applianceId, name, description, shared, scalable,
-					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
-						@Override
-						public void processApplianceType(ApplianceType applianceType) {
-							view.setSaveBusyState(false);
-							view.showModal(false);
-							eventBus.updateApplianceTypeView(applianceType);
-						}
-
-						@Override
-						public void onError(CloudFacadeError error) {
-							//ignoring - handled by the error callback passed below
-						}
-					}, new ErrorCallback() {
-						@Override
-						public void onError(CloudFacadeError error) {
-							view.setSaveBusyState(false);
-							view.displayGeneralSaveError();
-						}});
-		}
-	}
-	
 	private String safeValue(String value) {
 		if(value == null) {
 			return "0";

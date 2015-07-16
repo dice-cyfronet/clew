@@ -326,4 +326,9 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 			}
 		};
 	}
+
+	@Override
+	public void enableStartButton(boolean enable) {
+		start.setEnabled(!enable);
+	}
 }
