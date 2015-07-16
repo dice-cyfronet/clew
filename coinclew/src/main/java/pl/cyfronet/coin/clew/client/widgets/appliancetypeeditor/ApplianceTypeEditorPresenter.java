@@ -73,10 +73,11 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 		view.getCores().setValue("0");
 		view.getRam().setValue("0");
 		view.getDisk().setValue("0");
+		view.clearErrorMessages();
 	}
 
 	private void applyMode() {
-		if (saveMode) {
+		if(saveMode) {
 			view.showSaveControl(true);
 			view.showUpdateControl(false);
 		} else {
@@ -172,7 +173,7 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 
 						@Override
 						public void onError(CloudFacadeError error) {
-							//ignoring
+							//ignoring - handled by the error callback passed below
 						}
 					}, new ErrorCallback() {
 						@Override

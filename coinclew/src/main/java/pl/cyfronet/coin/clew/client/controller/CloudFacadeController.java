@@ -1292,14 +1292,14 @@ public class CloudFacadeController {
 		applianceTypesService.addApplianceType(request, new MethodCallback<ApplianceTypeRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
-				if (errorCallback != null) {
+				if(errorCallback != null) {
 					errorCallback.onError(errorReader.decodeError(method.getResponse().getText()));
 				}
 			}
 
 			@Override
 			public void onSuccess(Method method, ApplianceTypeRequestResponse response) {
-				if (applianceTypeCallback != null) {
+				if(applianceTypeCallback != null) {
 					applianceTypeCallback.processApplianceType(response.getApplianceType());
 				}
 			}
