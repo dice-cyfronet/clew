@@ -2,12 +2,13 @@ package pl.cyfronet.coin.clew.client.widgets.error;
 
 import java.util.List;
 
-import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -17,14 +18,22 @@ import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import pl.cyfronet.coin.clew.client.controller.PopupErrorHandler;
+import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
+
 public class ErrorView extends Composite implements IErrorView {
 	private static ErrorViewUiBinder uiBinder = GWT.create(ErrorViewUiBinder.class);
+	
 	interface ErrorViewUiBinder extends UiBinder<Widget, ErrorView> {}
+	
 	interface Style extends CssResource {
 		String fieldError();
 	}
+	
+	private PopupErrorHandler popupErrorHandler;
 
-	public ErrorView() {
+	public ErrorView(PopupErrorHandler popupErrorHandler) {
+		this.popupErrorHandler = popupErrorHandler;
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -34,10 +43,24 @@ public class ErrorView extends Composite implements IErrorView {
 	@UiField HTMLPanel details;
 	@UiField FlowPanel detailsList;
 	@UiField Style style;
+	@UiField HTMLPanel requestIdPanel;
+	@UiField SpanElement requestIdSpan;
+	
+	@UiHandler("close")
+	void close(ClickEvent event) {
+		popupErrorHandler.onClose();
+	}
 
 	@Override
 	public void setError(CloudFacadeError error) {
 		this.message.setText(error.getMessage());
+		
+		if(error.getRequestId() != null) {
+			requestIdPanel.setVisible(true);
+			requestIdSpan.setInnerHTML(error.getRequestId());
+		} else {
+			requestIdPanel.setVisible(false);
+		}
 		
 		if(error.getDetails() != null && error.getDetails().size() > 0) {
 			detailsList.clear();

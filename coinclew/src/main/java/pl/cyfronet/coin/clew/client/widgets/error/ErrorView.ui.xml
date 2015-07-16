@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	<ui:with type="pl.cyfronet.coin.clew.client.widgets.error.ErrorViewMessages" field="messages"/>
 	<ui:style type="pl.cyfronet.coin.clew.client.widgets.error.ErrorView.Style">
 		.popup {
@@ -29,21 +30,47 @@
 		.details {
 			margin-left: 10px;
 		}
+		.closePanel {
+			text-align: right;
+		}
+		.requestIdNotice {
+			font-size: smaller;
+			font-style: italic;
+			padding-left: 10px;
+		}
+		.closeIcon {
+			cursor: pointer;
+		}
+		.detailsPanel {
+			margin-top: 15px;
+		}
+		.requestIdPanel {
+			margin-top: 15px;
+		}
 	</ui:style>
 	<g:FlowPanel>
-		<g:PopupPanel ui:field="popup" addStyleNames="{style.popup} alert alert-danger">
+		<g:PopupPanel ui:field="popup" addStyleNames="{style.popup} alert alert-error">
 			<g:HTMLPanel>
+				<g:FlowPanel addStyleNames="{style.closePanel}">
+					<g:FocusPanel ui:field="close">
+						<b:Icon type="TIMES" addStyleNames="{style.closeIcon}"/>
+					</g:FocusPanel>
+				</g:FlowPanel>
 				<h4>
 					<g:HTML><ui:text from="{messages.headerLabel}"/></g:HTML>
 				</h4>
 				<g:HTML ui:field="message" addStyleNames="{style.mainMessage}"/>
-				<g:HTMLPanel ui:field="details" visible="false">
+				<g:HTMLPanel ui:field="requestIdPanel" visible="false" addStyleNames="{style.requestIdPanel}">
+					<div>
+						<strong><ui:text from="{messages.requestIdHeader}"/>:</strong>
+						<span ui:field="requestIdSpan"></span>
+					</div>
+					<div class="{style.requestIdNotice}"><ui:text from="{messages.requestIdNotice}"/></div>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="details" visible="false" addStyleNames="{style.detailsPanel}">
 					<g:HTML addStyleNames="{style.detailsHeader}"><ui:text from="{messages.detailsLabel}"/></g:HTML>
 					<g:FlowPanel ui:field="detailsList" addStyleNames="{style.details}"/>
 				</g:HTMLPanel>
-				<g:HTML addStyleNames="{style.notification}">
-					<ui:text from="{messages.closeNotification}"/>
-				</g:HTML>
 			</g:HTMLPanel>
 		</g:PopupPanel>
 	</g:FlowPanel>
