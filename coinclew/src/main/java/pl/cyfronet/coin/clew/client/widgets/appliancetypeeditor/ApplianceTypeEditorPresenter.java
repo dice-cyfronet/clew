@@ -49,63 +49,6 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 			loadProperties();
 		}
 	}
-	
-	private void setOptions() {
-		for(String value : properties.coreOptions()) {
-			view.addCoreOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
-		}
-		
-		for(String value : properties.ramOptions()) {
-			view.addRamOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
-		}
-		
-		for(String value : properties.diskOptions()) {
-			view.addDiskOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
-		}
-	}
-
-	private void clearControls() {
-		view.getName().setText("");
-		view.getDescription().setText("");
-		view.getShared().setValue(false);
-		view.getScalable().setValue(false);
-		view.getVisibleFor().setValue("all");
-		view.getCores().setValue("0");
-		view.getRam().setValue("0");
-		view.getDisk().setValue("0");
-	}
-
-	private void applyMode() {
-		if (saveMode) {
-			view.showSaveControl(true);
-			view.showUpdateControl(false);
-		} else {
-			view.showSaveControl(false);
-			view.showUpdateControl(true);
-		}
-	}
-
-	private void loadProperties() {
-		view.clearErrorMessages(); 
-		cloudFacadeController.getApplianceType(applianceTypeId, new ApplianceTypeCallback() {
-			@Override
-			public void processApplianceType(ApplianceType applianceType) {
-				view.getName().setText(applianceType.getName());
-				view.getDescription().setText(applianceType.getDescription());
-				view.getShared().setValue(applianceType.isShared());
-				view.getScalable().setValue(applianceType.isScalable());
-				view.getVisibleFor().setValue(applianceType.getVisibleTo());
-				view.getCores().setValue(safeValue(applianceType.getPreferenceCpu()));
-				view.getRam().setValue(safeValue(applianceType.getPreferenceMemory()));
-				view.getDisk().setValue(safeValue(applianceType.getPreferenceDisk()));
-			}
-
-			@Override
-			public void onError(CloudFacadeError error) {
-				eventBus.displayError(error);
-			}
-		});
-	}
 
 	@Override
 	public void onUpdate() {
@@ -123,15 +66,15 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 			view.displayNameEmptyMessage();
 		} else {
 			view.setUpdateBusyState(true);
-			cloudFacadeController.updateApplianceType(applianceTypeId, name, description, shared, scalable,
-					visibleFor, cores, ram, disk, new ApplianceTypeCallback() {
+			cloudFacadeController.updateApplianceType(applianceTypeId, name, description, shared, scalable, visibleFor, cores, ram, disk,
+					new ApplianceTypeCallback() {
 						@Override
 						public void processApplianceType(ApplianceType applianceType) {
 							view.setUpdateBusyState(false);
 							view.showModal(false);
 							eventBus.updateApplianceTypeView(applianceType);
 						}
-
+	
 						@Override
 						public void onError(CloudFacadeError error) {
 							eventBus.displayError(error);
@@ -169,10 +112,10 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 							view.showModal(false);
 							eventBus.updateApplianceTypeView(applianceType);
 						}
-
+	
 						@Override
 						public void onError(CloudFacadeError error) {
-							//ignoring
+							//ignoring - handled by the error callback passed below
 						}
 					}, new ErrorCallback() {
 						@Override
@@ -182,7 +125,65 @@ public class ApplianceTypeEditorPresenter extends BasePresenter<IApplianceTypeEd
 						}});
 		}
 	}
-	
+
+	private void setOptions() {
+		for(String value : properties.coreOptions()) {
+			view.addCoreOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
+		}
+		
+		for(String value : properties.ramOptions()) {
+			view.addRamOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
+		}
+		
+		for(String value : properties.diskOptions()) {
+			view.addDiskOption(value, value.equals("0") ? view.getDefaultOptionLabel() : value);
+		}
+	}
+
+	private void clearControls() {
+		view.getName().setText("");
+		view.getDescription().setText("");
+		view.getShared().setValue(false);
+		view.getScalable().setValue(false);
+		view.getVisibleFor().setValue("all");
+		view.getCores().setValue("0");
+		view.getRam().setValue("0");
+		view.getDisk().setValue("0");
+		view.clearErrorMessages();
+	}
+
+	private void applyMode() {
+		if(saveMode) {
+			view.showSaveControl(true);
+			view.showUpdateControl(false);
+		} else {
+			view.showSaveControl(false);
+			view.showUpdateControl(true);
+		}
+	}
+
+	private void loadProperties() {
+		view.clearErrorMessages(); 
+		cloudFacadeController.getApplianceType(applianceTypeId, new ApplianceTypeCallback() {
+			@Override
+			public void processApplianceType(ApplianceType applianceType) {
+				view.getName().setText(applianceType.getName());
+				view.getDescription().setText(applianceType.getDescription());
+				view.getShared().setValue(applianceType.isShared());
+				view.getScalable().setValue(applianceType.isScalable());
+				view.getVisibleFor().setValue(applianceType.getVisibleTo());
+				view.getCores().setValue(safeValue(applianceType.getPreferenceCpu()));
+				view.getRam().setValue(safeValue(applianceType.getPreferenceMemory()));
+				view.getDisk().setValue(safeValue(applianceType.getPreferenceDisk()));
+			}
+
+			@Override
+			public void onError(CloudFacadeError error) {
+				eventBus.displayError(error);
+			}
+		});
+	}
+
 	private String safeValue(String value) {
 		if(value == null) {
 			return "0";

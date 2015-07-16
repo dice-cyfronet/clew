@@ -33,4 +33,5 @@ public interface IApplianceTypeView extends IsWidget {
 	HasValue<String> getComputeSites();
 	void showNoFlavorInformation();
 	void showSingleComputeSiteLabel(String computeSiteName);
+	void enableStartButton(boolean enable);
 }

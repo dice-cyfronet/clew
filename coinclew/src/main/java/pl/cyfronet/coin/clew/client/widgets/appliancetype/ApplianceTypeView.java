@@ -290,4 +290,9 @@ public class ApplianceTypeView extends Composite implements IApplianceTypeView, 
 		label.getElement().getStyle().setFontSize(14, Unit.PX);
 		computeSiteContainer.add(label);;
 	}
+
+	@Override
+	public void enableStartButton(boolean enable) {
+		start.setEnabled(enable);
+	}
 }
