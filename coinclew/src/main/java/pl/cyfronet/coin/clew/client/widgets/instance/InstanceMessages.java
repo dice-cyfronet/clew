@@ -29,4 +29,5 @@ public interface InstanceMessages extends Messages {
 	String saveInPlaceTooltip();
 	String missingApplianceType();
 	String confirmSaveInPlace();
+	String initializingLabel();
 }

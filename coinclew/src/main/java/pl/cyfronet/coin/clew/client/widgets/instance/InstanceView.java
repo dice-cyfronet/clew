@@ -480,4 +480,9 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void addService(IHttpMappingView view) {
 		serviceContainer.add(view);
 	}
+
+	@Override
+	public String getInitializingLabel() {
+		return messages.initializingLabel();
+	}
 }
