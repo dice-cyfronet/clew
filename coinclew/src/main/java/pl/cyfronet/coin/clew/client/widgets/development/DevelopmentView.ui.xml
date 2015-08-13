@@ -14,7 +14,8 @@
 		.actions {
 			float: left;
 			width: 100%;
-			margin-top: 20px;
+			margin-bottom: 20px;
+			text-align: right;
 		}
 		.action {
 			margin-right: 20px;
@@ -68,6 +69,10 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
+		<g:FlowPanel addStyleNames="{style.actions}">
+			<b:Button ui:field="manageUserKeys" addStyleNames="{style.action}"><ui:text from="{messages.manageUserKeysButtonLabel}"/></b:Button>
+			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
+		</g:FlowPanel>
 		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.runningDevInstanceLabel}"/></g:HTML>
 		<g:FlowPanel ui:field="headerRow" visible="false" addStyleNames="{style.header-row}">
 			<g:HTML addStyleNames="{style.name} {style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
@@ -81,9 +86,5 @@
 		<g:FlowPanel ui:field="runningInstancesContainer" addStyleNames="{style.container}"/>
 		<g:HTML addStyleNames="{style.sectionHeader}"><ui:text from="{messages.cloudAtomicServicesLabel}"/></g:HTML>
 		<g:FlowPanel ui:field="atomicServicesContainer" addStyleNames="{style.container}"/>
-		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="startDevInstance" type="SUCCESS" addStyleNames="{style.action}"><ui:text from="{messages.startDevInstanceButtonLabel}"/></b:Button>
-			<b:Button ui:field="manageUserKeys" addStyleNames="{style.action}"><ui:text from="{messages.manageUserKeysButtonLabel}"/></b:Button>
-		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>
