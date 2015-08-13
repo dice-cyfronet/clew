@@ -51,10 +51,14 @@
 		.actions {
 			float: left;
 			width: 100%;
-			margin-top: 20px;
+			margin-bottom: 20px;
+			text-align: right;
 		}
 	</ui:style>
 	<g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.actions}">
+			<b:Button ui:field="startInstance" type="SUCCESS"><ui:text from="{messages.startInstanceButtonLabel}"/></b:Button>
+		</g:FlowPanel>
 		<g:FlowPanel ui:field="headerRow" visible="false" addStyleNames="{style.header-row}">
 			<g:HTML addStyleNames="{style.name} {style.header}"><ui:text from="{messages.nameHeader}"/></g:HTML>
 			<!-- <g:HTML addStyleNames="{style.spec}"><ui:text from="{messages.specHeader}"/></g:HTML> -->
@@ -65,8 +69,5 @@
 			<g:HTML addStyleNames="{style.instance-actions} {style.right} {style.header}"><ui:text from="{messages.actionsHeader}"/></g:HTML>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="instanceContainer" addStyleNames="{style.center}"/>
-		<g:FlowPanel addStyleNames="{style.actions}">
-			<b:Button ui:field="startInstance" type="SUCCESS"><ui:text from="{messages.startInstanceButtonLabel}"/></b:Button>
-		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>
