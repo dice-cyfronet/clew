@@ -1,6 +1,9 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
 import static pl.cyfronet.coin.clew.client.UrlHelper.joinUrl;
+import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_NEW;
+import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_SATISFIED;
+import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_UNSATISFIED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +26,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.Aggregate
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregatePortMappingTemplate;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateVm;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance;
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
 import pl.cyfronet.coin.clew.client.controller.cf.endpoint.Endpoint;
 import pl.cyfronet.coin.clew.client.controller.cf.httpmapping.HttpMapping;
@@ -75,7 +77,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		this.applianceInstance = applianceInstance;
 		view.getName().setText(applianceInstance.getName());
 
-		if(applianceInstance.getState() == State.unsatisfied) {
+		if(STATE_UNSATISFIED.equals(applianceInstance.getState())) {
 			view.setUnsatisfiedState(applianceInstance.getStateExplanation());
 		}
 		
@@ -95,7 +97,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			view.addShutdownControl();
 		}
 		
-		if(applianceInstance.getState() == State.satisfied) {
+		if(STATE_SATISFIED.equals(applianceInstance.getState())) {
 			displayDetails();
 		}
 		
@@ -104,13 +106,13 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			view.addSaveControl();
 			view.addSaveInPlaceControl();
 			
-			if(applianceInstance.getState() == State.unsatisfied) {
+			if(STATE_UNSATISFIED.equals(applianceInstance.getState())) {
 				view.enableExternalInterfaces(false);
 				view.enableSave(false);
 			}
 		}
 		
-		if(applianceInstance.getState() == State.satisfied) {
+		if(Arrays.asList(STATE_SATISFIED, STATE_NEW).contains(applianceInstance.getState())) {
 			if(applianceInstance.getVirtualMachines() != null && applianceInstance.getVirtualMachines().size() > 0) {
 				view.showDetailsPanel(true);
 				view.showNoVmsLabel(false);
@@ -124,8 +126,14 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.showNoVmsLabel(true);
 				view.getIp().setHTML("&nbsp;");
 				view.getLocation().setHTML("&nbsp;");
-				view.setStatus(view.getNoVmsLabel());
-				view.enableCollapsable(true);
+				
+				if(STATE_NEW.equals(applianceInstance.getState())) {
+					view.setStatus(view.getInitializingLabel());
+					view.enableCollapsable(false);
+				} else {
+					view.setStatus(view.getNoVmsLabel());
+					view.enableCollapsable(true);
+				}
 			}
 		}
 	}
@@ -459,7 +467,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 	
 	private void updateView(AggregateAppliance applianceInstance) {
-		if(applianceInstance.getState() == State.satisfied) {
+		if(STATE_SATISFIED.equals(applianceInstance.getState())) {
 			if(applianceInstance.getVirtualMachines().size() > 0) {
 				view.showDetailsPanel(true);
 				view.showNoVmsLabel(false);

@@ -5,24 +5,31 @@ import java.util.List;
 import org.fusesource.restygwt.client.Json;
 
 public class ApplianceInstance extends NewApplianceInstance {
-	public enum State {
-		satisfied,
-		unsatisfied
-	}
+	public static final String STATE_SATISFIED = "satisfied";
+	public static final String STATE_UNSATISFIED = "unsatisfied";
+	public static final String STATE_NEW = "new";
 	
 	private String id;
+	
 	@Json(name = "appliance_type_id")
 	private String applianceTypeId;
+	
 	@Json(name = "appliance_configuration_instance_id")
 	private String configurationInstanceId;
-	private State state;
+	
+	private String state;
+	
 	@Json(name = "state_explanation")
 	private String stateExplanation;
+	
 	@Json(name = "amount_billed")
 	private long amountBilled;
+	
 	@Json(name = "prepaid_until")
 	private String prepaidUntil;
+	
 	private String description;
+	
 	@Json(name = "virtual_machine_ids")
 	private List<String> virtualMachineIds;
 	
@@ -38,10 +45,10 @@ public class ApplianceInstance extends NewApplianceInstance {
 	public void setAmountBilled(long amountBilled) {
 		this.amountBilled = amountBilled;
 	}
-	public State getState() {
+	public String getState() {
 		return state;
 	}
-	public void setState(State state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 	public String getStateExplanation() {

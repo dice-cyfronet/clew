@@ -56,4 +56,5 @@ public interface IInstanceView extends IsWidget {
 	void enableSaveInPlace(boolean enable);
 	void addWebApplication(IsWidget view);
 	void addService(IHttpMappingView view);
+	String getInitializingLabel();
 }

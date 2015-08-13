@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.fusesource.restygwt.client.Json;
 
-import pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.State;
-
 public class AggregateAppliance {
 	private String id;
 	
@@ -15,7 +13,7 @@ public class AggregateAppliance {
 	@Json(name = "virtual_machines")
 	private List<AggregateVm> virtualMachines;
 	
-	private State state;
+	private String state;
 	private String name;
 	private String description;
 	
@@ -96,11 +94,11 @@ public class AggregateAppliance {
 				+ description + ", stateExplanation=" + stateExplanation + "]";
 	}
 
-	public State getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
