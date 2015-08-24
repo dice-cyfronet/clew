@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.extinterfaces;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -127,8 +129,8 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 							cloudFacadeController.getHttpMappingsForPortMappingTemplateIdOrInstanceId(portMappingTemplate.getId(), null, new HttpMappingsCallback() {
 								@Override
 								public void processHttpMappings(final List<HttpMapping> httpMappings) {
-									String httpUrl = Arrays.asList(new String[] {"http", "http_https"}).contains(portMappingTemplate.getApplicationProtocol()) ? "" : null;
-									String httpsUrl = Arrays.asList(new String[] {"https", "http_https"}).contains(portMappingTemplate.getApplicationProtocol()) ? "" : null;;
+									String httpUrl = asList("http", "http_https").contains(portMappingTemplate.getApplicationProtocol()) ? "" : null;
+									String httpsUrl = asList("https", "http_https").contains(portMappingTemplate.getApplicationProtocol()) ? "" : null;
 									
 									for (HttpMapping httpMapping : httpMappings) {
 										if (httpMapping.getApplicationProtocol().equals("http")) {
@@ -228,7 +230,7 @@ public class ExternalInterfacesEditorPresenter extends BasePresenter<IExternalIn
 	
 	private boolean httpMappingExists() {
 		for (PortMappingTemplate mappingTemplate : mappings.keySet()) {
-			if (Arrays.asList(new String[] {"http", "https", "http_https"})
+			if (asList("http", "https", "http_https")
 					.contains(mappingTemplate.getApplicationProtocol())) {
 				return true;
 			}
