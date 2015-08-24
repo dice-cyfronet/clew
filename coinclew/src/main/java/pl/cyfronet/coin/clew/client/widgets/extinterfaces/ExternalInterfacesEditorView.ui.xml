@@ -83,7 +83,6 @@
 						<g:item value="none"><ui:text from="{messages.externalInterfaceNoneType}"/></g:item>
 						<g:item value="http"><ui:text from="{messages.externalInterfaceHttpType}"/></g:item>
 						<g:item value="https"><ui:text from="{messages.externalInterfaceHttpsType}"/></g:item>
-						<g:item value="http_https"><ui:text from="{messages.externalInterfaceHttpAndHttpsType}"/></g:item>
 					</b:ListBox>
 					<b:ControlLabel><ui:text from="{messages.proxySendTimeoutLabel}"/></b:ControlLabel>
 					<b:TextBox ui:field="proxySendTimeout" placeholder="{messages.proxySendTimeoutPlaceholder}" addStyleNames="input-block-level"/>

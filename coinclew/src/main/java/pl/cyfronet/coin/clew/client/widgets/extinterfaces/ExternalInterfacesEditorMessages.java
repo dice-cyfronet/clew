@@ -15,7 +15,6 @@ public interface ExternalInterfacesEditorMessages extends Messages {
 	String addExternalInterfaceButtonLabel();
 	String externalInterfaceHttpType();
 	String externalInterfaceHttpsType();
-	String externalInterfaceHttpAndHttpsType();
 	String noExternalInterfacesLabel();
 	String noEndpointsLabel();
 	String externalInterfaceUdpProtocol();
