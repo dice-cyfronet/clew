@@ -19,6 +19,7 @@ import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -99,7 +100,7 @@ public class InitialConfigEmbedView extends Composite implements IInitialConfigE
 		Map<String, HasText> result = new HashMap<String, HasText>();
 		
 		FlowPanel panel = new FlowPanel();
-		HTML header = new HTML(applianceTypeName + " (" + configName + ")");
+		HTML header = new HTML(SafeHtmlUtils.fromString(applianceTypeName + " (" + configName + ")"));
 		header.addStyleName(style.header());
 		panel.add(header);
 		
