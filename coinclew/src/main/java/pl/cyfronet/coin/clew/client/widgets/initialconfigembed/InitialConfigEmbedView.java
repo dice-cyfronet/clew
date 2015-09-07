@@ -17,9 +17,6 @@ import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.InputType;
 
-import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
-import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.IInitialConfigEmbedView.IInitialConfigEmbedPresenter;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -31,6 +28,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
+
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
+import pl.cyfronet.coin.clew.client.widgets.initialconfigembed.IInitialConfigEmbedView.IInitialConfigEmbedPresenter;
 
 public class InitialConfigEmbedView extends Composite implements IInitialConfigEmbedView, ReverseViewInterface<IInitialConfigEmbedPresenter> {
 	private static InitialConfigEmbedViewUiBinder uiBinder = GWT.create(InitialConfigEmbedViewUiBinder.class);

@@ -14,6 +14,7 @@ import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfigu
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 import com.mvp4g.client.annotation.Presenter;
 import com.mvp4g.client.presenter.BasePresenter;
@@ -47,7 +48,7 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 		}
 		
 		String description = applianceType.getApplianceType().getDescription();
-		view.getDescription().setHTML(description != null && !description.isEmpty() ? description : "&nbsp;");
+		view.getDescription().setHTML(description != null && !description.isEmpty() ? SafeHtmlUtils.fromString(description).asString() : "&nbsp;");
 		
 		if (applianceType.getUser().getLogin().equals(ticketReader.getUserLogin())) {
 			view.addRemoveButton();

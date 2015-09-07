@@ -36,6 +36,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -259,7 +260,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.mapping());
 		
-		HTML name = new HTML(serviceName + " (" + transportProtocol + ")");
+		HTML name = new HTML(SafeHtmlUtils.fromString(serviceName + " (" + transportProtocol + ")"));
 		name.addStyleName(style.altName());
 		panel.add(name);
 		
@@ -512,7 +513,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 		FlowPanel panel = new FlowPanel();
 		panel.addStyleName(style.mapping());
 		
-		HTML name = new HTML(endpointName);
+		HTML name = new HTML(SafeHtmlUtils.fromString(endpointName));
 		name.addStyleName(style.name());
 		panel.add(name);
 
