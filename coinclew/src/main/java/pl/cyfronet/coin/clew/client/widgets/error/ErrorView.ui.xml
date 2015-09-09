@@ -49,7 +49,7 @@
 		}
 	</ui:style>
 	<g:FlowPanel>
-		<g:PopupPanel ui:field="popup" addStyleNames="{style.popup} alert alert-error">
+		<g:PopupPanel ui:field="popup" addStyleNames="{style.popup} alert alert-danger">
 			<g:HTMLPanel>
 				<g:FlowPanel addStyleNames="{style.closePanel}">
 					<g:FocusPanel ui:field="close">

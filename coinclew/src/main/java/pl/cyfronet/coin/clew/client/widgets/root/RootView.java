@@ -33,7 +33,7 @@ public class RootView extends Composite implements IRootView, ReverseViewInterfa
 
 	public RootView() {
 		errorLabel = new HTML();
-		errorLabel.addStyleName("alert alert-error");
+		errorLabel.addStyleName("alert alert-danger");
 		errorLabel.getElement().getStyle().setMargin(10, Unit.PX);
 		
 		errorPopup = new PopupPanel();
