@@ -118,14 +118,6 @@ public class MiTicketReader {
 		
 		return result;
 	}
-
-	public String getBase64Proxy() {
-		if(!devProperties.proxyBase64().equals(DevelopmentProperties.MISSING)) {
-			return devProperties.proxyBase64();
-		}
-		
-		return null;
-	}
 	
 	public String getProject() {
 		if(!devProperties.project().equals(DevelopmentProperties.MISSING)) {

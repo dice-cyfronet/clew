@@ -8,6 +8,7 @@ import java.util.Map;
 import org.gwtbootstrap3.client.ui.TextBox;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.ButtonElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.UListElement;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -24,14 +25,23 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class EditableListBox extends Composite {
 	private static EditableListBoxUiBinder uiBinder = GWT.create(EditableListBoxUiBinder.class);
+	
 	interface EditableListBoxUiBinder extends UiBinder<Widget, EditableListBox> {}
 	
 	private Map<String, String> labels;
+	
 	private List<ChangeHandler> handlers;
+	
 	private Timer keyTimer;
 	
-	@UiField UListElement list;
-	@UiField TextBox textBox;
+	@UiField
+	UListElement list;
+	
+	@UiField
+	TextBox textBox;
+	
+	@UiField
+	ButtonElement dropdownButton;
 
 	public EditableListBox() {
 		labels = new HashMap<>();
@@ -96,6 +106,16 @@ public class EditableListBox extends Composite {
 		return label;
 	}
 	
+	public void setEnabled(boolean enabled) {
+		textBox.setEnabled(enabled);
+		
+		if(enabled) {
+			dropdownButton.removeClassName("disabled");
+		} else {
+			dropdownButton.addClassName("disabled");
+		}
+	}
+
 	private void valueChanged() {
 		for(ChangeHandler handler : handlers) {
 			handler.onChange(null);

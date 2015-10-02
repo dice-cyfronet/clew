@@ -7,7 +7,7 @@
 	<g:HTMLPanel addStyleNames="form-group">
 		<g:HTMLPanel addStyleNames="input-group">
 			<div class="input-group-btn">
-				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				<button ui:field="dropdownButton" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 					<span class="caret"></span>
 				</button>
 				<ul ui:field="list" class="dropdown-menu"></ul>
