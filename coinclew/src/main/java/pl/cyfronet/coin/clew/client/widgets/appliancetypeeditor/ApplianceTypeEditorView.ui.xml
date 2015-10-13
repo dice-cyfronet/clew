@@ -68,12 +68,12 @@
 					<label><ui:text from="{messages.diskLabel}"/></label>
 					<g:HTMLPanel addStyleNames="input-group">
 						<div class="input-group-btn">
-							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+							<button class="btn btn-default dropdown-toggle disabled" data-toggle="dropdown">
 								<span class="caret"></span>
 							</button>
 							<ul ui:field="diskList" class="dropdown-menu"></ul>
 						</div>
-						<b:TextBox ui:field="disk"/>
+						<b:TextBox ui:field="disk" enabled="false"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</b:Form>
