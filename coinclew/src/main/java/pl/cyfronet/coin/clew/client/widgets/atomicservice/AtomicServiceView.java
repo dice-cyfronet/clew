@@ -6,6 +6,7 @@ import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAt
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ButtonGroup;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
@@ -19,6 +20,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -27,18 +29,38 @@ import com.mvp4g.client.view.ReverseViewInterface;
 
 public class AtomicServiceView extends Composite implements IAtomicServiceView, ReverseViewInterface<IAtomicServicePresenter> {
 	private static AtomicServiceViewUiBinder uiBinder = GWT.create(AtomicServiceViewUiBinder.class);
+	
 	interface AtomicServiceViewUiBinder extends UiBinder<Widget, AtomicServiceView> {}
 	
 	private IAtomicServicePresenter presenter;
+	
 	private Button removeButton;
+	
 	private Label inactiveLabel;
 	
-	@UiField InlineHTML name;
-	@UiField AtomicServiceMessages messages;
-	@UiField ButtonGroup buttons;
-	@UiField InlineHTML description;
-	@UiField FlowPanel inactiveContainer;
-	@UiField Button startInstance;
+	@UiField
+	InlineHTML name;
+	
+	@UiField
+	AtomicServiceMessages messages;
+	
+	@UiField
+	ButtonGroup buttons;
+	
+	@UiField
+	InlineHTML description;
+	
+	@UiField
+	FlowPanel inactiveContainer;
+	
+	@UiField
+	Button startInstance;
+	
+	@UiField
+	HTML computeSiteLabel;
+	
+	@UiField
+	ListBox computeSiteList;
 
 	public AtomicServiceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -142,5 +164,40 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	@Override
 	public void enableStartButton(boolean enable) {
 		startInstance.setEnabled(enable);
+	}
+
+	@Override
+	public void showComputeSiteList(boolean show) {
+		computeSiteList.setVisible(show);
+	}
+
+	@Override
+	public void showComputeSiteLabel(boolean show) {
+		computeSiteLabel.setVisible(true);
+	}
+
+	@Override
+	public void setNoComputeSitesLabel() {
+		computeSiteLabel.setHTML(messages.noComputeSiteLabels());
+	}
+
+	@Override
+	public void setComputeSiteLabel(String computeSiteName) {
+		computeSiteLabel.setHTML(messages.computeSiteLabel(computeSiteName));
+	}
+
+	@Override
+	public void addComputeSiteOption(String computeSiteId, String computeSiteName) {
+		computeSiteList.addItem(computeSiteName, computeSiteId);
+	}
+
+	@Override
+	public String getAnyComputeSiteLabel() {
+		return messages.anyComputeSiteLabel();
+	}
+
+	@Override
+	public String getSelectedComputeSiteValue() {
+		return computeSiteList.getSelectedValue();
 	}
 }

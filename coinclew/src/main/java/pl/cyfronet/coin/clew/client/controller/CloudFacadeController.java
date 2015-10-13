@@ -1521,16 +1521,45 @@ public class CloudFacadeController {
 
 						@Override
 						public void onSuccess(Method method, ApplianceTypesResponse response) {
-							for (ApplianceType applianceType : response.getApplianceTypes()) {
-								OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
-								ownedApplianceType.setApplianceType(applianceType);
-								ownedApplianceType.setUser(user);
-								result.add(ownedApplianceType);
+							final List<ApplianceType> applianceTypes = response.getApplianceTypes();
+							List<String> computeSiteIds = new ArrayList<>();
+							
+							for(ApplianceType applianceType : applianceTypes) {
+								computeSiteIds.addAll(applianceType.getComputeSiteIds());
 							}
 							
-							if (ownedApplianceTypesCallback != null) {
-								ownedApplianceTypesCallback.processOwnedApplianceTypes(result);
-							}
+							computeSitesService.getComputeSites(join(computeSiteIds, ","), new MethodCallback<ComputeSitesResponse>() {
+								@Override
+								public void onFailure(Method method, Throwable exception) {
+									popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
+								}
+
+								@Override
+								public void onSuccess(Method method, ComputeSitesResponse response) {
+									for(ApplianceType applianceType : applianceTypes) {
+										OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
+										ownedApplianceType.setApplianceType(applianceType);
+										ownedApplianceType.setUser(user);
+										
+										Map<String, ComputeSite> computeSites = new HashMap<>();
+										
+										for(String computeSiteId : applianceType.getComputeSiteIds()) {
+											for(ComputeSite computeSite : response.getComputeSites()) {
+												if(computeSite.getId().equals(computeSiteId)) {
+													computeSites.put(computeSiteId, computeSite);
+												}
+											}
+										}
+										
+										ownedApplianceType.setComputeSites(computeSites);
+										result.add(ownedApplianceType);
+									}
+									
+									if(ownedApplianceTypesCallback != null) {
+										ownedApplianceTypesCallback.processOwnedApplianceTypes(result);
+									}
+								}
+							});
 						}
 					});
 				} else {
