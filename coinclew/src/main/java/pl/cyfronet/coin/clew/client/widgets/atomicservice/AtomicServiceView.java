@@ -3,13 +3,11 @@ package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
 import org.gwtbootstrap3.client.ui.Label;
+import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.LabelType;
-
-import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
-import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,26 +18,50 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.mvp4g.client.view.ReverseViewInterface;
 
+import pl.cyfronet.coin.clew.client.widgets.BootstrapHelpers;
+import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
+
 public class AtomicServiceView extends Composite implements IAtomicServiceView, ReverseViewInterface<IAtomicServicePresenter> {
 	private static AtomicServiceViewUiBinder uiBinder = GWT.create(AtomicServiceViewUiBinder.class);
+	
 	interface AtomicServiceViewUiBinder extends UiBinder<Widget, AtomicServiceView> {}
 	
 	private IAtomicServicePresenter presenter;
+	
 	private Button removeButton;
+	
 	private Label inactiveLabel;
 	
-	@UiField InlineHTML name;
-	@UiField AtomicServiceMessages messages;
-	@UiField ButtonGroup buttons;
-	@UiField InlineHTML description;
-	@UiField FlowPanel inactiveContainer;
-	@UiField Button startInstance;
+	@UiField
+	InlineHTML name;
+	
+	@UiField
+	AtomicServiceMessages messages;
+	
+	@UiField
+	ButtonGroup buttons;
+	
+	@UiField
+	InlineHTML description;
+	
+	@UiField
+	FlowPanel inactiveContainer;
+	
+	@UiField
+	Button startInstance;
+	
+	@UiField
+	HTML computeSiteLabel;
+	
+	@UiField
+	ListBox computeSiteList;
 
 	public AtomicServiceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -143,5 +165,40 @@ public class AtomicServiceView extends Composite implements IAtomicServiceView, 
 	@Override
 	public void enableStartButton(boolean enable) {
 		startInstance.setEnabled(enable);
+	}
+
+	@Override
+	public void showComputeSiteList(boolean show) {
+		computeSiteList.setVisible(show);
+	}
+
+	@Override
+	public void showComputeSiteLabel(boolean show) {
+		computeSiteLabel.setVisible(true);
+	}
+
+	@Override
+	public void setNoComputeSitesLabel() {
+		computeSiteLabel.setHTML(messages.noComputeSiteLabels());
+	}
+
+	@Override
+	public void setComputeSiteLabel(String computeSiteName) {
+		computeSiteLabel.setHTML(messages.computeSiteLabel(computeSiteName));
+	}
+
+	@Override
+	public void addComputeSiteOption(String computeSiteId, String computeSiteName) {
+		computeSiteList.addItem(computeSiteName, computeSiteId);
+	}
+
+	@Override
+	public String getAnyComputeSiteLabel() {
+		return messages.anyComputeSiteLabel();
+	}
+
+	@Override
+	public String getSelectedComputeSiteValue() {
+		return computeSiteList.getSelectedValue();
 	}
 }

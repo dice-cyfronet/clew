@@ -2,7 +2,15 @@ package pl.cyfronet.coin.clew.client.widgets.atomicservice;
 
 import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
 
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
@@ -11,13 +19,9 @@ import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceCo
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.RemoveApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceconf.ApplianceConfiguration;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.IAtomicServiceView.IAtomicServicePresenter;
-
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = AtomicServiceView.class, multiple = true)
 public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, MainEventBus> implements IAtomicServicePresenter {
@@ -52,6 +56,21 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 		
 		if (applianceType.getUser().getLogin().equals(ticketReader.getUserLogin())) {
 			view.addRemoveButton();
+		}
+		
+		if(applianceType.getComputeSites().size() > 1) {
+			view.showComputeSiteList(true);
+			view.addComputeSiteOption("0", view.getAnyComputeSiteLabel());
+			
+			for(ComputeSite computeSite : applianceType.getComputeSites().values()) {
+				view.addComputeSiteOption(computeSite.getId(), computeSite.getName());
+			}
+		} else if(applianceType.getComputeSites().size() == 1) {
+			view.showComputeSiteLabel(true);
+			view.setComputeSiteLabel(applianceType.getComputeSites().values().iterator().next().getName());
+		} else {
+			view.showComputeSiteLabel(true);
+			view.setNoComputeSitesLabel();
 		}
 	}
 
@@ -98,7 +117,19 @@ public class AtomicServicePresenter extends BasePresenter<IAtomicServiceView, Ma
 				if (applianceConfigurations.size() == 0) {
 					view.showNoInitialConfigurationsMessage();
 				} else if (applianceConfigurations.size() == 1) {
-					eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, true);
+					if(applianceType.getComputeSites().size() > 1) {
+						Map<String, List<String>> computeSiteIds = new HashMap<>();
+						
+						if(view.getSelectedComputeSiteValue().equals("0")) {
+							computeSiteIds.put(applianceConfigurations.get(0).getId(), new ArrayList<String>(applianceType.getComputeSites().keySet()));
+						} else {
+							computeSiteIds.put(applianceConfigurations.get(0).getId(), asList(view.getSelectedComputeSiteValue()));
+						}
+						
+						eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), computeSiteIds, true);
+					} else {
+						eventBus.startApplications(asList(applianceConfigurations.get(0).getId()), null, true);
+					}
 				} else {
 					eventBus.showInitialConfigPicker(applianceConfigurations, true);
 				}

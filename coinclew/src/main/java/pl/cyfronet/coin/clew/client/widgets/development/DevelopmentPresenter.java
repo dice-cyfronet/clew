@@ -11,26 +11,28 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gwt.user.client.Timer;
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.AggregateApplianceCallback;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ComputeSitesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.OwnedApplianceTypesCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.UserCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
 import pl.cyfronet.coin.clew.client.controller.cf.aggregates.appliance.AggregateAppliance;
 import pl.cyfronet.coin.clew.client.controller.cf.applianceset.NewApplianceSet.Type;
 import pl.cyfronet.coin.clew.client.controller.cf.appliancetype.ApplianceType;
+import pl.cyfronet.coin.clew.client.controller.cf.computesite.ComputeSite;
 import pl.cyfronet.coin.clew.client.controller.cf.user.User;
 import pl.cyfronet.coin.clew.client.controller.overlay.OwnedApplianceType;
 import pl.cyfronet.coin.clew.client.widgets.atomicservice.AtomicServicePresenter;
 import pl.cyfronet.coin.clew.client.widgets.development.IDevelopmentView.IDevelopmentPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.InstancePresenter;
-
-import com.google.gwt.user.client.Timer;
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = DevelopmentView.class)
 public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEventBus> implements IDevelopmentPresenter {
@@ -322,24 +324,34 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	public void onUpdateApplianceTypeView(final ApplianceType applianceType) {
 		cloudFacadeController.getUser(applianceType.getAuthorId(), new UserCallback() {
 			@Override
-			public void processUser(User user) {
-				AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
-				
-				if (presenter == null) {
-					if (atomicServicePresenters.size() == 0) {
-						view.showNoAtomicServicesLabel(false);
-					}
+			public void processUser(final User user) {
+				cloudFacadeController.getComputeSites(applianceType.getComputeSiteIds(), new ComputeSitesCallback() {
+					@Override
+					public void processComputeSites(List<ComputeSite> computeSites) {
+						AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getId());
+						
+						if(presenter == null) {
+							if(atomicServicePresenters.size() == 0) {
+								view.showNoAtomicServicesLabel(false);
+							}
 
-					presenter = eventBus.addHandler(AtomicServicePresenter.class);
-					atomicServicePresenters.put(applianceType.getId(), presenter);
-					view.insert(presenter.getView().asWidget(), calculateApplianceTypeIndex(applianceType.getName()));
-				}
-				
-				OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
-				ownedApplianceType.setApplianceType(applianceType);
-				ownedApplianceType.setUser(user);
-				
-				presenter.setApplianceType(ownedApplianceType);
+							presenter = eventBus.addHandler(AtomicServicePresenter.class);
+							atomicServicePresenters.put(applianceType.getId(), presenter);
+							view.insert(presenter.getView().asWidget(), calculateApplianceTypeIndex(applianceType.getName()));
+						}
+						
+						OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
+						ownedApplianceType.setApplianceType(applianceType);
+						ownedApplianceType.setUser(user);
+						ownedApplianceType.setComputeSites(new HashMap<String, ComputeSite>());
+						
+						for(ComputeSite computeSite : computeSites) {
+							ownedApplianceType.getComputeSites().put(computeSite.getId(), computeSite);
+						}
+						
+						presenter.setApplianceType(ownedApplianceType);
+					}
+				});
 			}});
 	}
 }

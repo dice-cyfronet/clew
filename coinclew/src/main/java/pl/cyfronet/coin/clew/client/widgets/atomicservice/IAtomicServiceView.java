@@ -7,19 +7,45 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface IAtomicServiceView extends IsWidget {
 	interface IAtomicServicePresenter {
 		void onEditInitialConfigs();
+
 		void onEditProperties();
+
 		void onRemove();
+
 		void onEditExternalInterfaces();
+
 		void onStartInstance();
 	}
 
 	HasText getName();
+
 	void addRemoveButton();
+
 	void setRemoveBusyState(boolean busy);
+
 	boolean confirmRemoval();
+
 	void showInactiveLabel(boolean active, boolean saving);
+
 	HasHTML getDescription();
+
 	void setStartInstanceBusyState(boolean busy);
+
 	void showNoInitialConfigurationsMessage();
+
 	void enableStartButton(boolean enable);
+
+	void showComputeSiteList(boolean show);
+
+	void showComputeSiteLabel(boolean show);
+
+	void setNoComputeSitesLabel();
+
+	void setComputeSiteLabel(String computeSiteName);
+
+	void addComputeSiteOption(String computeSiteId, String computeSiteName);
+
+	String getAnyComputeSiteLabel();
+
+	String getSelectedComputeSiteValue();
 }

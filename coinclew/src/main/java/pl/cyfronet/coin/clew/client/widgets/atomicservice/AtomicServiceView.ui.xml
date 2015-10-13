@@ -6,7 +6,7 @@
 	<ui:style>
 		.title {
 			float: left;
-			width: 30%;
+			width: 25%;
 			text-align: left;
 			font-size: 1.2em;
 			word-wrap: break-word;
@@ -37,7 +37,7 @@
 		}
 		.description {
 			float: left;
-			width: 45%;
+			width: 35%;
 			text-align: left;
 		}
 		.inactive {
@@ -47,6 +47,12 @@
 		.buttons {
 			padding-right: 5px;
 		}
+		
+		.computeSites {
+			float: left;
+			width: 15%;
+			text-align: left;
+		}
 	</ui:style>
 	<g:HTMLPanel addStyleNames="{style.container}">
 		<g:FlowPanel addStyleNames="{style.title}">
@@ -54,6 +60,10 @@
 		</g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.description}">
 			<g:InlineHTML ui:field="description"/>
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.computeSites}">
+			<g:HTML ui:field="computeSiteLabel" visible="false"/>
+			<b:ListBox ui:field="computeSiteList" addStyleNames="input-block-level" visible="false"></b:ListBox>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="inactiveContainer" addStyleNames="{style.inactive}">
 			<g:InlineHTML>&nbsp;</g:InlineHTML>
