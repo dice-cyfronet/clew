@@ -102,6 +102,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 		
 		if(developmentMode) {
+			view.addPauseControl();
 			view.addRebootControl();
 		}
 		
@@ -115,7 +116,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		
 		if(developmentMode) {
 			view.addExternalInterfacesControl();
-			view.addPauseControl();
 			view.addSaveControl();
 			view.addSaveInPlaceControl();
 			

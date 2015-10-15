@@ -58,4 +58,6 @@ public interface InstanceMessages extends Messages {
 	String pauseTooltip();
 
 	String resumeTooltip();
+
+	String saveInPlaceElaboratedTooltip();
 }
