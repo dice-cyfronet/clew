@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.widgets.development;
 
+import static java.util.Collections.sort;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,9 +43,13 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	private static final int REFRESH_MILIS = 5000;
 	
 	private CloudFacadeController cloudFacadeController;
+	
 	private MiTicketReader ticketReader;
+	
 	private Map<String, InstancePresenter> instancePresenters;
+	
 	private Map<String, AtomicServicePresenter> atomicServicePresenters;
+	
 	private Timer timer;
 
 	@Inject
@@ -167,7 +173,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 					view.showNoRunningInstancesLabel(false);
 					view.showHeaderRow(true);
 					
-					Collections.sort(appliances, new Comparator<AggregateAppliance>() {
+					sort(appliances, new Comparator<AggregateAppliance>() {
 						@Override
 						public int compare(AggregateAppliance o1, AggregateAppliance o2) {
 							return o1.getName().compareToIgnoreCase(o2.getName());
@@ -252,7 +258,11 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 						view.getAtomicServicesContainer().clear();
 					}
 					
+					List<String> applianceTypeIds = new ArrayList<>();
+					
 					for(OwnedApplianceType applianceType : applianceTypes) {
+						applianceTypeIds.add(applianceType.getApplianceType().getId());
+						
 						AtomicServicePresenter presenter = atomicServicePresenters.get(applianceType.getApplianceType().getId());
 						
 						if(presenter == null) {
@@ -263,9 +273,17 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 						
 						presenter.setApplianceType(applianceType);
 					}
+					
+					updateGlobalSaveOnAppliances(applianceTypeIds);
 				}
 			}
 		});
+	}
+	
+	private void updateGlobalSaveOnAppliances(List<String> applianceTypeIds) {
+		for(InstancePresenter instancePresenter : instancePresenters.values()) {
+			instancePresenter.updateGlobalSave(applianceTypeIds);
+		}
 	}
 	
 	private int calculateApplianceTypeIndex(String name) {

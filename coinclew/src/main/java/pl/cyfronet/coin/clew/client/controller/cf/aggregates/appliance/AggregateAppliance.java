@@ -14,7 +14,9 @@ public class AggregateAppliance {
 	private List<AggregateVm> virtualMachines;
 	
 	private String state;
+	
 	private String name;
+	
 	private String description;
 	
 	@Json(name = "state_explanation")
@@ -28,6 +30,8 @@ public class AggregateAppliance {
 	
 	@Json(name = "appliance_set_id")
 	private String applianceSetId;
+	
+	private String applianceTypeId;
 
 	public String getApplianceSetId() {
 		return applianceSetId;
@@ -116,5 +120,13 @@ public class AggregateAppliance {
 
 	public void setAmountBilled(long amountBilled) {
 		this.amountBilled = amountBilled;
+	}
+
+	public String getApplianceTypeId() {
+		return applianceTypeId;
+	}
+
+	public void setApplianceTypeId(String applianceTypeId) {
+		this.applianceTypeId = applianceTypeId;
 	}
 }
