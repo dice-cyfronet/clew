@@ -448,7 +448,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			saveInPlaceButton.setType(ButtonType.WARNING);
 			saveInPlaceButton.setSize(ButtonSize.MINI);
 			saveInPlaceButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
-			saveInPlaceButton.setTitle(messages.saveInPlaceTooltip());
+			saveInPlaceButton.setTitle(messages.saveInPlaceElaboratedTooltip());
 			saveInPlaceButton.setEnabled(false);
 			saveInPlaceButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -465,7 +465,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 		if(pauseButton == null) {
 			pauseButton = new Button();
 			pauseButton.setIcon(IconType.PAUSE);
-			pauseButton.setType(ButtonType.WARNING);
+			pauseButton.setType(ButtonType.DANGER);
 			pauseButton.setSize(ButtonSize.MINI);
 			pauseButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
 			pauseButton.setTitle(messages.pauseTooltip());
@@ -476,7 +476,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 					getPresenter().onPause();
 				}
 			});
-			controls.insert(pauseButton, 0);
+			controls.add(pauseButton);
 		}
 	}
 
@@ -501,6 +501,10 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	public void enableSaveInPlace(boolean enable) {
 		if(saveInPlaceButton != null) {
 			saveInPlaceButton.setEnabled(enable);
+			
+			if(enable) {
+				saveInPlaceButton.setTitle(messages.saveInPlaceTooltip());
+			}
 		}
 	}
 
