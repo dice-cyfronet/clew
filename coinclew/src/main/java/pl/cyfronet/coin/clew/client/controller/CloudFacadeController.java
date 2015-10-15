@@ -242,6 +242,10 @@ public class CloudFacadeController {
 		void onAliasChanged(AliasResponseHttpMapping aliasResponseHttpMapping);
 	}
 	
+	public interface ActionCallback extends ErrorCallback {
+		void onActionPerformed();
+	}
+	
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -1907,22 +1911,6 @@ public class CloudFacadeController {
 		});
 	};
 	
-	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
-		for(AggregateApplianceType applianceType : applianceTypes) {
-			applianceType.setComputeSites(new HashMap<String, ComputeSite>());
-			
-			for(String computeSiteId : applianceType.getComputeSiteIds()) {
-				for (ComputeSite computeSite : computeSites) {
-					if(computeSite.getId().equals(computeSiteId)) {
-						applianceType.getComputeSites().put(computeSiteId, computeSite);
-						
-						break;
-					}
-				}
-			}
-		}
-	}
-
 	public void saveApplianceTypeInPlace(String applianceInstanceId, String applianceTypeId, final ApplianceTypeCallback callback) {
 		ApplianceTypeSaveInPlace applianceType = new ApplianceTypeSaveInPlace();
 		applianceType.setApplianceInstanceId(applianceInstanceId);
@@ -1963,5 +1951,38 @@ public class CloudFacadeController {
 				callback.onAliasChanged(response.getAliasResponseHttpMapping());
 			}
 		});
+	}
+
+	public void togglePause(String action, String instanceId, final ActionCallback callback) {
+		Map<String, String> actionRequest = new HashMap<>();
+		actionRequest.put(action, "");
+		applianceInstancesService.togglePause(instanceId, actionRequest, new MethodCallback<Void>() {
+			@Override
+			public void onFailure(Method method, Throwable exception) {
+				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
+				callback.onError(errorReader.decodeError(method.getResponse()));
+			}
+
+			@Override
+			public void onSuccess(Method method, Void response) {
+				callback.onActionPerformed();
+			}
+		});
+	}
+
+	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
+		for(AggregateApplianceType applianceType : applianceTypes) {
+			applianceType.setComputeSites(new HashMap<String, ComputeSite>());
+			
+			for(String computeSiteId : applianceType.getComputeSiteIds()) {
+				for (ComputeSite computeSite : computeSites) {
+					if(computeSite.getId().equals(computeSiteId)) {
+						applianceType.getComputeSites().put(computeSiteId, computeSite);
+						
+						break;
+					}
+				}
+			}
+		}
 	}
 }

@@ -17,13 +17,13 @@ public class BootstrapHelpers {
 		if(busy) {
 			originalIcons.put(button, getIcon(button));
 			button.setIcon(IconType.SPINNER);
-			spinIcon(button);
+			button.setIconSpin(true);
 			button.setEnabled(false);
 		} else {
 			IconType originalIcon = originalIcons.remove(button);
 			
 			if(originalIcon != null) {
-				stopSpin(button);
+				button.setIconSpin(false);
 				button.setIcon(originalIcon);
 			}
 			
@@ -38,24 +38,6 @@ public class BootstrapHelpers {
 				
 				break;
 			}
-		}
-	}
-
-	private static void stopSpin(Button button) {
-		Element iconElement = DOM.getChild(button.getElement(), 0);
-		
-		if(iconElement != null && iconElement.getClassName() != null &&
-				iconElement.getClassName().endsWith("fa-spin")) {
-			iconElement.setClassName(iconElement.getClassName().substring(0, iconElement.getClassName().length() - 9).trim());
-		}
-	}
-
-	private static void spinIcon(Button button) {
-		Element iconElement = DOM.getChild(button.getElement(), 0);
-		
-		if(iconElement != null && iconElement.getClassName() != null &&
-				iconElement.getClassName().startsWith("fa fa-")) {
-			iconElement.setClassName(iconElement.getClassName() + " fa-spin");
 		}
 	}
 

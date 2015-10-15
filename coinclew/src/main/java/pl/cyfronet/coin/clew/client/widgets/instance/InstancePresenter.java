@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import static java.util.Arrays.asList;
 import static pl.cyfronet.coin.clew.client.UrlHelper.joinUrl;
 import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_NEW;
 import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_SATISFIED;
@@ -15,10 +16,20 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ActionCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstanceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
@@ -34,26 +45,27 @@ import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.httpmapping.HttpMappingPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
-
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
 	private final static Logger log = LoggerFactory.getLogger(InstancePresenter.class); 
 	
 	private Map<String, HttpMappingPresenter> webapps;
+	
 	private Map<String, HttpMappingPresenter> services;
+	
 	private Map<String, IsWidget> otherServices;
+	
 	private boolean developmentMode;
+	
 	private AggregateAppliance applianceInstance;
+	
 	private MiTicketReader ticketReader;
+	
 	private CloudFacadeController cloudFacadeController;
+	
+	private boolean globalSaveInPlaceEnabled;
+
+	private boolean pauseToggleActive;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
@@ -103,12 +115,15 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		
 		if(developmentMode) {
 			view.addExternalInterfacesControl();
+			view.addPauseControl();
 			view.addSaveControl();
 			view.addSaveInPlaceControl();
 			
 			if(STATE_UNSATISFIED.equals(applianceInstance.getState())) {
 				view.enableExternalInterfaces(false);
 				view.enableSave(false);
+				view.enableSaveInPlace(false);
+				view.enablePause(false);
 			}
 		}
 		
@@ -142,6 +157,84 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		return applianceInstance;
 	}
 	
+	@Override
+	public void onShutdownClicked() {
+		if (view.confirmInstanceShutdown()) {
+			view.setShutdownBusyState(true);
+			cloudFacadeController.shutdownApplianceInstance(applianceInstance.getId(), new Command() {
+				@Override
+				public void execute() {
+					view.setShutdownBusyState(false);
+					eventBus.removeInstance(applianceInstance.getId());
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onExternalInterfacesClicked() {
+		eventBus.showExternalInterfacesEditor(applianceInstance.getId());
+	}
+
+	@Override
+	public void onSave() {
+		eventBus.showAtomicServiceEditor(applianceInstance.getId(), true);
+	}
+
+	public void updateAccessInfo() {
+		displayDetails();
+	}
+
+	public void updateEndpoints() {
+		displayDetails();
+	}
+
+	@Override
+	public void onReboot() {
+		if(view.confirmInstanceReboot()) {
+			view.setRebootBusyState(true);
+			cloudFacadeController.rebootApplianceInstance(applianceInstance.getId(), new Command() {
+				@Override
+				public void execute() {
+					view.setRebootBusyState(false);
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onSaveInPlace() {
+		if(view.saveInPlaceConfirmation()) {
+			saveInPlace();
+		}
+	}
+
+	public void updateGlobalSaveInPlace(List<String> applianceTypeIds) {
+		globalSaveInPlaceEnabled = applianceTypeIds.contains(applianceInstance.getApplianceTypeId());
+	}
+
+	@Override
+	public void onPause() {
+		final boolean paused = applianceInstance.getVirtualMachines().get(0).getState().equals("paused");
+		String action = paused ? "start" : "pause";
+		view.setPauseBusyState(true);
+		pauseToggleActive = true;
+		cloudFacadeController.togglePause(action, applianceInstance.getId(), new ActionCallback() {
+			@Override
+			public void onError(CloudFacadeError error) {
+				pauseToggleActive = false;
+				view.setPauseBusyState(false);
+			}
+			
+			@Override
+			public void onActionPerformed() {
+				pauseToggleActive = false;
+				view.setPauseBusyState(false);
+				view.switchPauseButton(!paused);
+			}
+		});
+	}
+
 	private String formatDate(String dateValue) {
 		try {
 			DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);
@@ -154,23 +247,34 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			return "";
 		}
 	}
-	
+
 	private void updateStatus(final AggregateVm applianceVm) {
 		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 		
 		if(applianceVm.getState() != null) {
-			if(applianceVm.getState().equals("active")) {
+			if(asList("active", "paused").contains(applianceVm.getState())) {
 				view.enableSave(true);
-				view.enableSaveInPlace(true);
+				view.enableSaveInPlace(true && globalSaveInPlaceEnabled);
+				
+				if(!pauseToggleActive) {
+					view.enablePause(true);
+					view.switchPauseButton(applianceVm.getState().equals("paused"));
+				}
+				
 				view.enableExternalInterfaces(true);
 				view.enableCollapsable(true);
 				
 				if(developmentMode) {
 					view.enableReboot(true);
 				}
-			} else if(applianceVm.getState().equals("saving") || applianceVm.getState().equals("reboot")) {
+			} else if(asList("saving", "reboot").contains(applianceVm.getState())) {
 				view.enableSave(false);
 				view.enableSaveInPlace(false);
+				
+				if(!pauseToggleActive) {
+					view.enablePause(false);
+				}
+				
 				view.enableExternalInterfaces(false);
 				view.collapseDetails();
 				view.enableCollapsable(false);
@@ -189,15 +293,15 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 			}
 		}
 	}
-	
+
 	private String costIndicator(final AggregateAppliance applianceInstance) {
 		return "$" + NumberFormat.getFormat("0.00").format(((float) applianceInstance.getAmountBilled() / 10000));
 	}
-	
+
 	private void displayDetails() {
 		displayRedirections();
 	}
-	
+
 	private void displayRedirections() {
 		List<String> currentWebapps = new ArrayList<String>();
 		List<String> currentServices = new ArrayList<String>();
@@ -430,18 +534,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		return result;
 	}
 
-	private List<PortMapping> matchPortMappings(List<PortMapping> portMappings, String portMappingTemplateId) {
-		List<PortMapping> result = new ArrayList<PortMapping>();
-
-		for(PortMapping portMapping : portMappings) {
-			if(portMappingTemplateId.equals(portMapping.getPortMappingTemplateId())) {
-				result.add(portMapping);
-			}
-		}
-		
-		return result;
-	}
-
 	private Redirection findSshRedirection(List<Redirection> redirections) {
 		for (Redirection redirection : redirections) {
 			if (redirection.getName().equals("ssh") && redirection.getProtocol().equals("tcp")) {
@@ -452,20 +544,18 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		return null;
 	}
 
-	@Override
-	public void onShutdownClicked() {
-		if (view.confirmInstanceShutdown()) {
-			view.setShutdownBusyState(true);
-			cloudFacadeController.shutdownApplianceInstance(applianceInstance.getId(), new Command() {
-				@Override
-				public void execute() {
-					view.setShutdownBusyState(false);
-					eventBus.removeInstance(applianceInstance.getId());
-				}
-			});
-		}
-	}
+	private List<PortMapping> matchPortMappings(List<PortMapping> portMappings, String portMappingTemplateId) {
+		List<PortMapping> result = new ArrayList<PortMapping>();
 	
+		for(PortMapping portMapping : portMappings) {
+			if(portMappingTemplateId.equals(portMapping.getPortMappingTemplateId())) {
+				result.add(portMapping);
+			}
+		}
+		
+		return result;
+	}
+
 	private void updateView(AggregateAppliance applianceInstance) {
 		if(STATE_SATISFIED.equals(applianceInstance.getState())) {
 			if(applianceInstance.getVirtualMachines().size() > 0) {
@@ -485,44 +575,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.setStatus(view.getNoVmsLabel());
 				view.enableCollapsable(true);
 			}
-		}
-	}
-
-	@Override
-	public void onExternalInterfacesClicked() {
-		eventBus.showExternalInterfacesEditor(applianceInstance.getId());
-	}
-
-	@Override
-	public void onSave() {
-		eventBus.showAtomicServiceEditor(applianceInstance.getId(), true);
-	}
-
-	public void updateAccessInfo() {
-		displayDetails();
-	}
-
-	public void updateEndpoints() {
-		displayDetails();
-	}
-
-	@Override
-	public void onReboot() {
-		if(view.confirmInstanceReboot()) {
-			view.setRebootBusyState(true);
-			cloudFacadeController.rebootApplianceInstance(applianceInstance.getId(), new Command() {
-				@Override
-				public void execute() {
-					view.setRebootBusyState(false);
-				}
-			});
-		}
-	}
-
-	@Override
-	public void onSaveInPlace() {
-		if(view.saveInPlaceConfirmation()) {
-			saveInPlace();
 		}
 	}
 
