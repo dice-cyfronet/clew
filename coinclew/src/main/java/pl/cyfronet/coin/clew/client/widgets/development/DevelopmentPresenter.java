@@ -282,7 +282,7 @@ public class DevelopmentPresenter extends BasePresenter<IDevelopmentView, MainEv
 	
 	private void updateGlobalSaveOnAppliances(List<String> applianceTypeIds) {
 		for(InstancePresenter instancePresenter : instancePresenters.values()) {
-			instancePresenter.updateGlobalSave(applianceTypeIds);
+			instancePresenter.updateGlobalSaveInPlace(applianceTypeIds);
 		}
 	}
 	

@@ -38,43 +38,55 @@ import com.mvp4g.client.view.ReverseViewInterface;
 
 public class InstanceView extends Composite implements IInstanceView, ReverseViewInterface<IInstancePresenter> {
 	private static InstanceViewUiBinder uiBinder = GWT.create(InstanceViewUiBinder.class);
+	
 	interface InstanceViewUiBinder extends UiBinder<Widget, InstanceView> {}
+	
 	interface Styles extends CssResource {
 		String anchor();
+		
 		String descriptor();
+		
 		String service();
+		
 		String detailsName();
+		
 		String links();
 	}
 	
 	private IInstancePresenter presenter;
-	private Button shutdown;
-	private Button externalInterfaces;
-	private Button saveButton;
-	private Label noServiceLabel;
-	private Label noWebApplicationLabel;
-	private Label noOtherServicesLabel;
-	private boolean collapsed;
-	private Button rebootButton;
-	private Button saveInPlaceButton;
 	
-	@UiField HTML name;
-	@UiField InstanceMessages messages;
-	@UiField HTML ip;
-	@UiField HTML location;
-	@UiField FlowPanel status;
-	@UiField ButtonGroup controls;
-	@UiField Collapse collapse;
-	@UiField FlowPanel webApplicationsContainer;
-	@UiField FlowPanel serviceContainer;
-	@UiField Styles style;
-	@UiField FlowPanel otherServiceContainer;
-	@UiField HTML description;
-	@UiField Label bill;
-	@UiField Button showDetails;
-	@UiField Tooltip prepaidTooltip;
-	@UiField FlowPanel details;
-	@UiField FlowPanel noVmsLabel;
+	private Button shutdown, externalInterfaces, saveButton, rebootButton, saveInPlaceButton, pauseButton;
+	
+	private Label noServiceLabel, noWebApplicationLabel, noOtherServicesLabel;
+	
+	private boolean collapsed;
+	
+	@UiField
+	InstanceMessages messages;
+	
+	@UiField
+	HTML name, ip, location, description;
+	
+	@UiField
+	FlowPanel status, webApplicationsContainer, serviceContainer, otherServiceContainer, details, noVmsLabel;
+	
+	@UiField
+	ButtonGroup controls;
+	
+	@UiField
+	Collapse collapse;
+	
+	@UiField
+	Styles style;
+	
+	@UiField
+	Label bill;
+	
+	@UiField
+	Button showDetails;
+	
+	@UiField
+	Tooltip prepaidTooltip;
 
 	public InstanceView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -449,6 +461,26 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
+	public void addPauseControl() {
+		if(pauseButton == null) {
+			pauseButton = new Button();
+			pauseButton.setIcon(IconType.PAUSE);
+			pauseButton.setType(ButtonType.WARNING);
+			pauseButton.setSize(ButtonSize.MINI);
+			pauseButton.setLoadingText("<i class='icon-spinner icon-spin'></i>");
+			pauseButton.setTitle(messages.pauseTooltip());
+			pauseButton.setEnabled(false);
+			pauseButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					getPresenter().onPause();
+				}
+			});
+			controls.insert(pauseButton, 0);
+		}
+	}
+
+	@Override
 	public boolean saveInPlaceConfirmation() {
 		return Window.confirm(messages.confirmSaveInPlace());
 	}
@@ -485,5 +517,28 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	@Override
 	public String getInitializingLabel() {
 		return messages.initializingLabel();
+	}
+
+	@Override
+	public void enablePause(boolean enable) {
+		pauseButton.setEnabled(enable);
+	}
+
+	@Override
+	public void switchPauseButton(boolean paused) {
+		if(paused) {
+			pauseButton.setIcon(IconType.PLAY);
+			pauseButton.setTitle(messages.resumeTooltip());
+		} else {
+			pauseButton.setIcon(IconType.PAUSE);
+			pauseButton.setTitle(messages.pauseTooltip());
+		}
+	}
+
+	@Override
+	public void setPauseBusyState(boolean busy) {
+		if(pauseButton != null) {
+			BootstrapHelpers.setButtonBusyState(pauseButton, busy);
+		}
 	}
 }

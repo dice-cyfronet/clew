@@ -1,5 +1,6 @@
 package pl.cyfronet.coin.clew.client.widgets.instance;
 
+import static java.util.Arrays.asList;
 import static pl.cyfronet.coin.clew.client.UrlHelper.joinUrl;
 import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_NEW;
 import static pl.cyfronet.coin.clew.client.controller.cf.applianceinstance.ApplianceInstance.STATE_SATISFIED;
@@ -15,10 +16,20 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.UrlHelper;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
+import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ActionCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceInstanceCallback;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController.ApplianceTypeCallback;
 import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeError;
@@ -33,15 +44,6 @@ import pl.cyfronet.coin.clew.client.controller.cf.portmapping.PortMapping;
 import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 import pl.cyfronet.coin.clew.client.widgets.httpmapping.HttpMappingPresenter;
 import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePresenter;
-
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
 
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
@@ -61,7 +63,9 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	
 	private CloudFacadeController cloudFacadeController;
 	
-	private boolean globalSaveEnabled;
+	private boolean globalSaveInPlaceEnabled;
+
+	private boolean pauseToggleActive;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
@@ -111,12 +115,15 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		
 		if(developmentMode) {
 			view.addExternalInterfacesControl();
+			view.addPauseControl();
 			view.addSaveControl();
 			view.addSaveInPlaceControl();
 			
 			if(STATE_UNSATISFIED.equals(applianceInstance.getState())) {
 				view.enableExternalInterfaces(false);
 				view.enableSave(false);
+				view.enableSaveInPlace(false);
+				view.enablePause(false);
 			}
 		}
 		
@@ -164,10 +171,6 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 
-	public void updateGlobalSave(List<String> applianceTypeIds) {
-		globalSaveEnabled = applianceTypeIds.contains(applianceInstance.getApplianceTypeId());
-	}
-
 	@Override
 	public void onExternalInterfacesClicked() {
 		eventBus.showExternalInterfacesEditor(applianceInstance.getId());
@@ -206,6 +209,32 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		}
 	}
 
+	public void updateGlobalSaveInPlace(List<String> applianceTypeIds) {
+		globalSaveInPlaceEnabled = applianceTypeIds.contains(applianceInstance.getApplianceTypeId());
+	}
+
+	@Override
+	public void onPause() {
+		final boolean paused = applianceInstance.getVirtualMachines().get(0).getState().equals("paused");
+		String action = paused ? "start" : "pause";
+		view.setPauseBusyState(true);
+		pauseToggleActive = true;
+		cloudFacadeController.togglePause(action, applianceInstance.getId(), new ActionCallback() {
+			@Override
+			public void onError(CloudFacadeError error) {
+				pauseToggleActive = false;
+				view.setPauseBusyState(false);
+			}
+			
+			@Override
+			public void onActionPerformed() {
+				pauseToggleActive = false;
+				view.setPauseBusyState(false);
+				view.switchPauseButton(!paused);
+			}
+		});
+	}
+
 	private String formatDate(String dateValue) {
 		try {
 			DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);
@@ -223,18 +252,29 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 		
 		if(applianceVm.getState() != null) {
-			if(applianceVm.getState().equals("active")) {
-				view.enableSave(true && globalSaveEnabled);
-				view.enableSaveInPlace(true);
+			if(asList("active", "paused").contains(applianceVm.getState())) {
+				view.enableSave(true);
+				view.enableSaveInPlace(true && globalSaveInPlaceEnabled);
+				
+				if(!pauseToggleActive) {
+					view.enablePause(true);
+					view.switchPauseButton(applianceVm.getState().equals("paused"));
+				}
+				
 				view.enableExternalInterfaces(true);
 				view.enableCollapsable(true);
 				
 				if(developmentMode) {
 					view.enableReboot(true);
 				}
-			} else if(applianceVm.getState().equals("saving") || applianceVm.getState().equals("reboot")) {
+			} else if(asList("saving", "reboot").contains(applianceVm.getState())) {
 				view.enableSave(false);
 				view.enableSaveInPlace(false);
+				
+				if(!pauseToggleActive) {
+					view.enablePause(false);
+				}
+				
 				view.enableExternalInterfaces(false);
 				view.collapseDetails();
 				view.enableCollapsable(false);

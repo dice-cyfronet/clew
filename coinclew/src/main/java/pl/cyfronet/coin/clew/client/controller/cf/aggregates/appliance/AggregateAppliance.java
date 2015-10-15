@@ -31,6 +31,7 @@ public class AggregateAppliance {
 	@Json(name = "appliance_set_id")
 	private String applianceSetId;
 	
+	@Json(name = "appliance_type_id")
 	private String applianceTypeId;
 
 	public String getApplianceSetId() {

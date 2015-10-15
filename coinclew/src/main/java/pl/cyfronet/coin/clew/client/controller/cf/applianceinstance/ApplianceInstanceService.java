@@ -1,5 +1,7 @@
 package pl.cyfronet.coin.clew.client.controller.cf.applianceinstance;
 
+import java.util.Map;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -37,4 +39,8 @@ public interface ApplianceInstanceService extends RestService {
 	@GET
 	@Path("appliances?id={id}")
 	void getApplianceInstance(@PathParam("id") String applianceInstanceId, MethodCallback<ApplianceInstancesResponse> methodCallback);
+
+	@POST
+	@Path("appliances/{id}/action")
+	void togglePause(@PathParam("id") String instanceId, Map<String, String> actionBody, MethodCallback<Void> methodCallback);
 }
