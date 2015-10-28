@@ -11,6 +11,7 @@ import pl.cyfronet.coin.clew.client.widgets.httpmapping.IHttpMappingView.IHttpMa
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -153,7 +154,7 @@ public class HttpMappingView extends Composite implements IHttpMappingView, Reve
 
 	@Override
 	public void setHttpsAlias(String httpsAlias, String httpsUrl) {
-		httpsAliasAnchor.setText(httpsAlias);
+		httpsAliasAnchor.setText(SafeHtmlUtils.fromString(httpsAlias).asString());
 		httpsAliasAnchor.setHref(httpsUrl);
 	}
 

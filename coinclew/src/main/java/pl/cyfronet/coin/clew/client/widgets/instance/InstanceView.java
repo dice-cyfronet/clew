@@ -469,7 +469,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 			pauseButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					getPresenter().onPause();
+					getPresenter().onSuspend();
 				}
 			});
 			controls.add(pauseButton);
@@ -536,7 +536,7 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 	}
 
 	@Override
-	public void setPauseBusyState(boolean busy) {
+	public void setSuspendBusyState(boolean busy) {
 		if(pauseButton != null) {
 			BootstrapHelpers.setButtonBusyState(pauseButton, busy);
 		}

@@ -1953,7 +1953,7 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void togglePause(String action, String instanceId, final ActionCallback callback) {
+	public void toggleSuspend(String action, String instanceId, final ActionCallback callback) {
 		Map<String, String> actionRequest = new HashMap<>();
 		actionRequest.put(action, "");
 		applianceInstancesService.togglePause(instanceId, actionRequest, new MethodCallback<Void>() {

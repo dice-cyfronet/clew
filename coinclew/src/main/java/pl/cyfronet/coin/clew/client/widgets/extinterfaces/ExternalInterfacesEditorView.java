@@ -307,7 +307,7 @@ public class ExternalInterfacesEditorView extends Composite implements IExternal
 				
 				
 				for (String key : keys) {
-					propertiesValue += ", " + key + ": " + properties.get(key);
+					propertiesValue += ", " + SafeHtmlUtils.fromString(key) + ": " + SafeHtmlUtils.fromString(properties.get(key));
 				}
 				
 				if (!propertiesValue.isEmpty()) {
