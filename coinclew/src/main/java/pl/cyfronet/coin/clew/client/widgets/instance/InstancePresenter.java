@@ -65,7 +65,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	
 	private boolean globalSaveInPlaceEnabled;
 
-	private boolean pauseToggleActive;
+	private boolean suspendToggleActive;
 	
 	@Inject
 	public InstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
@@ -214,23 +214,23 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 	}
 
 	@Override
-	public void onPause() {
-		final boolean paused = applianceInstance.getVirtualMachines().get(0).getState().equals("paused");
-		String action = paused ? "start" : "pause";
-		view.setPauseBusyState(true);
-		pauseToggleActive = true;
-		cloudFacadeController.togglePause(action, applianceInstance.getId(), new ActionCallback() {
+	public void onSuspend() {
+		final boolean suspended = applianceInstance.getVirtualMachines().get(0).getState().equals("paused");
+		String action = suspended ? "start" : "suspend";
+		view.setSuspendBusyState(true);
+		suspendToggleActive = true;
+		cloudFacadeController.toggleSuspend(action, applianceInstance.getId(), new ActionCallback() {
 			@Override
 			public void onError(CloudFacadeError error) {
-				pauseToggleActive = false;
-				view.setPauseBusyState(false);
+				suspendToggleActive = false;
+				view.setSuspendBusyState(false);
 			}
 			
 			@Override
 			public void onActionPerformed() {
-				pauseToggleActive = false;
-				view.setPauseBusyState(false);
-				view.switchPauseButton(!paused);
+				suspendToggleActive = false;
+				view.setSuspendBusyState(false);
+				view.switchPauseButton(!suspended);
 			}
 		});
 	}
@@ -256,7 +256,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.enableSave(true);
 				view.enableSaveInPlace(true && globalSaveInPlaceEnabled);
 				
-				if(!pauseToggleActive) {
+				if(!suspendToggleActive) {
 					view.enablePause(true);
 					view.switchPauseButton(applianceVm.getState().equals("paused"));
 				}
@@ -271,7 +271,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 				view.enableSave(false);
 				view.enableSaveInPlace(false);
 				
-				if(!pauseToggleActive) {
+				if(!suspendToggleActive) {
 					view.enablePause(false);
 				}
 				

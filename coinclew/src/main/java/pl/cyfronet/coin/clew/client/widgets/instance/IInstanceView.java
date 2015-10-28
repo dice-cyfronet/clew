@@ -18,7 +18,7 @@ public interface IInstanceView extends IsWidget {
 
 		void onSaveInPlace();
 
-		void onPause();
+		void onSuspend();
 	}
 
 	HasText getName();
@@ -111,5 +111,5 @@ public interface IInstanceView extends IsWidget {
 
 	void switchPauseButton(boolean paused);
 
-	void setPauseBusyState(boolean busy);
+	void setSuspendBusyState(boolean busy);
 }
