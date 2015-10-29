@@ -215,7 +215,7 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 
 	@Override
 	public void onSuspend() {
-		final boolean suspended = applianceInstance.getVirtualMachines().get(0).getState().equals("paused");
+		final boolean suspended = applianceInstance.getVirtualMachines().get(0).getState().equals("suspended");
 		String action = suspended ? "start" : "suspend";
 		view.setSuspendBusyState(true);
 		suspendToggleActive = true;
