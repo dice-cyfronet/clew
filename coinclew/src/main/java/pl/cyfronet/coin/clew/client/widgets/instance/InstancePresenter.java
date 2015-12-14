@@ -252,13 +252,13 @@ public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus
 		view.setStatus(applianceVm.getState() != null ? applianceVm.getState() : "&nbsp;");
 		
 		if(applianceVm.getState() != null) {
-			if(asList("active", "paused").contains(applianceVm.getState())) {
+			if(asList("active", "suspended").contains(applianceVm.getState())) {
 				view.enableSave(true);
 				view.enableSaveInPlace(true && globalSaveInPlaceEnabled);
 				
 				if(!suspendToggleActive) {
 					view.enablePause(true);
-					view.switchPauseButton(applianceVm.getState().equals("paused"));
+					view.switchPauseButton(applianceVm.getState().equals("suspended"));
 				}
 				
 				view.enableExternalInterfaces(true);
