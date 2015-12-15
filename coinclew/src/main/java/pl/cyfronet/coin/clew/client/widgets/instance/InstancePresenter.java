@@ -47,6 +47,7 @@ import pl.cyfronet.coin.clew.client.widgets.instance.IInstanceView.IInstancePres
 
 @Presenter(view = InstanceView.class, multiple = true)
 public class InstancePresenter extends BasePresenter<IInstanceView, MainEventBus> implements IInstancePresenter {
+	
 	private final static Logger log = LoggerFactory.getLogger(InstancePresenter.class); 
 	
 	private Map<String, HttpMappingPresenter> webapps;

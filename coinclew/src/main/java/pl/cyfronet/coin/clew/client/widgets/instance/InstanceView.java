@@ -521,17 +521,21 @@ public class InstanceView extends Composite implements IInstanceView, ReverseVie
 
 	@Override
 	public void enablePause(boolean enable) {
-		pauseButton.setEnabled(enable);
+		if(pauseButton != null) {
+			pauseButton.setEnabled(enable);
+		}
 	}
 
 	@Override
 	public void switchPauseButton(boolean paused) {
-		if(paused) {
-			pauseButton.setIcon(IconType.PLAY);
-			pauseButton.setTitle(messages.resumeTooltip());
-		} else {
-			pauseButton.setIcon(IconType.PAUSE);
-			pauseButton.setTitle(messages.pauseTooltip());
+		if(pauseButton != null) {
+			if(paused) {
+				pauseButton.setIcon(IconType.PLAY);
+				pauseButton.setTitle(messages.resumeTooltip());
+			} else {
+				pauseButton.setIcon(IconType.PAUSE);
+				pauseButton.setTitle(messages.pauseTooltip());
+			}
 		}
 	}
 
