@@ -227,8 +227,6 @@ public class ApplianceDetailsView extends Composite implements IApplianceDetails
 		FormLabel label = new FormLabel();
 		label.setText(messages.diskLabel());
 		final EditableListBox listBox = createListBox(options, value);
-		//in plgrid disk customizations is not possible
-		listBox.setEnabled(false);
 		nameContainer.add(label);
 		nameContainer.add(listBox);
 		listBox.addChangeHandler(new ChangeHandler() {
