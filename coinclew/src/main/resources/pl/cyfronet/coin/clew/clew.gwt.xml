@@ -10,13 +10,14 @@
 	<inherits name="de.benediktmeurer.gwt.slf4j.jul.JUL"/>
 	<inherits name='com.mvp4g.Mvp4gModule'/>
 	<inherits name="org.gwtbootstrap3.GwtBootstrap3CDN"/>
-	
+
 	<source path="client"/>
 	<entry-point class="pl.cyfronet.coin.clew.client.ClewEntryPoint"/>
-	
+
 	<!-- Logging configuration -->
-	<set-property name="gwt.logging.logLevel" value="FINE"/>
-	
+	<set-property name="gwt.logging.enabled" value="TRUE"/>
+	<set-property name="gwt.logging.logLevel" value="WARNING"/>
+
 	<!-- locale setup -->
 	<extend-property name="locale" values="en"/>
 	<set-property-fallback name="locale" value="en"/>

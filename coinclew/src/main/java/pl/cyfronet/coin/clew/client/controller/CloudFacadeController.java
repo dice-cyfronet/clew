@@ -113,139 +113,139 @@ public class CloudFacadeController {
 	public interface ErrorCallback {
 		void onError(CloudFacadeError error);
 	}
-	
+
 	public interface ApplianceInstancesCallback extends ErrorCallback {
 		public abstract void processApplianceInstances(List<ApplianceInstance> applianceInstances);
 	}
-	
+
 	public interface ApplianceTypesCallback {
 		void processApplianceTypes(List<ApplianceType> applianceTypes);
 	}
-	
+
 	public interface ApplianceTypeCallback extends ErrorCallback {
 		void processApplianceType(ApplianceType applianceType);
 	}
-	
+
 	public interface ApplianceSetCallback {
 		void processApplianceSet(ApplianceSet applianceSet);
 	}
-	
+
 	public interface ApplianceSetsCallback {
 		void processApplianceSet(List<ApplianceSet> applianceSets);
 	}
-	
+
 	public interface ApplianceConfigurationsCallback {
 		void processApplianceConfigurations(List<ApplianceConfiguration> applianceConfigurations);
 	}
-	
+
 	public interface ApplianceConfigurationCallback {
 		void processApplianceConfiguration(ApplianceConfiguration applianceConfiguration);
 	}
-	
+
 	public interface ApplianceVmsCallback {
 		void processApplianceVms(List<ApplianceVm> applianceVms);
 	}
-	
+
 	public interface ComputeSiteCallback {
 		void processComputeSite(ComputeSite computeSite);
 	}
-	
+
 	public interface PortMappingTemplatesCallback {
 		void processPortMappingTemplates(List<PortMappingTemplate> portMappingTemplates);
 	}
-	
+
 	public interface PortMappingTemplateCallback extends ErrorCallback {
 		void processPortMappingTemplate(PortMappingTemplate portMappingTemplate);
 	}
-	
+
 	public interface HttpMappingsCallback {
 		void processHttpMappings(List<HttpMapping> httpMappings);
 	}
-	
+
 	public interface EndpointsCallback {
 		void processEndpoints(List<Endpoint> endpoints);
 	}
-	
+
 	public interface UserKeysCallback {
 		void processUserKeys(List<UserKey> userKeys);
 	}
-	
+
 	public interface KeyUploadCallback extends ErrorCallback {
 		void onSuccess(UserKey userKey);
 	}
-	
+
 	public interface DevelopmentModePropertySetCallback {
 		void processDeveopmentModePropertySet(DevelopmentModePropertySet developmentModePropertySet);
 	}
-	
+
 	public interface PortMappingsCallback {
 		void processPortMappings(List<PortMapping> portMappings);
 	}
-	
+
 	public interface EndpointCallback {
 		void processEndpoint(Endpoint endpoint);
 	}
-	
+
 	public interface GenericErrorCallback {
 		void onError(int statusCode, String message);
 	}
-	
+
 	public interface RedirectionsCallback {
 		void processRedirections(List<Redirection> redirections);
 	}
-	
+
 	public interface UsersCallback {
 		void processUsers(List<User> users);
 	}
-	
+
 	public interface UserCallback {
 		void processUser(User user);
 	}
-	
+
 	public interface OwnedApplianceTypesCallback {
 		void processOwnedApplianceTypes(List<OwnedApplianceType> ownedApplianceTypes);
 	}
-	
+
 	public interface PortMappingTemplatePropertiesCallback {
 		void processPortMappingTemplateProperties(List<PortMappingTemplateProperty> portMappingTemplateProperties);
 	}
-	
+
 	public interface UserKeyRemovalCallback extends GenericErrorCallback {
 		void onRemoved();
 	}
-	
+
 	public interface FlavorsCallback {
 		void processFlavors(List<Flavor> flavors);
 	}
-	
+
 	public interface ComputeSitesCallback {
 		void processComputeSites(List<ComputeSite> computeSites);
 	}
-	
+
 	public interface AggregateApplianceCallback extends ErrorCallback {
 		void processAppliances(List<AggregateAppliance> appliances);
 	}
-	
+
 	public interface AggregateApplianceTypesCallback extends ErrorCallback {
 		void processApplianceTypes(List<AggregateApplianceType> applianceTypes);
 	}
-	
+
 	public interface RemoveApplianceTypeCallback extends ErrorCallback {
 		void onApplianceTypeRemoved();
 	}
-	
+
 	public interface ApplianceInstanceCallback extends ErrorCallback {
 		void processApplianceInstance(ApplianceInstance applianceInstance);
 	}
-	
+
 	public interface AliasCallback extends ErrorCallback {
 		void onAliasChanged(AliasResponseHttpMapping aliasResponseHttpMapping);
 	}
-	
+
 	public interface ActionCallback extends ErrorCallback {
 		void onActionPerformed();
 	}
-	
+
 	private ApplianceTypeService applianceTypesService;
 	private ApplianceInstanceService applianceInstancesService;
 	private ApplianceSetService applianceSetService;
@@ -265,7 +265,7 @@ public class CloudFacadeController {
 	private FlavorService flavorService;
 	private AggregateApplianceService aggregateService;
 	private AggregateApplianceTypeService aggregateApplianceTypeService;
-	
+
 	@Inject
 	public CloudFacadeController(ApplianceTypeService applianceTypesService, ApplianceInstanceService applianceInstancesService,
 			ApplianceSetService applianceSetService, ApplianceConfigurationService applianceConfigurationService,
@@ -275,7 +275,7 @@ public class CloudFacadeController {
 			DevelopmentModePropertySetService developmentModePropertySetService,
 			PortMappingService portMappingService, UserService userService,
 			PortMappingTemplatePropertyService portMappingTemplatePropertyService, FlavorService flavorService,
-			AggregateApplianceService aggregateService, AggregateApplianceTypeService aggregateApplianceTypeService, 
+			AggregateApplianceService aggregateService, AggregateApplianceTypeService aggregateApplianceTypeService,
 			PopupErrorHandler popupErrorHandler, CfErrorReader errorReader) {
 		this.applianceTypesService = applianceTypesService;
 		this.applianceInstancesService = applianceInstancesService;
@@ -297,7 +297,7 @@ public class CloudFacadeController {
 		this.popupErrorHandler = popupErrorHandler;
 		this.errorReader = errorReader;
 	}
-	
+
 	public void getApplianceTypes(final ApplianceTypesCallback applianceTypesCallback) {
 		applianceTypesService.getApplianceTypes(new MethodCallback<ApplianceTypesResponse>() {
 			@Override
@@ -306,14 +306,14 @@ public class CloudFacadeController {
 					applianceTypesCallback.processApplianceTypes(response.getApplianceTypes());
 				}
 			}
-			
+
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 			}
 		});
 	}
-	
+
 	public void getApplianceType(String applianceTypeId, final ApplianceTypeCallback applianceTypeCallback) {
 		applianceTypesService.getApplianceType(applianceTypeId, new MethodCallback<ApplianceTypeRequestResponse>() {
 			@Override
@@ -334,20 +334,20 @@ public class CloudFacadeController {
 		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
-				final List<String> started = new ArrayList<String>();
-				final List<String> failed = new ArrayList<String>();
-				
+				final List<String> started = new ArrayList<>();
+				final List<String> failed = new ArrayList<>();
+
 				for (final String configurationTemplateId : configurationTemplateIds) {
 					NewApplianceInstance applianceInstance = new NewApplianceInstance();
 					applianceInstance.setApplianceSetId(applianceSet.getId());
 					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
 					applianceInstanceRequest.setApplianceInstance(applianceInstance);
-					
+
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
 					}
-					
+
 					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
 						@Override
 						public void onFailure(Method method, Throwable exception) {
@@ -361,7 +361,7 @@ public class CloudFacadeController {
 							started.add(configurationTemplateId);
 							checkReturn();
 						}
-						
+
 						private void checkReturn() {
 							if (started.size() + failed.size() == configurationTemplateIds.size() && command != null) {
 								command.execute();
@@ -406,7 +406,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	private void ensureApplianceSet(final Type type, final ApplianceSetCallback applianceSetCallback) {
 		applianceSetService.getApplianceSets(new MethodCallback<ApplianceSetsResponse>() {
 			@Override
@@ -419,16 +419,16 @@ public class CloudFacadeController {
 				for (ApplianceSet applianceSet : response.getApplianceSets()) {
 					if (applianceSet.getType() == type && applianceSetCallback != null) {
 						applianceSetCallback.processApplianceSet(applianceSet);
-						
+
 						return;
 					}
 				}
-				
+
 				NewApplianceSet applianceSet = new NewApplianceSet();
 				applianceSet.setName("Portal set");
 				applianceSet.setPriority("50");
 				applianceSet.setType(type);
-				
+
 				NewApplianceSetRequest applianceSetRequest = new NewApplianceSetRequest();
 				applianceSetRequest.setApplianceSet(applianceSet);
 				applianceSetService.addApplianceSet(applianceSetRequest, new MethodCallback<ApplianceSetRequestResponse>() {
@@ -651,7 +651,7 @@ public class CloudFacadeController {
 		NewUserKey userKey = new NewUserKey();
 		userKey.setName(keyName);
 		userKey.setPublicKey(keyContents);
-		
+
 		NewUserKeyRequest keyRequest = new NewUserKeyRequest();
 		keyRequest.setUserKey(userKey);
 		userKeyService.addUserKey(keyRequest, new MethodCallback<UserKeyRequestResponse>() {
@@ -714,7 +714,7 @@ public class CloudFacadeController {
 		applianceConfiguration.setName(configName);
 		applianceConfiguration.setPayload(configPayload);
 		applianceConfiguration.setApplianceTypeId(applianceTypeId);
-		
+
 		ApplianceConfigurationRequestResponse request = new ApplianceConfigurationRequestResponse();
 		request.setApplianceConfiguration(applianceConfiguration);
 		applianceConfigurationService.updateApplianceConfiguration(configId, request, new MethodCallback<ApplianceConfigurationRequestResponse>() {
@@ -732,9 +732,11 @@ public class CloudFacadeController {
 		});
 	}
 
-	public void getInitialConfigurations(List<String> initialConfigurationIds, final ApplianceConfigurationsCallback applianceConfigurationsCallback) {
+	public void getInitialConfigurations(List<String> initialConfigurationIds,
+			final ApplianceConfigurationsCallback applianceConfigurationsCallback) {
 		String ids = join(initialConfigurationIds, ",");
-		applianceConfigurationService.getApplianceConfigurationsForIds(ids, new MethodCallback<ApplianceConfigurationsResponse>() {
+		applianceConfigurationService.getApplianceConfigurationsForIds(ids,
+				new MethodCallback<ApplianceConfigurationsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
@@ -743,39 +745,43 @@ public class CloudFacadeController {
 			@Override
 			public void onSuccess(Method method, ApplianceConfigurationsResponse response) {
 				if (applianceConfigurationsCallback != null) {
-					applianceConfigurationsCallback.processApplianceConfigurations(response.getApplianceConfigurations());
+					applianceConfigurationsCallback.processApplianceConfigurations(
+							response.getApplianceConfigurations());
 				}
-			}
-		});
-	}
-	
-	public void getApplianceTypes(List<String> applianceTypeIds, final ApplianceTypesCallback applianceTypesCallback) {
-		applianceTypesService.getApplianceTypesForIds(join(applianceTypeIds, ","), new MethodCallback<ApplianceTypesResponse>() {
-			@Override
-			public void onSuccess(Method method, ApplianceTypesResponse response) {
-				if (applianceTypesCallback != null) {
-					applianceTypesCallback.processApplianceTypes(response.getApplianceTypes());
-				}
-			}
-			
-			@Override
-			public void onFailure(Method method, Throwable exception) {
-				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 			}
 		});
 	}
 
+	public void getApplianceTypes(List<String> applianceTypeIds, final ApplianceTypesCallback applianceTypesCallback) {
+		applianceTypesService.getApplianceTypesForIds(join(applianceTypeIds, ","),
+				new MethodCallback<ApplianceTypesResponse>() {
+					@Override
+					public void onSuccess(Method method, ApplianceTypesResponse response) {
+						if (applianceTypesCallback != null) {
+							applianceTypesCallback.processApplianceTypes(
+									response.getApplianceTypes());
+						}
+					}
+
+					@Override
+					public void onFailure(Method method, Throwable exception) {
+						popupErrorHandler.displayError(errorReader.decodeError(
+								method.getResponse()));
+					}
+				});
+	}
+
 	private String join(List<String> initialConfigurationIds, String delimiter) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		for (Iterator<String> i = initialConfigurationIds.iterator(); i.hasNext(); ) {
 			builder.append(i.next().trim());
-			
+
 			if (i.hasNext()) {
 				builder.append(delimiter);
 			}
 		}
-		
+
 		return builder.toString();
 	}
 
@@ -783,19 +789,19 @@ public class CloudFacadeController {
 		ensureApplianceSet(Type.portal, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
-				final List<String> started = new ArrayList<String>();
-				final List<String> failed = new ArrayList<String>();
-				
+				final List<String> started = new ArrayList<>();
+				final List<String> failed = new ArrayList<>();
+
 				for (final String configurationTemplateId : parameterValues.keySet()) {
 					NewApplianceInstance applianceInstance = new NewApplianceInstance();
 					applianceInstance.setApplianceSetId(applianceSet.getId());
 					applianceInstance.setConfigurationTemplateId(configurationTemplateId);
 					applianceInstance.setParams(parameterValues.get(configurationTemplateId));
-					
+
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
 					}
-					
+
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
 					applianceInstanceRequest.setApplianceInstance(applianceInstance);
 					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
@@ -811,7 +817,7 @@ public class CloudFacadeController {
 							started.add(configurationTemplateId);
 							checkReturn();
 						}
-						
+
 						private void checkReturn() {
 							if (started.size() + failed.size() == parameterValues.keySet().size() && command != null) {
 								command.execute();
@@ -861,9 +867,9 @@ public class CloudFacadeController {
 		ensureApplianceSet(Type.development, new ApplianceSetCallback() {
 			@Override
 			public void processApplianceSet(ApplianceSet applianceSet) {
-				final List<String> started = new ArrayList<String>();
-				final List<String> failed = new ArrayList<String>();
-				
+				final List<String> started = new ArrayList<>();
+				final List<String> failed = new ArrayList<>();
+
 				for (final String configurationTemplateId : parameterValues.keySet()) {
 					NewApplianceInstance applianceInstance = new NewApplianceInstance();
 					applianceInstance.setApplianceSetId(applianceSet.getId());
@@ -874,15 +880,15 @@ public class CloudFacadeController {
 					applianceInstance.getDevelopmentProperties().put("preference_cpu", cores.get(configurationTemplateId));
 					applianceInstance.getDevelopmentProperties().put("preference_memory", rams.get(configurationTemplateId));
 					applianceInstance.getDevelopmentProperties().put("preference_disk", disks.get(configurationTemplateId));
-					
+
 					if (overrideNames != null && overrideNames.containsKey(configurationTemplateId)) {
 						applianceInstance.setName(overrideNames.get(configurationTemplateId));
 					}
-					
+
 					if(computeSiteIds != null && computeSiteIds.get(configurationTemplateId) != null) {
 						applianceInstance.setComputeSiteIds(computeSiteIds.get(configurationTemplateId));
 					}
-					
+
 					NewApplianceInstanceRequest applianceInstanceRequest = new NewApplianceInstanceRequest();
 					applianceInstanceRequest.setApplianceInstance(applianceInstance);
 					applianceInstancesService.addApplianceInstance(applianceInstanceRequest, new MethodCallback<ApplianceInstanceRequestResponse>() {
@@ -898,7 +904,7 @@ public class CloudFacadeController {
 							started.add(configurationTemplateId);
 							checkReturn();
 						}
-						
+
 						private void checkReturn() {
 							if (started.size() + failed.size() == parameterValues.keySet().size() && command != null) {
 								command.execute();
@@ -1022,7 +1028,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void addPortMappingTemplateForApplianceType(String name, int portNumber, String transportProtocol,
 			final String applicationProtocol, String applianceTypeId, final PortMappingTemplateCallback portMappingTemplateCallback) {
 		NewPortMappingTemplateRequest request = createNewPortMappingTemplateRequest(name, portNumber, transportProtocol, applicationProtocol, null, applianceTypeId);
@@ -1042,7 +1048,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	private NewPortMappingTemplateRequest createNewPortMappingTemplateRequest(String name, int portNumber, String transportProtocol, final String applicationProtocol,
 			String developmentModePropertySetId, String applianceTypeId) {
 		NewPortMappingTemplate portMappingTemplate = new NewPortMappingTemplate();
@@ -1052,10 +1058,10 @@ public class CloudFacadeController {
 		portMappingTemplate.setApplicationProtocol(applicationProtocol);
 		portMappingTemplate.setDevelopmentModePropertySetId(developmentModePropertySetId);
 		portMappingTemplate.setApplianceTypeId(applianceTypeId);
-		
+
 		NewPortMappingTemplateRequest request = new NewPortMappingTemplateRequest();
 		request.setPortMapping(portMappingTemplate);
-		
+
 		return request;
 	}
 
@@ -1132,7 +1138,7 @@ public class CloudFacadeController {
 				public void onFailure(Method method, Throwable exception) {
 					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 				}
-	
+
 				@Override
 				public void onSuccess(Method method, PortMappingResponse response) {
 					if (portMappingsCallback != null) {
@@ -1162,9 +1168,9 @@ public class CloudFacadeController {
 			httpMappingService.getHttpMappingsForPortMappingTemplateId(portMappingTemplateId, new MethodCallback<HttpMappingsResponse>() {
 				@Override
 				public void onFailure(Method method, Throwable exception) {
-					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));	
+					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 				}
-	
+
 				@Override
 				public void onSuccess(Method method, HttpMappingsResponse response) {
 					if (httpMappingsCallback != null) {
@@ -1215,7 +1221,7 @@ public class CloudFacadeController {
 		endpoint.setInvocationPath(invocationPath);
 		endpoint.setPortMappingTemplateId(portMappingTemplateId);
 		endpoint.setSecured(secured);
-		
+
 		NewEndpointRequest request = new NewEndpointRequest();
 		request.setEndpoint(endpoint);
 		endpointService.addEndpoint(request, new MethodCallback<EndpointRequestResponse>() {
@@ -1246,7 +1252,7 @@ public class CloudFacadeController {
 		applianceType.setPreferenceCpu(cores);
 		applianceType.setPreferenceMemory(ram);
 		applianceType.setPreferenceDisk(disk);
-		
+
 		ApplianceTypeRequestResponse request = new ApplianceTypeRequestResponse();
 		request.setApplianceType(applianceType);
 		applianceTypesService.updateApplianceType(applianceTypeId, request, new MethodCallback<ApplianceTypeRequestResponse>() {
@@ -1281,10 +1287,10 @@ public class CloudFacadeController {
 		applianceType.setPreferenceCpu(cores);
 		applianceType.setPreferenceMemory(ram);
 		applianceType.setPreferenceDisk(disk);
-		
+
 		SaveApplianceTypeRequest request = new SaveApplianceTypeRequest();
 		request.setApplianceType(applianceType);
-		
+
 		applianceTypesService.addApplianceType(request, new MethodCallback<ApplianceTypeRequestResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
@@ -1301,7 +1307,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void getRedirectionsForAppliance(final ApplianceInstance instance, final RedirectionsCallback callback) {
 		getPortMappingTemplates(instance.getApplianceTypeId(), new PortMappingTemplatesCallback() {
 			@Override
@@ -1310,7 +1316,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void getRedirectionsForDevPropertySetId(String devPropertySetId, final RedirectionsCallback callback) {
 		getPortMappingTemplatesForDevelopmentModePropertySetId(devPropertySetId, new PortMappingTemplatesCallback() {
 			@Override
@@ -1321,14 +1327,14 @@ public class CloudFacadeController {
 	}
 
 	protected void buildRedirections(List<PortMappingTemplate> portMappingTemplates, String instanceId, String virtualMachineId, final RedirectionsCallback callback) {
-		final List<Redirection> redirections = new ArrayList<Redirection>();
-		
+		final List<Redirection> redirections = new ArrayList<>();
+
 		if(portMappingTemplates.size() == 0 && callback != null) {
 			callback.processRedirections(redirections);
 		}
-		
-		final List<MutableBoolean> finishedCallbacks = new ArrayList<MutableBoolean>();
-		
+
+		final List<MutableBoolean> finishedCallbacks = new ArrayList<>();
+
 		for(PortMappingTemplate portMappingTemplate : portMappingTemplates) {
 			final Redirection redirection = new Redirection();
 			redirection.setId(portMappingTemplate.getId());
@@ -1336,7 +1342,7 @@ public class CloudFacadeController {
 			redirection.setTargetPort(portMappingTemplate.getTargetPort());
 			redirection.setProtocol(portMappingTemplate.getTransportProtocol());
 			redirections.add(redirection);
-			
+
 			if (Arrays.asList((new String[] {"http", "https", "http_https"})).contains(portMappingTemplate.getApplicationProtocol())) {
 				redirection.setHttp(true);
 				//fetching http mappings ...
@@ -1360,12 +1366,12 @@ public class CloudFacadeController {
 								redirection.setHttpsMappingId(httpMapping.getId());
 							}
 						}
-						
+
 						httpMappingsFinished.setValue(true);
 						checkRedirectionsReturn(finishedCallbacks, redirections, callback);
 					}
 				});
-				
+
 				//...  and endpoints
 				final MutableBoolean endpointsFinished = new MutableBoolean();
 				finishedCallbacks.add(endpointsFinished);
@@ -1400,23 +1406,23 @@ public class CloudFacadeController {
 				return;
 			}
 		}
-		
+
 		Collections.sort(redirections, new Comparator<Redirection>() {
 			@Override
 			public int compare(Redirection o1, Redirection o2) {
 				if (o1 != null && o2 != null && o1.getName() != null && o2.getName() != null) {
 					return o1.getName().compareToIgnoreCase(o2.getName());
 				}
-				
+
 				return 0;
 			}
 		});
-		
+
 		if (callback != null) {
 			callback.processRedirections(redirections);
 		}
 	}
-	
+
 	public void getUsers(List<String> userIds, final UsersCallback usersCallback) {
 		userService.getUsers(join(userIds, ","), new MethodCallback<UsersResponse>() {
 			@Override
@@ -1432,7 +1438,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void getOwnedApplianceTypes(final OwnedApplianceTypesCallback callback) {
 		getApplianceTypes(new ApplianceTypesCallback() {
 			@Override
@@ -1441,15 +1447,15 @@ public class CloudFacadeController {
 				getUsers(userIds, new UsersCallback() {
 					@Override
 					public void processUsers(List<User> users) {
-						List<OwnedApplianceType> result = new ArrayList<OwnedApplianceType>();
-						
+						List<OwnedApplianceType> result = new ArrayList<>();
+
 						for (ApplianceType applianceType : applianceTypes) {
 							OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
 							ownedApplianceType.setApplianceType(applianceType);
 							ownedApplianceType.setUser(getUser(applianceType.getAuthorId(), users));
 							result.add(ownedApplianceType);
 						}
-						
+
 						if (callback != null) {
 							callback.processOwnedApplianceTypes(result);
 						}
@@ -1461,19 +1467,19 @@ public class CloudFacadeController {
 								return user;
 							}
 						}
-						
+
 						return null;
 					}
 				});
 			}
 
 			private List<String> collectUserIds(List<ApplianceType> applianceTypes) {
-				List<String> userIds = new ArrayList<String>();
-				
+				List<String> userIds = new ArrayList<>();
+
 				for (ApplianceType applianceType : applianceTypes) {
 					userIds.add(applianceType.getAuthorId());
 				}
-				
+
 				return userIds;
 			}
 		});
@@ -1505,8 +1511,8 @@ public class CloudFacadeController {
 
 			@Override
 			public void onSuccess(Method method, UsersResponse response) {
-				final List<OwnedApplianceType> result = new ArrayList<OwnedApplianceType>();
-				
+				final List<OwnedApplianceType> result = new ArrayList<>();
+
 				if (response.getUsers().size() > 0) {
 					final User user = response.getUsers().get(0);
 					applianceTypesService.getManagedApplianceTypes(new MethodCallback<ApplianceTypesResponse>() {
@@ -1519,11 +1525,11 @@ public class CloudFacadeController {
 						public void onSuccess(Method method, ApplianceTypesResponse response) {
 							final List<ApplianceType> applianceTypes = response.getApplianceTypes();
 							List<String> computeSiteIds = new ArrayList<>();
-							
+
 							for(ApplianceType applianceType : applianceTypes) {
 								computeSiteIds.addAll(applianceType.getComputeSiteIds());
 							}
-							
+
 							computeSitesService.getComputeSites(join(computeSiteIds, ","), new MethodCallback<ComputeSitesResponse>() {
 								@Override
 								public void onFailure(Method method, Throwable exception) {
@@ -1536,9 +1542,9 @@ public class CloudFacadeController {
 										OwnedApplianceType ownedApplianceType = new OwnedApplianceType();
 										ownedApplianceType.setApplianceType(applianceType);
 										ownedApplianceType.setUser(user);
-										
+
 										Map<String, ComputeSite> computeSites = new HashMap<>();
-										
+
 										for(String computeSiteId : applianceType.getComputeSiteIds()) {
 											for(ComputeSite computeSite : response.getComputeSites()) {
 												if(computeSite.getId().equals(computeSiteId)) {
@@ -1546,11 +1552,11 @@ public class CloudFacadeController {
 												}
 											}
 										}
-										
+
 										ownedApplianceType.setComputeSites(computeSites);
 										result.add(ownedApplianceType);
 									}
-									
+
 									if(ownedApplianceTypesCallback != null) {
 										ownedApplianceTypesCallback.processOwnedApplianceTypes(result);
 									}
@@ -1572,11 +1578,11 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				CloudFacadeError error = errorReader.decodeError(method.getResponse());
-				
+
 				if(callback != null) {
 					callback.onError(error);
 				}
-				
+
 				popupErrorHandler.displayError(error);
 			}
 
@@ -1594,7 +1600,7 @@ public class CloudFacadeController {
 		property.setPortMappingTemplateId(portMappingTemplateId);
 		property.setKey(propertyName);
 		property.setValue(propertyValue);
-		
+
 		NewPortMappingTemplatePropertyRequest portMappingTemplatePropertyRequest = new NewPortMappingTemplatePropertyRequest();
 		portMappingTemplatePropertyRequest.setPortMappingTemplateProperty(property);
 		portMappingTemplatePropertyService.addPortMappingTemplateProperty(portMappingTemplatePropertyRequest, new MethodCallback<PortMappingTemplatePropertyRequestResponse>() {
@@ -1678,7 +1684,7 @@ public class CloudFacadeController {
 		property.setPortMappingTemplateId(portMappingTemplateId);
 		property.setKey(name);
 		property.setValue(value);
-		
+
 		NewPortMappingTemplatePropertyRequest portMappingTemplatePropertyRequest = new NewPortMappingTemplatePropertyRequest();
 		portMappingTemplatePropertyRequest.setPortMappingTemplateProperty(property);
 		portMappingTemplatePropertyService.updatePortMappingTemplateProperty(propertyId, portMappingTemplatePropertyRequest, new MethodCallback<PortMappingTemplatePropertyRequestResponse>() {
@@ -1723,7 +1729,7 @@ public class CloudFacadeController {
 		endpoint.setInvocationPath(invocationPath);
 		endpoint.setPortMappingTemplateId(portMappingTemplateId);
 		endpoint.setSecured(secured);
-		
+
 		NewEndpointRequest request = new NewEndpointRequest();
 		request.setEndpoint(endpoint);
 		endpointService.updateEndpoint(endpointId, request, new MethodCallback<EndpointRequestResponse>() {
@@ -1748,7 +1754,7 @@ public class CloudFacadeController {
 				public void onFailure(Method method, Throwable exception) {
 					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 				}
-	
+
 				@Override
 				public void onSuccess(Method method, FlavorsResponse response) {
 					if(callback != null) {
@@ -1762,7 +1768,7 @@ public class CloudFacadeController {
 				public void onFailure(Method method, Throwable exception) {
 					popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 				}
-	
+
 				@Override
 				public void onSuccess(Method method, FlavorsResponse response) {
 					if(callback != null) {
@@ -1804,7 +1810,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void getFlavors(List<String> flavorIds, final FlavorsCallback callback) {
 		flavorService.getFlavors(join(flavorIds, ","), new MethodCallback<FlavorsResponse>() {
 			@Override
@@ -1826,7 +1832,7 @@ public class CloudFacadeController {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
-				
+
 				if(command != null) {
 					command.execute();
 				}
@@ -1840,7 +1846,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void aggregatedInstances(Type type, final AggregateApplianceCallback callback) {
 		aggregateService.getAggregateAppliances(type.name(), new MethodCallback<AggregateAppliancesResponse>() {
 			@Override
@@ -1854,7 +1860,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void aggregateApplianceTypes(String mode, final AggregateApplianceTypesCallback callback) {
 		aggregateApplianceTypeService.getAggregateAppliances(mode, new MethodCallback<AggregateApplianceTypesResponse>() {
 			@Override
@@ -1870,7 +1876,7 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void getApplianceInstance(String applianceInstanceId, final ApplianceInstanceCallback callback) {
 		applianceInstancesService.getApplianceInstance(applianceInstanceId, new MethodCallback<ApplianceInstancesResponse>() {
 			@Override
@@ -1890,14 +1896,14 @@ public class CloudFacadeController {
 			}
 		});
 	}
-	
+
 	public void getUserWithLogin(String userLogin, final UserCallback callback) {
 		userService.getUserForLogin(userLogin, new MethodCallback<UsersResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
 				CloudFacadeError error = errorReader.decodeError(method.getResponse());
 				popupErrorHandler.displayError(error);
-				
+
 			}
 
 			@Override
@@ -1910,11 +1916,11 @@ public class CloudFacadeController {
 			}
 		});
 	};
-	
+
 	public void saveApplianceTypeInPlace(String applianceInstanceId, String applianceTypeId, final ApplianceTypeCallback callback) {
 		ApplianceTypeSaveInPlace applianceType = new ApplianceTypeSaveInPlace();
 		applianceType.setApplianceInstanceId(applianceInstanceId);
-		
+
 		ApplianceTypeSaveInPlaceRequest request = new ApplianceTypeSaveInPlaceRequest();
 		request.setApplianceType(applianceType);
 		applianceTypesService.saveInPlace(applianceTypeId, request, new MethodCallback<ApplianceTypeRequestResponse>() {
@@ -1935,7 +1941,7 @@ public class CloudFacadeController {
 	public void setAlias(String httpMappingId, String alias, final AliasCallback callback) {
 		AliasHttpMapping aliasHttpMapping = new AliasHttpMapping();
 		aliasHttpMapping.setCustomName(alias);
-		
+
 		AliasRequest aliasRequest = new AliasRequest();
 		aliasRequest.setAliasHttpMapping(aliasHttpMapping);
 		httpMappingService.setAlias(httpMappingId, aliasRequest, new MethodCallback<AliasResponse>() {
@@ -1973,12 +1979,12 @@ public class CloudFacadeController {
 	private void collectComputeSites(List<AggregateApplianceType> applianceTypes, List<ComputeSite> computeSites) {
 		for(AggregateApplianceType applianceType : applianceTypes) {
 			applianceType.setComputeSites(new HashMap<String, ComputeSite>());
-			
+
 			for(String computeSiteId : applianceType.getComputeSiteIds()) {
 				for (ComputeSite computeSite : computeSites) {
 					if(computeSite.getId().equals(computeSiteId)) {
 						applianceType.getComputeSites().put(computeSiteId, computeSite);
-						
+
 						break;
 					}
 				}

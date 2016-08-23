@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
+import com.mvp4g.client.annotation.Presenter;
+import com.mvp4g.client.presenter.BasePresenter;
+
 import pl.cyfronet.coin.clew.client.MainEventBus;
 import pl.cyfronet.coin.clew.client.auth.MiTicketReader;
 import pl.cyfronet.coin.clew.client.controller.CloudFacadeController;
@@ -19,19 +23,15 @@ import pl.cyfronet.coin.clew.client.controller.cf.user.User;
 import pl.cyfronet.coin.clew.client.widgets.appliancetype.ApplianceTypePresenter;
 import pl.cyfronet.coin.clew.client.widgets.startinstance.IStartInstanceView.IStartInstancePresenter;
 
-import com.google.inject.Inject;
-import com.mvp4g.client.annotation.Presenter;
-import com.mvp4g.client.presenter.BasePresenter;
-
 @Presenter(view = StartInstanceView.class)
 public class StartInstancePresenter extends BasePresenter<IStartInstanceView, MainEventBus> implements IStartInstancePresenter {
 	private CloudFacadeController cloudFacadeController;
 	private List<ApplianceTypePresenter> applianceTypePresenters;
 	private boolean developmentMode;
-	
+
 	/**
 	 * postponedQuery and presentersLoaded are used to handle filter input before the appliances are loaded and
-	 * carry out filtering afterwards. 
+	 * carry out filtering afterwards.
 	 */
 	private String postponedQuery;
 	private boolean presentersLoaded;
@@ -41,13 +41,13 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	public StartInstancePresenter(CloudFacadeController cloudFacadeController, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.ticketReader = ticketReader;
-		applianceTypePresenters = new ArrayList<ApplianceTypePresenter>();
+		applianceTypePresenters = new ArrayList<>();
 	}
-	
+
 	public void onStart() {
 		eventBus.addPopup(view);
 	}
-	
+
 	public void onShowStartInstanceDialog(boolean developmentMode) {
 		this.developmentMode = developmentMode;
 		setTitle();
@@ -60,7 +60,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			public void onError(CloudFacadeError error) {
 				eventBus.displayError(error);
 			}
-			
+
 			@Override
 			public void processApplianceTypes(final List<AggregateApplianceType> applianceTypes) {
 				cloudFacadeController.getUserWithLogin(ticketReader.getUserLogin(), new UserCallback() {
@@ -74,10 +74,10 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 			}
 		});
 	}
-	
+
 	protected void displayApplianceTypes(List<AggregateApplianceType> applianceTypes, User user) {
 		view.clearApplianceTypeContainer();
-		
+
 		if(applianceTypes.size() == 0) {
 			view.addNoApplianceTypesLabel();
 		} else {
@@ -87,16 +87,16 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 					return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 				}
 			});
-			
+
 			for(AggregateApplianceType applianceType : applianceTypes) {
 				ApplianceTypePresenter presenter = eventBus.addHandler(ApplianceTypePresenter.class);
 				applianceTypePresenters.add(presenter);
 				presenter.setApplianceType(applianceType, developmentMode);
 				view.getApplianceTypeContainer().add(presenter.getView().asWidget());
 			}
-			
+
 			presentersLoaded = true;
-			
+
 			if(postponedQuery != null) {
 				onFilterTextChanged();
 				postponedQuery = null;
@@ -114,33 +114,33 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 
 	public void onHideStartInstanceModal() {
 		view.hide();
-		
+
 		for (ApplianceTypePresenter presenter : applianceTypePresenters) {
 			eventBus.removeHandler(presenter);
 		}
-		
+
 		applianceTypePresenters.clear();
 	}
 
 	@Override
 	public void onStartSelected() {
-		List<String> initialConfigurationIds = new ArrayList<String>();
-		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
-		
+		List<String> initialConfigurationIds = new ArrayList<>();
+		Map<String, List<String>> computeSiteIds = new HashMap<>();
+
 		for(ApplianceTypePresenter presenter : applianceTypePresenters) {
 			String initialConfigId = presenter.getSelectedInitialConfigId();
-			
+
 			if(initialConfigId != null) {
 				initialConfigurationIds.add(initialConfigId);
 			}
-			
+
 			String computeSiteId = presenter.getSelectedComputeSiteId();
-			
+
 			if(computeSiteId != null && !computeSiteId.equals("0")) {
 				computeSiteIds.put(initialConfigId, Arrays.asList(new String[] {computeSiteId}));
 			}
 		}
-		
+
 		if(initialConfigurationIds.size() == 0) {
 			view.showNoApplianceTypesSelected();
 		} else {
@@ -152,7 +152,7 @@ public class StartInstancePresenter extends BasePresenter<IStartInstanceView, Ma
 	@Override
 	public void onFilterTextChanged() {
 		String filterText = view.getFilter().getText();
-		
+
 		if(!presentersLoaded) {
 			postponedQuery = filterText;
 		} else {

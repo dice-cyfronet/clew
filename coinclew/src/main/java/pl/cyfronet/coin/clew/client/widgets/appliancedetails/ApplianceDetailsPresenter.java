@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
@@ -35,7 +38,11 @@ import pl.cyfronet.coin.clew.client.controller.cf.userkey.UserKey;
 import pl.cyfronet.coin.clew.client.widgets.appliancedetails.IApplianceDetailsView.IApplianceDetailsPresenter;
 
 @Presenter(view = ApplianceDetailsView.class)
-public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsView, MainEventBus> implements IApplianceDetailsPresenter {
+public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsView,
+		MainEventBus> implements IApplianceDetailsPresenter {
+
+	private static final Logger log = LoggerFactory.getLogger(ApplianceDetailsPresenter.class);
+
 	private CloudFacadeController cloudFacadeController;
 	private Map<String, HasValue<Boolean>> keys;
 	private Map<String, Map<String, String>> parameterValues;
@@ -51,7 +58,8 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	private MiTicketReader ticketReader;
 
 	@Inject
-	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController, ClewProperties properties, MiTicketReader ticketReader) {
+	public ApplianceDetailsPresenter(CloudFacadeController cloudFacadeController,
+			ClewProperties properties, MiTicketReader ticketReader) {
 		this.cloudFacadeController = cloudFacadeController;
 		this.properties = properties;
 		this.ticketReader = ticketReader;
@@ -64,52 +72,61 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		applianceTypeIdToInitialConfigIdMapping = new HashMap<>();
 		pickedComputeSites = new HashMap<>();
 	}
-	
+
 	public void onStart() {
 		eventBus.addPopup(view);
 	}
-	
-	public void onShowApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds, Map<String, List<String>> computeSiteIds) {
+
+	public void onShowApplianceStartDetailsEditorForConfigIds(List<String> initialConfigurationIds,
+			Map<String, List<String>> computeSiteIds) {
+		log.debug("Showing appliance configuration window for initial configs {} and compute site "
+				+ "ids {}", initialConfigurationIds, computeSiteIds);
 		this.computeSiteIds = computeSiteIds;
-		parameterValues = new HashMap<String, Map<String, String>>();
-		
+		parameterValues = new HashMap<>();
+
 		for (String initialConfigurationId : initialConfigurationIds) {
 			parameterValues.put(initialConfigurationId, new HashMap<String, String>());
 		}
-		
+
 		loadKeysAndNamesAndShowModal(initialConfigurationIds);
 	}
 
-	public void onShowApplianceStartDetailsEditorForConfigParams(Map<String, Map<String, String>> parameterValues, Map<String, List<String>> computeSiteIds) {
+	public void onShowApplianceStartDetailsEditorForConfigParams(
+			Map<String, Map<String, String>> parameterValues, Map<String,
+			List<String>> computeSiteIds) {
+		log.debug("Showing appliance configuration window for parameters {} and compute site "
+				+ "ids {}", parameterValues, computeSiteIds);
+
 		this.parameterValues = parameterValues;
 		this.computeSiteIds = computeSiteIds;
-		loadKeysAndNamesAndShowModal(new ArrayList<String>(parameterValues.keySet()));
+		loadKeysAndNamesAndShowModal(new ArrayList<>(parameterValues.keySet()));
 	}
 
 	@Override
 	public void onStartInstance() {
 		String keyId = null;
-		
+
 		for(String id : keys.keySet()) {
 			if(keys.get(id).getValue()) {
 				keyId = id;
 			}
 		}
-		
-		Map<String, String> overrideNames = new HashMap<String, String>();
-		
+
+		Map<String, String> overrideNames = new HashMap<>();
+
 		for(String initialConfigId : names.keySet()) {
 			if(!names.get(initialConfigId).getText().trim().isEmpty()) {
 				overrideNames.put(initialConfigId, names.get(initialConfigId).getText().trim());
 			}
 		}
-		
+
 		Map<String, String> cores = createPreferenceMapping(this.cores);
 		Map<String, String> rams = createPreferenceMapping(this.rams);
 		Map<String, String> disks = createPreferenceMapping(this.disks);
 		updateComputeSites();
 		view.setStartBusyState(true);
-		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId, parameterValues, cores, rams, disks, computeSiteIds, new Command() {
+		cloudFacadeController.startApplianceTypesInDevelopment(overrideNames, keyId,
+				parameterValues, cores, rams, disks, computeSiteIds, new Command() {
 			@Override
 			public void execute() {
 				view.setStartBusyState(false);
@@ -122,7 +139,10 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	@Override
 	public void onPreferenceChanged(String applianceTypeId) {
 		String initialConfigId = applianceTypeIdToInitialConfigIdMapping.get(applianceTypeId);
-		updateFlavorDetails(applianceTypeId, cores.get(initialConfigId).getValue(), rams.get(initialConfigId).getValue(),
+		updateFlavorDetails(
+				applianceTypeId,
+				cores.get(initialConfigId).getValue(),
+				rams.get(initialConfigId).getValue(),
 				disks.get(initialConfigId).getValue());
 	}
 
@@ -133,35 +153,47 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 		view.showKeyProgress(true);
 		view.showDetailsProgress(true);
 		view.showModal(true);
-		cloudFacadeController.getInitialConfigurations(initialConfigurationIds, new ApplianceConfigurationsCallback() {
+		log.debug("Fetching initial configurations for ids {}", initialConfigurationIds);
+		cloudFacadeController.getInitialConfigurations(initialConfigurationIds,
+				new ApplianceConfigurationsCallback() {
 			@Override
-			public void processApplianceConfigurations(final List<ApplianceConfiguration> applianceConfigurations) {
-				cloudFacadeController.getApplianceTypes(collectApplianceTypeIds(applianceConfigurations), new ApplianceTypesCallback() {
+			public void processApplianceConfigurations(
+					final List<ApplianceConfiguration> applianceConfigurations) {
+				List<String> applianceTypeIds = collectApplianceTypeIds(applianceConfigurations);
+				log.debug("Fetching appliance types for ids {}", applianceTypeIds);
+				cloudFacadeController.getApplianceTypes(
+						applianceTypeIds, new ApplianceTypesCallback() {
 					@Override
 					public void processApplianceTypes(final List<ApplianceType> applianceTypes) {
 						if(computeSiteSelectionRequired(applianceTypes)) {
-							cloudFacadeController.getComputeSites(collectComputeSiteIds(applianceTypes), new ComputeSitesCallback() {
+							cloudFacadeController.getComputeSites(
+									collectComputeSiteIds(applianceTypes),
+									new ComputeSitesCallback() {
 								@Override
-								public void processComputeSites(final List<ComputeSite> computeSites) {
-									cloudFacadeController.getUserWithLogin(ticketReader.getUserLogin(), new UserCallback() {
+								public void processComputeSites(
+										final List<ComputeSite> computeSites) {
+									cloudFacadeController.getUserWithLogin(
+											ticketReader.getUserLogin(), new UserCallback() {
 										@Override
 										public void processUser(User user) {
 											view.showDetailsProgress(false);
-											
-											for(ApplianceType applianceType : applianceTypes) { 
-												addDetails(applianceConfigurations, applianceType, computeSites);
+
+											for(ApplianceType applianceType : applianceTypes) {
+												addDetails(applianceConfigurations, applianceType,
+														computeSites);
 											}
 										}
 									});
 								}
 							});
 						} else {
-							cloudFacadeController.getUserWithLogin(ticketReader.getUserLogin(), new UserCallback() {
+							cloudFacadeController.getUserWithLogin(ticketReader.getUserLogin(),
+									new UserCallback() {
 								@Override
 								public void processUser(User user) {
 									view.showDetailsProgress(false);
-									
-									for(ApplianceType applianceType : applianceTypes) { 
+
+									for(ApplianceType applianceType : applianceTypes) {
 										addDetails(applianceConfigurations, applianceType, null);
 									}
 								}
@@ -174,12 +206,12 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 			@Override
 			public void processUserKeys(List<UserKey> userKeys) {
 				view.showKeyProgress(false);
-				
+
 				boolean firstSet = false;
-				
+
 				for (UserKey userKey : userKeys) {
 					keys.put(userKey.getId(), view.addKey(userKey.getId(), userKey.getName()));
-					
+
 					if (!firstSet) {
 						keys.get(userKey.getId()).setValue(true);
 						firstSet = true;
@@ -188,8 +220,9 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 			}
 		});
 	}
-	
-	private void addDetails(List<ApplianceConfiguration> applianceConfigurations, ApplianceType applianceType, List<ComputeSite> computeSites) {
+
+	private void addDetails(List<ApplianceConfiguration> applianceConfigurations,
+			ApplianceType applianceType, List<ComputeSite> computeSites) {
 		String initialConfigId = getInitialConfigId(applianceType.getId(), applianceConfigurations);
 		names.put(initialConfigId, view.addName(applianceType.getName()));
 		cores.put(initialConfigId, view.addCores(getOptions(properties.coreOptions()),
@@ -200,84 +233,91 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 				safeValue(applianceType.getPreferenceDisk()), applianceType.getId()));
 		flavorContainers.put(applianceType.getId(), view.addFlavorContainer());
 		applianceTypeIdToInitialConfigIdMapping.put(applianceType.getId(), initialConfigId);
-		updateFlavorDetails(applianceType.getId(), applianceType.getPreferenceCpu(), applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk());
-		
+		updateFlavorDetails(applianceType.getId(), applianceType.getPreferenceCpu(),
+				applianceType.getPreferenceMemory(), applianceType.getPreferenceDisk());
+
 		boolean separatorAdded = false;
-		
-		if(applianceType.getComputeSiteIds() != null && applianceType.getComputeSiteIds().size() > 1) {
+
+		if(applianceType.getComputeSiteIds() != null
+				&& applianceType.getComputeSiteIds().size() > 1) {
 			String chosenComputeSite = null;
-			
-			if(computeSiteIds != null && computeSiteIds.get(initialConfigId) != null && computeSiteIds.get(initialConfigId).size() == 1) {
+
+			if(computeSiteIds != null && computeSiteIds.get(initialConfigId) != null
+					&& computeSiteIds.get(initialConfigId).size() == 1) {
 				chosenComputeSite = computeSiteIds.get(initialConfigId).get(0);
 			}
-			
-			pickedComputeSites.put(initialConfigId, view.addComputeSites(labelComputeSites(computeSites), chosenComputeSite));
+
+			pickedComputeSites.put(initialConfigId, view.addComputeSites(
+					labelComputeSites(computeSites), chosenComputeSite));
 			view.addSeparator();
 			separatorAdded = true;
 		}
-		
+
 		if(!separatorAdded) {
 			view.addSeparator();
 			separatorAdded = true;
 		}
 	}
-	
+
 	private Map<String, String> labelComputeSites(List<ComputeSite> computeSites) {
-		Map<String, String> result = new LinkedHashMap<String, String>();
+		Map<String, String> result = new LinkedHashMap<>();
 		result.put("0", view.getAnyComputeSiteLabel());
-		
+
 		for(ComputeSite computeSite : computeSites) {
 			result.put(computeSite.getId(), computeSite.getName());
 		}
-		
+
 		return result;
 	}
 
 	private List<String> collectComputeSiteIds(List<ApplianceType> applianceTypes) {
-		Set<String> result = new HashSet<String>();
-		
+		Set<String> result = new HashSet<>();
+
 		for(ApplianceType applianceType : applianceTypes) {
 			result.addAll(applianceType.getComputeSiteIds());
 		}
-		
-		return new ArrayList<String>(result);
+
+		return new ArrayList<>(result);
 	}
-	
+
 	private boolean computeSiteSelectionRequired(List<ApplianceType> applianceTypes) {
 		for(ApplianceType applianceType : applianceTypes) {
-			if(applianceType.getComputeSiteIds() != null && applianceType.getComputeSiteIds().size() > 1) {
+			if(applianceType.getComputeSiteIds() != null
+					&& applianceType.getComputeSiteIds().size() > 1) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
-	private void updateFlavorDetails(final String applianceTypeId, String cpu, String ram, String disk) {
+
+	private void updateFlavorDetails(final String applianceTypeId, String cpu, String ram,
+			String disk) {
 		if(!isValid(cpu) || !isValid(ram) || !isValid(disk)) {
 			view.showPreferencesError(flavorContainers.get(applianceTypeId));
-			
+
 			return;
 		}
-		
+
 		view.showFlavorProgress(flavorContainers.get(applianceTypeId), true);
 		cloudFacadeController.getFlavors(applianceTypeId, cpu == null ? "0" : cpu,
 				ram == null ? "0" : ram, disk == null ? "0" : disk, null, new FlavorsCallback() {
 					@Override
 					public void processFlavors(List<Flavor> flavors) {
 						view.showFlavorProgress(flavorContainers.get(applianceTypeId), false);
-						
+
 						Flavor flavor = getCheapest(flavors);
-						
+
 						if(flavor != null) {
-							view.showFlavorInformation(flavorContainers.get(applianceTypeId), flavor.getName(), flavor.getHourlyCost());
+							view.showFlavorInformation(flavorContainers.get(applianceTypeId),
+									flavor.getName(), flavor.getHourlyCost());
 						} else {
 							view.showFlavorError(flavorContainers.get(applianceTypeId));
 						}
 					}
 				});
 	}
-	
+
 	private boolean isValid(String amount) {
 		if(amount != null) {
 			try {
@@ -288,30 +328,30 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
 	private Flavor getCheapest(List<Flavor> flavors) {
 		Flavor result = null;
-		
+
 		for(Flavor flavor : flavors) {
 			if(result == null || flavor.getHourlyCost() < result.getHourlyCost()) {
 				result = flavor;
 			}
 		}
-		
+
 		return result;
 	}
 
 	private void updateComputeSites() {
 		if(computeSiteIds == null) {
-			computeSiteIds = new HashMap<String, List<String>>();
+			computeSiteIds = new HashMap<>();
 		}
-		
+
 		for(String initialConfigID : pickedComputeSites.keySet()) {
 			if(!pickedComputeSites.get(initialConfigID).getValue().equals("0")) {
-				List<String> computeSiteId = new ArrayList<String>();
+				List<String> computeSiteId = new ArrayList<>();
 				computeSiteId.add(pickedComputeSites.get(initialConfigID).getValue());
 				computeSiteIds.put(initialConfigID, computeSiteId );
 			}
@@ -319,45 +359,47 @@ public class ApplianceDetailsPresenter extends BasePresenter<IApplianceDetailsVi
 	}
 
 	private Map<String, String> createPreferenceMapping(Map<String, HasValue<String>> preferences) {
-		Map<String, String> result = new HashMap<String, String>();
-		
+		Map<String, String> result = new HashMap<>();
+
 		for(String id : preferences.keySet()) {
 			result.put(id, preferences.get(id).getValue());
 		}
-		
+
 		return result;
 	}
 
-	private List<String> collectApplianceTypeIds(List<ApplianceConfiguration> applianceConfigurations) {
-		List<String> result = new ArrayList<String>();
-		
+	private List<String> collectApplianceTypeIds(
+			List<ApplianceConfiguration> applianceConfigurations) {
+		List<String> result = new ArrayList<>();
+
 		for (ApplianceConfiguration config : applianceConfigurations) {
 			result.add(config.getApplianceTypeId());
 		}
-		
+
 		return result;
 	}
-	
-	private String getInitialConfigId(String applianceTypeId, List<ApplianceConfiguration> applianceConfigurations) {
+
+	private String getInitialConfigId(String applianceTypeId,
+			List<ApplianceConfiguration> applianceConfigurations) {
 		for (ApplianceConfiguration applianceConfiguration : applianceConfigurations) {
 			if (applianceConfiguration.getApplianceTypeId().equals(applianceTypeId)) {
 				return applianceConfiguration.getId();
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	private Map<String, String> getOptions(String[] values) {
-		Map<String, String> result = new LinkedHashMap<String, String>();
-		
+		Map<String, String> result = new LinkedHashMap<>();
+
 		for(String value : values) {
 			result.put(value, value.equals("0") ? view.getDefaultValueLabel() : value);
 		}
-		
+
 		return result;
 	}
-	
+
 	private String safeValue(String value) {
 		if(value == null) {
 			return "0";
