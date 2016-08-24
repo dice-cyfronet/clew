@@ -17,21 +17,28 @@ import pl.cyfronet.coin.clew.client.controller.cf.CloudFacadeDispatcher;
 public interface ApplianceConfigurationService extends RestService {
 	@GET
 	@Path("appliance_configuration_templates?appliance_type_id={applianceTypeId}")
-	void getApplianceConfigurations(@PathParam("applianceTypeId") String applianceTypeId, MethodCallback<ApplianceConfigurationsResponse> methodCallback);
-	
+	void getApplianceConfigurations(@PathParam("applianceTypeId") String applianceTypeId,
+			MethodCallback<ApplianceConfigurationsResponse> methodCallback);
+
 	@POST
 	@Path("appliance_configuration_templates")
-	void addApplianceConfiguration(NewApplianceConfigurationRequest newApplianceConfigurationRequest, MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
-	
+	void addApplianceConfiguration(
+			NewApplianceConfigurationRequest newApplianceConfigurationRequest,
+			MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
+
 	@DELETE
 	@Path("appliance_configuration_templates/{id}")
-	void deleteApplianceConfiguration(@PathParam("id") String applianceConfigurationId, MethodCallback<Void> methodCallback);
-	
+	void deleteApplianceConfiguration(@PathParam("id") String applianceConfigurationId,
+			MethodCallback<Void> methodCallback);
+
 	@PUT
 	@Path("appliance_configuration_templates/{id}")
-	void updateApplianceConfiguration(@PathParam("id") String configId, ApplianceConfigurationRequestResponse applianceConfigurationRequest, MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
+	void updateApplianceConfiguration(@PathParam("id") String configId,
+			ApplianceConfigurationRequestResponse applianceConfigurationRequest,
+			MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
 
 	@GET
 	@Path("appliance_configuration_templates?id={ids}")
-	void getApplianceConfigurationsForIds(@PathParam("ids") String ids, MethodCallback<ApplianceConfigurationsResponse> methodCallback);
+	void getApplianceConfigurationsForIds(@PathParam("ids") String ids,
+			MethodCallback<ApplianceConfigurationsResponse> methodCallback);
 }

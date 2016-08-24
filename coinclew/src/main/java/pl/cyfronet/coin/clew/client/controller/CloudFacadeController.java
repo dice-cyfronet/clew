@@ -11,6 +11,8 @@ import java.util.Map;
 
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
@@ -110,6 +112,9 @@ import pl.cyfronet.coin.clew.client.controller.overlay.Redirection;
 
 @Singleton
 public class CloudFacadeController {
+
+	private static final Logger log = LoggerFactory.getLogger(CloudFacadeController.class);
+
 	public interface ErrorCallback {
 		void onError(CloudFacadeError error);
 	}
@@ -735,10 +740,12 @@ public class CloudFacadeController {
 	public void getInitialConfigurations(List<String> initialConfigurationIds,
 			final ApplianceConfigurationsCallback applianceConfigurationsCallback) {
 		String ids = join(initialConfigurationIds, ",");
+		log.debug("Appliance configuration path is {}", ids);
 		applianceConfigurationService.getApplianceConfigurationsForIds(ids,
 				new MethodCallback<ApplianceConfigurationsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {
+				log.error("Error while retrieving initial configurations occurred", exception);
 				popupErrorHandler.displayError(errorReader.decodeError(method.getResponse()));
 			}
 
