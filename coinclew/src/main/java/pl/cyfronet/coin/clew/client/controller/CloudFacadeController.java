@@ -751,6 +751,9 @@ public class CloudFacadeController {
 
 			@Override
 			public void onSuccess(Method method, ApplianceConfigurationsResponse response) {
+				log.debug("Got appliance configuration response with status {}",
+						method.getResponse().getStatusCode());
+
 				if (applianceConfigurationsCallback != null) {
 					applianceConfigurationsCallback.processApplianceConfigurations(
 							response.getApplianceConfigurations());
