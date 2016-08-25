@@ -24,7 +24,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	private AggregateApplianceType applianceType;
 	private CloudFacadeController cloudFacadeController;
 	private boolean developmentMode;
-	
+
 	@Inject
 	public ApplianceTypePresenter(CloudFacadeController cloudFacadeController) {
 		this.cloudFacadeController = cloudFacadeController;
@@ -34,17 +34,17 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		this.applianceType = applianceType;
 		this.developmentMode = developmentMode;
 		view.getName().setText(applianceType.getName());
-		
+
 		if (applianceType.getDescription().trim().isEmpty()) {
 			view.setEmptyDescription();
 		} else {
 			view.getDescription().setText(applianceType.getDescription());
 		}
-		
+
 		view.clearInitialConfigsContainer();
 		view.addInitialConfigsProgressIndicator();
 		view.clearInitialConfigsContainer();
-		
+
 		if (applianceType.getInitialConfigurations().size() == 0) {
 			view.addNoInitialConfigsLabel();
 		} else {
@@ -53,7 +53,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 			for(ApplianceConfiguration config : applianceType.getInitialConfigurations()) {
 				view.addInitialConfigValue(config.getId(), config.getName());
 			}
-			
+
 			if(!developmentMode) {
 				if(applianceType.getFlavor() != null) {
 					view.showFlavorInformation(applianceType.getFlavor().getName(),
@@ -62,16 +62,16 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 					view.showNoFlavorInformation();
 				}
 			}
-			
+
 			if(applianceType.getComputeSiteIds() != null &&
 					applianceType.getComputeSiteIds().size() > 0) {
 				view.enableControls(true);
-				
+
 				if(applianceType.getComputeSites().size() > 1) {
 					view.showComputeSiteProgressIndicator(false);
 					view.showComputeSiteSelector();
 					view.addComputeSite("0", view.getAnyComputeSiteLabel());
-					
+
 					for(ComputeSite computeSite : applianceType.getComputeSites().values()) {
 						view.addComputeSite(computeSite.getId(), computeSite.getName());
 					}
@@ -90,14 +90,15 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		view.enableStartButton(false);
 		String initialConfigurationId = view.getInitialConfigs().getValue();
 		eventBus.hideStartInstanceModal();
-		eventBus.startApplications(asList(initialConfigurationId), collectComputeSiteIds(), developmentMode);
+		eventBus.startApplications(asList(initialConfigurationId), collectComputeSiteIds(),
+				developmentMode);
 	}
 
 	public String getSelectedInitialConfigId() {
 		if(view.getChecked().getValue()) {
 			return view.getInitialConfigs().getValue();
 		}
-		
+
 		return null;
 	}
 
@@ -105,7 +106,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		return applianceType.getName() != null && applianceType.getName().toLowerCase().contains(filterText.toLowerCase()) ||
 				applianceType.getDescription() != null && applianceType.getDescription().toLowerCase().contains(filterText.toLowerCase());
 	}
-	
+
 	public String getSelectedComputeSiteId() {
 		return view.getComputeSites().getValue();
 	}
@@ -113,7 +114,7 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	@Override
 	public void onComputeSiteChanged() {
 		String computeSiteId = view.getComputeSites().getValue();
-		
+
 		if(!computeSiteId.equals("0")) {
 			updateFlavorInformation(ApplianceTypePresenter.this.applianceType.getId(),
 					ApplianceTypePresenter.this.applianceType.getPreferenceCpu(),
@@ -134,9 +135,9 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 					@Override
 					public void processFlavors(List<Flavor> flavors) {
 						view.showFlavorProgress(false);
-						
+
 						Flavor flavor = getCheapest(flavors);
-						
+
 						if(flavor != null) {
 							view.showFlavorInformation(flavor.getName(), flavor.getHourlyCost());
 						} else {
@@ -147,8 +148,8 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 	}
 
 	private Map<String, List<String>> collectComputeSiteIds() {
-		Map<String, List<String>> computeSiteIds = new HashMap<String, List<String>>();
-		
+		Map<String, List<String>> computeSiteIds = new HashMap<>();
+
 		if(applianceType.getComputeSiteIds() != null && applianceType.getComputeSiteIds().size() > 0) {
 			if(applianceType.getComputeSiteIds().size() > 1) {
 				if(view.getComputeSites().getValue().equals("0")) {
@@ -162,19 +163,19 @@ public class ApplianceTypePresenter extends BasePresenter<IApplianceTypeView, Ma
 		} else {
 			return null;
 		}
-		
+
 		return computeSiteIds;
 	}
 
 	private Flavor getCheapest(List<Flavor> flavors) {
 		Flavor result = null;
-		
+
 		for(Flavor flavor : flavors) {
 			if(result == null || flavor.getHourlyCost() < result.getHourlyCost()) {
 				result = flavor;
 			}
 		}
-		
+
 		return result;
 	}
 }

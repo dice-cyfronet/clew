@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -741,7 +742,7 @@ public class CloudFacadeController {
 			final ApplianceConfigurationsCallback applianceConfigurationsCallback) {
 		String ids = join(initialConfigurationIds, ",");
 		log.debug("Appliance configuration path is {}", ids);
-		applianceConfigurationService.getApplianceConfigurationsForIds(ids,
+		applianceConfigurationService.getApplianceConfigurationsForIds(ids, new Date().getTime(),
 				new MethodCallback<ApplianceConfigurationsResponse>() {
 			@Override
 			public void onFailure(Method method, Throwable exception) {

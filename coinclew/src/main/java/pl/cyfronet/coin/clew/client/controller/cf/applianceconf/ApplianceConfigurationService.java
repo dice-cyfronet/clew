@@ -37,8 +37,11 @@ public interface ApplianceConfigurationService extends RestService {
 			ApplianceConfigurationRequestResponse applianceConfigurationRequest,
 			MethodCallback<ApplianceConfigurationRequestResponse> methodCallback);
 
+	//TODO: remove the token parameter when
+	//https://bugs.chromium.org/p/chromium/issues/detail?id=633696 is fixed
 	@GET
-	@Path("appliance_configuration_templates?id={ids}")
+	@Path("appliance_configuration_templates?_={token}&id={ids}")
 	void getApplianceConfigurationsForIds(@PathParam("ids") String ids,
+			@PathParam("token") long date,
 			MethodCallback<ApplianceConfigurationsResponse> methodCallback);
 }
