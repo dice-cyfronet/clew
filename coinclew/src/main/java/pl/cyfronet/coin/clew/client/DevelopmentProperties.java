@@ -9,16 +9,19 @@ import com.google.gwt.i18n.client.Constants;
  */
 public interface DevelopmentProperties extends Constants {
 	static final String MISSING = "missing";
-	
+
 	@DefaultStringValue(MISSING)
 	String cloudFacadeKey();
-	
+
 	@DefaultStringValue(MISSING)
 	String developmentUserLogin();
-	
+
 	@DefaultStringValue(MISSING)
 	String ticketOverride();
 
 	@DefaultStringValue(MISSING)
 	String project();
+
+	@DefaultStringValue(MISSING)
+	String jwtTokenOverride();
 }
