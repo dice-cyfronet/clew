@@ -15,7 +15,7 @@ public class CloudFacadeOverrideProperties {
 
 	public CloudFacadeOverrideProperties() {
 		properties = GWT.create(ClewProperties.class);
-		
+
 		try {
 			dictionary = Dictionary.getDictionary("ClewOverrides");
 		} catch (MissingResourceException e) {
@@ -25,30 +25,30 @@ public class CloudFacadeOverrideProperties {
 
 	public String getCloudFacadeEndpoint() {
 		String endpoint = getDictionaryProperty("cloudFacadeUrl");
-		
+
 		if(endpoint == null) {
 			endpoint = properties.getCloudFacadeRootUrl();
 		}
-		
+
 		return endpoint;
 	}
-	
-	public String getPrivateToken() {		
+
+	public String getPrivateToken() {
 		return getProperty("private_token");
 	}
-	
+
 	public String getUsername() {
 		return getProperty("username");
 	}
-	
+
 	public String getBuildInfo() {
 		return properties.buildInfo();
 	}
-	
+
 	public String getTicket() {
 		return getDictionaryProperty("vphTicket");
 	}
-	
+
 	public String getCsrfHeaderName() {
 		return getDictionaryProperty("csrf_header_name");
 	}
@@ -56,41 +56,45 @@ public class CloudFacadeOverrideProperties {
 	public String getCsrfToken() {
 		return getDictionaryProperty("csrf_token");
 	}
-	
+
 	public String getCsrfFieldName() {
 		return getDictionaryProperty("csrf_form_field_name");
 	}
-	
+
 	public List<String> getRoles() {
 		List<String> result = new ArrayList<>();
 		String roles = getDictionaryProperty("roles");
-		
+
 		if(roles != null) {
 			result.addAll(Arrays.asList(roles.split(",")));
 		}
-		
+
 		return result;
-	}
-	
-	private String getProperty(String propertyName) {
-		String property = getDictionaryProperty(propertyName);
-		
-		if(property == null) {
-			property = Window.Location.getParameter(propertyName);
-		}
-		
-		return property;
-	}
-	
-	private String getDictionaryProperty(String propertyName) {
-		if(dictionary != null && dictionary.keySet().contains(propertyName)) {
-			return dictionary.get(propertyName);
-		}
-		
-		return null;
 	}
 
 	public String getProject() {
 		return getProperty("project");
+	}
+
+	public String getJwtToken() {
+		return getDictionaryProperty("jwtToken");
+	}
+
+	private String getProperty(String propertyName) {
+		String property = getDictionaryProperty(propertyName);
+
+		if(property == null) {
+			property = Window.Location.getParameter(propertyName);
+		}
+
+		return property;
+	}
+
+	private String getDictionaryProperty(String propertyName) {
+		if(dictionary != null && dictionary.keySet().contains(propertyName)) {
+			return dictionary.get(propertyName);
+		}
+
+		return null;
 	}
 }

@@ -34,22 +34,15 @@ public class CloudFacadeDispatcher implements Dispatcher {
 			if(!builder.getHTTPMethod().equalsIgnoreCase("GET")) {
 				builder.setHeader(csrfHeaderName, csrfToken);
 			}
+		} else if (ticketReader.getJwtToken() != null) {
+			//trying the JWT token
+			builder.setHeader("Authorization", "Bearer " + ticketReader.getJwtToken());
+		} else if (ticketReader.getTicket() != null) {
+			//trying the MI ticket
+			builder.setHeader("MI-TICKET", ticketReader.getTicket());
 		} else {
-			//trying to retrieve MI token, if it is not there falling back to private key
-			String ticket = ticketReader.getTicket();
-
-			if(ticket == null) {
-				String cfToken = ticketReader.getCfToken();
-
-				if(cfToken.equals(DevelopmentProperties.MISSING) || ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
-					//no authentication token found, sending nonetheless
-					return builder.send();
-				} else {
-					builder.setHeader("PRIVATE-TOKEN", cfToken);
-				}
-			} else {
-				builder.setHeader("MI-TICKET", ticket);
-			}
+			//trying private token
+			setPrivateToken(builder, ticketReader);
 		}
 
 		if(SuPresenter.getSuUser() != null) {
@@ -57,5 +50,17 @@ public class CloudFacadeDispatcher implements Dispatcher {
 		}
 
 		return builder.send();
+	}
+
+	private void setPrivateToken(RequestBuilder builder, MiTicketReader ticketReader)
+			throws RequestException {
+		String cfToken = ticketReader.getCfToken();
+
+		if(cfToken.equals(DevelopmentProperties.MISSING)
+				|| ticketReader.getUserLogin().equals(DevelopmentProperties.MISSING)) {
+			//no authentication token found, sending nonetheless
+		} else {
+			builder.setHeader("PRIVATE-TOKEN", cfToken);
+		}
 	}
 }
